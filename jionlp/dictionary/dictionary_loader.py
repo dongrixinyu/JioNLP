@@ -2,7 +2,7 @@
 
 import os
 
-from bbd_nlp_apis.gadget.file_io import read_file_by_line
+from jionlp.gadget.file_io import read_file_by_line
 
 
 DIR_PATH = os.path.dirname(os.path.abspath(__file__))
