@@ -8,6 +8,8 @@ import json
 #    NLP 中常用的工具函数集合
 #    '''
 
+__all__ = ['read_file_by_line', 'write_file_by_line']
+
 
 def read_file_by_line(file_path, line_num=None, 
                       skip_empty_line=True):
@@ -62,16 +64,8 @@ def read_file_by_line(file_path, line_num=None,
                 count += 1
                 line = f.readline()
                 continue
+                
     return content_list
-
-
-
-
-
-
-
-
-
 
 
 def write_file_by_line(data_list, file_path, start_line_idx=None,

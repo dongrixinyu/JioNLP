@@ -21,7 +21,7 @@ class FastLoader(types.ModuleType):
         print( module)
         self._parent_module_globals[self._local_name] = module  # 将真实的 module 用本地名做绑定
         print(type(self._parent_module_globals))
-        pdb.set_trace()
+        # pdb.set_trace()
         # Update this object's dict so that if someone keeps a reference to the    
         # FastLoader, lookups are efficient (__getattr__ is only called on lookups
         # that fail).

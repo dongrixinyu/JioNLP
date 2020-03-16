@@ -2,10 +2,16 @@
 
 import os
 
-from jionlp.gadget.file_io import read_file_by_line
+from jionlp.gadget import read_file_by_line
 
 
 DIR_PATH = os.path.dirname(os.path.abspath(__file__))
+GRAND_DIR_PATH = os.path.dirname(DIR_PATH)
+
+
+__all__ = ['china_location_loader', 'world_location_loader',
+           'stopwords_loader', 'chinese_idiom_loader', 
+           'pornography_loader']
 
 
 def china_location_loader():
@@ -17,7 +23,7 @@ def china_location_loader():
 def world_location_loader():
     ''' 加载世界地名词典 world_location.txt '''
     content = read_file_by_line(
-        os.path.join(DIR_PATH, 'world_location.txt'))
+        os.path.join(GRAND_DIR_PATH, 'dictionary/world_location.txt'))
     
     result = dict()
     cur_continent = None
@@ -48,13 +54,14 @@ def world_location_loader():
     
 def stopwords_loader():
     ''' 加载停用词典 stopwords.txt '''
-    return read_file_by_line(os.path.join(DIR_PATH, 'stopwords.txt'))
+    return read_file_by_line(os.path.join(
+        GRAND_DIR_PATH, 'dictionary/stopwords.txt'))
     
     
 def chinese_idiom_loader():
     ''' 加载成语词典 chinese_idiom.txt '''
     content = read_file_by_line(
-        os.path.join(DIR_PATH, 'chinese_idiom.txt'))
+        os.path.join(GRAND_DIR_PATH, 'dictionary/chinese_idiom.txt'))
     
     result = dict()
     for line in content:
@@ -65,7 +72,8 @@ def chinese_idiom_loader():
 
 def pornography_loader():
     ''' 加载淫秽色情词典 pornography.txt '''
-    return read_file_by_line(os.path.join(DIR_PATH, 'pornography.txt'))
+    return read_file_by_line(os.path.join(
+        GRAND_DIR_PATH, 'dictionary/pornography.txt'))
     
     
     

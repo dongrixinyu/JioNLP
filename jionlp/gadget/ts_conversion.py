@@ -19,7 +19,7 @@ class TraditionalSimplifiedConversion(object):
         self.trad2simp_trie_tree_obj.build_trie_tree()
         self.simp2trad_trie_tree_obj.build_trie_tree()
 
-
+    
 
 
 

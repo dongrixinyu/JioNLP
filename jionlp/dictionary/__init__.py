@@ -1,7 +1,6 @@
 # -*- coding=utf-8 -*-
 
 import os
-from . import dictionary_loader
 
 
 __all__ = []
