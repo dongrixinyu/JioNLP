@@ -3,17 +3,16 @@
 # import 
 
 
-
 def turn_num_std_fmt(num, std_fmt="%.2f"):
     """将数字形式转换成`std_fmt`形式。
     使用该函数将数字形式转换成期望的`std_fmt`形式。
 
     Args:
-      num: 一个数字，支持unicode，str，int或str格式。
-      std_fmt: 希望转换后的数字格式，默认是带两位小数的float。
+        num: 一个数字，支持unicode，str，int或str格式。
+        std_fmt: 希望转换后的数字格式，默认是带两位小数的float。
 
     Returns:
-      转换后`std_fmt`形式的unicode类型的数字。
+        转换后`std_fmt`形式的unicode类型的数字。
 
     Examples:
         >>> num = 30.5
