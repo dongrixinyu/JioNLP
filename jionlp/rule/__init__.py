@@ -1,6 +1,5 @@
 # -*- coding=utf-8 -*-
 
-from . import rule_pattern
 from .extractor import Extractor
 
 
@@ -15,6 +14,7 @@ extract_phone_number = extractor.extract_phone_number
 extract_ip_address = extractor.extract_ip_address
 extract_id_card = extractor.extract_id_card
 extract_qq = extractor.extract_qq
+extract_parentheses = extractor.extract_parentheses
 
 remove_email = extractor.remove_email
 remove_url = extractor.remove_url
