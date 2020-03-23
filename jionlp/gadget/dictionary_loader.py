@@ -16,8 +16,47 @@ __all__ = ['china_location_loader', 'world_location_loader',
 
 def china_location_loader():
     ''' 加载中国地名词典 china_location.txt '''
+    location_jio = read_file_by_line(
+        os.path.join(GRAND_DIR_PATH, 'dictionary/china_location.txt'), 
+        strip=False)
     
-    
+    cur_province = None
+    cur_city = None
+    cur_county = None
+    location_dict = dict()
+
+    for item in location_jio:
+        if not item.startswith('\t'):  # 省
+            if len(item.strip().split('\t')) != 3:
+                continue
+            province, admin_code, alias_name = item.strip().split('\t')
+            cur_province = province
+            location_dict.update(
+                {cur_province: {'_full_name': province,
+                                '_alias': alias_name,
+                                '_admin_code': admin_code}})
+
+        elif item.startswith('\t\t'):  # 县
+            if len(item.strip().split('\t')) != 3:
+                continue
+            county, admin_code, alias_name = item.strip().split('\t')
+            cur_county = county
+            location_dict[cur_province][cur_city].update(
+                {cur_county: {'_full_name': county,
+                              '_alias': alias_name,
+                              '_admin_code': admin_code}})
+
+        else:  # 市
+            if len(item.strip().split('\t')) != 3:
+                continue
+            city, admin_code, alias_name = item.strip().split('\t')
+            cur_city = city
+            location_dict[cur_province].update(
+                {cur_city: {'_full_name': city,
+                            '_alias': alias_name,
+                            '_admin_code': admin_code}})
+
+    return location_dict
 
 
 def world_location_loader():

@@ -5,7 +5,7 @@ import re
 import pdb
 
 from .rule_pattern import *
-from itertools import groupby
+from jionlp.gadget.dictionary_loader import china_location_loader
 
 
 __all__ = ['clean_text', 'extract_email', 'extract_id_card', 
@@ -26,6 +26,7 @@ class Extractor(object):
         self.phone_number_pattern = None
         self.ip_address_pattern = None
         self.id_card_pattern = None
+        self.china_locations = None
         self.html_tag_pattern = None
         self.loose_qq_pattern = None
         self.strict_qq_pattern = None
@@ -167,6 +168,20 @@ class Extractor(object):
         if self.id_card_pattern is None:
             self.id_card_pattern = re.compile(ID_CARD_PATTERN)
             
+        if self.china_locations is None:
+            china_loc = china_location_loader()
+            china_locations = dict()
+            for prov in china_loc:
+                if not prov.startswith('_'):
+                    for city in china_loc[prov]:
+                        if not city.startswith('_'):
+                            for county in china_loc[prov][city]:
+                                if not county.startswith('_'):
+                                    china_locations.update(
+                                        {china_loc[prov][city][county]['_admin_code']: 
+                                         [prov, city, county]})
+            self.china_locations = china_locations
+
         text = ''.join(['#', text, '#'])
         results = self._extract_base(self.id_card_pattern, text, 
                                      with_offset=detail)
@@ -175,13 +190,15 @@ class Extractor(object):
         else:
             detail_results = list()
             for item in results:
-                item.update({'province': item['text'][:2], 
-                             'city': item['text'][2:4], 
-                             'county': item['text'][4:6], 
+                prov, city, county = self.china_locations[item['text'][:6]]
+                gender = '男' if int(item['text'][-2]) % 2 else '女'
+                item.update({'province': prov, 
+                             'city': city, 
+                             'county': county, 
                              'birth_year': item['text'][6:10],
                              'birth_month': item['text'][10:12],
                              'birth_day': item['text'][12:14],
-                             'gender': int(item['text'][-2]) % 2,
+                             'gender': gender,
                              'check_code': item['text'][-1]})
                 detail_results.append(item)
             return detail_results
