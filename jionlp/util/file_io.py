@@ -3,10 +3,6 @@
 import os
 import json
 
-#class Tools(object):
-#    '''
-#    NLP 中常用的工具函数集合
-#    '''
 
 __all__ = ['read_file_by_iter', 'read_file_by_line',
            'write_file_by_line']

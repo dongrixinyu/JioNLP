@@ -222,7 +222,7 @@ class Extractor(object):
                                   with_offset=detail)
     
     def extract_money(self, text, detail=False):
-        """从文本中抽取出金额字符串，可以和 turn_money_std_fmt 函数配合使用，
+        """从文本中抽取出金额字符串，可以和 money_standardization 函数配合使用，
         得到数字金额
 
         Args:

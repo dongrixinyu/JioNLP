@@ -4558,21 +4558,14 @@ zh2Hans = {
 "鹼": "碱",
 "㠏": "㟆",
 "𡞵": "㛟",
-"万": "万",
-"与": "与",
-"丑": "丑",
 "丟": "丢",
 "並": "并",
-"丰": "丰",
-"么": "么",
 "乾": "干",
 "乾坤": "乾坤",
 "乾隆": "乾隆",
 "亂": "乱",
-"云": "云",
 "亙": "亘",
 "亞": "亚",
-"仆": "仆",
 "价": "价",
 "伙": "伙",
 "佇": "伫",
@@ -8285,3 +8278,45 @@ zh2SG = {
 "房价": "屋价",
 "泡麵": "快速面",
 }
+
+import pdb
+
+# zh2Hant', 'zh2Hans', 'zh2TW', 'zh2HK', 'zh2CN', 'zh2SG
+
+single_dict = dict()
+word_dict = dict()
+
+sim2tra = [zh2Hant, zh2TW, zh2HK, zh2SG]
+tra2sim = [zh2Hans, zh2CN]
+
+dict_list = tra2sim
+for item in dict_list:
+    
+    for key, value in item.items():
+        if len(key) == 1:
+            if key not in single_dict:
+                single_dict.update({key:value})
+            else:
+                if key != value:
+                    print(key, single_dict[key])
+                    print(key, value)
+                    #pdb.set_trace()
+        elif len(key) > 1:
+            if key not in word_dict:
+                word_dict.update({key:value})
+            else:
+                if key != value:
+                    print(key, word_dict[key])
+                    print(key, value)
+                    #pdb.set_trace()
+print(len(single_dict))
+print(len(word_dict))
+
+pdb.set_trace()
+with open('tra2sim_char.txt', 'w', encoding='utf-8') as f:
+    for key, value in single_dict.items():
+        f.write(key + '\t' + value + '\n')
+
+
+
+

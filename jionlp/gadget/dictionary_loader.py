@@ -2,7 +2,7 @@
 
 import os
 
-from jionlp.gadget import read_file_by_line
+from .file_io import read_file_by_line
 
 
 DIR_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -11,7 +11,7 @@ GRAND_DIR_PATH = os.path.dirname(DIR_PATH)
 
 __all__ = ['china_location_loader', 'world_location_loader',
            'stopwords_loader', 'chinese_idiom_loader', 
-           'pornography_loader']
+           'pornography_loader', 'traditional_simplified_loader']
 
 
 def china_location_loader():
@@ -115,7 +115,17 @@ def pornography_loader():
         GRAND_DIR_PATH, 'dictionary/pornography.txt'))
     
     
+def traditional_simplified_loader(file_name):
+    ''' 加载繁简体转换词典 '''
+    content = read_file_by_line(os.path.join(
+        GRAND_DIR_PATH, 'dictionary', file_name))
     
+    map_dict = dict()
+    for item in content:
+        print(item.split('\t'))
+        key, value = item.split('\t')
+        map_dict.update({key: value})
+    return map_dict
     
     
     

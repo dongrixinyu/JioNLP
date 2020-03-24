@@ -1,12 +1,25 @@
 # -*- coding -*-
+import pdb
+import re
+from jionlp.gadget.file_io import read_file_by_line, write_file_by_line
+import os
 
 
-from bbd_nlp_apis.gadget.file_io import read_file_by_line, write_file_by_line
+
+with open('tra2sim/', 'r', encoding='utf-8') as f:
 
 
-seqing1 = read_file_by_line('politics.txt')
-seqing2 = read_file_by_line('zhengzhi.txt')
 
-seqing = sorted(list(set(seqing1 + seqing2)))
 
-write_file_by_line(seqing, 'zhengzhi_all')
+
+pdb.set_trace()
+
+
+
+
+
+
+
+
+
+

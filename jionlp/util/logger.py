@@ -67,3 +67,4 @@ def set_logger(level='INFO', log_dir_name='.bbd_nlp_apis_logs'):
     
     return logger
 
+
