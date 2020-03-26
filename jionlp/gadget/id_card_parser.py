@@ -3,7 +3,7 @@
 
 import os
 
-from .dictionary_loader import china_location_loader
+from jionlp.dictionary.dictionary_loader import china_location_loader
 
 
 class IDCardParser(object):

@@ -5,7 +5,7 @@ import re
 import pdb
 
 from .rule_pattern import *
-from jionlp.gadget.dictionary_loader import china_location_loader
+from jionlp.dictionary.dictionary_loader import china_location_loader
 
 
 __all__ = ['clean_text', 'extract_email', 'extract_id_card', 
