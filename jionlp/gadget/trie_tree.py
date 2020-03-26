@@ -1,6 +1,9 @@
 # -*- coding=utf-8 -*-
 
 
+from jionlp import logging
+
+
 class TrieTree(object):
     '''
     Trie 树的基本方法，用途包括：
@@ -28,14 +31,13 @@ class TrieTree(object):
                 if char in tree:
                     tree = tree[char]
                 else:
-                    tree[char] = {}
+                    tree[char] = dict()
                     tree = tree[char]
             if depth > self.depth:
                 self.depth = depth
             if 'type' in tree and tree['type'] != typing:
                 logging.warning(
-                    'entity `{}` belongs to `{}` and `{}` '
-                    'at the same time.'.format(
+                    '`{}` belongs to both `{}` and `{}`.'.format(
                         word, tree['type'], typing))
             else:
                 tree['type'] = typing
