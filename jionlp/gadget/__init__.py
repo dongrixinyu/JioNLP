@@ -11,9 +11,9 @@ from jionlp.util.fast_loader import FastLoader
 
 
 money_standardization = MoneyStandardization()
-id_card_parser = IDCardParser()
+parse_id_card = IDCardParser()
 split_sentence = SplitSentence()
-location_parser = LocationParser()
+parse_location = LocationParser()
 
 
 #rule = FastLoader('rule', globals(), 'jionlp.rule')
