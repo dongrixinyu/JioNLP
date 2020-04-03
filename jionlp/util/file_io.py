@@ -25,7 +25,7 @@ def read_file_by_iter(file_path, line_num=None,
 
     Examples:
         >>> file_path = '/path/to/stopwords.txt'
-        >>> print(bbd.read_file_by_line(file_path, line_num=3))
+        >>> print(bbd.read_file_by_iter(file_path, line_num=3))
         ['在', '然后', '还有']
 
     """

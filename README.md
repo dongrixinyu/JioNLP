@@ -45,9 +45,9 @@ $ pip install .
 
 | 功能   | 函数   |描述   |
 |--------|--------|-------|
-|[按行读取文件]()     |read_file_by_iter    |以迭代器形式方便按行读取文件，节省内存，支持指定**行数**，**跳过空行**  |
-|[按行读取文件]()     |read_file_by_line |按行读取文件，支持指定**行数**，**跳过空行** |
-|[将 list 中元素按行写入文件]() | write_file_by_line | 将 list 中元素按行写入文件 |
+|[按行读取文件](https://github.com/dongrixinyu/jionlp/wiki/%E6%96%87%E4%BB%B6%E8%AF%BB%E5%86%99-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3#user-content-文件读取iter)     |read_file_by_iter    |以迭代器形式方便按行读取文件，节省内存，支持指定**行数**，**跳过空行**  |
+|[按行读取文件](https://github.com/dongrixinyu/jionlp/wiki/%E6%96%87%E4%BB%B6%E8%AF%BB%E5%86%99-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3#user-content-文件读取list)     |read_file_by_line |按行读取文件，支持指定**行数**，**跳过空行** |
+|[将 list 中元素按行写入文件](https://github.com/dongrixinyu/jionlp/wiki/%E6%96%87%E4%BB%B6%E8%AF%BB%E5%86%99-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3#user-content-文件写入) | write_file_by_line | 将 list 中元素按行写入文件 |
 
 ### 3.词典加载与使用
 
