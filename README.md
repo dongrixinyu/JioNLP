@@ -27,7 +27,7 @@ $ pip install .
 |[抽取 **E-mail**](https://github.com/dongrixinyu/jionlp/wiki/%E6%AD%A3%E5%88%99%E6%8A%BD%E5%8F%96%E4%B8%8E%E8%A7%A3%E6%9E%90-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3#user-content-抽取-e-mail)      |extract_email       |抽取文本中的 E-mail，返回**位置**与**域名** |
 |[抽取 **金额**]()        |extract_money       |抽取文本中的金额，并将其以**数字 + 单位**形式输出 |
 |[抽取**电话号码**](https://github.com/dongrixinyu/jionlp/wiki/%E6%AD%A3%E5%88%99%E6%8A%BD%E5%8F%96%E4%B8%8E%E8%A7%A3%E6%9E%90-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3#user-content-抽取电话号码) | extract_phone_number | 抽取电话号码(含**手机**、**座机**)，返回**域名**、**类型**与**位置**
-|[抽取中国**身份证** ID]()|extract_id_card     |抽取身份证 ID，返回身份证的详细信息(**省市县**、**出生日期**、**性别**、**校验码**) |
+|[抽取中国**身份证** ID](https://github.com/dongrixinyu/jionlp/wiki/%E6%AD%A3%E5%88%99%E6%8A%BD%E5%8F%96%E4%B8%8E%E8%A7%A3%E6%9E%90-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3#user-content-抽取身份证号)|extract_id_card     |抽取身份证 ID，配合 **jio.parse_id_card** 返回身份证的详细信息(**省市县**、**出生日期**、**性别**、**校验码**) |
 |[抽取 **QQ** 号](https://github.com/dongrixinyu/jionlp/wiki/%E6%AD%A3%E5%88%99%E6%8A%BD%E5%8F%96%E4%B8%8E%E8%A7%A3%E6%9E%90-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3#user-content-抽取-qq)       |extract_qq          |抽取 QQ 号，分为严格规则和宽松规则 |
 |[抽取 **URL**]()         |extract_url         |抽取 URL   |
 |[抽取 **IP**地址]()      |extract_ip_address  |抽取 IP 地址|

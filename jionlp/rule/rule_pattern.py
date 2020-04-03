@@ -42,7 +42,7 @@ PARENTHESES_PATTERN = '{}「」[]【】()（）<>《》'
 
 # 腾讯QQ号
 QQ_PATTERN = '(?<=[^0-9])([1-9][0-9]{5,10})(?=[^0-9])'
-STRICT_QQ_PATTERN = '(qq|QQ|\+q|\+Q)'
+STRICT_QQ_PATTERN = '(qq|QQ|\+q|\+Q|加q|加Q)'
 #STRICT_QQ_PATTERN = '([qQ]{2}[:： ]{0,5}[1-9][0-9]{5,10})(?=[^0-9])'
 
 # 冗余字符处理

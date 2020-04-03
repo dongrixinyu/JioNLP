@@ -26,10 +26,8 @@ class Extractor(object):
         self.phone_number_pattern = None
         self.ip_address_pattern = None
         self.id_card_pattern = None
-        self.china_locations = None
         self.html_tag_pattern = None
         self.qq_pattern = None
-        #self.strict_qq_pattern = None
         self.cell_phone_pattern = None
         self.landline_phone_pattern = None
         self.extract_parentheses_pattern = None
@@ -168,41 +166,12 @@ class Extractor(object):
         """
         if self.id_card_pattern is None:
             self.id_card_pattern = re.compile(ID_CARD_PATTERN)
-            
-        if self.china_locations is None:
-            china_loc = china_location_loader()
-            china_locations = dict()
-            for prov in china_loc:
-                if not prov.startswith('_'):
-                    for city in china_loc[prov]:
-                        if not city.startswith('_'):
-                            for county in china_loc[prov][city]:
-                                if not county.startswith('_'):
-                                    china_locations.update(
-                                        {china_loc[prov][city][county]['_admin_code']: 
-                                         [prov, city, county]})
-            self.china_locations = china_locations
 
         text = ''.join(['#', text, '#'])
         results = self._extract_base(self.id_card_pattern, text, 
                                      with_offset=detail)
-        if not detail:
-            return results
-        else:
-            detail_results = list()
-            for item in results:
-                prov, city, county = self.china_locations[item['text'][:6]]
-                gender = '男' if int(item['text'][-2]) % 2 else '女'
-                item.update({'province': prov, 
-                             'city': city, 
-                             'county': county, 
-                             'birth_year': item['text'][6:10],
-                             'birth_month': item['text'][10:12],
-                             'birth_day': item['text'][12:14],
-                             'gender': gender,
-                             'check_code': item['text'][-1]})
-                detail_results.append(item)
-            return detail_results
+        
+        return results
         
     def extract_ip_address(self, text, detail=False):
         """提取文本中的 IP 地址
