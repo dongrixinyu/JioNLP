@@ -24,9 +24,9 @@ $ pip install .
 
 | 功能   | 函数   |描述   |
 |--------|--------|-------|
-|[抽取 **E-mail**](https://github.com/dongrixinyu/jionlp/wiki/%E6%8A%BD%E5%8F%96-E-mail)      |extract_email       |抽取文本中的 E-mail，返回**位置**与**域名** |
+|[抽取 **E-mail**](https://github.com/dongrixinyu/jionlp/wiki/%E6%AD%A3%E5%88%99%E6%8A%BD%E5%8F%96%E4%B8%8E%E8%A7%A3%E6%9E%90-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3#user-content-抽取-e-mail)      |extract_email       |抽取文本中的 E-mail，返回**位置**与**域名** |
 |[抽取 **金额**]()        |extract_money       |抽取文本中的金额，并将其以**数字 + 单位**形式输出 |
-|[抽取**电话号码**](https://github.com/dongrixinyu/jionlp/wiki/%E6%8A%BD%E5%8F%96%E7%94%B5%E8%AF%9D%E5%8F%B7%E7%A0%81) | extract_phone_number | 抽取电话号码(含**手机**、**座机**)，返回**域名**、**类型**与**位置**
+|[抽取**电话号码**](https://github.com/dongrixinyu/jionlp/wiki/%E6%AD%A3%E5%88%99%E6%8A%BD%E5%8F%96%E4%B8%8E%E8%A7%A3%E6%9E%90-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3#user-content-抽取电话号码) | extract_phone_number | 抽取电话号码(含**手机**、**座机**)，返回**域名**、**类型**与**位置**
 |[抽取中国**身份证** ID]()|extract_id_card     |抽取身份证 ID，返回身份证的详细信息(**省市县**、**出生日期**、**性别**、**校验码**) |
 |[抽取 **QQ** 号]()       |extract_qq          |抽取 QQ 号，分为严格规则和宽松规则 |
 |[抽取 **URL**]()         |extract_url         |抽取 URL   |
@@ -53,10 +53,10 @@ $ pip install .
 
 | 功能   | 函数   |描述   |
 |--------|--------|-------|
-|[**停用词过滤**](https://github.com/dongrixinyu/jionlp/wiki/Gadget-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3)       |remove_stopwords|给定一个文本被分词后的词 list，去除其中的停用词            |
-|[**分句**](https://github.com/dongrixinyu/jionlp/wiki/Gadget-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3)             |split_sentence  |对文本按标点分句。  |
-|[**地址解析**](https://github.com/dongrixinyu/jionlp/wiki/Gadget-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3)         |parse_location  |给定一个包含国内地址字符串，识别其中的**省、市、县**等信息     |
-|[**身份证号**解析]()     |parse_id_card   |给定一个身份证号，识别对应的**省、市、县、出生年月、性别、校验码**等信息 |
+|[**停用词过滤**](https://github.com/dongrixinyu/jionlp/wiki/Gadget-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3#user-content-去除停用词)       |remove_stopwords|给定一个文本被分词后的词 list，去除其中的停用词            |
+|[**分句**](https://github.com/dongrixinyu/jionlp/wiki/Gadget-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3#user-content-文本分句)             |split_sentence  |对文本按标点分句。  |
+|[**地址解析**](https://github.com/dongrixinyu/jionlp/wiki/Gadget-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3#user-content-地址解析)         |parse_location  |给定一个包含国内地址字符串，识别其中的**省、市、县**等信息     |
+|[**身份证号**解析](https://github.com/dongrixinyu/jionlp/wiki/Gadget-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3#user-content-身份证号码解析)     |parse_id_card   |给定一个身份证号，识别对应的**省、市、县、出生年月、性别、校验码**等信息 |
 |[色情数据过滤]()     |
 |[反动数据过滤]()     |
 |[繁体转简体]()       |                |繁体转简体，支持**逐字转**与**最大匹配**两种模式       |
