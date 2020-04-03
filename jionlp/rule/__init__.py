@@ -26,3 +26,4 @@ remove_html_tag = extractor.remove_html_tag
 
 del extractor
 
+

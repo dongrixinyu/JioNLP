@@ -28,8 +28,8 @@ class Extractor(object):
         self.id_card_pattern = None
         self.china_locations = None
         self.html_tag_pattern = None
-        self.loose_qq_pattern = None
-        self.strict_qq_pattern = None
+        self.qq_pattern = None
+        #self.strict_qq_pattern = None
         self.cell_phone_pattern = None
         self.landline_phone_pattern = None
         self.extract_parentheses_pattern = None
@@ -61,6 +61,7 @@ class Extractor(object):
                       for item in pattern.finditer(text)]
         else:
             results = [item.group(1) for item in pattern.finditer(text)]
+        
         return results
 
     def remove_redundant_char(self, text):
@@ -280,17 +281,23 @@ class Extractor(object):
             list: email列表
 
         """
-        if not strict:
-            if self.loose_qq_pattern is None:
-                self.loose_qq_pattern = re.compile(LOOSE_QQ_PATTERN)
-            qq_pattern = self.loose_qq_pattern
-        else:
-            if self.strict_qq_pattern is None:
-                self.strict_qq_pattern = re.compile(STRICT_QQ_PATTERN)
-            qq_pattern = self.strict_qq_pattern
+        if self.qq_pattern is None:
+            self.qq_pattern = re.compile(QQ_PATTERN)
+            self.strict_qq_pattern = re.compile(STRICT_QQ_PATTERN)
         
         text = ''.join(['#', text, '#'])
-        return self._extract_base(qq_pattern, text, with_offset=detail)
+        tmp_res = self._extract_base(
+            self.qq_pattern, text, with_offset=detail)
+        
+        if not strict:
+            return tmp_res
+        else:
+            # 将无法匹配 qq 字符的 qq 号删除
+            match_flag = self.strict_qq_pattern.search(text)
+            if match_flag:
+                return tmp_res
+            else:
+                return list()
     
     def extract_url(self, text, detail=False):
         """提取文本中的url链接
