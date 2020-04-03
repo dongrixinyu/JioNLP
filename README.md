@@ -53,9 +53,10 @@ $ pip install .
 
 | 功能   | 函数   |描述   |
 |--------|--------|-------|
-|[停用词过滤]()       |
-|[地址解析]()         |parse_location  |给定一个国内地址字符串，识别其中的省、市、县等信息     |
-|[身份证号解析]()     |parse_id_card   |给定一个身份证号，识别对应的省、市、县、出生年月、性别、校验码等信息 |
+|[**停用词过滤**](https://github.com/dongrixinyu/jionlp/wiki/Gadget-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3)       |remove_stopwords|给定一个文本被分词后的词 list，去除其中的停用词            |
+|[**分句**](https://github.com/dongrixinyu/jionlp/wiki/Gadget-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3)             |split_sentence  |对文本按标点分句。  |
+|[**地址解析**](https://github.com/dongrixinyu/jionlp/wiki/Gadget-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3)         |parse_location  |给定一个包含国内地址字符串，识别其中的**省、市、县**等信息     |
+|[**身份证号**解析]()     |parse_id_card   |给定一个身份证号，识别对应的**省、市、县、出生年月、性别、校验码**等信息 |
 |[色情数据过滤]()     |
 |[反动数据过滤]()     |
 |[繁体转简体]()       |                |繁体转简体，支持**逐字转**与**最大匹配**两种模式       |

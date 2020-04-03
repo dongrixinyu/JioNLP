@@ -117,8 +117,6 @@ class LocationParser(object):
         min_matched_offset = sum([j[0] for j in candidate_admin_list[0][-1]])
         candidate_admin_list = [item for item in candidate_admin_list 
                                 if sum([j[0] for j in item[-1]]) == min_matched_offset]
-        for i in candidate_admin_list:
-            print(i)
             
         # rule: 县级存在重复名称，计算可能重复的县名
         county_dup1_list = [item[3][0] for item in candidate_admin_list]
