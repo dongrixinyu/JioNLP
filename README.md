@@ -30,8 +30,8 @@ $ pip install .
 |[抽取中国**身份证** ID](https://github.com/dongrixinyu/jionlp/wiki/%E6%AD%A3%E5%88%99%E6%8A%BD%E5%8F%96%E4%B8%8E%E8%A7%A3%E6%9E%90-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3#user-content-抽取身份证号)|extract_id_card     |抽取身份证 ID，配合 **jio.parse_id_card** 返回身份证的详细信息(**省市县**、**出生日期**、**性别**、**校验码**) |
 |[抽取 **QQ** 号](https://github.com/dongrixinyu/jionlp/wiki/%E6%AD%A3%E5%88%99%E6%8A%BD%E5%8F%96%E4%B8%8E%E8%A7%A3%E6%9E%90-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3#user-content-抽取-qq)       |extract_qq          |抽取 QQ 号，分为严格规则和宽松规则 |
 |[抽取 **URL**](https://github.com/dongrixinyu/jionlp/wiki/%E6%AD%A3%E5%88%99%E6%8A%BD%E5%8F%96%E4%B8%8E%E8%A7%A3%E6%9E%90-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3#user-content-抽取-url-超链接)         |extract_url         |抽取 URL 超链接  |
-|[抽取 **IP**地址]()      |extract_ip_address  |抽取 IP 地址|
-|[抽取**括号**中的内容]() |extract_parentheses |抽取括号内容，包括 **{}「」[]【】()（）<>《》** |
+|[抽取 **IP**地址](https://github.com/dongrixinyu/jionlp/wiki/%E6%AD%A3%E5%88%99%E6%8A%BD%E5%8F%96%E4%B8%8E%E8%A7%A3%E6%9E%90-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3#user-content-抽取-ip-地址)      |extract_ip_address  |抽取 IP 地址|
+|[抽取**括号**中的内容](https://github.com/dongrixinyu/jionlp/wiki/%E6%AD%A3%E5%88%99%E6%8A%BD%E5%8F%96%E4%B8%8E%E8%A7%A3%E6%9E%90-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3#user-content-抽取文本括号信息) |extract_parentheses |抽取括号内容，包括 **{}「」[]【】()（）<>《》** |
 |[**清洗文本**]()         |clean_text          |去除文本中的**异常字符、冗余字符、HTML标签、括号信息、URL、E-mail、电话号码**|
 |[删除 **E-mail**]()      |remove_email        |删除文本中的 E-mail 信息 |
 |[删除 **URL**]()         |remove_url          |删除文本中的 URL 信息
