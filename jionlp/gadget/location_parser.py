@@ -17,8 +17,6 @@ class LocationParser(object):
     def _mapping(self, china_loc):
         # 整理行政区划码映射表
         self.administrative_map_list = list()  # 地址别称
-        county_full_list = list()
-        county_alias_list = list()
         
         for prov in china_loc:
             if not prov.startswith('_'):
@@ -41,37 +39,23 @@ class LocationParser(object):
                                      [prov, china_loc[prov]['_alias']],
                                      [city, china_loc[prov][city]['_alias']],
                                      [county, china_loc[prov][city][county]['_alias']]])
-                                county_full_list.append(county)
-                                county_alias_list.append(
-                                    china_loc[prov][city][county]['_alias'])
-        
-        county_full_list = collections.Counter(county_full_list).most_common()
-        county_alias_list = collections.Counter(county_alias_list).most_common()
-        
-        self.county_dup1_list = [item[0] for item in county_full_list if item[1] > 1]
-        self.county_dup2_list = [item[0] for item in county_alias_list if item[1] > 1]
-        self.county_dup_list = self.county_dup1_list + self.county_dup2_list
         
     def _prepare(self):
         # 添加中国区划词典
         china_loc = china_location_loader()
         self._mapping(china_loc)
         
-        self.loc_level_key_list = [
-            '省', '市', '县']
+        self.loc_level_key_list = ['省', '市', '县']
         self.loc_level_key_dict = dict(
             [(loc_level, None) for loc_level in self.loc_level_key_list])
         self.municipalities_cities = ['北京', '上海', '天津', '重庆', '香港', '澳门']
         
-    def __call__(self, location_text):
-        ''' 将地址解析出来，成若干段，其中，省市县的准确度高，而道路等详细字段准确度低 '''
+    def get_candidates(self, location_text):
+        ''' 从地址中获取所有可能涉及到的候选地址 '''
+        
         if self.administrative_map_list is None:
             self._prepare()
-            
-        location_res = copy.deepcopy(self.loc_level_key_dict)
         
-        # 获取文本中的省、市、县三级行政区划
-        # rule: 命中匹配别名或全名，统计命中量，并假设省市县分别位于靠前的位置且依次排开
         candidate_admin_list = list()  # 候选列表 
         for admin_item in self.administrative_map_list:
             count = 0
@@ -96,6 +80,17 @@ class LocationParser(object):
                 cur_item = copy.deepcopy(admin_item)
                 cur_item.extend([count, offset_list])
                 candidate_admin_list.append(cur_item)
+                
+        return candidate_admin_list
+        
+    def __call__(self, location_text):
+        ''' 将地址解析出来，成若干段，其中，省市县的准确度高，而道路等详细字段准确度低 '''
+        if self.administrative_map_list is None:
+            self._prepare()
+        
+        # 获取文本中的省、市、县三级行政区划
+        # rule: 命中匹配别名或全名，统计命中量，并假设省市县分别位于靠前的位置且依次排开
+        candidate_admin_list = self.get_candidates(location_text)
         
         if len(candidate_admin_list) == 0:
             return {'province': None, 
@@ -106,8 +101,8 @@ class LocationParser(object):
                     'orig_location': location_text}
             
         # 寻找匹配最多的候选地址，然后寻找匹配最靠前的候选地址，作为最终的省市县的判断结果
-        candidate_admin_list = sorted(candidate_admin_list, 
-                                      key=lambda i:i[-2], reverse=True)
+        candidate_admin_list = sorted(
+            candidate_admin_list, key=lambda i:i[-2], reverse=True)
         max_matched_num = candidate_admin_list[0][-2]
         candidate_admin_list = [item for item in candidate_admin_list
                                 if item[-2] == max_matched_num]
@@ -117,7 +112,7 @@ class LocationParser(object):
         min_matched_offset = sum([j[0] for j in candidate_admin_list[0][-1]])
         candidate_admin_list = [item for item in candidate_admin_list 
                                 if sum([j[0] for j in item[-1]]) == min_matched_offset]
-            
+        
         # rule: 县级存在重复名称，计算可能重复的县名
         county_dup1_list = [item[3][0] for item in candidate_admin_list]
         county_dup2_list = [item[3][1] for item in candidate_admin_list]
