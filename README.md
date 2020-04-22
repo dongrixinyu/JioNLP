@@ -1,4 +1,6 @@
-# **jionlp: 全面简便的中文 NLP 工具包，做您的 NLP 任务的垫 jio 石**
+# **jionlp**
+
+## &emsp;&emsp;&emsp; 全面简便的中文 NLP 工具包，做您的 NLP 任务的垫 jio 石
 
 ## &emsp;&emsp;&emsp; A python library for chinese NLP
 
@@ -12,16 +14,16 @@
 - python>=3.6
 ```
 $ git clone https://github.com/dongrixinyu/jionlp  
-$ cd ~/jionlp
+$ cd ./jionlp
 $ pip install .
 ```
 
 ## 使用 Features
 
-- 导入工具包
+- 导入工具包，查看工具包的主要功能
 ```
 >>> import jionlp as jio
->>> dir(jio)  # 查看工具包功能列表
+>>> dir(jio)
 ```
 
 ### 1、正则抽取与解析
