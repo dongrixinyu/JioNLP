@@ -8,6 +8,7 @@ from .split_sentence import SplitSentence
 from .id_card_parser import IDCardParser
 from .location_parser import LocationParser
 from .remove_stopwords import RemoveStopwords
+from .ts_conversion import TSConversion
 from jionlp.util.fast_loader import FastLoader
 
 
@@ -16,8 +17,10 @@ parse_id_card = IDCardParser()
 split_sentence = SplitSentence()
 parse_location = LocationParser()
 remove_stopwords = RemoveStopwords()
-
+tra_sim_conversion = TSConversion()
+tra2sim = tra_sim_conversion.tra2sim
+sim2tra = tra_sim_conversion.sim2tra
 
 #rule = FastLoader('rule', globals(), 'jionlp.rule')
-del MoneyStandardization
+del tra_sim_conversion
 del FastLoader

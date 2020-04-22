@@ -5,7 +5,7 @@ import pdb
 #from .trie_tree import TrieTree
 
 from jionlp.dictionary.dictionary_loader import traditional_simplified_loader
-from trie_tree import TrieTree
+from .trie_tree import TrieTree
 
 
 class TSConversion(object):
@@ -13,7 +13,7 @@ class TSConversion(object):
     繁简体转换
     '''
     def __init__(self):
-        self._prepare()
+        self.trie_tree_obj = None
         
     def _prepare(self):
         self.tra2sim_char = traditional_simplified_loader('tra2sim_char.txt')
@@ -31,6 +31,9 @@ class TSConversion(object):
 
     def tra2sim(self, text, mode='char'):
         ''' 将繁体转换为简体 '''
+        if self.trie_tree_obj is None:
+            self._prepare()
+        
         if mode == 'char':
             res_list = list()
             for char in text:
@@ -60,6 +63,9 @@ class TSConversion(object):
 
     def sim2tra(self, text, mode='char'):
         ''' 将简体转换为繁体 '''
+        if self.trie_tree_obj is None:
+            self._prepare()
+            
         if mode == 'char':
             res_list = list()
             for char in text:

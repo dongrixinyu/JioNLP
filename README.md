@@ -59,7 +59,7 @@ $ pip install .
 |[**身份证号**解析](https://github.com/dongrixinyu/jionlp/wiki/Gadget-说明文档#user-content-身份证号码解析)     |parse_id_card   |给定一个身份证号，识别对应的**省、市、县、出生年月、性别、校验码**等信息 |
 |[色情数据过滤]()     |
 |[反动数据过滤]()     |
-|[繁体转简体]()       |                |繁体转简体，支持**逐字转**与**最大匹配**两种模式       |
-|[简体转繁体]()       |                |简体转繁体，支持**逐字转**与**最大匹配**两种模式       |
-|
+|[繁体转简体](https://github.com/dongrixinyu/jionlp/wiki/Gadget-说明文档#user-content-繁体转简体字) |tra2sim |繁体转简体，支持**逐字转**与**最大匹配**两种模式 |
+|[简体转繁体](https://github.com/dongrixinyu/jionlp/wiki/Gadget-说明文档#user-content-简体转繁体字) |sim2tra |简体转繁体，支持**逐字转**与**最大匹配**两种模式 |
+
 
