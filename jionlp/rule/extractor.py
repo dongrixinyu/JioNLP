@@ -453,12 +453,12 @@ class Extractor(object):
 
         """
         if self.cell_phone_pattern is None:
-            self.cell_number_pattern = re.compile(CELL_PHONE_PATTERN)
+            self.cell_phone_pattern = re.compile(CELL_PHONE_PATTERN)
+            
         if self.landline_phone_pattern is None:
-            self.landline_number_pattern = re.compile(
-                LANDLINE_PHONE_PATTERN)
+            self.landline_phone_pattern = re.compile(LANDLINE_PHONE_PATTERN)
         
-        text = ''.join(['#', text, '#'])    
+        text = ''.join(['#', text, '#'])
         text = self.cell_phone_pattern.sub('', text)
         text = self.landline_phone_pattern.sub('', text)
         
@@ -474,17 +474,18 @@ class Extractor(object):
             str: 删除email后的文本
 
         """
-        if not strict:
-            if self.loose_qq_pattern is None:
-                self.loose_qq_pattern = re.compile(LOOSE_QQ_PATTERN)
-            qq_pattern = self.loose_qq_pattern
-        else:
-            if self.strict_qq_pattern is None:
-                self.strict_qq_pattern = re.compile(STRICT_QQ_PATTERN)
-            qq_pattern = self.strict_qq_pattern
-            
+        if self.qq_pattern is None:
+            self.qq_pattern = re.compile(QQ_PATTERN)
+            self.strict_qq_pattern = re.compile(STRICT_QQ_PATTERN) 
+
+        if strict:
+            # 将无法匹配 qq 字符的文本直接返回
+            match_flag = self.strict_qq_pattern.search(text)
+            if not match_flag:
+                return text
+        
         text = ''.join(['#', text, '#'])
-        return qq_pattern.sub('', text)[1:-1]
+        return self.qq_pattern.sub('', text)[1:-1]
     
     def remove_url(self, text):
         """删除文本中的url链接
