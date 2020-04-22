@@ -55,7 +55,7 @@ class Extractor(object):
                 pdb.set_trace()
             #'''
             results = [{'text': item.group(1), 
-                        'offset': [item.span()[0], item.span()[1]-2]} 
+                        'offset': [item.span()[0] - 1, item.span()[1] - 1]} 
                       for item in pattern.finditer(text)]
         else:
             results = [item.group(1) for item in pattern.finditer(text)]
@@ -168,10 +168,8 @@ class Extractor(object):
             self.id_card_pattern = re.compile(ID_CARD_PATTERN)
 
         text = ''.join(['#', text, '#'])
-        results = self._extract_base(self.id_card_pattern, text, 
+        return self._extract_base(self.id_card_pattern, text, 
                                      with_offset=detail)
-        
-        return results
         
     def extract_ip_address(self, text, detail=False):
         """提取文本中的 IP 地址
@@ -223,8 +221,9 @@ class Extractor(object):
         if self.landline_phone_pattern is None:
             self.landline_phone_pattern = re.compile(LANDLINE_PHONE_PATTERN)
             
-        cell_results = self._extract_base(self.cell_phone_pattern, text, 
-                                          with_offset=detail)
+        text = ''.join(['#', text, '#'])
+        cell_results = self._extract_base(
+            self.cell_phone_pattern, text, with_offset=detail)
         landline_results = self._extract_base(
             self.landline_phone_pattern, text, with_offset=detail)
         
