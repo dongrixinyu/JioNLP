@@ -32,14 +32,14 @@ $ pip install .
 |[抽取 **URL**](https://github.com/dongrixinyu/jionlp/wiki/%E6%AD%A3%E5%88%99%E6%8A%BD%E5%8F%96%E4%B8%8E%E8%A7%A3%E6%9E%90-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3#user-content-抽取-url-超链接)         |extract_url         |抽取 URL 超链接  |
 |[抽取 **IP**地址](https://github.com/dongrixinyu/jionlp/wiki/%E6%AD%A3%E5%88%99%E6%8A%BD%E5%8F%96%E4%B8%8E%E8%A7%A3%E6%9E%90-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3#user-content-抽取-ip-地址)      |extract_ip_address  |抽取 IP 地址|
 |[抽取**括号**中的内容](https://github.com/dongrixinyu/jionlp/wiki/%E6%AD%A3%E5%88%99%E6%8A%BD%E5%8F%96%E4%B8%8E%E8%A7%A3%E6%9E%90-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3#user-content-抽取文本括号信息) |extract_parentheses |抽取括号内容，包括 **{}「」[]【】()（）<>《》** |
-|[**清洗文本**]()         |clean_text          |去除文本中的**异常字符、冗余字符、HTML标签、括号信息、URL、E-mail、电话号码**|
-|[删除 **E-mail**]()      |remove_email        |删除文本中的 E-mail 信息 |
-|[删除 **URL**]()         |remove_url          |删除文本中的 URL 信息
-|[删除 **电话号码**]()    |remove_phone_number |删除文本中的电话号码
-|[删除 **IP地址**]()      |remove_ip_address   |删除文本中的 IP 地址
-|[删除 **身份证号**]()    |remove_id_card      |删除文本中的身份证信息 |
-|[删除 **QQ**]()          |remove_qq           |删除文本中的 qq 号|
-|[删除 **HTML**标签]()    |remove_html_tag     |删除文本中残留的 HTML 标签
+|[**清洗文本**](https://github.com/dongrixinyu/jionlp/wiki/%E6%AD%A3%E5%88%99%E6%8A%BD%E5%8F%96%E4%B8%8E%E8%A7%A3%E6%9E%90-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3#user-content-清洗文本)         |clean_text          |去除文本中的**异常字符、冗余字符、HTML标签、括号信息、URL、E-mail、电话号码**|
+|[删除 **E-mail**](https://github.com/dongrixinyu/jionlp/wiki/%E6%AD%A3%E5%88%99%E6%8A%BD%E5%8F%96%E4%B8%8E%E8%A7%A3%E6%9E%90-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3#user-content-删除文本中的-e-mail)      |remove_email        |删除文本中的 E-mail 信息 |
+|[删除 **URL**](https://github.com/dongrixinyu/jionlp/wiki/%E6%AD%A3%E5%88%99%E6%8A%BD%E5%8F%96%E4%B8%8E%E8%A7%A3%E6%9E%90-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3#user-content-删除文本中的-url)         |remove_url          |删除文本中的 URL 信息
+|[删除 **电话号码**](https://github.com/dongrixinyu/jionlp/wiki/正则抽取与解析-说明文档#user-content-删除电话号码)    |remove_phone_number |删除文本中的电话号码
+|[删除 **IP地址**](https://github.com/dongrixinyu/jionlp/wiki/%E6%AD%A3%E5%88%99%E6%8A%BD%E5%8F%96%E4%B8%8E%E8%A7%A3%E6%9E%90-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3#user-content-删除文本中的-ip-地址)      |remove_ip_address   |删除文本中的 IP 地址
+|[删除 **身份证号**](https://github.com/dongrixinyu/jionlp/wiki/%E6%AD%A3%E5%88%99%E6%8A%BD%E5%8F%96%E4%B8%8E%E8%A7%A3%E6%9E%90-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3#user-content-删除文本中的身份证号)    |remove_id_card      |删除文本中的身份证信息 |
+|[删除 **QQ**](https://github.com/dongrixinyu/jionlp/wiki/%E6%AD%A3%E5%88%99%E6%8A%BD%E5%8F%96%E4%B8%8E%E8%A7%A3%E6%9E%90-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3#user-content-删除文本中的-qq-号)          |remove_qq           |删除文本中的 qq 号|
+|[删除 **HTML**标签](https://github.com/dongrixinyu/jionlp/wiki/%E6%AD%A3%E5%88%99%E6%8A%BD%E5%8F%96%E4%B8%8E%E8%A7%A3%E6%9E%90-%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3#user-content-删除文本中的-html-标签)    |remove_html_tag     |删除文本中残留的 HTML 标签
 
 ### 2. 文件读写工具
 
