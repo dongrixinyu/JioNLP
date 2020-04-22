@@ -1,8 +1,10 @@
-# **jionlp**
+# &emsp;&emsp; **jionlp**
 
-## &emsp;&emsp;&emsp; 全面简便的中文 NLP 工具包，做您的 NLP 任务的垫 jio 石
 
-## &emsp;&emsp;&emsp; A python library for chinese NLP
+
+### &emsp;&emsp; ——全面简便的中文 NLP 工具包，做您的 NLP 任务的垫 jio 石
+### &emsp;&emsp; ——A python library for chinese NLP
+
 
 #### jionlp 是一个提供常用 NLP 功能的工具包，宗旨是直接提供方便快捷的解析、词典类的面向中文的工具接口，并提供一步到位的查阅入口。
 
