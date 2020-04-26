@@ -12,7 +12,7 @@ class TrieTree(object):
     
     '''
     def __init__(self):
-        self.dict_trie = {}
+        self.dict_trie = dict()
         self.depth = 0
 
     def add_node(self, word, typing):
