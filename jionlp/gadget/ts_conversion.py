@@ -2,7 +2,6 @@
 
 import os
 import pdb
-#from .trie_tree import TrieTree
 
 from jionlp.dictionary.dictionary_loader import traditional_simplified_loader
 from .trie_tree import TrieTree
@@ -45,7 +44,7 @@ class TSConversion(object):
             return ''.join(res_list)
             
         elif mode == 'word':
-            record_list = []  # 输出最终结果
+            record_list = list()  # 输出最终结果
             i = 0
             end = len(text)
             while i < end:
