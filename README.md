@@ -1,4 +1,4 @@
-# &emsp;&emsp; **jionlp**
+# &emsp;&emsp; **JioNLP**
 
 
 
@@ -6,7 +6,7 @@
 ### &emsp;&emsp; ——A python library for chinese NLP
 
 
-#### jionlp 是一个提供常用 NLP 功能的工具包，宗旨是直接提供方便快捷的解析、词典类的面向中文的工具接口，并提供一步到位的查阅入口。
+#### JioNLP 是一个提供常用 NLP 功能的工具包，宗旨是直接提供方便快捷的解析、词典类的面向中文的工具接口，并提供一步到位的查阅入口。
 
 #### 功能主要包括：文本清洗，去除HTML标签、异常字符、冗余字符，抽取E-mail、电话号码、QQ号、括号内容、身份证号、IP地址、URL超链接，解析身份证号信息、手机号码归属地、座机区号归属地、E-mail域名，按行快速读写文件，停用词过滤，（优化的）分句，地址解析，繁简体转换，汉字转拼音，汉字偏旁拆解，基于词典的情感分析，色情数据过滤，反动数据过滤，关键短语抽取。
 
@@ -15,8 +15,8 @@
 
 - python>=3.6
 ```
-$ git clone https://github.com/dongrixinyu/jionlp  
-$ cd ./jionlp
+$ git clone https://github.com/dongrixinyu/JioNLP
+$ cd ./JioNLP
 $ pip install .
 ```
 

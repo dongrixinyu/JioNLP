@@ -7,20 +7,21 @@ from setuptools import setup, find_packages
 
 DIR_PATH = os.path.dirname(os.path.abspath(__file__))
 LONGDOC = '''
-jionlp
-================================================================================
+==================================== JioNLP ====================================
 
-面向公司算法和使用部门提供算法api接口
+一个全面简便的中文 NLP 工具包，做您的 NLP 任务的垫 jio 石。提供丰富的 NLP 功能。
 
-安装方法：
-代码使用 Python 3 
+安装：
+```
+$ git clone https://github.com/dongrixinyu/JioNLP
+$ cd ./JioNLP
+$ pip install .
+```
 
--   半自动安装：
-    $ git clone http://git.bbdops.com/BBD-AI-Lab/BBD-Tools-Documentation.git
-    $ cd BBD-Tools-Documentation
-    $ pip install .
--   通过 import bbd_tools as bbd 来引用
-
+导入：
+```
+>>> import jionlp as jio
+```
 '''
 
 __name__ = 'jionlp'
@@ -30,12 +31,8 @@ __credits__ = []
 __license__ = "Apache License 2.0"
 __maintainer__ = "dongrixinyu"
 __email__ = "dongrixinyu.89@163.com"
-
-__url__ = 'https://github.com/dongrixinyu/jionlp'
-__description__ = 'Simple, Keras-powered multilingual NLP framework,' \
-                  ' allows you to build your models in 5 minutes for named entity recognition (NER),' \
-                  ' part-of-speech tagging (PoS) and text classification tasks. ' \
-                  'Includes BERT, GPT-2 and word2vec embedding.'
+__url__ = 'https://github.com/dongrixinyu/JioNLP'
+__description__ = LONGDOC.split('安装\n```')[0]
 
 
 
