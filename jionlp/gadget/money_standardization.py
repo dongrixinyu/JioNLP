@@ -3,6 +3,8 @@
 import re
 import pdb
 
+from jionlp.rule.rule_pattern import CURRENCY_CASE
+
 
 __all__ = ['MoneyStandardization']
 
@@ -18,6 +20,7 @@ class MoneyStandardization(object):
         self.punc_pattern = re.compile('[,， ]')
         self.wan_pattern = re.compile('万|萬')
         self.yi_pattern = re.compile('亿')
+        self.currency_case_pattern = re.compile(CURRENCY_CASE)
         
         self.mult_nums = {
             '分': 0.01, '角': 0.1, '毛': 0.1, '十': 10, '拾': 10, 
@@ -26,9 +29,11 @@ class MoneyStandardization(object):
         self.plus_nums = {
             '〇': 0, 'O': 0, '零': 0, '一': 1, '二': 2, '三': 3,
             '四': 4, '五': 5, '六': 6, '七': 7, '八': 8, '九': 9,
-            '两': 2, '壹': 1, '贰': 2, '叁': 3, '肆': 4, '伍': 5,
+            '两': 2, '壹': 1, '贰': 2, '俩': 2, '叁': 3, '弎': 3,
+            '仨': 3, '肆': 4, '伍': 5,
             '陆': 6, '柒': 7, '捌': 8, '玖': 9}
         self.suffix_nums = {
+            '百': 100, '佰': 100, '千': 1000, '仟': 1000,
             '万': 10000, '亿': 100000000, '仟万': 10000000, 
             '千万': 10000000, '百万': 1000000, '佰万': 1000000,
             '十万': 100000, '拾万': 100000}
@@ -61,6 +66,7 @@ class MoneyStandardization(object):
         if type(num) is int or type(num) is float:
             num = std_fmt % num
             rtn_std_num = num
+            
         return rtn_std_num
 
     def turn_money_std_fmt_util1(self, num):
@@ -92,9 +98,9 @@ class MoneyStandardization(object):
             mul_num = self.mult_nums.get(ch, 1)
             if len(tmp_nums) >= 1 and plus_num != 1:
                 tmp_nums[-1] = tmp_nums[-1] * mul_num
+                
         rtn_std_num = sum(tmp_nums)
         return rtn_std_num
-
 
     def turn_money_std_fmt_util2(self, num):
         """将中文金额形式转换成float形式。
@@ -103,14 +109,13 @@ class MoneyStandardization(object):
         另一个辅助函数，与turn_money_std_fmt_util1搭配起来转换类似“1千万”数字。
 
         Args:
-          num: 一个中文格式表示的金额。
+            num: 一个中文格式表示的金额。
 
         Returns:
-          转换后float类型的数字。
+            转换后float类型的数字。
         """
         rtn_num = 0.0
         if '万' in num or '萬' in num:
-            
             seg_num = self.wan_pattern.split(num)
             #pdb.set_trace()
             if len(seg_num) == 2:
@@ -123,6 +128,25 @@ class MoneyStandardization(object):
             rtn_num = self.turn_money_std_fmt_util1(num)
         return rtn_num
 
+    def _get_currency_case(self, input_num):
+        ''' 获取金额中的货币类型 '''
+        res = self.currency_case_pattern.search(input_num)
+        if res is not None:
+            # 规定标准的货币类型
+            if res.group() == '块钱':
+                unit = '元'
+            else:
+                unit = res.group()
+            
+            if res.span()[1] == len(input_num):
+                # 切去字符串末尾最后的货币类型，若不在末尾则不切
+                return unit, input_num[0: res.span()[0]]
+            else:
+                return unit, input_num
+        else:
+            return '元', input_num  # 默认是人民币元
+        
+    
     def __call__(self, inp_num, unit='元', std_fmt='%.2f', rtn_def_num='null'):
         """将各种金额形式转换成指定的形式。
         使用该函数将中文金额转换成易于计算的float形式，该函数可以转换如下金额格式：
@@ -132,7 +156,7 @@ class MoneyStandardization(object):
         "25481元",
         "1.2万元",
         "三百万",
-        "45564.441111美元",
+        "45564.44美元",
         "四百三十万",
         "二十五万三千二百美元",
         "两个亿",
@@ -160,24 +184,21 @@ class MoneyStandardization(object):
         if not inp_num:
             return rtn_money
         
+        # 去除其中的标点符号 ，，等
         inp_num = self.punc_pattern.sub('', inp_num)
-        if len(inp_num) > 2 and inp_num[0:2] == '美元':
-            unit = '美元'
-            inp_num = inp_num[2:]
-        if len(inp_num) > 1 and inp_num[0:1] == '元':
-            inp_num = inp_num[1:]
-        if len(inp_num) > 2 and inp_num[-2:] == '美元':
-            unit = '美元'
-            inp_num = inp_num[:-2]
-        if len(inp_num) > 1 and inp_num[-1] == '元':
-            inp_num = inp_num[:-1]
+        
+        # 判断货币类型
+        unit, inp_num = self._get_currency_case(inp_num)
+        #print(unit, inp_num)
+        #pdb.set_trace()
         
         if self.number_pattern.match(inp_num): 
             tmp_money = self.turn_num_std_fmt(inp_num, std_fmt)
 
-            if tmp_money is not None:
+            if tmp_money is not None:  # 纯数字格式的金额
                 rtn_money = tmp_money + unit
                 return rtn_money
+            
             if len(inp_num) > 1:
                 inp_num_suffix = inp_num[-1]
                 num_suffix1 = self.suffix_nums.get(inp_num_suffix, 0)
@@ -191,7 +212,7 @@ class MoneyStandardization(object):
                         num_suffix = num_suffix1
                         inp_num_prefix = inp_num[:-1]
                         
-                    if self.self.float_num_pattern.match(inp_num_prefix):
+                    if self.float_num_pattern.match(inp_num_prefix):
                         
                         tmp_money = float(inp_num_prefix) * num_suffix
                         rtn_money = self.turn_num_std_fmt(tmp_money, std_fmt) + unit
@@ -210,5 +231,6 @@ class MoneyStandardization(object):
                 tmp_money = self.turn_money_std_fmt_util2(inp_num)
                 if tmp_money != 0.0:
                     rtn_money = self.turn_num_std_fmt(tmp_money, std_fmt) + unit
+                    
         return rtn_money
 

@@ -202,8 +202,13 @@ class Extractor(object):
         """
         if self.money_pattern is None:
             self.money_pattern = re.compile(MONEY_PATTERN)
-        return self._extract_base(self.money_pattern, text, 
-                                  with_offset=detail)
+            
+        res = list()
+        for item in self.money_pattern.finditer(text):
+            #print(item.group())
+            res.append(item.group())
+        
+        return res
     
     def extract_phone_number(self, text, detail=False):
         """从文本中抽取出电话号码
