@@ -36,7 +36,7 @@ class MoneyStandardization(object):
             '百': 100, '佰': 100, '千': 1000, '仟': 1000,
             '万': 10000, '亿': 100000000, '仟万': 10000000, 
             '千万': 10000000, '百万': 1000000, '佰万': 1000000,
-            '十万': 100000, '拾万': 100000}
+            '十万': 100000, '拾万': 100000, '兆': 1000000000000}
         
     def turn_num_std_fmt(self, num, std_fmt='%.2f'):
         """将数字形式转换成`std_fmt`形式。
@@ -137,6 +137,8 @@ class MoneyStandardization(object):
                 unit = '元'
             elif res.group() == '港元':
                 unit = '港币'
+            elif res.group() == '澳大利亚元':
+                unit = '澳元'
             else:
                 unit = res.group()
             
