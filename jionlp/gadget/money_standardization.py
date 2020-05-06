@@ -135,6 +135,8 @@ class MoneyStandardization(object):
             # 规定标准的货币类型
             if res.group() == '块钱':
                 unit = '元'
+            elif res.group() == '港元':
+                unit = '港币'
             else:
                 unit = res.group()
             
