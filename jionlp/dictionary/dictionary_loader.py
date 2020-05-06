@@ -106,9 +106,19 @@ def chinese_idiom_loader():
         os.path.join(GRAND_DIR_PATH, 'dictionary/chinese_idiom.txt'))
     
     result = dict()
+    cur_item = dict()
     for line in content:
         item_tup = line.split('\t')
-        result.update({item_tup[0]: int(item_tup[1])})
+        print(len(item_tup))
+        assert len(item_tup) == 6
+        example = item_tup[4] if item_tup[4] != '无' else None
+        cur_item = {'explanation': item_tup[1],
+                    'derivation': item_tup[2],
+                    'pinyin': item_tup[3].split(' '),
+                    'example': example,
+                    'freq': int(item_tup[5])}
+        result.update({item_tup[0]: cur_item})
+    
     return result
     
 
