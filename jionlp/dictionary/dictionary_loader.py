@@ -109,7 +109,7 @@ def chinese_idiom_loader():
     cur_item = dict()
     for line in content:
         item_tup = line.split('\t')
-        print(len(item_tup))
+        
         assert len(item_tup) == 6
         example = item_tup[4] if item_tup[4] != '无' else None
         cur_item = {'explanation': item_tup[1],
