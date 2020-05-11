@@ -18,7 +18,15 @@ EMAIL_PATTERN = '(?<=[^0-9a-zA-Z.\-])([a-zA-Z0-9_.-]+@[a-zA-Z0-9_.-]+(?:\.[a-zA-
 EMAIL_DOMAIN_PATTERN = '(?<=@)([0-9a-zA-Z]+)(?=\.)'
 
 # 异常字符
-EXCEPTION_PATTERN = '[^ ¥～「」％－＋\n　一-龥!-~·×—‘’“”…、。《》『』【】！（），：；？]'
+EXCEPTION_PATTERN = '[^ ¥～「」％－＋\n　\xa0々一-龥!-~·×÷—‘’“”…、。《》『』【】．！〔〕（），：；＂？〈〉Ａ-Ｚａ-ｚ０-９▲℃＊§■︱]'
+
+# 全角字母数字表
+FULL_ANGLE_ALPHABET = 'ａｂｃｄｅｆｇｈｉｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＵＶＷＸＹＺ'
+FULL_ANGLE_NUMBER = '１２３４５６７８９０'
+
+# 半角字母数字表
+HALF_ANGLE_ALPHABET = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+HALF_ANGLE_NUMBER = '1234567890'
 
 # HTML 标签
 HTML_TAG_PATTERN = '<[^<\u4E00-\u9FA5，。；！？、“”‘’（）—《》…●]+?>'
@@ -48,7 +56,7 @@ MONEY_PATTERN = '(' + MONEY_PATTERN1 + '|' + MONEY_PATTERN2 + '|' + MONEY_PATTER
 
 
 # 中文括号
-PARENTHESES_PATTERN = '{}「」[]【】()（）<>《》'
+PARENTHESES_PATTERN = '{}「」[]【】()（）<>《》〈〉『』〔〕'
 
 # 腾讯QQ号
 QQ_PATTERN = '(?<=[^0-9])([1-9][0-9]{5,10})(?=[^0-9])'
@@ -57,7 +65,7 @@ STRICT_QQ_PATTERN = '(qq|QQ|\+q|\+Q|加q|加Q|q号|Q号)'
 
 # 冗余字符处理
 # 文本中有连续的 “哈哈哈哈哈” 等字符串，需要删除冗余字符串，返回为 “哈”
-REDUNDENT_PATTERN = ' -\t\n啊哈呀~'
+REDUNDENT_PATTERN = ' -\t\n啊哈呀~\u3000\xa0'
 
 # URL
 #URL_PATTERN = '(?<=[^.])((?:(?:https?|ftp|file)://|(?<![a-zA-Z\-\.])www\.)[\-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|])(?=[^<\u4E00-\u9FA5，。；！？、“”‘’（）—《》…●])'
