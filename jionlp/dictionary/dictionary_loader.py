@@ -96,8 +96,11 @@ def world_location_loader():
     
 def stopwords_loader():
     ''' 加载停用词典 stopwords.txt '''
-    return read_file_by_line(os.path.join(
+    res = read_file_by_line(os.path.join(
         GRAND_DIR_PATH, 'dictionary/stopwords.txt'))
+    # 一般漏掉了若干转换符号
+    res.extend(['', ' '])
+    return res
     
     
 def chinese_idiom_loader():

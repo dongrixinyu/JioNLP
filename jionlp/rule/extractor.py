@@ -169,7 +169,7 @@ class Extractor(object):
 
         text = ''.join(['#', text, '#'])
         return self._extract_base(self.id_card_pattern, text, 
-                                     with_offset=detail)
+                                  with_offset=detail)
         
     def extract_ip_address(self, text, detail=False):
         """提取文本中的 IP 地址
