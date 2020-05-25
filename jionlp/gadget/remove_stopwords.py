@@ -43,7 +43,7 @@ class RemoveStopwords(object):
                     world_list.extend(info['main_city'])
                 world_list.append(info['full_name'])
                 world_list.append(info['capital'])
-        #pdb.set_trace()
+
         return world_list
         
     def _prepare_china_locations(self):

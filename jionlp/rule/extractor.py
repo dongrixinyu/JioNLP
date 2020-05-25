@@ -13,7 +13,7 @@ __all__ = ['clean_text', 'extract_email', 'extract_id_card',
            'extract_phone_number', 'extract_qq', 'extract_url', 
            'remove_email', 'remove_html_tag', 'remove_id_card', 
            'remove_ip_address', 'remove_phone_number', 'remove_qq', 
-           'remove_url']
+           'remove_url', 'remove_exception_char']
 
 
 class Extractor(object):
@@ -363,7 +363,7 @@ class Extractor(object):
         if self.exception_pattern is None:
             self.exception_pattern = re.compile(EXCEPTION_PATTERN)
         
-        return self.exception_pattern.sub('', text)
+        return self.exception_pattern.sub(' ', text)
 
     def remove_html_tag(self, text):
         """删除文本中的html标签
