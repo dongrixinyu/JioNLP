@@ -40,18 +40,12 @@ ESCAPE_CHAR_PATTERN = '\t\n\a\b\f\r\v'
 # 物理单位等符号 绝大多数不常用的都被丢弃。其中 㐀-䶵 指的是另一个汉字字符集
 # 仅保留了常用符号，数字标识，如 ① 等
 ASCII_EXCEPTION_PATTERN = '[^\x09-\x0d\x20-\x7e\xa0£¥©®°±×÷]'
-UNICODE_EXCEPTION_PATTERN = '[^‐-”•…‰※℃℉Ⅰ-ⅹ①-⒛\u3000-】〔-〞㈠-㈩一-龥﹐-￥]'
+UNICODE_EXCEPTION_PATTERN = '[^‐-”•…‰※℃℉Ⅰ-ⅹ①-⒛\u3000-】〔-〞㈠-㈩一-龥﹐-﹫！-～￠￡￥]'
 EXCEPTION_PATTERN = ASCII_EXCEPTION_PATTERN[:-1] + UNICODE_EXCEPTION_PATTERN[2:]
 
 # ---------------------------------------------------------------------
-# 全角字母数字表
-FULL_ANGLE_ALPHABET = 'ａｂｃｄｅｆｇｈｉｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＵＶＷＸＹＺ'
-FULL_ANGLE_NUMBER = '１２３４５６７８９０'
-
-# ---------------------------------------------------------------------
-# 半角字母数字表
-HALF_ANGLE_ALPHABET = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-HALF_ANGLE_NUMBER = '1234567890'
+# 全角字符字母数字表
+FULL_ANGLE_ALPHABET = '[０-９Ａ-Ｚａ-ｚ\u3000]'
 
 # ---------------------------------------------------------------------
 # HTML 标签
