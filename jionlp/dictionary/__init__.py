@@ -16,13 +16,15 @@ DICTIONARY = {
     'tra2sim_word.txt': '繁体转简体字的港台和大陆用语转换词典',
     'tra2sim_char.txt': '繁体转简体映射词典',
     'landline_phone_area_code.txt': '固定电话区号对照表，用于定位区号的归属地',
-    'xiehouyu.txt': '对网络上搜集的歇后语做汇总，质量较高，几乎无错漏；共计 17000 多条'
+    'xiehouyu.txt': '对网络上搜集的歇后语做汇总，质量较高，几乎无错漏；共计 17000 多条',
+    'chinese_char_dictionary.txt': '新华字典，词典中有两千余个多音字，每个字分别包括汉字，其旧称，笔画数，拼音，偏旁部首，释义，详细释义 7 部分'
 }
 
 
 from .dictionary_loader import china_location_loader
 from .dictionary_loader import world_location_loader
 from .dictionary_loader import stopwords_loader
+from .dictionary_loader import chinese_char_dictionary_loader
 from .dictionary_loader import chinese_idiom_loader
 from .dictionary_loader import pornography_loader
 from .dictionary_loader import traditional_simplified_loader
