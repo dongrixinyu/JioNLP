@@ -15,6 +15,7 @@ __all__ = ['china_location_loader', 'world_location_loader',
            'stopwords_loader', 'chinese_idiom_loader', 
            'pinyin_phrase_loader', 'pinyin_char_loader',
            'xiehouyu_loader', 'chinese_char_dictionary_loader',
+           'chinese_word_dictionary_loader',
            'pornography_loader', 'traditional_simplified_loader']
 
 
@@ -145,6 +146,24 @@ def chinese_idiom_loader():
         result.update({item_tup[0]: cur_item})
     
     return result
+    
+    
+def chinese_word_dictionary_loader():
+    ''' 加载新华词典，词典中有 20 万余个多音字，分别包括：
+    词语及其释义
+    '''
+    content = read_file_by_line(
+        os.path.join(GRAND_DIR_PATH, 'dictionary',
+                     'chinese_word_dictionary.txt'))
+    
+    word_list = list()
+    for idx, line in enumerate(content):
+        segs = line.split('\t')
+        assert len(segs) == 2
+        cur_item = {'word': segs[0], 'explanation': segs[1]}
+        word_list.append(cur_item)
+        
+    return word_list
     
 
 def pornography_loader():
