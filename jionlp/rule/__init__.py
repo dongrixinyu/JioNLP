@@ -22,6 +22,7 @@ remove_phone_number = extractor.remove_phone_number
 remove_ip_address = extractor.remove_ip_address
 remove_id_card = extractor.remove_id_card
 remove_qq = extractor.remove_qq
+remove_parentheses = extractor.remove_parentheses
 remove_html_tag = extractor.remove_html_tag
 remove_exception_char = extractor.remove_exception_char
 

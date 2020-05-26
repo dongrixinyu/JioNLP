@@ -14,6 +14,7 @@ GRAND_DIR_PATH = os.path.dirname(DIR_PATH)
 __all__ = ['china_location_loader', 'world_location_loader',
            'stopwords_loader', 'chinese_idiom_loader', 
            'pinyin_phrase_loader', 'pinyin_char_loader',
+           'xiehouyu_loader',
            'pornography_loader', 'traditional_simplified_loader']
 
 
@@ -180,7 +181,14 @@ def pinyin_char_loader():
     return map_dict
     
 
+def xiehouyu_loader():
+    ''' 加载歇后语词典，共计 17000 余条 '''
+    xiehouyu = read_file_by_line(os.path.join(
+        GRAND_DIR_PATH, 'dictionary', 'xiehouyu.txt'))
+    
+    xiehouyu = [item.split('\t') for item in xiehouyu]
 
+    return xiehouyu
 
 
 
