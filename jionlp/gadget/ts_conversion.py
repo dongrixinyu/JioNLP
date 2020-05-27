@@ -1,4 +1,18 @@
 # -*- coding=utf-8 -*-
+'''
+TODO:
+    1、繁简体字、词的映射表目前并不完善。
+    2、简体字主要应用在中国大陆，繁体字主要应用在香港、台湾、新加坡等地。
+       各地的表述用语各不相同。因此，繁体短语融合了台湾、香港、新加坡等地
+       的用法，其中绝大多数是台湾用法，如“古早味”、“呛声”等。混合多个地区
+       的繁体字会对结果产生影响。
+    3、繁简体短语转换有特殊情况：“勒布朗·詹姆斯”与“雷覇龍·詹姆士”，其中“·”
+       是可以省略的部分，因此正向最大匹配树中，需要进行改进，即某些字符应当
+       不予匹配。
+    4、某些繁简体词汇存在多义，不能在所有情况均强制匹配，如“专业”和“科系”，
+       “专业”必须在做名词时才可以替换，而形容词时不可替换，目前工具仍未保证
+       该功能。
+'''
 
 import os
 import pdb
@@ -9,7 +23,8 @@ from .trie_tree import TrieTree
 
 class TSConversion(object):
     '''
-    繁简体转换
+    给定一段文本，将其中的简体字转换为繁体字，或将繁体字转换为简体字
+    
     '''
     def __init__(self):
         self.trie_tree_obj = None
@@ -29,7 +44,29 @@ class TSConversion(object):
         self.trie_tree_obj.build_trie_tree(self.sim2tra_token, 'sim')
 
     def tra2sim(self, text, mode='char'):
-        ''' 将繁体转换为简体 '''
+        ''' 给定一段文本，将其中的繁体字转换为简体字，提供 char 和 word 两种模式：
+        char 模式是按照字符逐个替换为简体字。word 模式是将港台地区的词汇表述习惯，
+        替换为符合大陆表述习惯的相应词汇。采用前向最大匹配的方式执行。
+        
+        Args:
+            text(str): 中文文本字符串
+            mode(char|word): 选择按字逐个转换，还是按词替换。
+        
+        return:
+            str: 简体文本字符串
+            
+        Examples:
+            >>> import jionlp as jio
+            >>> text = '今天天氣好晴朗，想喫速食麵。妳還在工作嗎？在太空梭上工作嗎？'
+            >>> res1 = jio.tra2sim(text, mode='char')
+            >>> res2 = jio.tra2sim(text, mode='word')
+            >>> print(res1)
+            >>> print(res2)
+
+            # 今天天气好晴朗，想吃速食面。你还在工作吗？在太空梭上工作吗？
+            # 今天天气好晴朗，想吃方便面。你还在工作吗？在航天飞机上工作吗？
+
+        '''
         if self.trie_tree_obj is None:
             self._prepare()
         

@@ -13,7 +13,7 @@ __all__ = ['clean_text', 'extract_email', 'extract_id_card',
            'extract_phone_number', 'extract_qq', 'extract_url', 
            'remove_email', 'remove_html_tag', 'remove_id_card', 
            'remove_ip_address', 'remove_phone_number', 'remove_qq', 
-           'remove_url']
+           'remove_url', 'remove_exception_char', 'remove_parentheses']
 
 
 class Extractor(object):
@@ -34,6 +34,7 @@ class Extractor(object):
         self.remove_parentheses_pattern = None
         self.redundent_pattern = None
         self.exception_pattern = None
+        self.full_angle_pattern = None
 
     #@staticmethod
     def _extract_base(self, pattern, text, with_offset=False):
@@ -85,6 +86,7 @@ class Extractor(object):
         return self.redundent_pattern.sub('', text)
 
     def clean_text(self, text, remove_html_tag=True,
+                   convert_full2half=True,
                    remove_exception_char=True, remove_url=True,
                    remove_redundant_char=True, remove_parentheses=True,
                    remove_email=True, remove_phone_number=True):
@@ -94,10 +96,11 @@ class Extractor(object):
             text(str): 待清理文本
             remove_html_tag(bool): 是否删除html标签，如 <span> 等
             remove_exception_char(bool): 是否删除异常字符，如“敩衞趑”等
+            convert_full2half(bool): 是否将全角字符转换为半角
             remove_redundant_char(bool): 是否删除冗余字符，如“\n\n\n”，修剪为“\n”
             remove_parentheses(bool): 是否删除括号及括号内内容，如“（记者：小丽）”
-            remove_url(bool): 是否删除url链接
-            remove_email(bool): 是否删除email
+            remove_url(bool): 是否删除 url 链接
+            remove_email(bool): 是否删除 email
             remove_phone_number(bool): 是否删除电话号码
 
         Returns:
@@ -109,6 +112,8 @@ class Extractor(object):
             text = self.remove_html_tag(text)
         if remove_exception_char:
             text = self.remove_exception_char(text)
+        if convert_full2half:
+            text = self.convert_full2half(text)
         if remove_redundant_char:
             text = self.remove_redundant_char(text)
         if remove_parentheses:
@@ -121,6 +126,36 @@ class Extractor(object):
             text = self.remove_phone_number(text)
 
         return text
+        
+    def convert_full2half(self, text):
+        '''将全角字符转换为半角字符
+        其中分为空格字符和非空格字符
+        '''
+        if self.full_angle_pattern is None:
+            self.full_angle_pattern = re.compile(FULL_ANGLE_ALPHABET)
+        
+        final_text_list = list()
+        cursor = 0
+        for item in self.full_angle_pattern.finditer(text):
+            # 补充前段字符串
+            if item.span()[0] == 0:
+                pass
+            else:
+                final_text_list.append(text[cursor: item.span()[0]])
+                
+            # 替换
+            for char in item.group():
+                flag = True
+                if char == '\u3000':  # 全角空格直接替换
+                    final_text_list.append(' ')
+                else:
+                    final_text_list.append(chr(ord(char) - 65248))
+            cursor = item.span()[1]  
+            
+        if len(text) > cursor:  # 补充最后的字符串
+            final_text_list.append(text[cursor:])
+        
+        return ''.join(final_text_list)
         
     def extract_email(self, text, detail=False):
         """提取文本中的 E-mail
@@ -169,7 +204,7 @@ class Extractor(object):
 
         text = ''.join(['#', text, '#'])
         return self._extract_base(self.id_card_pattern, text, 
-                                     with_offset=detail)
+                                  with_offset=detail)
         
     def extract_ip_address(self, text, detail=False):
         """提取文本中的 IP 地址
@@ -363,7 +398,7 @@ class Extractor(object):
         if self.exception_pattern is None:
             self.exception_pattern = re.compile(EXCEPTION_PATTERN)
         
-        return self.exception_pattern.sub('', text)
+        return self.exception_pattern.sub(' ', text)
 
     def remove_html_tag(self, text):
         """删除文本中的html标签
