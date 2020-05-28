@@ -73,3 +73,10 @@ $ pip install .
 |[**成语**词典](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载成语词典) | chinese_idiom_loader |加载成语词典 |
 
 
+
+
+### 原创不易，欢迎自由投食 (#^.^#)
+
+![image](https://github.com/dongrixinyu/JioNLP/blob/master/qr_code_for_collection.png)
+
+
