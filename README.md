@@ -77,6 +77,6 @@ $ pip install .
 
 ### 原创不易，欢迎自由投食 (#^.^#)
 
-![image](https://github.com/dongrixinyu/JioNLP/blob/master/qr_code_for_collection.png)
+![image](https://github.com/dongrixinyu/JioNLP/blob/master/qr_code_for_collection.jpg)
 
 
