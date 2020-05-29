@@ -1,5 +1,7 @@
 # -*- coding=utf-8 -*-
 
+
+# --------------------------------------------------------------------------------
 import os
 import re
 import pdb
@@ -19,26 +21,29 @@ class LocationParser(object):
         self.administrative_map_list = list()  # 地址别称
         
         for prov in china_loc:
-            if not prov.startswith('_'):
+            if prov.startswith('_'):
+                continue
+            self.administrative_map_list.append(
+                [china_loc[prov]['_admin_code'], 
+                 [prov, china_loc[prov]['_alias']],
+                 [None, None],
+                 [None, None]])
+            for city in china_loc[prov]:
+                if city.startswith('_'):
+                    continue
                 self.administrative_map_list.append(
-                    [china_loc[prov]['_admin_code'], 
+                    [china_loc[prov][city]['_admin_code'], 
                      [prov, china_loc[prov]['_alias']],
-                     [None, None],
+                     [city, china_loc[prov][city]['_alias']],
                      [None, None]])
-                for city in china_loc[prov]:
-                    if not city.startswith('_'):
-                        self.administrative_map_list.append(
-                            [china_loc[prov][city]['_admin_code'], 
-                             [prov, china_loc[prov]['_alias']],
-                             [city, china_loc[prov][city]['_alias']],
-                             [None, None]])
-                        for county in china_loc[prov][city]:
-                            if not county.startswith('_'):
-                                self.administrative_map_list.append(
-                                    [china_loc[prov][city][county]['_admin_code'], 
-                                     [prov, china_loc[prov]['_alias']],
-                                     [city, china_loc[prov][city]['_alias']],
-                                     [county, china_loc[prov][city][county]['_alias']]])
+                for county in china_loc[prov][city]:
+                    if county.startswith('_'):
+                        continue
+                    self.administrative_map_list.append(
+                        [china_loc[prov][city][county]['_admin_code'], 
+                         [prov, china_loc[prov]['_alias']],
+                         [city, china_loc[prov][city]['_alias']],
+                         [county, china_loc[prov][city][county]['_alias']]])
         
     def _prepare(self):
         # 添加中国区划词典
@@ -82,9 +87,49 @@ class LocationParser(object):
                 candidate_admin_list.append(cur_item)
                 
         return candidate_admin_list
-        
+
     def __call__(self, location_text):
-        ''' 将地址解析出来，成若干段，其中，省市县的准确度高，而道路等详细字段准确度低 '''
+        ''' 将给定中国地址字串进行解析出来，抽取或补全地址对应的省、市、县信息，此外还包
+        括详细地址、原地址等。其中，省市县的准确度高，而道路等详细字段准确度低，主要应用
+        目标文本示例如下：
+        
+        1、中国详细地址字符串
+            此类字符串一般用于邮寄、地图等。可以根据国内固有的县、市定位出所在市、省。
+            e.g. 喀左旗覃家岗街道梨树湾村芭蕉沟村民小组临.222号
+            {
+                "province":"辽宁省",
+                "city":"朝阳市",
+                "county":"喀喇沁左翼蒙古族自治县",
+                "detail":"旗覃家岗街道梨树湾村芭蕉沟村民小组临.222号",
+                "full_location":"辽宁省朝阳市喀喇沁左翼蒙古族自治县旗覃家岗街道梨树湾
+                                 村芭蕉沟村民小组临.222号",
+                "orig_location":"喀左旗覃家岗街道梨树湾村芭蕉沟村民小组临.222号"
+            }
+
+        2、一般文本句子字符串
+            此类文本自由度很高，可能包含不止一个地址，默认优先选择最靠前的地址进行返回。
+            e.g. 成都和西安是西部大开发先锋城市。
+            {
+                "province":"四川省",
+                "city":"成都市",
+                "county":null,
+                "detail":"和西安是西部大开发先锋城市。",
+                "full_location":"四川省成都市和西安是西部大开发先锋城市。",
+                "orig_location":"成都和西安是西部大开发先锋城市。"
+            }
+            此时，detail 等字段作废，没有意义。
+
+        Args:
+            location_text(str): 包含地名的字符串，若字符串中无中国地名，则返回结果是
+                                无意义的。
+        
+        Returns:
+            dict[str,]: 字典格式，如上例所示。
+        
+        Examples:
+            如上
+        
+        '''
         if self.administrative_map_list is None:
             self._prepare()
         
@@ -171,16 +216,13 @@ class LocationParser(object):
 
 if __name__ == '__main__':
     import json
+    
     lp = LocationParser()
-    with open('/data1/ml/cuichengyu/hainan_project/address1.txt', 
-              'r', encoding='utf-8') as fr:
-        addresses = fr.readlines()
-        
-    for loc in addresses:
-        #loc = '喀左旗覃家岗街道梨树湾村芭蕉沟村民小组临.222号'
-        res = lp(loc)
-        print(json.dumps(res, ensure_ascii=False, 
-                         indent=4, separators=(',', ':')))
-        pdb.set_trace()
+    
+    loc = '是西部大开发先锋城市。'
+    res = lp(loc)
+    print(json.dumps(res, ensure_ascii=False, 
+                     indent=4, separators=(',', ':')))
+    pdb.set_trace()
 
 

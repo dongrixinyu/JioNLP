@@ -34,7 +34,7 @@ class SplitSentence(object):
 
         Examples:
             >>> text = '中华古汉语，泱泱大国，历史传承的瑰宝。'
-            >>> print(bbd.split_sentences(text, criterion='fine'))
+            >>> print(jio.split_sentence(text, criterion='fine'))
             ['中华古汉语，', '泱泱大国，', '历史传承的瑰宝。']
         
         '''

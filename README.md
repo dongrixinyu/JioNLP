@@ -62,20 +62,20 @@ $ pip install .
 
 | 功能   | 函数   |描述   |
 |--------|--------|-------|
-|[**停用词过滤**](https://github.com/dongrixinyu/jionlp/wiki/Gadget-说明文档#user-content-去除停用词)       |remove_stopwords|给定一个文本被分词后的词 list，去除其中的停用词            |
-|[**分句**](https://github.com/dongrixinyu/jionlp/wiki/Gadget-说明文档#user-content-文本分句)             |split_sentence  |对文本按标点分句。  |
-|[**地址解析**](https://github.com/dongrixinyu/jionlp/wiki/Gadget-说明文档#user-content-地址解析)         |parse_location  |给定一个包含国内地址字符串，识别其中的**省、市、县**等信息     |
-|[**身份证号**解析](https://github.com/dongrixinyu/jionlp/wiki/Gadget-说明文档#user-content-身份证号码解析)     |parse_id_card   |给定一个身份证号，识别对应的**省、市、县、出生年月、性别、校验码**等信息 |
+|[**停用词过滤**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-去除停用词)       |remove_stopwords|给定一个文本被分词后的词 list，去除其中的停用词            |
+|[**分句**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-文本分句)             |split_sentence  |对文本按标点分句。  |
+|[**地址解析**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-地址解析)         |parse_location  |给定一个包含国内地址字符串，识别其中的**省、市、县**等信息     |
+|[**身份证号**解析](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-身份证号码解析)     |parse_id_card   |给定一个身份证号，识别对应的**省、市、县、出生年月、性别、校验码**等信息 |
 |[色情数据过滤]()     |
 |[反动数据过滤]()     |
-|[繁体转简体](https://github.com/dongrixinyu/jionlp/wiki/Gadget-说明文档#user-content-繁体转简体字) |tra2sim |繁体转简体，支持**逐字转**与**最大匹配**两种模式 |
-|[简体转繁体](https://github.com/dongrixinyu/jionlp/wiki/Gadget-说明文档#user-content-简体转繁体字) |sim2tra |简体转繁体，支持**逐字转**与**最大匹配**两种模式 |
+|[繁体转简体](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-繁体转简体字) |tra2sim |繁体转简体，支持**逐字转**与**最大匹配**两种模式 |
+|[简体转繁体](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-简体转繁体字) |sim2tra |简体转繁体，支持**逐字转**与**最大匹配**两种模式 |
 |[**成语**词典](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载成语词典) | chinese_idiom_loader |加载成语词典 |
 
 
 
 
-### 原创不易，欢迎自由投食 (#^.^#)
+### 开源不易，欢迎自由投食 (#^.^#)
 
 ![image](https://github.com/dongrixinyu/JioNLP/blob/master/qr_code_for_collection.jpg)
 
