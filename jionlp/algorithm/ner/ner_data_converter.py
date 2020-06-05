@@ -13,7 +13,7 @@ from jionlp import logging
 __all__ = ['entity2tag', 'tag2entity']
 
 
-def entity2tag(token_list: List, entities: List[Dict[str, Any]], 
+def entity2tag(token_list: List[str], entities: List[Dict[str, Any]], 
                formater='BIOES'):
     ''' 将实体 entity 格式转为 tag 格式，若标注过程中有重叠标注，则会自动将靠后的
     实体忽略、删除。
