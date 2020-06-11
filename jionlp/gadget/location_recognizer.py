@@ -1,7 +1,25 @@
 # -*- coding=utf-8 -*-
 '''
-给定一篇文本，确定其归属地。主要应用在新闻领域
-
+给定一篇中文文本，确定其归属地。主要应用在新闻领域，确定新闻的发生地
+注意事项：
+    1、该方法主要应用于舆情分析与统计
+    2、该方法采用了北大分词器 pkuseg，采用词性标注得到的地名 ns 进行统计计算
+       因此，方法的计算效果和性能 90% 程度上受到分词器影响。
+    3、该方法抽取结果中，排序靠后的地址可能存在错误，如，原文中出现“北京朝阳”，
+       而结果中返回了
+           {'province': '辽宁省', 'city': '朝阳市', 'county': '朝阳县'}
+       因此，当有多个地址返回时，排序靠后的地址往往可靠性低。
+    4、在新闻领域，其归属地往往由 1~3 个国内城市或国家构成，这是分析大量新闻
+       得出的结论，极少有某篇新闻涉及到诸多国家或城市。因此，返回的地址中，可
+       靠性较高的是前三个地址，在应用时也可仅考虑前三个重要的地址。
+    5、国内地名未考虑乡镇级，国外地名未考虑洲、州、邦、县级；地名未考虑海洋、
+       山形、河流、楼宇等地名，此类地址全部存入 others 字段，方便后续的处理。
+    6、文本中，存在“中国”二字，而不存在具体的城市、省份的情况，往往为外交新闻，
+       因此，在 foreign 字段中，也可能出现“中国”，而 domestic 为空。
+    7、地名词典仍有扩充和改进的空间。
+    8、仍需增加一些规则，如“北京时间”不能计入地名计算，往往分词器无法判断；
+       “日美同盟”中需要分别考虑日本、美国，此类简称也无法考虑。
+    9、返回结果中，第一个地址属于文本的归属地的正确率为 93%。
 
 '''
 
@@ -11,7 +29,8 @@ import pdb
 import copy
 import collections
 
-import thulac
+#import thulac
+import pkuseg
 
 from location_parser import LocationParser
 from split_sentence import SplitSentence
@@ -21,13 +40,11 @@ from jionlp.dictionary.dictionary_loader import world_location_loader
 
 class LocationRecognizer(object):
     def __init__(self):
-        self.location_parser_obj = None
+        self.pkuseg = None
         
     def _prepare(self):
-        self.location_parser_obj = LocationParser()
-        self.split_sentence_obj = SplitSentence()
-        self.thuseg = thulac.thulac()
-        #self.municipalities_cities = ['北京', '上海', '天津', '重庆', '香港', '澳门']
+        self.pkuseg = pkuseg.pkuseg(postag=True)
+        
         china_loc = china_location_loader()
         world_loc = world_location_loader()
         self._mapping_china_location(china_loc)
@@ -80,7 +97,6 @@ class LocationRecognizer(object):
                     
         self.world_administrative_map_list = world_administrative_map_list
         
-        
     def get_china_candidates(self, location):
         ''' 从地址中获取所有可能涉及到的候选地址，
         如给定，朝阳，匹配得到
@@ -125,14 +141,13 @@ class LocationRecognizer(object):
             # TODO
             # 当这里已有结果后，若不是有歧义的地名，如辽宁朝阳，北京朝阳等之外，可以直接跳出循环
             # 返回结果即可，可以大大加快计算速度，待总结
-                
+            
         return candidate_admin_list
     
     def get_world_candidates(self, location):
         ''' 给定一个地址字符串，找出其中的候选地址，
-        如给定 新加坡，匹配得到
-        [[['新加坡', '新加坡共和国'], None, [1, -1]], 
-         [['新加坡', '新加坡共和国'], '新加坡', [1, 1]]]
+        如给定 科伦坡，匹配得到
+            [{'country': '斯里兰卡', 'city': '科伦坡'}]
         '''
         if self.world_administrative_map_list is None:
             self._prepare()
@@ -149,8 +164,10 @@ class LocationRecognizer(object):
                             match_flag = True
                             break
                 elif idx == 1:  # 城市名
-                    if name_item is not None and name_item == location:
-                        match_flag = True
+                    if name_item is not None:
+                        if name_item in [location, location.replace('市', '')]:
+                            # 兼顾到国外地名未提各类别名的情况
+                            match_flag = True
                 else:
                     raise ValueError
                 
@@ -172,10 +189,8 @@ class LocationRecognizer(object):
                         cur_item.update({level: None})
                 if cur_item not in candidate_admin_list:
                     candidate_admin_list.append(cur_item)
-            # TODO
-            # 当这里已有结果后，若不是有歧义的地名，如辽宁朝阳，北京朝阳等之外，可以直接跳出循环
-            # 返回结果即可，可以大大加快计算速度，待总结
-        #pdb.set_trace()
+            # TODO:
+            # 世界地名较少有重复的城市名称，因此可以考虑当匹配后，直接跳出循环
         return candidate_admin_list
 
     def _combine_china_locations(self, china_combine_list, cur_location):
@@ -226,8 +241,6 @@ class LocationRecognizer(object):
                     item[2] = False
                     cur_location[1] = item[1] + cur_location[1]
                     cur_location.append(True)
-                    #item = 
-                    
                     combine_flag = True
                     
         if combine_flag:
@@ -235,7 +248,6 @@ class LocationRecognizer(object):
         else:  # 并无合并，但是仍需加在所有结果的末尾
             cur_location.append(True)
             china_combine_list.append(cur_location)
-        #pdb.set_trace()
             
         return china_combine_list
         
@@ -274,7 +286,6 @@ class LocationRecognizer(object):
                 # 将较短的一个地名设置为 False，频次取两者最大值
                 none_num = len([i for i in list(item[0].values()) if i is None])
                 cur_none_num = len([i for i in list(cur_location[0].values()) if i is None])
-                #print(none_num, cur_none_num)
                 if none_num < cur_none_num:  # 当前进入的地址较短，不作为最终结果
                     item[1] = item[1] + cur_location[1]
                     cur_location.append(False)
@@ -284,32 +295,29 @@ class LocationRecognizer(object):
                     item[2] = False
                     cur_location[1] = item[1] + cur_location[1]
                     cur_location.append(True)
-                    #item = 
                     
                     combine_flag = True
                     
-                #pdb.set_trace()
-                # break
         if combine_flag:
             world_combine_list.append(cur_location)
         else:  # 并无合并，但是仍需加在所有结果的末尾
             cur_location.append(True)
             world_combine_list.append(cur_location)
-        #pdb.set_trace()
             
         return world_combine_list
         
-    def __call__(self, text, top_k=1):
+    def __call__(self, text, top_k='default'):
         ''' 地域识别，识别出一篇文本中主要涉及的地址，即返回一篇文本的归属地，
         返回的结果具体到地级市，国外具体到城市 
         具体假设为，每一个句子仅识别一个地址，然后统计所有的结果
         
         计算方法：
-        1、按句子的粗粒度分句；
-        2、对每一个句子做分词与词性标注（默认使用清华工具 thulac），找出其中地名词汇；
-        3、对所有地名词汇进行合并，如“西藏”和“拉萨”，同属于一个地址，则进行合并,成为“{
-           '省': '西藏', '市': '拉萨', '县': None}”
-        4、
+        1、对文本做分词与词性标注（默认使用北大工具 pkuseg），找出其中地名词汇，统计词频；
+        2、对所有地名词汇进行扩充，如，将“广州”扩展成
+           {'province': '广东省', 'city': '广州市', 'county': None}；
+        3、将存在上下级关系的地名进行合并，如“西藏”和“拉萨”，同属于一个地址，则进行合并，
+           {'province': '西藏', 'city': '拉萨', 'county': None}；
+        4、统计国内、国外、以及无法归纳的地址，按频次排序返回。
         
         Args:
             text(str): 输入的文本，一般是网络新闻文本
@@ -327,21 +335,30 @@ class LocationRecognizer(object):
             >>> print(jio.location_recognizer(text))
             {
                 'domestic': [
-                    {
-                        'province': '四川省',
-                        'city': '成都市',
-                        'county': None
-                    }
+                    [
+                        {
+                            'province': '四川省',
+                            'city': '成都市',
+                            'county': None
+                        },
+                        1
+                    ]
                 ],
                 'foreign': [
-                    {
-                        'country': '日本',
-                        'city': '东京'
-                    },
-                    {
-                        'country': '韩国',
-                        'city': None
-                    }
+                    [
+                        {
+                            'country': '日本',
+                            'city': '东京'
+                        },
+                        3
+                    ],
+                    [
+                        {
+                            'country': '韩国',
+                            'city': None
+                        },
+                        1
+                    ]
                 ],
                 'others': [
                     '尚家村',
@@ -352,119 +369,73 @@ class LocationRecognizer(object):
             }
         
         '''
-        if self.location_parser_obj is None:
+        if self.pkuseg is None:
             self._prepare()
         
-        final_res = {'domestic': None, 'foreign': None, 'others': None}
-        text_pos_seg = self.thuseg.cut(text)
+        text_pos_seg = self.pkuseg.cut(text)
         text_location = [item[0] for item in text_pos_seg if item[1] == 'ns']
         if len(text_location) == 0:
             return final_res
         
         location_count = dict(collections.Counter(text_location).most_common())
-        #print(location_count)
         
-        not_matched_list = copy.deepcopy(location_count)  # 做最后未匹配地址的返回
-        china_combine_list = list()  # 将若干地名合并
+        not_matched_list = copy.deepcopy(location_count)  # 统计未匹配地址
         
+        # 中国国内部分
+        china_combine_list = list()  # 将若干中国地名合并
         for location, count in location_count.items():
             china_candidates = self.get_china_candidates(location)
-            
-            #pdb.set_trace()
             if len(china_candidates) > 0:  # 匹配到地址
                 not_matched_list.pop(location)  # 从未匹配词典中删除
-                
                 # 此时，未知 郑州 和 金水区 是对应的上下级映射关系，需要进行关联
                 for china_candidate in china_candidates:
-                    
                     china_combine_list = self._combine_china_locations(
                         china_combine_list, [china_candidate, count])
-                    #print(china_combine_list)
-            #print(china_candidates)
-            #print(china_combine_list)
-            #pdb.set_trace()
-            
+        
         domestic_locations = sorted(
             [item[:2] for item in china_combine_list if item[-1]],
             key=lambda i:i[1], reverse=True)
         
-        final_res['domestic'] = domestic_locations
-        
-        # 世界地名
-        world_combine_list = list()  # 将若干地名合并
-        
+        # 世界部分
+        world_combine_list = list()  # 将若干世界地名合并
         for location, count in location_count.items():
             world_candidates = self.get_world_candidates(location)
-            
-            #pdb.set_trace()
             if len(world_candidates) > 0:  # 匹配到地址
                 if location in not_matched_list:
                     not_matched_list.pop(location)  # 从未匹配词典中删除
                 
-                # 此时，未知 郑州 和 金水区 是对应的上下级映射关系，需要进行关联
+                # 此时，未知 斯里兰卡 和 科伦坡 是对应的上下级映射关系，需要进行关联
                 for world_candidate in world_candidates:
-                    
                     world_combine_list = self._combine_world_locations(
                         world_combine_list, [world_candidate, count])
-                    #print(world_combine_list)
-            #print(world_candidates)
-            #print(world_combine_list)
-            #pdb.set_trace()
             
         foreign_locations = sorted(
             [item[:2] for item in world_combine_list if item[-1]],
             key=lambda i:i[1], reverse=True)
         
-        final_res['foreign'] = foreign_locations
-        #pdb.set_trace()
-        
-        #print(not_matched_list)
-        #print(location_count)
-        if len(not_matched_list) != 0:
+        final_res = {'domestic': None, 'foreign': None, 'others': None}
+        if len(domestic_locations) > 0:
+            if top_k == 'default':
+                final_res['domestic'] = domestic_locations[:3]
+            else:
+                final_res['domestic'] = domestic_locations[:top_k]
+                
+        if len(foreign_locations) > 0:
+            if top_k == 'default':
+                final_res['foreign'] = foreign_locations[:3]
+            else:
+                final_res['foreign'] = foreign_locations[:top_k]
+        if len(not_matched_list) > 0:
             final_res['others'] = not_matched_list
+        
         return final_res
             
 
-
-
-
-def test():
-    import json
-    import random
-    
-    from jionlp.util.file_io import read_file_by_line
-    lr = LocationRecognizer()
-    texts = read_file_by_line(
-        '/data1/ml/cuichengyu/dataset_store/text_dataset_20190731_guoxinyuqing.txt',
-        line_num=1000)
-    random.shuffle(texts)
-    for text in texts:
-        #text = '中国海军和平方舟医院船首访多米尼加。新华社圣多明各11月1日电（记者吴昊 江山）执行“和谐使命－2018”任务的中国海军和平方舟医院船11月1日抵达圣多明各港，开始对多米尼加进行为期8天的友好访问。多米尼加地处加勒比海，今年5月1日，与中国正式建交。这是两国建交以来，中国海军舰艇首次访多。当地时间1日上午7时30分许，和平方舟缓缓驶进圣多明各港。停泊在港内的多海军舰艇悬挂满旗，舰员在甲板分区列队，随着一长声鸣笛，整齐敬礼，表达热烈欢迎。和平方舟悬挂满旗致谢，鸣笛一长声还礼，海军官兵行举手礼致敬。8时许，和平方舟停靠圣多明各港码头，多方举行热烈欢迎仪式，多海军军乐队分别演奏两国国歌，官兵代表向“和谐使命－2018”任务指挥员敬献鲜花。多军政官员，中国驻多使馆临时代办张步新 率使馆工作人员、华侨华人、中资机构代表等在码头迎接。仪式结束后，多军政官员、华侨华人等登船参观。当天下午，和平方舟主平台全面展开，进行诊疗活动。多米尼加是和平方舟 入列以来访问的第41个国家，也是此次任务的第九站。访问期间，“和谐使命－2018”任务指挥员将拜会多军政要员，和平方舟将开展联合诊疗、文化联谊、设备维修等系列活动。'
-        #print(''.join(json.loads(text)[0]))
-        res = lr(text)
-        #print(json.dumps(res, ensure_ascii=False, 
-        #                 indent=4, separators=(',', ':')))
-        #print(text)
-        #pdb.set_trace()
-
 if __name__ == '__main__':
-    import cProfile
-    cProfile.run('test()', sort='cumtime')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    import json
+    lr = LocationRecognizer()
+    text = '中国海军和平方舟医院船首访多米尼加。新华社圣多明各11月1日电（记者吴昊 江山）执行“和谐使命－2018”任务的中国海军和平方舟医院船11月1日抵达圣多明各港，开始对多米尼加进行为期8天的友好访问。多米尼加地处加勒比海，今年5月1日，与中国正式建交。这是两国建交以来，中国海军舰艇首次访多。当地时间1日上午7时30分许，和平方舟缓缓驶进圣多明各港。停泊在港内的多海军舰艇悬挂满旗，舰员在甲板分区列队，随着一长声鸣笛，整齐敬礼，表达热烈欢迎。和平方舟悬挂满旗致谢，鸣笛一长声还礼，海军官兵行举手礼致敬。8时许，和平方舟停靠圣多明各港码头，多方举行热烈欢迎仪式，多海军军乐队分别演奏两国国歌，官兵代表向“和谐使命－2018”任务指挥员敬献鲜花。多军政官员，中国驻多使馆临时代办张步新 率使馆工作人员、华侨华人、中资机构代表等在码头迎接。仪式结束后，多军政官员、华侨华人等登船参观。当天下午，和平方舟主平台全面展开，进行诊疗活动。多米尼加是和平方舟 入列以来访问的第41个国家，也是此次任务的第九站。访问期间，“和谐使命－2018”任务指挥员将拜会多军政要员，和平方舟将开展联合诊疗、文化联谊、设备维修等系列活动。'
+    res = lr(text)
+    print(json.dumps(res, ensure_ascii=False, 
+                     indent=4, separators=(',', ':')))
 
