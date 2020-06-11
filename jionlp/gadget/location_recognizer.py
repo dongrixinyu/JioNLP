@@ -13,7 +13,7 @@
        得出的结论，极少有某篇新闻涉及到诸多国家或城市。因此，返回的地址中，可
        靠性较高的是前三个地址，在应用时也可仅考虑前三个重要的地址。
     5、国内地名未考虑乡镇级，国外地名未考虑洲、州、邦、县级；地名未考虑海洋、
-       山形、河流、楼宇等地名，此类地址全部存入 others 字段，方便后续的处理。
+       山形、河流、楼宇等，此类地址全部存入 others 字段，方便后续的处理。
     6、文本中，存在“中国”二字，而不存在具体的城市、省份的情况，往往为外交新闻，
        因此，在 foreign 字段中，也可能出现“中国”，而 domestic 为空。
     7、地名词典仍有扩充和改进的空间。
@@ -29,11 +29,8 @@ import pdb
 import copy
 import collections
 
-#import thulac
 import pkuseg
 
-from location_parser import LocationParser
-from split_sentence import SplitSentence
 from jionlp.dictionary.dictionary_loader import china_location_loader
 from jionlp.dictionary.dictionary_loader import world_location_loader
 
@@ -231,7 +228,7 @@ class LocationRecognizer(object):
                 # 将较短的一个地名设置为 False，频次取两者最大值
                 none_num = len([i for i in list(item[0].values()) if i is None])
                 cur_none_num = len([i for i in list(cur_location[0].values()) if i is None])
-                #print(none_num, cur_none_num)
+                
                 if none_num < cur_none_num:  # 当前进入的地址较短，不作为最终结果
                     item[1] = item[1] + cur_location[1]
                     cur_location.append(False)
@@ -332,7 +329,7 @@ class LocationRecognizer(object):
         Examples:
             >>> text = '成都市召开了中日韩三国峰会，中国、日本、韩国三国首脑，日本东京和
                 尚家村缔结了互帮互助...'
-            >>> print(jio.location_recognizer(text))
+            >>> print(jio.recognize_location(text))
             {
                 'domestic': [
                     [
