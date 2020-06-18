@@ -7,7 +7,7 @@ from typing import Union
 
 from jionlp.dictionary.dictionary_loader import pinyin_phrase_loader
 from jionlp.dictionary.dictionary_loader import pinyin_char_loader
-from trie_tree import TrieTree
+from .trie_tree import TrieTree
 #from .trie_tree import TrieTree
 
 
