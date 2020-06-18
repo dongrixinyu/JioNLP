@@ -32,6 +32,7 @@ class Extractor(object):
         self.landline_phone_pattern = None
         self.extract_parentheses_pattern = None
         self.remove_parentheses_pattern = None
+        self.parentheses_pattern = PARENTHESES_PATTERN
         self.redundent_pattern = None
         self.exception_pattern = None
         self.full_angle_pattern = None
@@ -324,28 +325,32 @@ class Extractor(object):
         return self._extract_base(self.url_pattern, text, 
                                   with_offset=detail)
     
-    def extract_parentheses(self, text):
+    def extract_parentheses(self, text, parentheses=PARENTHESES_PATTERN):
         """提取文本中的括号及括号内内容，当有括号嵌套时，提取每一对
         成对的括号的内容
 
         Args:
             text(str): 字符串文本
-            
+            parentheses: 要删除的括号类型，格式为:
+            '左括号1右括号1左括号2右括号2...'，必须为成对的括号如'{}()[]'，
+            默认为self.parentheses
 
         Returns:
             list: 括号内容列表
 
         """
-        if self.extract_parentheses_pattern is None:
-            extract_pattern = '[' + re.escape(PARENTHESES_PATTERN) + ']'
+        if self.extract_parentheses_pattern is None or self.parentheses_pattern != parentheses:
+            self.parentheses_pattern = parentheses
+
+            extract_pattern = '[' + re.escape(self.parentheses_pattern) + ']'
             extract_pattern = re.compile(extract_pattern)
             
-            p_length = len(PARENTHESES_PATTERN)
+            p_length = len(self.parentheses_pattern)
 
             parentheses_dict = dict()
             for i in range(0, p_length, 2):
-                value = PARENTHESES_PATTERN[i]
-                key = PARENTHESES_PATTERN[i + 1]
+                value = self.parentheses_pattern[i]
+                key = self.parentheses_pattern[i + 1]
                 parentheses_dict.update({key: value})
             
             self.parentheses_dict = parentheses_dict
@@ -446,7 +451,7 @@ class Extractor(object):
         text = ''.join(['#', text, '#'])
         return self.ip_address_pattern.sub('', text)[1:-1]
     
-    def remove_parentheses(self, text):
+    def remove_parentheses(self, text, parentheses=PARENTHESES_PATTERN):
         """删除文本中的括号及括号内内容
 
         Args:
@@ -458,14 +463,16 @@ class Extractor(object):
         Returns:
             str: 删除括号及括号中内容后的文本
         """
-        if self.remove_parentheses_pattern is None:
-            p_length = len(PARENTHESES_PATTERN)
+        if self.remove_parentheses_pattern is None or self.parentheses_pattern != parentheses:
+            self.parentheses_pattern = parentheses
+
+            p_length = len(self.parentheses_pattern)
             remove_pattern_list = list()
             remove_pattern_format = '{left}[^{left}{right}]*{right}'
             
             for i in range(0, p_length, 2):
-                left = re.escape(PARENTHESES_PATTERN[i])
-                right = re.escape(PARENTHESES_PATTERN[i + 1])
+                left = re.escape(self.parentheses_pattern[i])
+                right = re.escape(self.parentheses_pattern[i + 1])
                 remove_pattern_list.append(
                     remove_pattern_format.format(left=left, right=right))
                 
