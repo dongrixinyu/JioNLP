@@ -186,14 +186,14 @@ def traditional_simplified_loader(file_name):
     
 def pinyin_phrase_loader():
     content = read_file_by_line(os.path.join(
-        GRAND_DIR_PATH, 'dictionary', 'phrase_pinyin.txt'))
+        GRAND_DIR_PATH, 'dictionary', 'pinyin_phrase.txt'))
     
     map_dict = dict()
     for item in content:
         key, value = item.split('\t')
-        #print(key, value)
         value = value.split('/')
         map_dict.update({key: value})
+        
     return map_dict
 
 
@@ -203,21 +203,12 @@ def pinyin_char_loader():
     
     map_dict = dict()
     for item in content:
-        #print(item)
-        if len(item.split('\t')) != 2:  # 该发音下无汉字
-            continue
-        #pdb.set_trace()
         key, value = item.split('\t')
-        #print(key, value)
-        value = list(value)
-        for val in value:
-            if val not in map_dict:
-                map_dict.update({val: key})
-            else:  # 说明存在多音字
-                #logging.warn(val, map_dict[val])
-                #logging.warn(val, key)
-                pass
-                #pdb.set_trace()
+        assert len(item.split('\t')) == 2
+        
+        multi_pinyin = value.split('/')
+        map_dict.update({key: multi_pinyin})
+
     return map_dict
     
 
