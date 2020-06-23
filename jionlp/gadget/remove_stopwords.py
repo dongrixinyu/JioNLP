@@ -17,7 +17,7 @@ import pdb
 import typing
 
 from jionlp.dictionary.dictionary_loader import stopwords_loader, world_location_loader, china_location_loader
-from jionlp.rule.rule_pattern import TIME_PATTERN
+from jionlp.rule.rule_pattern import TIME_PATTERN, NUMBER_PATTERN, CHINESE_CHAR_PATTERN
 
 
 class RemoveStopwords(object):
@@ -31,6 +31,8 @@ class RemoveStopwords(object):
         self.location_list = list(set(self.world_list + self.china_list))
         #pdb.set_trace()
         self.time_pattern = re.compile(TIME_PATTERN)
+        self.number_pattern = re.compile(NUMBER_PATTERN)
+        self.chinese_char_pattern = re.compile(CHINESE_CHAR_PATTERN)
         
     def _prepare_world_locations(self):
         world_location = world_location_loader()
@@ -70,14 +72,19 @@ class RemoveStopwords(object):
         return china_list
         
     def __call__(self, text_segs, remove_time=False, 
-                 remove_location=False):
+                 remove_location=False, remove_number=False,
+                 remove_non_chinese=False):
         ''' 给出分词之后的结果，做判定，其中分词器使用用户自定义的，推荐的有
         jieba 分词器、清华分词器 thuseg、北大分词器 pkuseg。
+        该方法处理速度较快，但由于大量的中文词汇包含多义，如“本”字包含名词、
+        代词、连词等词性，因此准确性较差。是词性标注的简易替代品。
         
         Args:
             list(str): 分词之后的列表
             remove_time: 是否去除时间词汇
             remove_location: 是否去除地名词汇
+            remove_number: 是否去除纯数字词汇
+            remove_non_chinese: 是否去除非中文词汇
         
         Return:
             list(str)
@@ -106,8 +113,22 @@ class RemoveStopwords(object):
             if remove_location:
                 if word in self.location_list:
                     continue
+            
+            # rule4: 采用数字正则过滤纯数字
+            if remove_number:
+                res = self.number_pattern.search(word)
+                if res is not None:
+                    continue
+            
+            # rule5: 采用中文正则过滤非中文词汇
+            if remove_non_chinese:
+                res = self.chinese_char_pattern.search(word)
+                if res is None:
+                    continue
+            
             res_text_segs.append(word)
             
+
         return res_text_segs
         
 

@@ -101,7 +101,7 @@ def stopwords_loader():
     res = read_file_by_line(os.path.join(
         GRAND_DIR_PATH, 'dictionary/stopwords.txt'))
     # 一般漏掉了若干转换符号
-    res.extend(['', ' '])
+    res.extend(['', ' ', '\t'])
     return res
     
     
