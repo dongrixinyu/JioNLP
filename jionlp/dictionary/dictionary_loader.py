@@ -172,6 +172,25 @@ def pornography_loader():
         GRAND_DIR_PATH, 'dictionary/pornography.txt'))
     
     
+def char_radical_loader():
+    ''' 加载汉字字形词典 char_radical.txt '''
+    structure_dict = {
+        0: '一体结构', 1: '左右结构', 2: '上下结构', 3: '左中右结构',
+        4: '上中下结构', 5: '右上包围结构', 6: '左上包围结构', 7: '左下包围结构',
+        8: '全包围结构', 9: '半包围结构'}
+    
+    content = read_file_by_line(os.path.join(
+        GRAND_DIR_PATH, 'dictionary', 'char_radical.txt'))
+    
+    map_dict = dict()
+    for item in content:
+        assert len(item.split('\t')) == 3
+        char, radical, structure = item.split('\t')
+        map_dict.update({char: [radical, int(structure)]})
+        
+    return map_dict, structure_dict
+    
+    
 def traditional_simplified_loader(file_name):
     ''' 加载繁简体转换词典 '''
     content = read_file_by_line(os.path.join(

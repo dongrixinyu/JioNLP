@@ -67,10 +67,12 @@ IP_ADDRESS_PATTERN = '(?<=[^0-9])((25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-
 # 地名表达式
 # 除中国地名表外，还有大量的地名未进行识别，采用正则匹配。然而仍然有一些特例：
 # “城”字结尾的名词有不少房地产楼盘
-LOCATION_CONTINENT_PATTERN = '(亚|欧|非|北美|中(南)?美|南美|拉丁美|南极|大洋)洲'
-LOCATION_OCEAN_PATTERN = '(东|西|南|北)?(太平|大西|印度|北冰)洋'
-LOCATION_INTER_REGION_PATTERN = '((东|西|南|北|中|东南|中北)亚|(东|西|南|北|中)欧|(东|西|南|北|中)非|拉美|北美|南美)'
-LOCATION_KEYWORDS_PATTERN = CHINESE_CHAR_PATTERN + '+[县市镇村区山州路河城湖岛港江省湾乡街庄堡国寺桥溪岭海郡]'
+LOCATION_CONTINENT_PATTERN = '(亚|欧|非|北美|中(南)?美|南美|拉丁美|南极|大洋)洲'  # 大洲
+LOCATION_OCEAN_PATTERN = '(东|西|南|北)?(太平|大西|印度|北冰)洋'  # 大洋
+LOCATION_INTER_REGION_PATTERN = '((东|西|南|北|中|东南|中北)亚|(东|西|南|北|中)欧|(东|西|北)非|拉美|北美|南美|(中|近|远)东)'  # 国际区域名词
+LOCATION_KEYWORDS_PATTERN = CHINESE_CHAR_PATTERN + '+[县市镇村区山州路河城湖岛港江省湾乡街庄堡国寺桥溪岭海郡]'  # 尾缀词地名
+
+# 各种不同类型的地名可以自由添加组合
 LOCATION_PATTERN = '^(' + '|'.join(
     [LOCATION_CONTINENT_PATTERN, LOCATION_OCEAN_PATTERN,
      LOCATION_INTER_REGION_PATTERN, LOCATION_KEYWORDS_PATTERN]) + ')$'

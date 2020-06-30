@@ -1,4 +1,13 @@
 # -*- coding=utf-8 -*-
+'''
+TODO:
+    1、拼音词典并不完善
+    2、拼音词典并不能完全涵盖所有多音字情况，如“任性”与“任家萱”，在人名中，“任”
+       字读音为 2 声，但词典无法覆盖所有人名。
+    3、若干汉字有复音，如“瓩”。
+    4、数字、字母、符号等，并非没有读音，但均以 <unk> 替代
+
+'''
 
 import os
 import pdb
@@ -12,7 +21,21 @@ from .trie_tree import TrieTree
 
 
 class Pinyin(object):
-    ''' 为汉字标读音 '''
+    ''' 
+    将汉字转为拼音，并提供额外的拼音展示方案，若对应字符无拼音，或字母、字符等，
+    则添加 <unk> 作为标记，并且提供两种格式的返回形式。
+
+    args:
+        text(str): 待标记拼音的文本
+        formater(str): 可选择 standard 或 simple，
+            当为 standard 时，返回结果为 “佛山 ['fó', 'shān']”，方便展示查看，
+            当为 simple 时，返回结果为 “佛山 ['fo2', 'shan1']”，方便输入深度
+            学习模型。
+
+    return:
+        list(str): 拼音列表
+
+    '''
     
     def __init__(self):
         self.trie_tree_obj = None
@@ -64,12 +87,15 @@ class Pinyin(object):
                 standard_pinyin, letter_map_dict)
             self.pinyin_formater.update({standard_pinyin: simple_pinyin})
         
-    def __call__(self, text, formater: Union['standard', 'simple'] = 'standard'):
-        ''' 将汉字转为拼音，并提供额外的拼音展示方案，若对应字符无拼音，或字母、字符等，
-        则添加 <unk> 作为标记 
-        '''
+    def __call__(self, text: str,
+                 formater: Union['standard', 'simple'] = 'standard'):
+
         if self.trie_tree_obj is None:
             self._prepare()
+        
+        if formater not in ['standard', 'simple']:
+            raise ValueError(
+                '`formater` should be either `standard` or `simple`.')
         
         record_list = list()  # 输出最终结果
         i = 0
@@ -105,18 +131,5 @@ if __name__ == '__main__':
     res = pinyin(text, formater='simple')
     for i, j in zip(text, res):
         print(i, j)
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
