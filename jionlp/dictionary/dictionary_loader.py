@@ -184,9 +184,10 @@ def char_radical_loader():
     
     map_dict = dict()
     for item in content:
-        assert len(item.split('\t')) == 3
-        char, radical, structure = item.split('\t')
-        map_dict.update({char: [radical, int(structure)]})
+        assert len(item.split('\t')) == 5
+        char, radical, structure, four_corner, components = item.split('\t')
+        map_dict.update({char: [radical, int(structure),
+                                four_corner, components]})
         
     return map_dict, structure_dict
     
