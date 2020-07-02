@@ -34,7 +34,7 @@ import numpy as np
 from typing import Union
 
 from jionlp.dictionary.dictionary_loader import char_radical_loader
-from trie_tree import TrieTree
+from .trie_tree import TrieTree
 
 
 class CharRadical(object):
