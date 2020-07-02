@@ -23,6 +23,8 @@ TODO:
        首为准，且汉字和偏旁意义相差很大情况下，可以考虑以 <char_radical_unk> 标识。
     7、utf8编码的汉字，基本上是按照核心部首，以及笔画数量进行排序的，因此面对无法识别的
        字，可以选择使用 utf8 编码排序进行寻找，99% 是正确的。
+    8、四角编码主要以字形笔画为基础进行编码设计，因此，其包含信息与拆字部件、字形结构等
+       信息有重复之处。
 
 '''
 
@@ -40,13 +42,14 @@ from .trie_tree import TrieTree
 class CharRadical(object):
     ''' 
     从汉字中抽取偏旁部首，一般用于深度学习模型的特征学习。若字符没有偏旁部首，
-    则添加 <char_radical_unk> 作为标记。
+    则添加 <cr_unk> 作为标记。针对每个字，输出的结果依次是：核心偏旁部首、
+    字形结构、四角编码（五位）、拆字部件。
 
     args:
         text(str): 待标记偏旁的文本
 
     return:
-        list(list(str, int)): 偏旁与结构列表
+        list(list(str, int, str, str)): 偏旁与结构列表
 
     '''
     
@@ -55,6 +58,8 @@ class CharRadical(object):
         
     def _prepare(self):
         self.radicals, self.structure_detail = char_radical_loader()
+        self.cr_unk = '<cr_unk>'
+        self.four_corner_unk = '00000'
         
     def get_structure_detail(self):
         if self.radicals is None:
@@ -70,7 +75,7 @@ class CharRadical(object):
         record_list = list()  # 输出最终结果
         for char in text:
             cur_radical = self.radicals.get(
-                char, ['<cr_unk>', 0, '00000', char])
+                char, [self.cr_unk, 0, self.four_corner_unk, char])
             record_list.append(cur_radical)
 
         assert len(record_list) == len(text)

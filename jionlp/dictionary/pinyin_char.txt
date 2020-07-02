@@ -7379,7 +7379,7 @@
 呏	shēng
 呐	nà/nè/na/nuò/ne
 呑	tūn
-呒	wǔ/ḿ
+呒	wǔ
 呓	yì
 呔	dāi/tǎi
 呕	ǒu/òu
@@ -7396,7 +7396,7 @@
 呠	pěn
 呡	wěn/mǐn
 呢	ne/ní/nǐ/nī
-呣	ḿ/móu/m̀
+呣	móu
 呤	lìng/líng
 呥	rán
 呦	yōu
@@ -7549,7 +7549,7 @@
 哹	fú
 哺	bǔ/bū/fǔ
 哻	hān
-哼	hēng/hng
+哼	hēng
 哽	gěng/yǐng/yìng/ńg/ń
 哾	shuō/yuè
 哿	gě
@@ -7573,7 +7573,7 @@
 唑	zuò/shì
 唒	qiú
 唓	chē
-唔	wú/wù/ńg/ḿ/ń
+唔	wú/wù
 唕	zào
 唖	yǎ
 唗	dōu
@@ -7864,7 +7864,7 @@
 嘵	xiāo
 嘶	sī
 嘷	háo
-嘸	fǔ/wǔ/m̄/ḿ
+嘸	fǔ/wǔ
 嘹	liáo/liào
 嘺	qiáo/qiào
 嘻	xī
@@ -7927,7 +7927,7 @@
 噴	pēn/pèn/fèn
 噵	dào
 噶	gá/gé
-噷	hm/xīn/hēn
+噷	xīn/hēn
 噸	dūn
 噹	dāng
 噺	xīn
@@ -13239,7 +13239,7 @@
 欵	kuǎn
 欶	shuò/sòu
 欷	xī
-欸	āi/ǎi/xiè/ế/éi/ê̌/ěi/ề/èi/ê̄/ēi
+欸	āi/ǎi/xiè/e/éi/ěi/èi/ēi
 欹	yī
 欺	qī
 欻	chuā/xū
@@ -21259,7 +21259,7 @@
 誏	lǎng/làng
 誐	é/ě
 誑	kuáng
-誒	éi/xī/yì/ê̄/ế/ê̌/ěi/ề/èi/ēi
+誒	éi/xī/yì/e/ěi/èi/ēi
 誓	shì
 誔	tǐng
 誕	dàn
