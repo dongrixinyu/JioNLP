@@ -116,11 +116,10 @@ def chinese_char_dictionary_loader():
     char_list = list()
     for line in content:
         segs = line.split('\t')
-        assert len(segs) == 7
+        assert len(segs) == 3
         cur_item = {
-            'word': segs[0], 'old_word': segs[1], 'strokes': segs[2],
-            'pinyin': segs[3], 'radicals': segs[4], 'explanation': segs[5],
-            'more_details': segs[6]}
+            'word': segs[0], 'explanation': segs[1],
+            'more_details': segs[2]}
         char_list.append(cur_item)
         
     return char_list
@@ -133,16 +132,16 @@ def chinese_idiom_loader():
     
     result = dict()
     cur_item = dict()
+    import json
     for line in content:
         item_tup = line.split('\t')
         
-        assert len(item_tup) == 6
-        example = item_tup[4] if item_tup[4] != '无' else None
+        assert len(item_tup) == 5
+        example = item_tup[3] if item_tup[3] != '' else None
         cur_item = {'explanation': item_tup[1],
                     'derivation': item_tup[2],
-                    'pinyin': item_tup[3].split(' '),
                     'example': example,
-                    'freq': int(item_tup[5])}
+                    'freq': int(item_tup[4])}
         result.update({item_tup[0]: cur_item})
     
     return result

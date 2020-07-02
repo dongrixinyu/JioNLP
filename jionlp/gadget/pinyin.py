@@ -18,8 +18,7 @@ from typing import Union
 
 from jionlp.dictionary.dictionary_loader import pinyin_phrase_loader
 from jionlp.dictionary.dictionary_loader import pinyin_char_loader
-from trie_tree import TrieTree
-#from .trie_tree import TrieTree
+from .trie_tree import TrieTree
 
 
 class Pinyin(object):
@@ -122,12 +121,18 @@ class Pinyin(object):
         
         self.pinyin_formater = dict()
         for standard_pinyin in pinyin_list:
-            simple_pinyin = self._pinyin_convert_standard_2_simple(
-                standard_pinyin, letter_map_dict)
-            consonant_vowel_tone = self._get_consonant_vowel_tone(
-                simple_pinyin)
-            self.pinyin_formater.update(
-                {standard_pinyin: [simple_pinyin, consonant_vowel_tone]})
+            
+            if standard_pinyin == self.py_unk:
+                self.pinyin_formater.update(
+                    {standard_pinyin: [standard_pinyin, self.py_unk_detail]})
+            else:
+                simple_pinyin = self._pinyin_convert_standard_2_simple(
+                    standard_pinyin, letter_map_dict)
+
+                consonant_vowel_tone = self._get_consonant_vowel_tone(
+                    simple_pinyin)
+                self.pinyin_formater.update(
+                    {standard_pinyin: [simple_pinyin, consonant_vowel_tone]})
         
     def __call__(self, text: str,
                  formater: Union['standard', 'simple', 'detail'] = 'standard'):
@@ -156,7 +161,7 @@ class Pinyin(object):
                 elif formater == 'detail':
                     cur_pinyin = [self.pinyin_formater[pinyin][1]
                                   for pinyin in cur_pinyin]
-                    
+                
                 record_list.extend(cur_pinyin)
             elif typing == 'char':
                 cur_pinyin = self.pinyin_char[pointer[0: step]][0]
