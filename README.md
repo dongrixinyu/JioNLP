@@ -30,9 +30,9 @@ $ pip install .
 
 ### 1、正则抽取与解析
 
-| 功能   | 函数   |描述   |
+| 功能 <img width=100/>   | 函数 <img width=100/>   |描述 <img width=400/>   |
 |--------|--------|-------|
-|<div style="width: 150pt">[抽取 **E-mail**](https://github.com/dongrixinyu/JioNLP/wiki/正则抽取与解析-说明文档#user-content-抽取-e-mail)|extract_email |抽取文本中的 E-mail，返回**位置**与**域名** |
+|[抽取 **E-mail**](https://github.com/dongrixinyu/JioNLP/wiki/正则抽取与解析-说明文档#user-content-抽取-e-mail)|extract_email |抽取文本中的 E-mail，返回**位置**与**域名** |
 |[抽取 **金额**](https://github.com/dongrixinyu/JioNLP/wiki/正则抽取与解析-说明文档#user-content-抽取金额字符串)|extract_money |抽取文本中的金额，并将其以**数字 + 单位**标准形式输出 |
 |[抽取**电话号码**](https://github.com/dongrixinyu/JioNLP/wiki/正则抽取与解析-说明文档#user-content-抽取电话号码) | extract_phone_number | 抽取电话号码(含**手机**、**座机**)，返回**域名**、**类型**与**位置**
 |[抽取中国**身份证** ID](https://github.com/dongrixinyu/jionlp/wiki/正则抽取与解析-说明文档#user-content-抽取身份证号)|extract_id_card     |抽取身份证 ID，配合 **jio.parse_id_card** 返回身份证的详细信息(**省市县**、**出生日期**、**性别**、**校验码**) |
@@ -52,7 +52,7 @@ $ pip install .
 
 ### 2. 文件读写工具
 
-| 功能   | 函数   |描述   |
+| 功能 <img width=100/>   | 函数 <img width=100/>   |描述 <img width=400/>   |
 |--------|--------|-------|
 |<div style="width: 150pt">[按行读取文件](https://github.com/dongrixinyu/jionlp/wiki/文件读写-说明文档#user-content-文件读取iter)     |read_file_by_iter    |以迭代器形式方便按行读取文件，节省内存，支持指定**行数**，**跳过空行**  |
 |[按行读取文件](https://github.com/dongrixinyu/jionlp/wiki/文件读写-说明文档#user-content-文件读取list)     |read_file_by_line |按行读取文件，支持指定**行数**，**跳过空行** |
@@ -60,9 +60,9 @@ $ pip install .
 
 ### 3.小工具集 Gadgets
 
-| 功能   | 函数   |描述   |
+| 功能 <img width=100/>   | 函数 <img width=100/>   |描述 <img width=400/>   |
 |--------|--------|-------|
-|<div style="width: 150pt">[**停用词过滤**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-去除停用词)       |remove_stopwords|给定一个文本被分词后的词 list，去除其中的停用词            |
+|[**停用词过滤**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-去除停用词)       |remove_stopwords|给定一个文本被分词后的词 list，去除其中的停用词            |
 |[**分句**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-文本分句)             |split_sentence    |对文本按标点分句。  |
 |[**地址解析**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-地址解析)         |parse_location    |给定一个包含国内地址字符串，识别其中的**省、市、县**等信息     |
 |[新闻**地名识别**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-新闻地名识别) |recognize_location|给定新闻文本，识别其中的**国内省、市、县，国外国家、城市**等信息     |
@@ -76,9 +76,9 @@ $ pip install .
 
 ### 4.词典加载与使用
 
-| 功能   | 函数   |描述   |
+| 功能 <img width=100/>   | 函数 <img width=100/>   |描述 <img width=400/>   |
 |--------|--------|-------|
-|<div style="width: 150pt">[**成语**词典](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载成语词典) | chinese_idiom_loader |加载成语词典 |
+|[**成语**词典](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载成语词典) | chinese_idiom_loader |加载成语词典 |
 |[**歇后语**词典](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载歇后语词典) | xiehouyu_loader |加载歇后语词典 |
 
 
