@@ -41,6 +41,17 @@ $ pip install .
 ```
 
 ### 1、正则抽取与解析
+<style>
+table th:first-of-type {
+    width: 15%;
+}
+table th:nth-of-type(2) {
+    width: 15%;
+}
+table th:nth-of-type(3) {
+    width: 70%;
+}
+</style>
 
 | 功能   | 函数   |描述   |
 |--------|--------|-------|
@@ -71,6 +82,17 @@ $ pip install .
 |[将 list 中元素按行写入文件](https://github.com/dongrixinyu/jionlp/wiki/文件读写-说明文档#user-content-文件写入) | write_file_by_line | 将 list 中元素按行写入文件 |
 
 ### 3.小工具集 Gadgets
+<style>
+table th:first-of-type {
+    width: 15%;
+}
+table th:nth-of-type(2) {
+    width: 15%;
+}
+table th:nth-of-type(3) {
+    width: 70%;
+}
+</style>
 
 | 功能   | 函数   |描述   |
 |--------|--------|-------|
