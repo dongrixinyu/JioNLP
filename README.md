@@ -80,8 +80,8 @@ $ pip install .
 |--------|--------|-------|
 |[**成语**词典](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载成语词典) | chinese_idiom_loader |加载成语词典 |
 |[**歇后语**词典](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载歇后语词典) | xiehouyu_loader |加载歇后语词典 |
-|[**中国地名**词典](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载中国省、市、县地名词典) | china_location_loader |加载中国**省、市、县**三级词典 |
-|[**世界地名**词典](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载世界国家、城市地名词典) | world_location_loader |加载世界**大洲、国家、城市**词典 |
+|[**中国地名**词典](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载中国省市县地名词典) | china_location_loader |加载中国**省、市、县**三级词典 |
+|[**世界地名**词典](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载世界国家城市地名词典) | world_location_loader |加载世界**大洲、国家、城市**词典 |
 |[**新华字典**](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载新华字典) | chinese_char_dictionary_loader |加载新华字典 |
 |[**新华词典**](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载新华词典) | chinese_word_dictionary_loader |加载新华词典 |
 
