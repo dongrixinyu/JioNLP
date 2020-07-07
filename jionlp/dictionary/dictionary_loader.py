@@ -106,23 +106,24 @@ def stopwords_loader():
     
     
 def chinese_char_dictionary_loader():
-    ''' 加载新华字典，词典中有两千余个多音字，分别包括：
-    汉字，其旧称，笔画数，拼音，偏旁部首，释义，详细释义 7 部分
+    ''' 加载新华字典，分别包括：
+    汉字，释义，详细释义 3 部分
     '''
     content = read_file_by_line(
         os.path.join(GRAND_DIR_PATH, 'dictionary',
-                     'chinese_char_dictionary.txt'))
+                     'chinese_char_dictionary.txt'), strip=False)
     
-    char_list = list()
+    char_dict = dict()
     for line in content:
         segs = line.split('\t')
-        assert len(segs) == 3
-        cur_item = {
-            'word': segs[0], 'explanation': segs[1],
-            'more_details': segs[2]}
-        char_list.append(cur_item)
         
-    return char_list
+        assert len(segs) == 3
+        char_dict.update({
+            segs[0]: {'explanation': segs[1],
+                      'more_details': segs[2].replace('\n', '')
+                      if segs[2] != '\n' else None}})
+        
+    return char_dict
     
     
 def chinese_idiom_loader():
@@ -155,14 +156,13 @@ def chinese_word_dictionary_loader():
         os.path.join(GRAND_DIR_PATH, 'dictionary',
                      'chinese_word_dictionary.txt'))
     
-    word_list = list()
+    word_dict = dict()
     for idx, line in enumerate(content):
         segs = line.split('\t')
         assert len(segs) == 2
-        cur_item = {'word': segs[0], 'explanation': segs[1]}
-        word_list.append(cur_item)
+        word_dict.update({segs[0]: segs[1]})
         
-    return word_list
+    return word_dict
     
 
 def pornography_loader():
