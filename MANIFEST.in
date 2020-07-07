@@ -1,0 +1,3 @@
+include jionlp/dictionary/*
+include jionlp/util/util_doc/*
+
