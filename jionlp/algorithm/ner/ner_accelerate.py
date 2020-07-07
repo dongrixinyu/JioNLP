@@ -2,12 +2,50 @@
 
 '''
 DESCRIPTION:
-    1、
+    该文件包含了若干种对 NER 模型进行预测(predict/inference)加速的方法。主要包括：
+    1、将短句进行拼接，至接近最大序列长度。
+        一般 NER 模型在输入模型前，须首先进行分句处理。但一般较短的句子，其上下文依赖
+        少，不利于挖掘上下文信息；另一方面，需要大量的 pad 操作，限制了模型效率。因此
+        须将较短的句子逐一拼接，至接近模型允许的序列最大长度。该方法主要由
+        TokenSplitSentence 实现。
+    2、将超长句子进行重叠拆解，并使用规则对其进行合并。
+        输入的文本有一部分，长度超过模型允许序列最大长度，且无标点符号。这类句子一旦
+        直接应用模型，一方面造成模型并行性能急剧下降，另一方面其模型效果也会下降。因此
+        须将超长句子进行重叠拆分，然后再次利用规则合并，达到高速并行的效果。该方法已申
+        请专利。由 TokenBreakLongSentence 实现。
+    3、将相近长度的句子拼接入一个 batch，提升模型的并行能力。
+        在 tensorflow 等框架中，动态处理 LSTM 等 RNN 序列，会以最长的序列为基准进行
+        计算。因此，若句子长度均相近，长句和长句放入一个 batch，短句和短句放入一个
+        batch，则会减少 pad 数量，提升模型的并行能力。由 TokenBatchBucket 实现。
+    4、上述三种方法可以并用，也可以单独使用，并用样例如下：
+        >>>
+        >>>
+        >>>
+        
+        1、并用样例：
+            >>> text_list = [list(line) for line in text_list]
+            
+            >>> def func(token_lists, para=1):
+            >>> ... token_lists = [['S-' + chr(ord(token) + para) for token in token_list]
+            >>> ...                for token_list in token_lists]
+            >>> ... return token_lists
 
+            >>> max_sen_len = 70
+            >>> token_batch_obj = TokenBatchBucket(func, max_sen_len=max_sen_len, batch_size=30)
+            >>> token_break_obj = TokenBreakLongSentence(token_batch_obj, max_sen_len=max_sen_len)
+            >>> token_split_obj= TokenSplitSentence(token_break_obj, max_sen_len=max_sen_len, combine_sentences=True)
 
-TODO:
-    1、
-
+            >>> res = token_split_obj(text_list, para=1)  # 补充 func 函数的参数
+            其中，三个工具的 max_sen_len 必须保持一致。
+            
+        2、分用样例：
+            允许 TokenSplitSentence, TokenBreakLongSentence 两者结合
+            TokenSplitSentence, TokenBreakLongSentence
+            
+            >>> token_break_obj = TokenBreakLongSentence(token_batch_obj, max_sen_len=max_sen_len)
+            >>> token_split_obj= TokenSplitSentence(token_break_obj, max_sen_len=max_sen_len, combine_sentences=True)
+            
+            >>> res = token_break_obj(text_list, para=1)  # 补充 func 函数的参数
 
 '''
 
@@ -22,12 +60,40 @@ __all__ = ['TokenSplitSentence', 'TokenBreakLongSentence', 'TokenBatchBucket']
 
 
 class TokenSplitSentence(object):
-    ''' 将句子按照标点符号拆解开，同时提供将若干短句拼接的功能 '''
+    ''' 将句子按照标点符号拆解开，同时提供将若干短句拼接的功能。
+    1、给定待并行处理的序列 token 列表。
+    2、对每个句子进行分句。
+    3、当前，超长序列被按序排列为子序列。
+    4、输入给模型进行预测，并将结果子序列，拼接为原超长序列，其中拼接过程使用规则完成。
+    
+    Args:
+        func: 按照 max_sen_len 处理数据的函数，如按照 max_sen_len
+            训练得到的模型进行预测的函数。
+        criterion: 分句的粒度粗细。
+        max_sen_len: 用以契合 func 函数需要的模型最大长度。
+        combine_sentences: 是否将最终合并结果不超过 max_sen_len 的短句进行合并。
+        
+    Return:
+        tag_list: 结果列表
+        
+    Examples:
+        >>> # func: [['张', '川'], ['不', '在']] => [['B-Person', 'E-Person'], ['O', 'O']]
+        >>> import jionlp as jio
+        >>> token_split_sentence = jio.ner.TokenSplitSentence(
+                func, criterion='fine', max_sen_len=10, combine_sentences=True)
+                
+        >>> token_lists = [['张', '川'], ['不', '在']]
+        >>> res = token_split_sentence(token_lists, **kwargs)  
+        >>> print(res)
+            [['B-Person', 'E-Person'], ['O', 'O']]
+    
+    '''
     def __init__(self, func, criterion='fine', max_sen_len=100, 
                  combine_sentences=False):
         self.func = func
         self.max_sen_len = max_sen_len
         self.combine_sentences = combine_sentences
+        
         if criterion == 'fine':
             self.puncs = ['……', '\r\n', '，', '。', ';', '；', '…', '！',
                           '!', '?', '？', '\r', '\n', '：']
@@ -39,14 +105,11 @@ class TokenSplitSentence(object):
     def __call__(self, token_lists, **kwargs):
         recover_info, punc_sen = self.__split_sentences(token_lists)
         tags = self.func(punc_sen, **kwargs)
-        #print([len(i) for i in punc_sen])
-        #print([len(i) for i in tags])
-        #print(len(tags), [len(i) for i in tags] == [len(i) for i in punc_sen])
-        #pdb.set_trace()
+
         return self.__recover_tags(punc_sen, recover_info, tags)
 
     def __split_sentences(self, token_lists):
-        """
+        '''
         拆分一个 batch 的句子，根据标点符号拆分句子，子句之间没有重叠。标点符号保留在句子的末尾。
         eg. "今天，我去公园" => ["今天，", "我去公园"]
 
@@ -54,7 +117,7 @@ class TokenSplitSentence(object):
         :return: sentences, starts
                  sentences: ["sentence 1", "sentence 2", ...]
                  starts: [0, 20, 40, ...]
-        """
+        '''
         recover_info = list()  # 恢复标点句子所需要的信息
         punc_sen = list()  # 标点切分后的子句放在这里
         for token_list in token_lists:  # token_lists 本身就是个 batch, 要事先保证其中没有空字符串
@@ -72,7 +135,7 @@ class TokenSplitSentence(object):
         return recover_info, punc_sen
 
     def __split_one_sentence(self, token_list):
-        """
+        '''
         拆分一个句子为若干短句，根据标点符号拆分句子，子句之间没有重叠。标点符号保留在句子的末尾。
         eg. "今天，我去公园" => ["今天，", "我去公园"]
 
@@ -82,7 +145,8 @@ class TokenSplitSentence(object):
                  valid_starts: [0, 20, 40, ...]  真实可处理的子句 在整句中的起始位置
                  sentence_starts: 整个句子切分成的子句的起始位置，可能包含仅仅一个逗号等等
                  len(sentences): 整个句子切分后的结果，不包含标点，可能有空字符串存在
-        """
+        '''
+        
         sentences = list()
         start_idx = -1
         for idx, word in enumerate(token_list):
@@ -108,7 +172,7 @@ class TokenSplitSentence(object):
                 
             elif idx == len(token_list) - 1:  # 已经抵达序列的末尾
                 sentences.append(token_list[start_idx + 1:])
-            
+        
         # 计算 starts 起始位置
         sentence_starts = list()
         if token_list != list():
@@ -119,7 +183,7 @@ class TokenSplitSentence(object):
         # 若 len(sentences) != len(sentence_starts),
         # 即 the last char in the sentence 是标点.
         
-        # 过滤 empty sentence，添加 the delimiter
+        # 过滤 empty sentence
         valid_sentences = list()
         valid_starts = list()
 
@@ -133,12 +197,12 @@ class TokenSplitSentence(object):
         return valid_sentences, valid_starts, sentence_starts, len(sentences)
 
     def __recover_tags(self, punc_sen, recover_info, tags):
-        """
+        '''
             根据信息恢复 punc 切分前的样子
             punc_sen: 被 punc 切分之后的句子结果，且其中都只有valid子句，没有只包含标点的错误子句
             recover_info: 恢复信息，一个句子对应一个 tuple
             tags: 与 punc_sen 对应的预测出来的 tags
-        """
+        '''
         num = 0  # 从该数值之后的若干子句串成一个没被 punc 切过的大长句
         whole_non_punc_tags = []  # 没有被 punc 切分过的句子对应的标签
 
@@ -160,7 +224,7 @@ class TokenSplitSentence(object):
     @staticmethod
     def __recover_one_tags(sentence, sentence_length, sub_sentences,
                            valid_starts, sentence_starts, tags):
-        """
+        '''
         根据信息把碎片句子恢复成原句子
         :param sentence: 完整的句子
         :param sentence_length:
@@ -169,7 +233,7 @@ class TokenSplitSentence(object):
         :param sentence_starts: 所有的子句的起始值
         :param tags: 每个真实子句的标签列表
         :return:
-        """
+        '''
         # concat the sub tags
         whole_tags = []
         for start_num in sentence_starts:
@@ -182,11 +246,33 @@ class TokenSplitSentence(object):
     
     
 class TokenBreakLongSentence(object):
-    '''
-    将超长句切分为若干部分
-    使用样例:
-        >>> from split_sentence import BreakLongSentence
-        >>> brk_long = BreakLongSentence(func)
+    ''' 将超长句重叠切分为若干部分。
+    1、前提，句子经过了分句，得到了分句后的结果。
+    2、给定 max_sen_len 模型指定的最大序列长度，对超过的句子，进行拆解，其中相邻两
+        片子序列需要有重叠值 overlap，用于后续恢复。
+    3、当前，超长序列被按序排列为子序列。
+    4、输入给模型进行预测，并将结果子序列，拼接为原超长序列，其中拼接过程使用规则完成。
+    
+    Args:
+        func: 按照 max_sen_len 处理数据的函数，如按照 max_sen_len
+            训练得到的模型进行预测的函数。
+        max_sen_len: 用以契合 func 函数需要的模型最大长度。
+        batch_size: 用以契合 func 函数需要的模型 batch 大小。
+        
+    Return:
+        tag_list: 结果列表
+        
+    Examples:
+        >>> # func: [['张', '川'], ['不', '在']] => [['B-Person', 'E-Person'], ['O', 'O']]
+        >>> import jionlp as jio
+        >>> token_break_long_sentence = jio.ner.TokenBreakLongSentence(
+                func, max_sen_len=10, overlap=3)
+                
+        >>> token_lists = [['张', '川'], ['不', '在']]
+        >>> res = token_break_long_sentence(token_lists, **kwargs)  
+        >>> print(res)
+            [['B-Person', 'E-Person'], ['O', 'O']]
+    
     '''
     def __init__(self, func, max_sen_len=50, overlap=20):
         '''  '''
@@ -196,18 +282,13 @@ class TokenBreakLongSentence(object):
 
     def __call__(self, sentences, **kwargs):
         sub_sentences, starts = self.__break_long_sentence(sentences)
-        #print([len(i) for i in sub_sentences])
         tags = self.func(sub_sentences, **kwargs)
         
-        #print([len(i) for i in tags])
-        #print(len(tags), [len(i) for i in tags] == [len(i) for i in sub_sentences])
-        #pdb.set_trace()
         return self.__recover_tags(sub_sentences, starts, tags)
 
     def __break_long_sentence(self, sentences):
-        '''
-            将长的句子强制拆分成短句，最大句子长度为50，子句之间重叠
-            eg. "我爱北京天安门" => ["我爱北京", "北京天安", "天安门"]
+        ''' 将长的句子强制拆分成短句，最大句子长度为50，子句之间重叠
+            e.g. "我爱北京天安门" => ["我爱北京", "北京天安", "天安门"]
             上例中，max_length=4, overlap=2
 
         Args:
@@ -220,8 +301,8 @@ class TokenBreakLongSentence(object):
             starts: [0, 20, 40, ...]
             
         '''
-        starts = []
-        broken_sentences = []
+        starts = list()
+        broken_sentences = list()
 
         for sentence in sentences:
             valid_broken_sentences, valid_broken_starts = self._break_one_sentence(
@@ -231,7 +312,6 @@ class TokenBreakLongSentence(object):
         return broken_sentences, starts
 
     def _break_one_sentence(self, sentence):
-        """ break one sentence """
         valid_broken_starts = [0]
         valid_broken_sentences = list()
         
@@ -248,7 +328,6 @@ class TokenBreakLongSentence(object):
         return valid_broken_sentences, valid_broken_starts
 
     def __recover_tags(self, sub_sentences, starts, tags):
-        '''  '''
         whole_tags = list()
         count = 0
         for idx, start in enumerate(starts):
@@ -289,7 +368,6 @@ class TokenBreakLongSentence(object):
                     else:  # 两个 overlap 都没有实体在边界上，则不需考虑
                         pass
                         
-
                     overlap = list()
                     for indexing, (lap_1, lap_2) in enumerate(zip(overlap_1, overlap_2)):
                         if lap_1[0] == 'I' and lap_2[0] == 'I':
@@ -332,21 +410,6 @@ class TokenBreakLongSentence(object):
                     flag += 1
                     count += 1
 
-                    '''
-                    # S 标签的作用
-                    S_flag = False
-                    for t in old_overlap_1 + old_overlap_2:
-                        if t.startswith('S'):
-                            S_flag = True
-                            break
-                    
-                    if S_flag:
-                        print('-'*30)
-                        for i, j, k in zip(old_overlap_1, old_verlap_2, overlap):
-                            print(i[:3], '\t', j[:3], '\t', k)
-                        
-                        pdb.set_trace()
-                    '''
                     complete_tags.extend(overlap)
                     if flag == len(start) - 1:
                         complete_tags.extend(tags[count][self.overlap:])
@@ -381,7 +444,33 @@ class TokenBreakLongSentence(object):
 
     
 class TokenBatchBucket(object):
-    ''' 按桶分配序列，长度一致的分在一组 '''
+    ''' 对待输入给模型的序列，进行桶排序。
+    1、确定所有的序列长度均在 max_sen_len 之内，不允许有超出，否则桶的个数不受限制。
+    2、按桶分配所有序列，长度一致的分在一组，并将其按照 batch_size 进行拼装。
+    3、当前，所有序列的顺序均打乱，按长度排序。
+    4、输入给模型进行预测，并将结果按照原序进行排列。
+    
+    Args:
+        func: 按照 max_sen_len 和 batch_size 处理数据的函数，如按照 max_sen_len
+            训练得到的模型，以 batch_size 大小进行预测的函数。
+        max_sen_len: 用以契合 func 函数需要的模型最大长度。
+        batch_size: 用以契合 func 函数需要的模型 batch 大小。
+        
+    Return:
+        tag_list: 结果列表
+        
+    Examples:
+        >>> # func: [['张', '川'], ['不', '在']] => [['B-Person', 'E-Person'], ['O', 'O']]
+        >>> import jionlp as jio
+        >>> token_batch_bucket = jio.ner.TokenBatchBucket(
+                func, max_sen_len=10, batch_size=2)
+                
+        >>> token_lists = [['张', '川'], ['不', '在']]
+        >>> res = token_batch_bucket(token_lists, **kwargs)  
+        >>> print(res)
+            [['B-Person', 'E-Person'], ['O', 'O']]
+    
+    '''
     def __init__(self, func, max_sen_len=100, batch_size=1000):
         ''' 默认最大的长度指定已经 '''
         self.func = func
@@ -395,19 +484,16 @@ class TokenBatchBucket(object):
         for batch in batch_bucket:
             tmp_batch_tags = self.func(batch, **kwargs)
             batch_tags.append(tmp_batch_tags)
-        #print([len(i) for i in batch_bucket])
-        #print([len(i) for i in batch_tags])
-        #print(len(batch_tags), [len(i) for i in batch_tags] == [len(i) for i in batch_bucket])
-        #pdb.set_trace()
+        
         batch_tags = self.resolve_bucket(batch_tags, idx_bucket)
         return batch_tags
         
     @staticmethod
     def list_concat(bucket_list):
-        cat = list()
-        for i in bucket_list:
-            cat.extend(i)
-        return cat
+        concat_list = list()
+        for bucket in bucket_list:
+            concat_list.extend(bucket)
+        return concat_list
 
     def make_batch(self, bucket_list, batch_size):
         length = len(bucket_list)
@@ -415,17 +501,15 @@ class TokenBatchBucket(object):
         batch_list = list()
         for i in range(batch_num):
             batch_list.append(
-                bucket_list[i * self.batch_size: (i+1) * self.batch_size])
+                bucket_list[i * self.batch_size: (i + 1) * self.batch_size])
         return batch_list
     
     def make_bucket(self, token_lists):
-        ''' 将数据按桶分配，按序列最大长度分配，每个长度一个桶，
-        为后续还原每一个序列的原来位置，需要标记索引桶
-        '''
+        ''' 制作桶排序 '''
         token_list_bucket_list = list()
         index_bucket_list = list()
 
-        for j in range(self.max_sen_len + 1):
+        for _ in range(self.max_sen_len + 1):
             token_list_bucket_list.append(list())
             index_bucket_list.append(list())
 
@@ -444,7 +528,7 @@ class TokenBatchBucket(object):
         return batch_bucket, idx_bucket
 
     def resolve_bucket(self, batch_bucket, idx_bucket):
-        ''' 将按长度排序过后的结果恢复原状 '''
+        ''' 还原桶排序 '''
         batch_cat = self.list_concat(batch_bucket)
         idx_cat = self.list_concat(idx_bucket)
         length = len(idx_cat)
@@ -452,6 +536,7 @@ class TokenBatchBucket(object):
 
         for i in range(len(idx_cat)):
             token_list[idx_cat[i]] = batch_cat[i]
+            
         return token_list
 
     
@@ -483,12 +568,12 @@ if __name__ == '__main__':
         token_break_obj, max_sen_len=max_sen_len, combine_sentences=True)
     
     res = token_split_obj(text_list, para=1)
+    
+    # 确保序列前后长度一致
     print([len(i) for i in res])
     print([len(i) for i in text_list])
     print([len(i) for i in text_list] == [len(i) for i in res])
-    pdb.set_trace()
     
-    #loaded_model.predict(test_x[:10])
 
 
 
