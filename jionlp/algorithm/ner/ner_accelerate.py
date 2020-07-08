@@ -18,11 +18,9 @@ DESCRIPTION:
         计算。因此，若句子长度均相近，长句和长句放入一个 batch，短句和短句放入一个
         batch，则会减少 pad 数量，提升模型的并行能力。由 TokenBatchBucket 实现。
     4、上述三种方法可以并用，也可以单独使用，并用样例如下：
-        >>>
-        >>>
-        >>>
         
         1、并用样例：
+            >>> import jionlp as jio
             >>> text_list = [list(line) for line in text_list]
             
             >>> def func(token_lists, para=1):
@@ -31,24 +29,22 @@ DESCRIPTION:
             >>> ... return token_lists
 
             >>> max_sen_len = 70
-            >>> token_batch_obj = TokenBatchBucket(func, max_sen_len=max_sen_len, batch_size=30)
-            >>> token_break_obj = TokenBreakLongSentence(token_batch_obj, max_sen_len=max_sen_len)
-            >>> token_split_obj= TokenSplitSentence(token_break_obj, max_sen_len=max_sen_len, combine_sentences=True)
+            >>> token_batch_obj = jio.ner.TokenBatchBucket(func, max_sen_len=max_sen_len, batch_size=30)
+            >>> token_break_obj = jio.ner.TokenBreakLongSentence(token_batch_obj, max_sen_len=max_sen_len)
+            >>> token_split_obj= jio.ner.TokenSplitSentence(token_break_obj, max_sen_len=max_sen_len, combine_sentences=True)
 
             >>> res = token_split_obj(text_list, para=1)  # 补充 func 函数的参数
             其中，三个工具的 max_sen_len 必须保持一致。
             
         2、分用样例：
             允许 TokenSplitSentence, TokenBreakLongSentence 两者结合
-            TokenSplitSentence, TokenBreakLongSentence
             
-            >>> token_break_obj = TokenBreakLongSentence(token_batch_obj, max_sen_len=max_sen_len)
-            >>> token_split_obj= TokenSplitSentence(token_break_obj, max_sen_len=max_sen_len, combine_sentences=True)
+            >>> token_break_obj = jio.ner.TokenBreakLongSentence(token_batch_obj, max_sen_len=max_sen_len)
+            >>> token_split_obj= jio.ner.TokenSplitSentence(token_break_obj, max_sen_len=max_sen_len, combine_sentences=True)
             
             >>> res = token_break_obj(text_list, para=1)  # 补充 func 函数的参数
 
 '''
-
 
 import pdb
 import re
@@ -573,30 +569,5 @@ if __name__ == '__main__':
     print([len(i) for i in res])
     print([len(i) for i in text_list])
     print([len(i) for i in text_list] == [len(i) for i in res])
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

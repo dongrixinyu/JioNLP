@@ -57,7 +57,7 @@ def entity2tag(token_list: List[str], entities: List[Dict[str, Any]],
         >>> ner_entities =                 
                 [{'text': '胡静静', 'offset': [0, 3], 'type': 'Person'},
                  {'text': '水利局', 'offset': [4, 7], 'type': 'Orgnization'}]
-        >>> print(entity2tag(token_list, ner_entities))
+        >>> print(jio.ner.entity2tag(token_list, ner_entities))
             ['B-Person', 'I-Person', 'E-Person', 'O', 'B-Orgnization',
              'I-Orgnization', 'E-Orgnization', 'O', 'O', 'O']
              
@@ -107,7 +107,7 @@ def tag2entity(token_list: List[str], tags: List[str], verbose=False):
                           '利', '局', '工', '作', '。']  # 字或词级别
         >>> tags = ['B-Person', 'I-Person', 'E-Person', 'O', 'B-Orgnization',
                     'I-Orgnization', 'E-Orgnization', 'O', 'O', 'O']
-        >>> print(tag2entity(token_list, tags))
+        >>> print(jio.ner.tag2entity(token_list, tags))
             [{'text': '胡静静', 'offset': [0, 3], 'type': 'Person'},
              {'text': '水利局', 'offset': [4, 7], 'type': 'Orgnization'}]]
     
@@ -179,7 +179,7 @@ def char2word(char_entity_list, word_token_list, verbose=False):
                 {'text': '胡静静', 'offset': [0, 3], 'type': 'Person'},
                 {'text': '江西红叶建筑公司', 'offset': [5, 13], 'type': 'Company'}]
         >>> word_token_list = ['胡静静', '喜欢', '江西', '红叶', '建筑', '公司']
-        >>> print(char2word(char_entity_list, word_token_list))
+        >>> print(jio.ner.char2word(char_entity_list, word_token_list))
             [{'text': '胡静静', 'offset': [0, 1], 'type': 'Person'},
              {'text': '江西红叶建筑公司', 'offset': [2, 6], 'type': 'Company'}]
     
@@ -241,7 +241,7 @@ def word2char(word_entity_list, word_token_list):
                 {'type': 'Person', 'offset': [0, 1], 'text': '胡静静'},
                 {'type': 'Company', 'offset': [2, 6], 'text': '江西红叶建筑公司'}]
         >>> word_token_list = ['胡静静', '喜欢', '江西', '红叶', '建筑', '公司']
-        >>> print(word2char(word_entity_list, word_token_list))
+        >>> print(jio.ner.word2char(word_entity_list, word_token_list))
                 [{'text': '胡静静', 'offset': [0, 3], 'type': 'Person'},
                  {'text': '江西红叶建筑公司', 'offset': [5, 13], 'type': 'Company'}]
 
