@@ -96,6 +96,7 @@ $ pip install .
 |[**tag 转 entity**](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-tag-转-entity) | tag2entity |将模型处理的 tag 序列转换为 json 格式实体 |
 |[**字 token 转词 token**](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-字-token-转词-token) | char2word |将字符级别 token 转换为词汇级别 token |
 |[**词 token 转字 token**](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-词-token-转字-token) | word2char |将词汇级别 token 转换为字符级别 token |
+|[**比较标注与模型预测的实体差异**](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-比较-ner-标注实体与模型预测实体之间的差异) | entity_compare |针对人工标注的实体，与模型预测出的实体结果<br>，做差异比对 |
 |[**NER模型预测加速**](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-ner-模型预测加速)  |TokenSplitSentence<br>TokenBreakLongSentence<br>TokenBatchBucket   |对 NER 模型预测并行加速的方法  |
 
 
