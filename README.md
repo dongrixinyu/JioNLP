@@ -87,13 +87,16 @@ $ pip install .
 
 ### 5.实体识别(NER)算法辅助工具集
 
+- [工具包 NER 数据规定说明](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-前言)
+
 | 功能 <img width=100/>   | 函数 <img width=100/>   |描述 <img width=200/>   |
 |--------|--------|-------|
-|[**基于词典NER**](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载成语词典) | LexiconNER |依据指定的实体词典，前向最大匹配实体 |
-|[**entity 转 tag**](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载歇后语词典) | entity2tag |将 json 格式实体转换为模型处理的 tag 序列 |
-|[**tag 转 entity**](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载中国省市县地名词典) | tag2entity |将模型处理的 tag 序列转换为 json 格式实体 |
-|[**字 token 转词 token**](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载世界国家城市地名词典) | char2word |将字符级别 token 转换为词汇级别 token |
-|[**词 token 转字 token**](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载新华字典) | word2char |将词汇级别 token 转换为字符级别 token |
+|[**基于词典NER**](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-基于词典-ner) | LexiconNER |依据指定的实体词典，前向最大匹配实体 |
+|[**entity 转 tag**](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-entity-转-tag) | entity2tag |将 json 格式实体转换为模型处理的 tag 序列 |
+|[**tag 转 entity**](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-tag-转-entity) | tag2entity |将模型处理的 tag 序列转换为 json 格式实体 |
+|[**字 token 转词 token**](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-字-token-转词-token) | char2word |将字符级别 token 转换为词汇级别 token |
+|[**词 token 转字 token**](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-词-token-转字-token) | word2char |将词汇级别 token 转换为字符级别 token |
+|[NER模型预测加速](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-ner-模型预测加速)  |TokenSplitSentence<br>TokenBreakLongSentence<br>TokenBatchBucket   |对 NER 模型预测并行加速的方法  |
 
 
 ### 开源不易，欢迎自由投食 (#^.^#)
