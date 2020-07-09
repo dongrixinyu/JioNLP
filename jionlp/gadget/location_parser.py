@@ -136,7 +136,7 @@ class LocationParser(object):
         # 获取文本中的省、市、县三级行政区划
         # rule: 命中匹配别名或全名，统计命中量，并假设省市县分别位于靠前的位置且依次排开
         candidate_admin_list = self.get_candidates(location_text)
-        
+
         if len(candidate_admin_list) == 0:
             return {'province': None, 
                     'city': None,
@@ -158,10 +158,8 @@ class LocationParser(object):
         candidate_admin_list = [item for item in candidate_admin_list 
                                 if sum([j[0] for j in item[-1]]) == min_matched_offset]
         
-        # rule: 县级存在重复名称，计算可能重复的县名
-        county_dup1_list = [item[3][0] for item in candidate_admin_list]
-        county_dup2_list = [item[3][1] for item in candidate_admin_list]
-        county_dup_list = county_dup1_list + county_dup2_list
+        # rule: 县级存在重复名称，计算候选列表中可能重复的县名
+        county_dup_list = [item[3][item[-1][-1][1]] for item in candidate_admin_list]
         county_dup_list = collections.Counter(county_dup_list).most_common()
         county_dup_list = [item[0] for item in county_dup_list if item[1] > 1]
         
@@ -177,7 +175,6 @@ class LocationParser(object):
         for admin_idx, i in enumerate(final_admin[-1]):
             if i[0] != -1:
                 detail_idx = i[0] + len(final_admin[admin_idx + 1][i[1]])
-                
                 # rule: 全国地址省市无重复命名，而县级有，如鼓楼区、高新区等
                 if admin_idx >= 0 and final_admin[admin_idx + 1][i[1]] not in county_dup_list:
                     final_prov = final_admin[1][0]
@@ -219,7 +216,7 @@ if __name__ == '__main__':
     
     lp = LocationParser()
     
-    loc = '是西部大开发先锋城市。'
+    loc = '成都是西部大开发先锋城市。'
     res = lp(loc)
     print(json.dumps(res, ensure_ascii=False, 
                      indent=4, separators=(',', ':')))
