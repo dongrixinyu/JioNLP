@@ -44,11 +44,28 @@ import re
 import pdb
 import typing
 
-from jionlp.dictionary.dictionary_loader import stopwords_loader, world_location_loader, china_location_loader
+from jionlp.dictionary.dictionary_loader import stopwords_loader, world_location_loader, china_location_loader, negative_words_loader
 from jionlp.rule.rule_pattern import TIME_PATTERN, NUMBER_PATTERN, CHINESE_CHAR_PATTERN, LOCATION_PATTERN
 
 
 class RemoveStopwords(object):
+    ''' 给出分词之后的结果，做判定，其中分词器使用用户自定义的，推荐的有
+    jieba 分词器、清华分词器 thuseg、北大分词器 pkuseg。
+    该方法处理速度较快，但由于大量的中文词汇包含多义，如“本”字包含名词、
+    代词、连词等词性，因此准确性较差。是词性标注的简易替代品。
+
+    Args:
+        text_segs: 分词之后的列表
+        remove_time: 是否去除时间词汇
+        remove_location: 是否去除地名词汇
+        remove_number: 是否去除纯数字词汇
+        remove_non_chinese: 是否去除非中文词汇
+        save_negative_words: 保留否定词，如“未”、“没有”、“不”等
+
+    Return:
+        list(str)
+
+    '''
     def __init__(self):
         self.stopwords_list = None
 
@@ -57,7 +74,8 @@ class RemoveStopwords(object):
         self.world_list = self._prepare_china_locations()
         self.china_list = self._prepare_world_locations()
         self.location_list = list(set(self.world_list + self.china_list))
-        #pdb.set_trace()
+        self.negative_words_list = negative_words_loader()
+        
         self.time_pattern = re.compile(TIME_PATTERN)
         self.location_pattern = re.compile(LOCATION_PATTERN)
         self.number_pattern = re.compile(NUMBER_PATTERN)
@@ -102,25 +120,9 @@ class RemoveStopwords(object):
         
     def __call__(self, text_segs, remove_time=False, 
                  remove_location=False, remove_number=False,
-                 save_negative_words=False,
-                 remove_non_chinese=False):
-        ''' 给出分词之后的结果，做判定，其中分词器使用用户自定义的，推荐的有
-        jieba 分词器、清华分词器 thuseg、北大分词器 pkuseg。
-        该方法处理速度较快，但由于大量的中文词汇包含多义，如“本”字包含名词、
-        代词、连词等词性，因此准确性较差。是词性标注的简易替代品。
-        
-        Args:
-            list(str): 分词之后的列表
-            remove_time: 是否去除时间词汇
-            remove_location: 是否去除地名词汇
-            remove_number: 是否去除纯数字词汇
-            remove_non_chinese: 是否去除非中文词汇
-            save_negative_words: 保留否定词，如“未”、“没有”、“不”等
-        
-        Return:
-            list(str)
-        
-        '''
+                 remove_non_chinese=False,
+                 save_negative_words=False):
+
         if self.stopwords_list is None:
             self._prepare()
         
@@ -132,7 +134,14 @@ class RemoveStopwords(object):
                 
             # rule1: 采用停用词典过滤
             if word in self.stopwords_list:
-                continue
+                # rule6: 保留停用词词典里的否定词
+                if save_negative_words:
+                    if word in self.negative_words_list:
+                        pass
+                    else:
+                        continue
+                else:
+                    continue
             
             word_length = len(word)
             # rule2: 采用时间正则过滤
@@ -167,7 +176,6 @@ class RemoveStopwords(object):
             
             res_text_segs.append(word)
             
-
         return res_text_segs
         
 

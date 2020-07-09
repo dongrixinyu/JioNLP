@@ -103,8 +103,16 @@ def stopwords_loader():
     # 一般漏掉了若干转换符号
     res.extend(['', ' ', '\t'])
     return res
+
+
+def negative_words_loader():
+    ''' 加载否定词典 negative_words.txt '''
+    res = read_file_by_line(os.path.join(
+        GRAND_DIR_PATH, 'dictionary/negative_words.txt'))
     
-    
+    return res
+
+
 def chinese_char_dictionary_loader():
     ''' 加载新华字典，分别包括：
     汉字，释义，详细释义 3 部分
@@ -189,6 +197,8 @@ def char_radical_loader():
                                 four_corner, components]})
         
     return map_dict, structure_dict
+    
+    
     
     
 def traditional_simplified_loader(file_name):
