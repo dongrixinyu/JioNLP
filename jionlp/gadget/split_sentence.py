@@ -6,6 +6,23 @@ import pdb
 
 
 class SplitSentence(object):
+    '''将文本切分为若干句子，其中处理引号的部分逻辑情况较多
+
+    Args:
+        text(str): 字符串文本
+        criterion(coarse/fine): 句子切分粒度，粗细两种 `coarse` 或 `fine`，
+            `coarse` 指的是按句号级别切分，`fine` 指按所有标点符合切分，
+            默认按照粗粒度进行切分
+
+    Returns:
+        list(str): 句子列表
+
+    Examples:
+        >>> text = '中华古汉语，泱泱大国，历史传承的瑰宝。'
+        >>> print(jio.split_sentence(text, criterion='fine'))
+        ['中华古汉语，', '泱泱大国，', '历史传承的瑰宝。']
+
+    '''
     def __init__(self):
         self.puncs_fine = None
         
@@ -21,23 +38,7 @@ class SplitSentence(object):
         self.puncs_fine_ptn = re.compile('([，：。;“”；…！!?？\r\n])')
         
     def __call__(self, text, criterion='coarse'):
-        '''将文本切分为若干句子，其中处理引号的部分逻辑情况较多
 
-        Args:
-            text(str): 字符串文本
-            criterion(coarse/fine): 句子切分粒度，粗细两种 `coarse` 或 `fine`，
-                `coarse` 指的是按句号级别切分，`fine` 指按所有标点符合切分，
-                默认按照粗粒度进行切分
-
-        Returns:
-            list(str): 句子列表
-
-        Examples:
-            >>> text = '中华古汉语，泱泱大国，历史传承的瑰宝。'
-            >>> print(jio.split_sentence(text, criterion='fine'))
-            ['中华古汉语，', '泱泱大国，', '历史传承的瑰宝。']
-        
-        '''
         if self.puncs_fine is None:
             self._prepare()
 

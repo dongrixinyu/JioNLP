@@ -24,7 +24,7 @@ def _logging_level_from_str(level):
     return logging.INFO
 
 
-def set_logger(level='INFO', log_dir_name='.bbd_nlp_apis_logs'):
+def set_logger(level='INFO', log_dir_name='.jio_nlp_logs'):
     level = _logging_level_from_str(level)
     logger = logging.getLogger(__name__)
     logger.setLevel(level)

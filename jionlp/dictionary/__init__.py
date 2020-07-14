@@ -35,6 +35,8 @@ from .dictionary_loader import pornography_loader
 from .dictionary_loader import traditional_simplified_loader
 from .dictionary_loader import pinyin_phrase_loader
 from .dictionary_loader import pinyin_char_loader
+from .dictionary_loader import sentiment_expand_words_loader
+from .dictionary_loader import sentiment_words_loader
 from .dictionary_loader import xiehouyu_loader
 
 

@@ -239,8 +239,44 @@ def pinyin_char_loader():
         map_dict.update({key: multi_pinyin})
 
     return map_dict
-    
 
+
+def sentiment_expand_words_loader():
+    ''' 加载情感词典，并附带其对应的情感权重
+    
+    '''
+    content = read_file_by_line(os.path.join(
+        GRAND_DIR_PATH, 'dictionary', 'sentiment_expand_words.txt'))
+    
+    sentiment_expand_words_dict = dict()
+    for item in content:
+        key, value = item.split('\t')
+        assert len(item.split('\t')) == 2
+        
+        #multi_pinyin = value.split('/')
+        sentiment_expand_words_dict.update({key: float(value)})
+
+    return sentiment_expand_words_dict
+
+
+def sentiment_words_loader():
+    ''' 加载情感词典，并附带其对应的情感权重
+    
+    '''
+    content = read_file_by_line(os.path.join(
+        GRAND_DIR_PATH, 'dictionary', 'sentiment_words.txt'))
+    
+    sentiment_words_dict = dict()
+    for item in content:
+        key, value = item.split('\t')
+        assert len(item.split('\t')) == 2
+        
+        #multi_pinyin = value.split('/')
+        sentiment_words_dict.update({key: float(value)})
+
+    return sentiment_words_dict
+    
+    
 def xiehouyu_loader():
     ''' 加载歇后语词典，共计 17000 余条，其中有相似的歇后语，如：
     一个模子出来的  一个样

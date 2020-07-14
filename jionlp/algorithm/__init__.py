@@ -2,7 +2,7 @@
 
 
 from . import ner
-
+from . import sentiment
 
 
 

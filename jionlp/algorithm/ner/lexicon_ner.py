@@ -10,7 +10,6 @@ from jionlp.gadget.trie_tree import TrieTree
 class LexiconNER(object):
     ''' 构建基于 Trie 词典的前向最大匹配算法，做实体识别。
     
-    
     Args:
         entity_dicts(dict): 每个类型对应的实体词典
             e.g.
