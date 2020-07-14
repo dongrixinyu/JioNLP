@@ -1,3 +1,3 @@
 # -*- coding=utf-8 -*-
 
-from .sentiment_analysis import SentimentAnalysis
+from .sentiment_analysis import LexiconSentiment

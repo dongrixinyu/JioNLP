@@ -88,21 +88,36 @@ class Items(object):
                 self.items_list.append(item)
 
 
-class SentimentAnalysis(object):
-    '''
+class LexiconSentiment(object):
+    ''' 基于词典的情感分析计算，首先分句，找出每句中的情感词，否定词，以及情感乘子副词，
+    否定词起到逆转情感的作用，情感乘子副词起到条件情感强度的作用。由此计算出每句的情感值。
+    并求各句的均值，得到文本的情感值，再经过 sigmoid 形成 0~1 取值的情感值。其中，0代表
+    极端负面，1代表极端正面。
+    
+    Args:
+        暂无参数，内部参数与词典权重已经验获得，质量相对较好。
+        
+    Return:
+        float: 情感得分值，0~1之间
+        
+    Examples:
+        >>> import jionlp as jio
+        >>> text = '14岁女孩坠亡生前遭强奸致孕。'
+        >>> senti_analysis = jio.sentiment.SentimentAnalysis()
+        >>> res = senti_analysis(text)
+        >>> print(res)
     
     '''
     def __init__(self):
-        self.not_dict = negative_words_loader()
+        self.negative_list = negative_words_loader()
         self.sentiment_dict = sentiment_words_loader()
         self.weight_dict = sentiment_expand_words_loader()
         
         self.lexicon_ner = LexiconNER(
             {'sentiment_word': list(self.sentiment_dict.keys()),
-             'negative_word': self.not_dict,
+             'negative_word': self.negative_list,
              'expand_word': list(self.weight_dict.keys())})
         
-        #pdb.set_trace()
         self.split_sentence = SplitSentence()
         self.transition_words = re.compile('((，|\,)(但是|可是|但|不过))')
 
@@ -132,7 +147,6 @@ class SentimentAnalysis(object):
         for x in items_object.items_list:
             
             word = x.word
-            #typing = x
             bias = x.bias
             next_len = x.next_len
             
@@ -148,7 +162,7 @@ class SentimentAnalysis(object):
                 sentence_not = 1.0
                 sentence_weight = 1.0
                 
-            elif word in self.not_dict:  # 否定词汇，乘以 -1
+            elif word in self.negative_list:  # 否定词汇，乘以 -1
                 if next_len < 6:
                     sentence_not = -1.0
                     
@@ -171,10 +185,10 @@ class SentimentAnalysis(object):
     def __call__(self, text: str):
         if not text:
             return 0.5
-        sentiment_value = 0
+        
+        sentiment_value = 0.
         sentence_list = self.split_sentence(text)
         
-        #pdb.set_trace()
         for sentence in sentence_list:
             sentence_val = self.get_sentence_sentiment(sentence)
             sentiment_value += sentence_val
@@ -182,25 +196,6 @@ class SentimentAnalysis(object):
         sentiment_value = sentiment_value / len(sentence_list)
         sentiment_value = sigmoid(sentiment_value)
         return sentiment_value
-
-
-def file_2_dict(file_nm):
-    # print(current_path + os.sep + "data" + os.sep + file_nm)
-    if current_path == '':
-        fr = open("sentiment_dict" + os.sep + file_nm, "r")
-    else:
-        fr = open(current_path + os.sep + "sentiment_dict" + os.sep + file_nm, "r")
-    rtn_dict = {}
-    for line in fr.readlines():
-        line = line.strip()
-        #line = line.decode("utf-8")
-        line_split = line.split()
-        if len(line_split) == 2:
-            k = line_split[0].strip()
-            v = line_split[1].strip()
-            rtn_dict[k] = float(v)
-    return rtn_dict
-
 
 
 if __name__ == '__main__':

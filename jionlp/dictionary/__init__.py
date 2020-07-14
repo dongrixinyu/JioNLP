@@ -19,7 +19,9 @@ DICTIONARY_DESCRIPTION = {
     'xiehouyu.txt': '对网络上搜集的歇后语做汇总，质量较高，几乎无错漏；共计 17000 多条。其中',
     'chinese_char_dictionary.txt': '新华字典，字典中有两千余个多音字，每个字分别包括汉字，释义，详细释义 7 部分',
     'chinese_word_dictionary.txt': '新华词典，词典中包含 20 万余词汇，分别包括词汇和释义',
-    'negative_words.txt': '常用否定词汇词典'
+    'negative_words.txt': '常用否定词汇词典',
+    'sentiment_expand_words.txt': '情感词分析中，情感扩张性副词',
+    'sentiment_words.txt': '情感分析中，情感词及其权重'
 }
 
 

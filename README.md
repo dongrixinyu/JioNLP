@@ -100,6 +100,14 @@ $ pip install .
 |[**NER模型预测加速**](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-ner-模型预测加速)  |TokenSplitSentence<br>TokenBreakLongSentence<br>TokenBatchBucket   |对 NER 模型预测并行加速的方法  |
 
 
+### 6.情感分析
+
+| 功能 <img width=100/>   | 函数 <img width=100/>   |描述 <img width=200/>   |
+|--------|--------|-------|
+|[**基于词典情感分析**](https://github.com/dongrixinyu/JioNLP/wiki/情感分析-说明文档#user-content-基于词典的情感分析) | LexiconSentiment | 依据人工构建的情感词典，计算文本的情感值，介于0~1之间 |
+
+
+
 ### 开源不易，欢迎自由投食 (#^.^#)
 
 ![image](https://github.com/dongrixinyu/JioNLP/blob/master/qr_code_for_collection.jpg)
