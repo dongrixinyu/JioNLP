@@ -92,7 +92,7 @@ class LexiconSentiment(object):
     ''' 基于词典的情感分析计算，首先分句，找出每句中的情感词，否定词，以及情感乘子副词，
     否定词起到逆转情感的作用，情感乘子副词起到条件情感强度的作用。由此计算出每句的情感值。
     并求各句的均值，得到文本的情感值，再经过 sigmoid 形成 0~1 取值的情感值。其中，0代表
-    极端负面，1代表极端正面。
+    极端负面，1代表极端正面。目前准确率在 70~80%，有较大优化空间。
     
     Args:
         暂无参数，内部参数与词典权重已经验获得，质量相对较好。
@@ -122,7 +122,7 @@ class LexiconSentiment(object):
         self.transition_words = re.compile('((，|\,)(但是|可是|但|不过))')
 
     def get_sentence_sentiment(self, sentence):
-        
+        print(sentence)
         # rule1: 转折词汇，不考虑前面的情感词，仅考虑之后的情感词
         trantision_item = self.transition_words.search(sentence)
         if trantision_item:
@@ -130,15 +130,14 @@ class LexiconSentiment(object):
             sentence_split = sentence.split(match_word)
             if len(sentence_split) > 0:
                 sentence = sentence_split[-1]
-                
-        # rule2: 
+                 
         items_object = Items()
         for item in self.lexicon_ner(sentence):
             #tmp_end = tmp_end/3
             it_object = Item(item['offset'][0], item['offset'][1],
                              20, 20, item['text'])
             
-            print(item)
+            #print(item)
             items_object.put_note(it_object)  # 整理每一个情感词汇
         
         val_list = list()
@@ -175,7 +174,8 @@ class LexiconSentiment(object):
                     
                 elif bias == Bias.RIGHT:
                     sentence_weight = word_weight
-                    
+            print(word, word_val)
+            
         sentence_value = 0
         for x in val_list:
             sentence_value += x

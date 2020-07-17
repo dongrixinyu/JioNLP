@@ -1,7 +1,7 @@
 # -*- coding=utf-8 -*-
 
 
-__version__ = '1.1.0'
+__version__ = '1.2.0'
 
 import os
 
@@ -36,11 +36,6 @@ from jionlp.dictionary import *
 from jionlp.rule import *
 from jionlp.gadget import *
 from jionlp.algorithm import *
-#from jionlp import rule
-#from jionlp import gadget
-#from jionlp import util
-#from jionlp import algorithm
-#from jionlp import dictionary
 
 from jionlp.util.fast_loader import FastLoader
 
