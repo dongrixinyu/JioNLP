@@ -84,8 +84,7 @@ def analyse_freq_words(dataset_x: List[List[str]], dataset_y: List[Any],
             [item for item in words_statistics.items() if item[1][1] > min_word_threshold],
             key=lambda i:i[1][1], reverse=True)
         result.update({label: dict(sorted_result)})
-            
-    pdb.set_trace()
+    
     return result
 
 
