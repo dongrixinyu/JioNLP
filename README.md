@@ -30,7 +30,7 @@ $ pip install .
 
 ### 1、正则抽取与解析
 
-| 功能 <img width=100/>   | 函数 <img width=100/>   |描述 <img width=200/>   |
+| 功能   | 函数   |描述   |
 |--------|--------|-------|
 |[抽取 **E-mail**](https://github.com/dongrixinyu/JioNLP/wiki/正则抽取与解析-说明文档#user-content-抽取-e-mail)|extract_email |抽取文本中的 E-mail，返回**位置**与**域名** |
 |[抽取 **金额**](https://github.com/dongrixinyu/JioNLP/wiki/正则抽取与解析-说明文档#user-content-抽取金额字符串)|extract_money |抽取文本中的金额，并将其以**数字 + 单位**标准形式输出 |
@@ -52,7 +52,7 @@ $ pip install .
 
 ### 2. 文件读写工具
 
-| 功能 <img width=100/>   | 函数 <img width=100/>   |描述 <img width=200/>   |
+| 功能   | 函数   |描述   |
 |--------|--------|-------|
 |[**按行读取文件**](https://github.com/dongrixinyu/jionlp/wiki/文件读写-说明文档#user-content-文件读取iter)     |read_file_by_iter    |以迭代器形式方便按行读取文件，节省内存，支持指定**行数**，<br>**跳过空行**  |
 |[**按行读取文件**](https://github.com/dongrixinyu/jionlp/wiki/文件读写-说明文档#user-content-文件读取list)     |read_file_by_line |按行读取文件，支持指定**行数**，**跳过空行** |
@@ -60,7 +60,7 @@ $ pip install .
 
 ### 3.小工具集 Gadgets
 
-| 功能 <img width=100/>   | 函数 <img width=100/>   |描述 <img width=200/>   |
+| 功能   | 函数   |描述   |
 |--------|--------|-------|
 |[**停用词过滤**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-去除停用词)       |remove_stopwords|给定一个文本被分词后的词 list，去除其中的停用词            |
 |[**分句**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-文本分句)             |split_sentence    |对文本按标点分句。  |
@@ -76,7 +76,7 @@ $ pip install .
 
 ### 4.词典加载与使用
 
-| 功能 <img width=100/>   | 函数 <img width=100/>   |描述 <img width=200/>   |
+| 功能   | 函数   |描述   |
 |--------|--------|-------|
 |[**成语**词典](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载成语词典) | chinese_idiom_loader |加载成语词典 |
 |[**歇后语**词典](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载歇后语词典) | xiehouyu_loader |加载歇后语词典 |
@@ -89,7 +89,7 @@ $ pip install .
 
 - [工具包 NER 数据规定说明](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-前言)
 
-| 功能 <img width=100/>   | 函数 <img width=100/>   |描述 <img width=200/>   |
+| 功能   | 函数   |描述   |
 |--------|--------|-------|
 |[**基于词典NER**](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-基于词典-ner) | LexiconNER |依据指定的实体词典，前向最大匹配实体 |
 |[**entity 转 tag**](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-entity-转-tag) | entity2tag |将 json 格式实体转换为模型处理的 tag 序列 |
@@ -102,11 +102,14 @@ $ pip install .
 
 ### 6.情感分析
 
-| 功能 <img width=100/>   | 函数 <img width=100/>   |描述 <img width=200/>   |
+| 功能   | 函数   |描述   |
 |--------|--------|-------|
 |[**基于词典情感分析**](https://github.com/dongrixinyu/JioNLP/wiki/情感分析-说明文档#user-content-基于词典的情感分析) | LexiconSentiment | 依据人工构建的情感词典，计算文本的情感值，介于0~1之间 |
 
 
+### 初衷
+
+- NLP 开发一个模型，上线一个算法服务，并不仅仅是标注数据、训练一个模型，进而上线这么简单。其中涉及到数据分析、数据预处理、加快标注进度、加速模型并行计算能力、想尽办法提升模型稳定性等等方面，因此，抛开论文中千奇百怪的模型，如何快速完成上述的任务，才是非常依赖工程师经验的。因此，想开发这样一个工具包，能够快速辅助工程师完成各种琐碎的文件读写、数据预处理、模型加速、比对数据等操作。加速开发进度，把有限的精力用在思考而非 code 上。
 
 ### 开源不易，欢迎自由投食 (#^.^#)
 
