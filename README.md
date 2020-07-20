@@ -100,7 +100,14 @@ $ pip install .
 |[**NER模型预测加速**](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-ner-模型预测加速)  |TokenSplitSentence<br>TokenBreakLongSentence<br>TokenBatchBucket   |对 NER 模型预测并行加速的方法  |
 
 
-### 6.情感分析
+### 6.文本分类
+
+| 功能   | 函数   |描述   |
+|--------|--------|-------|
+|[**朴素贝叶斯分析类别词汇**](https://github.com/dongrixinyu/JioNLP/wiki/文本分类-说明文档#user-content-朴素贝叶斯分析类别词汇) | analyse_freq_words |对文本分类的标注语料，做朴素贝叶斯词频分析，返回各类文本的高条件概率词汇  |
+
+
+### 7.情感分析
 
 | 功能   | 函数   |描述   |
 |--------|--------|-------|
