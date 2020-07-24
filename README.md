@@ -98,7 +98,7 @@ $ pip install .
 |[**词 token 转字 token**](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-词-token-转字-token) | word2char |将词汇级别 token 转换为字符级别 token |
 |[**比较标注与模型预测的实体差异**](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-比较-ner-标注实体与模型预测实体之间的差异) | entity_compare |针对人工标注的实体，与模型预测出的实体结果<br>，做差异比对 |
 |[**NER模型预测加速**](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-ner-模型预测加速)  |TokenSplitSentence<br>TokenBreakLongSentence<br>TokenBatchBucket   |对 NER 模型预测并行加速的方法  |
-|[**分割数据集**](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-分割数据集) | analyse_dataset |对 NER 的标注语料，切分为训练集、验证集、测试集，<br>并给出各个子集的实体类型分布统计  |
+|[**分割数据集**](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-分割数据集) | analyse_dataset |对 NER 标注语料，分为训练集、验证集、测试集，<br>并给出各个子集的实体类型分布统计  |
 
 
 ### 6.文本分类
