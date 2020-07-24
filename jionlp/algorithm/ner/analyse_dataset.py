@@ -47,9 +47,9 @@ def _compute_kl_divergence(vector_1, vector_2):
 
 
 def analyse_dataset(dataset_x, dataset_y, ratio=[0.8, 0.05, 0.15], shuffle=True):
-    ''' 将数据集按照训练、验证、测试进行划分，统计数据集中各个类别实体的数量和占比，计算训练、
-    验证、测试集的相对熵，判断数据集分割是否合理。其中，dismatch 信息比例越低，证明数据集
-    划分的各类别比例越贴近数据全集的分布。
+    ''' 将 NER 数据集按照训练、验证、测试进行划分，统计数据集中各个类别实体的数量和占比，
+    计算训练、验证、测试集的相对熵，判断数据集分割是否合理。其中，dismatch 信息比例越低，
+    证明数据集划分的各类别比例越贴近数据全集的分布。
     
     Args:
         dataset_x: 数据集的输入数据部分
@@ -62,47 +62,47 @@ def analyse_dataset(dataset_x, dataset_y, ratio=[0.8, 0.05, 0.15], shuffle=True)
             stats 为数据集的统计信息(数量、占比、相对熵)
         
     Examples:
->>> import jionlp as jio
->>> dataset_x = ['马成宇在...', 
-                 '金融国力教育公司...', 
-                 '延平区人民法院曾经...',
-                 ...]
->>> dataset_y = [[{'type': 'Person', 'text': '马成宇', 'offset': (0, 3)}],
-                 [{'type': 'Company', 'text': '国力教育公司', 'offset': (2, 8)}],
-                 [{'type': 'Organization', 'text': '延平区人民法院', 'offset': (0, 7)}],
-                 ...]
->>> train_x, train_y, valid_x, valid_y, test_x, test_y, stats = \
-    ... jio.ner.analyse_dataset(dataset_x, dataset_y)
->>> print(stats)
+        >>> import jionlp as jio
+        >>> dataset_x = ['马成宇在...', 
+                         '金融国力教育公司...', 
+                         '延平区人民法院曾经...',
+                         ...]
+        >>> dataset_y = [[{'type': 'Person', 'text': '马成宇', 'offset': (0, 3)}],
+                         [{'type': 'Company', 'text': '国力教育公司', 'offset': (2, 8)}],
+                         [{'type': 'Organization', 'text': '延平区人民法院', 'offset': (0, 7)}],
+                         ...]
+        >>> train_x, train_y, valid_x, valid_y, test_x, test_y, stats = \
+            ... jio.ner.analyse_dataset(dataset_x, dataset_y)
+        >>> print(stats)
 
-    whole dataset:
-    Company                    573        39.68%
-    Person                     495        34.28%
-    Organization               376        26.04%
-    total                    3,000        100.00%
+            whole dataset:
+            Company                    573        39.68%
+            Person                     495        34.28%
+            Organization               376        26.04%
+            total                    3,000        100.00%
 
-    train dataset: 80.00%
-    Company                    464        40.38%
-    Person                     379        32.99%
-    Organization               306        26.63%
-    total                    2,400        100.00%
+            train dataset: 80.00%
+            Company                    464        40.38%
+            Person                     379        32.99%
+            Organization               306        26.63%
+            total                    2,400        100.00%
 
-    valid dataset: 5.00%
-    Person                      32        47.06%
-    Company                     22        32.35%
-    Organization                14        20.59%
-    total                      150        100.00%
+            valid dataset: 5.00%
+            Person                      32        47.06%
+            Company                     22        32.35%
+            Organization                14        20.59%
+            total                      150        100.00%
 
-    test dataset: 15.00%
-    Company                     87        38.33%
-    Person                      84        37.00%
-    Organization                56        24.67%
-    total                      450        100.00%
+            test dataset: 15.00%
+            Company                     87        38.33%
+            Person                      84        37.00%
+            Organization                56        24.67%
+            total                      450        100.00%
 
-    train KL divergence: 0.000546, info dismatch: 0.03%
-    valid KL divergence: 0.048423, info dismatch: 3.10%
-    test KL divergence: 0.002364, info dismatch: 0.15%
-    
+            train KL divergence: 0.000546, info dismatch: 0.03%
+            valid KL divergence: 0.048423, info dismatch: 3.10%
+            test KL divergence: 0.002364, info dismatch: 0.15%
+
     '''
     dataset = [[sample_x, sample_y] for sample_x, sample_y
                in zip(dataset_x, dataset_y)]
