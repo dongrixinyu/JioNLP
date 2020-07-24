@@ -148,7 +148,7 @@ def tag2entity(token_list: List[str], tags: List[str], verbose=False):
                 _wrong_message(idx, tags)
                 return entities
         
-        entities.append({'type': key, 'text': value,
+        entities.append({'type': key, 'text': ''.join(value),
                          'offset': (start, idx + 1)})
         start = None
 
