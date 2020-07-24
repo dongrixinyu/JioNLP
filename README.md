@@ -104,7 +104,8 @@ $ pip install .
 
 | 功能   | 函数   |描述   |
 |--------|--------|-------|
-|[**朴素贝叶斯分析类别词汇**](https://github.com/dongrixinyu/JioNLP/wiki/文本分类-说明文档#user-content-朴素贝叶斯分析类别词汇) | analyse_freq_words |对文本分类的标注语料，做朴素贝叶斯词频分析，返回各类文本的高条件概率词汇  |
+|[**朴素贝叶斯分析类别词汇**](https://github.com/dongrixinyu/JioNLP/wiki/文本分类-说明文档#user-content-朴素贝叶斯分析类别词汇) | analyse_freq_words |对文本分类的标注语料，做朴素贝叶斯词频分析，返回各类<br>文本的高条件概率词汇  |
+|[**分割数据集**](https://github.com/dongrixinyu/JioNLP/wiki/文本分类-说明文档#user-content-分割数据集) | analyse_dataset |对文本分类的标注语料，切分为训练集、验证集、测试集，<br>并给出各个子集的分类分布统计  |
 
 
 ### 7.情感分析
