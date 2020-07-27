@@ -199,6 +199,17 @@ def char_radical_loader():
     return map_dict, structure_dict
     
     
+def idf_loader():
+    ''' 加载 idf 文件，属于 tfidf 算法的一部分 '''
+    content = read_file_by_line(os.path.join(
+        GRAND_DIR_PATH, 'dictionary', 'idf.txt'))
+    
+    idf_dict = dict()
+    for item in content:
+        word, idf_value = item.split('\t')
+        idf_dict.update({word: float(idf_value)})
+    
+    return idf_dict
     
     
 def traditional_simplified_loader(file_name):

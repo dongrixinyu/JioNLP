@@ -28,6 +28,7 @@ DICTIONARY_DESCRIPTION = {
 from .dictionary_loader import china_location_loader
 from .dictionary_loader import world_location_loader
 from .dictionary_loader import stopwords_loader
+from .dictionary_loader import idf_loader
 from .dictionary_loader import negative_words_loader
 from .dictionary_loader import char_radical_loader
 from .dictionary_loader import chinese_char_dictionary_loader
