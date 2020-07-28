@@ -119,7 +119,6 @@ class ChineseKeyPhrasesExtractor(object):
         # 加载 lda 模型参数
         self._lda_prob_matrix()
         
-        
     def _lda_prob_matrix(self):
         ''' 读取 lda 模型有关概率分布文件，并计算 unk 词的概率分布 '''
         # 读取 p(topic|word) 概率分布文件，由于 lda 模型过大，不方便加载并计算
@@ -150,27 +149,6 @@ class ChineseKeyPhrasesExtractor(object):
                  remove_phrases_list=None,
                  remove_words_list=None,
                  specified_words=dict(), bias=None):
-        '''
-        抽取一篇文本的关键短语
-        :param text: utf-8 编码中文文本
-        :param top_k: 选取多少个关键短语返回，默认为 5，若为 -1 返回所有短语
-        :param with_weight: 指定返回关键短语是否需要短语权重
-        :param func_word_num: 允许短语中出现的虚词个数，strict_pos 为 True 时无效
-        :param stop_word_num: 允许短语中出现的停用词个数，strict_pos 为 True 时无效
-        :param max_phrase_len: 允许短语的最长长度，默认为 25 个字符
-        :param topic_theta: 主题权重的权重调节因子，默认0.5，范围（0~无穷）
-        :param strict_pos: (bool) 为 True 时仅允许名词短语出现
-        :param allow_pos_weight: (bool) 考虑词性权重，即某些词性组合的短语首尾更倾向成为关键短语
-        :param allow_length_weight: (bool) 考虑词性权重，即 token 长度为 2~5 的短语倾向成为关键短语
-        :param allow_topic_weight: (bool) 考虑主题突出度，它有助于过滤与主题无关的短语（如日期等）
-        :param without_person_name: (bool) 决定是否剔除短语中的人名
-        :param without_location_name: (bool) 决定是否剔除短语中的地名
-        :param remove_phrases_list: (list) 将某些不想要的短语剔除，使其不出现在最终结果中
-        :param remove_words_list: (list) 将某些不想要的词剔除，使包含该词的短语不出现在最终结果中
-        :param specified_words: (dict) 行业名词:词频，若不为空，则仅返回包含该词的短语
-        :param bias: (int|float) 若指定 specified_words，则可选择定义权重增加值
-        :return: 关键短语及其权重
-        ''' 
         try:
             # 初始化加载
             if self.unk_topic_prominence_value == 0.:
