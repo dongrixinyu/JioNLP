@@ -36,6 +36,7 @@ class Extractor(object):
         self.redundent_pattern = None
         self.exception_pattern = None
         self.full_angle_pattern = None
+        self.chinese_char_pattern = None
 
     #@staticmethod
     def _extract_base(self, pattern, text, with_offset=False):
@@ -566,5 +567,20 @@ class Extractor(object):
         return text_without_chinese
 
         #{'phone': '18100065143', 'province': '上海', 'city': '上海', 'zip_code': '200000', 'area_code': '021', 'phone_type': '电信'}
+
+    def check_chinese_char(self, text):
+        ''' 检查文本中是否包含中文字符
+        '''
+        if text == '':
+            return False
+        if self.chinese_char_pattern is None:
+            self.chinese_char_pattern = re.compile(CHINESE_CHAR_PATTERN)
+
+        if self.chinese_char_pattern.search(text):
+            return True
+
+        return False
+
+
 
 
