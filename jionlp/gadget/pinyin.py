@@ -56,7 +56,7 @@ class Pinyin(object):
         
         self.pinyin_phrase = pinyin_phrase_loader()
         self.pinyin_char = pinyin_char_loader()
-        pdb.set_trace() 
+        #pdb.set_trace() 
         # 加载 trie 树
         self.trie_tree_obj = TrieTree()
         self.trie_tree_obj.build_trie_tree(self.pinyin_phrase, 'phrase')
