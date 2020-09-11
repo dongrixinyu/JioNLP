@@ -66,5 +66,3 @@ def set_logger(level='INFO', log_dir_name='.jio_nlp_logs'):
     logger.addHandler(stream_handler)
     
     return logger
-
-

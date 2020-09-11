@@ -1,5 +1,5 @@
 # -*- coding=utf-8 -*-
-'''
+"""
 TODO:
     1、偏旁部首词典基本完善准确。
     2、一些汉字有多个偏旁部首，如“岡”，既包括“山”，也包括“冂”，其字本意为“山脊”，
@@ -16,7 +16,7 @@ TODO:
        7: 左下包围结构, 远
        8: 全包围结构, 国
        9: 半包围结构，冈
-       
+
     5、数字、字母、符号，以及一些未登录汉字等，无结构，均以 <char_radical_unk> 替代
     6、一些汉字的偏旁部首确实与本意有较大差别，如“爱”字，其部首为“爪”，而实际繁体字部
        首为“心”，“矮”字部首为“矢”，部首与字本意已无联系。因此，词典尽量以靠近本意的部
@@ -26,7 +26,7 @@ TODO:
     8、四角编码主要以字形笔画为基础进行编码设计，因此，其包含信息与拆字部件、字形结构等
        信息有重复之处。
 
-'''
+"""
 
 
 import os
@@ -40,7 +40,7 @@ from .trie_tree import TrieTree
 
 
 class CharRadical(object):
-    ''' 
+    """
     从汉字中抽取偏旁部首，一般用于深度学习模型的特征学习。若字符没有偏旁部首，
     则添加 <cr_unk> 作为标记。针对每个字，输出的结果依次是：核心偏旁部首、
     字形结构、四角编码（五位）、拆字部件。
@@ -51,7 +51,7 @@ class CharRadical(object):
     return:
         list(list(str, int, str, str)): 偏旁与结构列表
 
-    '''
+    """
     
     def __init__(self):
         self.radicals = None
@@ -82,9 +82,8 @@ class CharRadical(object):
         return record_list
     
     def convert_to_vector(self, char_info):
-        ''' 将各类的字形与结构转换为向量，方便输入模型 '''
+        """ 将各类的字形与结构转换为向量，方便输入模型 """
         
-
 
 if __name__ == '__main__':
     char_radical = CharRadical()
@@ -92,4 +91,3 @@ if __name__ == '__main__':
     res = char_radical(text)
     for i, j in zip(text, res):
         print(i, j)
-

@@ -13,7 +13,7 @@ GRAND_DIR_PATH = os.path.dirname(DIR_PATH)
 
 
 def pkuseg_postag_loader():
-    ''' 加载北大分词器的词性映射表 '''
+    """ 加载北大分词器的词性映射表 """
     content = read_file_by_line(os.path.join(
         DIR_PATH, 'pkuseg_postag_map.txt'))
     
@@ -23,4 +23,3 @@ def pkuseg_postag_loader():
         pkuseg_postag_map.update({segs[0]: segs[1]})
     
     return pkuseg_postag_map
-

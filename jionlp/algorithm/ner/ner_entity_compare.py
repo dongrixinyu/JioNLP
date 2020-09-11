@@ -5,8 +5,8 @@ import os
 import pdb
 
 
-def _check_entity(entity):  
-    ''' 检查实体的 text 和 offset 是否对应一致 '''
+def _check_entity(entity):
+    """ 检查实体的 text 和 offset 是否对应一致 """
     if len(entity['text']) == entity['offset'][1] - entity['offset'][0]:
         return True
     else:
@@ -14,9 +14,9 @@ def _check_entity(entity):
 
 
 def entity_compare(text, labeled_entities, predicted_entities, context_pad=10):
-    ''' 针对标注语料的实体，以及模型训练后预测得到的实体，往往存在不一致，找出这些标注不一
+    """ 针对标注语料的实体，以及模型训练后预测得到的实体，往往存在不一致，找出这些标注不一
     致的数据，能够有效分析模型的预测能力。
-    
+
     输入数据须为字 token 文本和实体，对应的标注实体，模型预测的实体，返回不一致的实体对。
     存在以下几种情况：
     1、标注实体存在，而模型预测实体无
@@ -26,17 +26,17 @@ def entity_compare(text, labeled_entities, predicted_entities, context_pad=10):
         2、模型预测实体和多个标注实体存在交叠偏差
         3、两者不存在多个偏差实体
     4、两者不存在交叠偏差，但类型不一致
-    
+
     Args:
         text(str): 文本字符串或字 token 的列表
         labeled_entities: 标注语料中，标注的实体，以 entity 格式存储
         predicted_entities: 针对 text 的文本，使用模型预测得到的实体结果，以 entity 格式
             存储。
         context_pad: 需要返回有差异实体对的上下文，需指定其上下文指定长度，默认为 10
-    
+
     Return:
         list: 有差异的实体对。
-    
+
     Examples:
         >>> import jionlp as jio
         >>> text = '张三在西藏拉萨游玩！之后去新疆。'
@@ -50,15 +50,15 @@ def entity_compare(text, labeled_entities, predicted_entities, context_pad=10):
         >>> res = jio.ner.entity_compare(
                 text, labeled_entities, predicted_entities, context_pad=1)
         >>> print(res)
-            [{'context': '张三在西', 
+            [{'context': '张三在西',
               'labeled_entity': {'text': '张三', 'offset': [0, 2], 'type': 'Person'},
               'predicted_entity': {'text': '张三在', 'offset': [0, 3], 'type': 'Person'}},
              {'context': '去新疆。',
               'labeled_entity': None,
-              'predicted_entity': 
+              'predicted_entity':
                   {'text': '新疆', 'offset': [13, 15], 'type': 'Location'}}]
-        
-    '''
+
+    """
     different_entity_pairs = list()  # 标注数据和模型预测数据里，有差异的实体对
     text_length = len(text)
     
@@ -210,17 +210,10 @@ if __name__ == '__main__':
     predicted_entities = [
         {'text': '张三在', 'offset': [2, 15], 'type': 'Person'},
         {'text': '西藏拉萨', 'offset': [3, 7], 'type': 'Person'},
-        #{'text': '新疆', 'offset': [13, 15], 'type': 'Location'},
+        # {'text': '新疆', 'offset': [13, 15], 'type': 'Location'},
         {'text': '。', 'offset': [15, 16], 'type': 'Location'}]
     
     res = entity_compare(
         text, labeled_entities, predicted_entities, context_pad=1)
     for i in res:
         print(i)
-    
-    
-
-
-
-
-

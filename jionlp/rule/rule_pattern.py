@@ -93,12 +93,12 @@ MONEY_PATTERN_1 = '((\d{1,3}([,，]\d{1,3})*(\.\d{0,2})?)' + CURRENCY_CASE + ')'
 # 纯数字格式 340000.0元
 MONEY_PATTERN_2 = '((\d{1,12}(\.\d{0,2})?)' + CURRENCY_CASE + ')'
 # 中文金额格式 一万二千三百四十五元
-MONEY_PATTERN_3 = '(((' + CHI_N + '?' + CHI_U + '{1,2})*' + CHI_N + '?)'  + CURRENCY_CASE + '(' + CHI_N + '角)?(' + CHI_N + '分)?)'
+MONEY_PATTERN_3 = '(((' + CHI_N + '?' + CHI_U + '{1,2})*' + CHI_N + '?)' + CURRENCY_CASE + '(' + CHI_N + '角)?(' + CHI_N + '分)?)'
 # 数字+汉字单位格式 9300万元  1.2万元  9佰元
 MONEY_PATTERN_4 = '(\d{1,4}(\.\d{0,4})?' + CHI_U + CURRENCY_CASE + ')'
 
-MONEY_PATTERN = '(' +'|'.join(
-    [MONEY_PATTERN_1, MONEY_PATTERN_2, 
+MONEY_PATTERN = '(' + '|'.join(
+    [MONEY_PATTERN_1, MONEY_PATTERN_2,
      MONEY_PATTERN_3, MONEY_PATTERN_4]) + ')'
 
 # ---------------------------------------------------------------------
@@ -113,7 +113,7 @@ PUNCTUATION_PATTERN = ''
 # 腾讯QQ号
 QQ_PATTERN = '(?<=[^0-9])([1-9][0-9]{5,10})(?=[^0-9])'
 STRICT_QQ_PATTERN = '(qq|QQ|\+q|\+Q|加q|加Q|q号|Q号)'
-#STRICT_QQ_PATTERN = '([qQ]{2}[:： ]{0,5}[1-9][0-9]{5,10})(?=[^0-9])'
+# STRICT_QQ_PATTERN = '([qQ]{2}[:： ]{0,5}[1-9][0-9]{5,10})(?=[^0-9])'
 
 # ---------------------------------------------------------------------
 # 冗余字符处理
@@ -125,7 +125,7 @@ REDUNDENT_PATTERN = ' -\t\n啊哈呀~\u3000\xa0'
 # 融合了百分比格式、序数词，形容词（数*、*余等），负数，数字范围等，还差分数表
 # 示未添加，如 “三十分之一”
 BASE_NUMBER_PATTERN = '[' + CHINESE_NUM[1:-1] + CHINESE_UNIT[1:-1] + '点\d\%％\.\,．多余几]+'
-NUMBER_PATTERN =  '^((十|百|千|万)分之|第|数|好|\-)?' + BASE_NUMBER_PATTERN + '([\~\-～－至]?' + BASE_NUMBER_PATTERN + ')?(多|余)?$'
+NUMBER_PATTERN = '^((十|百|千|万)分之|第|数|好|\-)?' + BASE_NUMBER_PATTERN + '([\~\-～－至]?' + BASE_NUMBER_PATTERN + ')?(多|余)?$'
 
 # ---------------------------------------------------------------------
 # 时间词汇，用于停用词过滤时，将时间词汇过滤掉
@@ -146,9 +146,9 @@ MI_N = '[012345]?\d'  # 分 数字格式
 SE_N = '[012345]?\d'  # 秒 数字格式
 HMS_GAP = '[:：]'
 HMS_PATTERN_1 = '^(' + HO_N + HMS_GAP + MI_N + '(' + HMS_GAP + SE_N + ')?)$'  # 纯数字格式时分秒，或时分
-HMS_PATTERN_2 = '^(' + HO_N +  '(点|时|小时)(' + MI_N + '分(钟)?(' + SE_N + '秒(钟)?)?)?)$'  # 带汉字时分秒
+HMS_PATTERN_2 = '^(' + HO_N + '(点|时|小时)(' + MI_N + '分(钟)?(' + SE_N + '秒(钟)?)?)?)$'  # 带汉字时分秒
 HMS_PATTERN_3 = '^(' + HMS_PATTERN_1 + '[\-\~—]{1,2}' + HMS_PATTERN_1 + ')$'  # 时间段
-#HMS_PATTERN_4 = '^([012]?\d点)$'  # 有一定前提条件，即前后必须也有时间词汇
+# HMS_PATTERN_4 = '^([012]?\d点)$'  # 有一定前提条件，即前后必须也有时间词汇
 
 # 年月日格式
 YE_N = '[12]?\d{2,3}'  # 年份数字格式
@@ -161,7 +161,7 @@ SPAN_GAP = '[\~\-～－至]'
 YMD_PATTERN_1 = '^((公元(前)?)?' + YE_N + '年(初|底|中)?)?((' + MO_N + '|' + MO_C + ')月(份|底|初)?)?(' + DA_N + '[日号])?$'  # 带汉字年月日
 YMD_PATTERN_2 = '^(' + YE_N + YMD_GAP + MO_N + '(' + YMD_GAP + DA_N + ')?)$'  # 纯数字年月日，或年月
 YMD_PATTERN_3 = '^(' + MO_N + YMD_GAP + DA_N + '(' + YMD_GAP + YE_N + ')?)$'  # 纯数字月日年，或月日
-YMD_PATTERN_4 = '^((公元(前)?)?' + '(([12]?\d|(二)?十(一|二|三|四|五|六|七|八|九)?)世纪)?((\d0|(一|二|三|四|五|六|七|八|九)十)年代)?(初|末)?' + ')$'   # 世纪，年代
+YMD_PATTERN_4 = '^((公元(前)?)?' + '(([12]?\d|(二)?十(一|二|三|四|五|六|七|八|九)?)世纪)?((\d0|(一|二|三|四|五|六|七|八|九)十)年代)?(初|末)?' + ')$'  # 世纪，年代
 YMD_PATTERN_5 = '^(一|二|三|四|五|六|七|八|九|零|〇|○|0){4}年$'
 
 # 年月日-时分秒合并格式
@@ -198,22 +198,16 @@ COMMON_TIME_PATTERN_7 = '午(后|时)'
 
 # 各类型的时间正则汇总，可根据需要进行增删
 TIME_PATTERN = '(' + '|'.join(
-    [COMMON_TIME_PATTERN_1, 
+    [COMMON_TIME_PATTERN_1,
      COMMON_YEAR_PATTERN, COMMON_MONTH_PATTERN, COMMON_DAY_PATTERN,
      COMMON_TIME_PATTERN_2, COMMON_TIME_PATTERN_3, COMMON_TIME_PATTERN_4,
      COMMON_TIME_PATTERN_5, COMMON_TIME_PATTERN_6, COMMON_TIME_PATTERN_7,
      WEEK_PATTERN, LUNAR_PATTERN, YMD_HMS_PATTERN, SEASON_PATTERN,
      YMD_PATTERN_1, YMD_PATTERN_2, YMD_PATTERN_3, YMD_PATTERN_4,
-     YMD_PATTERN_5, 
-     HMS_PATTERN_1, HMS_PATTERN_2, HMS_PATTERN_3, YEAR_SPAN_PATTERN, MONTH_SPAN_PATTERN, DAY_SPAN_PATTERN,]) + ')'
+     YMD_PATTERN_5,
+     HMS_PATTERN_1, HMS_PATTERN_2, HMS_PATTERN_3,
+     YEAR_SPAN_PATTERN, MONTH_SPAN_PATTERN, DAY_SPAN_PATTERN, ]) + ')'
 
 # ---------------------------------------------------------------------
 # URL
 URL_PATTERN = '(?<=[^.])((?:(?:https?|ftp|file)://|(?<![a-zA-Z\-\.])www\.)[\-A-Za-z0-9\+&@\(\)#/%\?=\~_|!:\,\.\;]+[\-A-Za-z0-9\+&@#/%=\~_\|])(?=[<\u4E00-\u9FA5，。；！？、“”‘’>（）—《》…●])'
-
-
-
-
-
-
-

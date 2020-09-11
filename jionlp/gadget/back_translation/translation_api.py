@@ -1,12 +1,12 @@
 # -*- coding=utf-8 -*-
-'''
+"""
 调用公开大厂翻译 API 完成文本回译数据增强
 
 DESCRIPTION:
     1、包括百度、谷歌、有道、有道（免费版）、腾讯、讯飞
     2、翻译质量最高的 api 是 Deepl
 
-'''
+"""
 
 import os
 import pdb
@@ -29,9 +29,9 @@ __all__ = ['BaiduApi', 'GoogleApi', 'YoudaoApi',
 
 
 def check_lang_name(func):
-    ''' 检查源语言和目标语言的缩写名是否正确 '''
+    """ 检查源语言和目标语言的缩写名是否正确 """
     def wrapper(self, *args, **kargs):
-        #pdb.set_trace()
+        # pdb.set_trace()
         from_lang = kargs['from_lang']
         to_lang = kargs['to_lang']
         exception_string = 'The API does not contain {} language'
@@ -47,10 +47,10 @@ def check_lang_name(func):
 
 
 def gap_sleep(func):
-    ''' 两次调用之间的时间间隔，以在每次调用之前等待实现 '''
+    """ 两次调用之间的时间间隔，以在每次调用之前等待实现 """
     def wrapper(self, *args, **kargs):
         time.sleep(self.gap_time)
-        #pdb.set_trace()
+        # pdb.set_trace()
         f = func(self, *args, **kargs)
         return f
     
@@ -58,27 +58,27 @@ def gap_sleep(func):
 
 
 class TranslationApi(object):
-    ''' 翻译接口基础类，完成
-    
+    """ 翻译接口基础类，完成
+
     1、appkey 是否可用的检测与管理
     2、睡眠等待时间，装饰器实现
     3、管理请求头
     4、检查语言缩写编号是否符合要求，装饰器实现
-    
-    '''
+
+    """
     def __init__(self, appkey_obj, gap_time, 
                  lang_pool=['zh', 'en']):
-        '''
+        """
         appkey_obj: 调用接口的用户密钥，各个接口各不一样
         gap_time: 两次调用的间隔睡眠时间
-        
-        '''
+
+        """
         self.gap_time = gap_time
         self.appkey_obj = appkey_obj
         self.lang_pool = lang_pool
         
     def manage_appkey(self):
-        ''' 管理有效的请求密钥，将结果返回 '''
+        """ 管理有效的请求密钥，将结果返回 """
         if self.appkey_obj is None:
             return None
         else:
@@ -87,27 +87,28 @@ class TranslationApi(object):
     
     
 class BaiduApi(TranslationApi):
-    ''' 百度翻译 api 的调用接口 
-    
+    """ 百度翻译 api 的调用接口
+
     参考文档：https://api.fanyi.baidu.com/doc/21
     支持语言：中文(zh)、英文(en)、西班牙语(spa)、德文(de)、法语(fra)、
             日语(jp)、俄语(ru)、葡萄牙语(pt)
     Args:
         from_lang: 输入源语言
         to_lang: 输入目标语言
-        
+
     Return:
-    
+
     Examples:
         >>> baidu_api = BaiduApi(
-                {'appid': '20200618000498778', 
+                {'appid': '20200618000498778',
                  'secretKey': 'raHalLakgYitNuzGOoBZ'})
         >>> text = '她很好看。'
         >>> res = baidu_api(text, from_lang='zh', to_lang='en')
         >>> print(res)
-        
+
         # She looks good.
-    '''
+
+    """
     def __init__(self, appkey_obj=None, gap_time=0, 
                  url='http://api.fanyi.baidu.com/api/trans/vip/translate',
                  lang_pool=['zh', 'en', 'jp', 'spa', 'de',
@@ -118,7 +119,7 @@ class BaiduApi(TranslationApi):
     @check_lang_name
     @gap_sleep
     def __call__(self, text, from_lang='zh', to_lang='en'):
-        ''' 对一段文本进行翻译 '''
+        """ 对一段文本进行翻译 """
         salt = random.randint(32768, 65536)
         salt = str(salt)
         sign = ''.join([self.appkey_obj['appid'], text, 
@@ -136,33 +137,33 @@ class BaiduApi(TranslationApi):
             return result['trans_result'][0]['dst']
         else:
             exception_string = ''.join(
-                ['Http请求失败，状态码：', str(status_code),
+                ['Http请求失败，状态码：', str(result.status_code),
                  '，错误信息：\n', result.text])
             raise Exception(exception_string)
 
 
 class GoogleApi(TranslationApi):
-    ''' Google 翻译 api 的调用接口 
-     
+    """ Google 翻译 api 的调用接口
+
     支持语言：中文(zh)、英文(en)、西班牙语(es)、德文(de)、法语(fr)、
             日语(ja)、俄语(ru)
-    
+
     Args:
         from_lang: 输入源语言
         to_lang: 输入目标语言
-        
+
     Return:
         str: 目标语言字符串
-    
+
     Examples:
         >>> google_api = GoogleApi()
         >>> text = '她很好看。'
         >>> res = google_api(text, from_lang='zh', to_lang='ja')
         >>> print(res)
-        
+
         # She is pretty.
-        
-    ''' 
+
+    """
     def __init__(self, appkey_obj=None, gap_time=0, 
                  url='http://translate.google.cn/translate_a/single',
                  lang_pool=['zh', 'en', 'ja', 'es', 'de', 'fr', 'ru']):
@@ -172,12 +173,12 @@ class GoogleApi(TranslationApi):
     @check_lang_name
     @gap_sleep
     def __call__(self, text, from_lang='zh', to_lang='en'):
-        ''' 对一段文本进行翻译 '''
+        """ 对一段文本进行翻译 """
         post_data = {'client': 'gtx', 'dt': 't',
                      'dj': 1, 'ie': 'UTF-8',
                      'sl': from_lang, 'tl': to_lang,
                      'q': text}
-        #print(to_lang)
+        # print(to_lang)
         result = requests.post(self.url, data=post_data)
         
         time.sleep(self.gap_time)
@@ -187,25 +188,25 @@ class GoogleApi(TranslationApi):
             return result['sentences'][0]['trans']
         else:
             exception_string = ''.join(
-                ['Http请求失败，状态码：', str(status_code),
+                ['Http请求失败，状态码：', str(result.status_code),
                  '，错误信息：\n', result.text])
             raise Exception(exception_string)
         
         
 class YoudaoApi(TranslationApi):
-    ''' 有道 翻译 api 的调用接口 
-    
+    """ 有道 翻译 api 的调用接口
+
     参考文档：http://ai.youdao.com/DOCSIRMA/html/自然语言翻译/API文档/文本翻译服务/文本翻译服务-API文档.html
     支持语言：中文(zh-CHS)、英文(en)、日文(ja)、法文(fr)、西班牙语(es)、
             韩文(ko)、葡萄牙文(pt)、俄语(ru)、德语(de)
-    
+
     Args:
         from_lang: 输入源语言
         to_lang: 输入目标语言
-        
+
     Return:
         str: 目标语言字符串
-    
+
     Examples:
         >>> youdao_api = YoudaoApi(
                 appkey_obj={
@@ -214,12 +215,11 @@ class YoudaoApi(TranslationApi):
         >>> text = '她很好看。'
         >>> res = youdao_api(text, from_lang='zh-CHS', to_lang='ne')
         >>> print(res)
-        
+
         # She's pretty.
-        
-    ''' 
-    def __init__(self, appkey_obj=None, gap_time=0, 
-                 #url='http://fanyi.youdao.com/translate',
+
+    """
+    def __init__(self, appkey_obj=None, gap_time=0,
                  url='https://openapi.youdao.com/api',
                  lang_pool=['zh-CHS', 'en', 'ja', 'fr', 'es', 'ko',
                             'pt', 'ru', 'de']):
@@ -229,15 +229,15 @@ class YoudaoApi(TranslationApi):
     @check_lang_name
     @gap_sleep
     def __call__(self, text, from_lang='zh-CHS', to_lang='en'):
-        ''' 对一段文本进行翻译 '''
+        """ 对一段文本进行翻译 """
         def _encrypt(sign_tr):
-            ''' 对请求做签名 '''
+            # 对请求做签名
             hash_algorithm = hashlib.sha256()
             hash_algorithm.update(sign_str.encode('utf-8'))
             return hash_algorithm.hexdigest()
         
         def _truncate(text):
-            ''' 对请求文本做删截 '''
+            # 对请求文本做删截
             if text is None:
                 return None
             size = len(text)
@@ -272,34 +272,35 @@ class YoudaoApi(TranslationApi):
             return response_json['translation'][0]
         else:
             exception_string = ''.join(
-                ['Http请求失败，状态码：', str(status_code),
-                 '，错误信息：\n', result.text])
+                ['Http请求失败，状态码：', str(response.status_code),
+                 '，错误信息：\n', response.text])
             raise Exception(exception_string)
     
     
 class YoudaoFreeApi(TranslationApi):
-    ''' 有道免费的翻译 api 的调用接口，该接口模型与非免费版结果不一致
-    
+    """ 有道免费的翻译 api 的调用接口，该接口模型与非免费版结果不一致
+
     参考文档：http://fanyi.youdao.com/
     支持语言：中文(zh-CHS)、英文(en)，属于 api 接口自动检测
     限制条件：
         1、免费试用
-        
+
     Args:
         from_lang: 输入源语言
         to_lang: 输入目标语言
-        
+
     Return:
         str: 目标语言字符串
-        
+
     Examples:
         >>> youdao_api = YoudaoFreeApi()
         >>> text = '她很好看。'
         >>> res = youdao_api(text, from_lang='zh-CHS', to_lang='en')
         >>> print(res)
-        
+
         # She looks very nice.
-    ''' 
+
+    """
     def __init__(self, appkey_obj=None, gap_time=0, 
                  url='http://fanyi.youdao.com/translate?&doctype=json&type=AUTO&i=',
                  lang_pool=['zh-CHS', 'en']):
@@ -310,22 +311,22 @@ class YoudaoFreeApi(TranslationApi):
     @check_lang_name
     @gap_sleep
     def __call__(self, text, from_lang='zh-CHS', to_lang='en'):
-        ''' 对一段文本进行翻译 '''
-        response = requests.get(self.url + text)#, headers=headers)
+        """ 对一段文本进行翻译 """
+        response = requests.get(self.url + text)
         
         response_json = json.loads(response.text)
         if response.status_code == 200 and 'translateResult' in response_json:
             return response_json['translateResult'][0][0]['tgt']
         else:
             exception_string = ''.join(
-                ['Http请求失败，状态码：', str(status_code),
-                 '，错误信息：\n', result.text])
+                ['Http请求失败，状态码：', str(response.status_code),
+                 '，错误信息：\n', response.text])
             raise Exception(exception_string)
 
 
 class TencentApi(TranslationApi):
-    ''' 腾讯 翻译 api 的调用接口 
-    
+    """ 腾讯 翻译 api 的调用接口
+
     参考文档：https://cloud.tencent.com/document/product/551/15619
     支持语言：中文(zh)、英文(en)、日文(ja)、法文(fr)、西班牙语(es)、
             韩文(ko)、葡萄牙文(pt)、俄语(ru)、德语(de)
@@ -333,14 +334,14 @@ class TencentApi(TranslationApi):
         1、默认接口请求频率限制：5次/秒
         2、文本翻译的每月免费额度为5百万字符
         3、单次请求的字符数不超过 2000（一个汉字、字母、标点都计为一个字符）
-        
+
     Args:
         from_lang: 输入源语言
         to_lang: 输入目标语言
-        
+
     Return:
         str: 目标语言字符串
-    
+
     Examples:
         >>> tencent_api = TencentApi(
                 {"project_id": "0",
@@ -349,10 +350,10 @@ class TencentApi(TranslationApi):
         >>> text = '她很好看。'
         >>> res = tencent_api(text, from_lang='zh', to_lang='en')
         >>> print(res)
-        
+
         # She's pretty.
-        
-    ''' 
+
+    """
     def __init__(self, appkey_obj=None, gap_time=1, 
                  url='https://tmt.tencentcloudapi.com/',
                  host_name='tmt.tencentcloudapi.com',
@@ -393,21 +394,21 @@ class TencentApi(TranslationApi):
         
         response_json = json.loads(response.text)
         if response.status_code == 200:
-            #print(response_json['Response']['TargetText'])
+            # print(response_json['Response']['TargetText'])
             return response_json['Response']['TargetText']
         else:
             exception_string = ''.join(
-                ['Http请求失败，状态码：', str(status_code),
-                 '，错误信息：\n', result.text])
+                ['Http请求失败，状态码：', str(response.status_code),
+                 '，错误信息：\n', response.text])
             raise Exception(exception_string)
             
     def sign(self, sign_str, sign_method):
-        ''' 该方法主要是实现腾讯云的签名功能
-        
+        """ 该方法主要是实现腾讯云的签名功能
+
         param secret_key: secret_key
         param sign_str: 传递进来字符串，加密时需要使用
         param sign_method: 加密方法
-        '''
+        """
         sign_str = sign_str.encode('utf-8')
         secret_key = self.appkey_obj['secret_key'].encode('utf-8')
 
@@ -425,7 +426,7 @@ class TencentApi(TranslationApi):
     
     @staticmethod
     def dict_to_str(dict_data):
-        ''' 将 dict 转为 list 并且拼接成字符串 '''
+        # 将 dict 转为 list 并且拼接成字符串
         temp_list = list()
         for eve_key, eve_value in dict_data.items():
             temp_list.append(str(eve_key) + '=' + str(eve_value))
@@ -433,8 +434,8 @@ class TencentApi(TranslationApi):
 
     
 class XunfeiApi(TranslationApi):
-    ''' 讯飞免费的翻译 api 的调用接口
-    
+    """ 讯飞免费的翻译 api 的调用接口
+
     参考文档：https://www.xfyun.cn/doc/nlp/xftrans/API.html
             https://www.xfyun.cn/services/xftrans
     支持语言：中文(cn)、英文(en)、日文(ja)、法文(fr)、西班牙语(es)、
@@ -444,14 +445,14 @@ class XunfeiApi(TranslationApi):
         2、字符数以翻译的源语言字符长度为标准计算。一个汉字、英文字母、标点符号等，均计为一个字符。
         3、单次请求长度控制在256个字符以内。
         4、不支持源语言语种自动识别
-        
+
     Args:
         from_lang: 输入源语言
         to_lang: 输入目标语言
-        
+
     Return:
         str: 目标语言的结果字符串
-    
+
     Examples:
         >>> xunfei_api = XunfeiApi(
                 appkey_obj={
@@ -463,12 +464,11 @@ class XunfeiApi(TranslationApi):
         >>> text = '她很好看。'
         >>> res = xunfei_api(text, from_lang='cn', to_lang='en')
         >>> print(res)
-        
+
         # She's good-looking.
-        
-    ''' 
-    def __init__(self, appkey_obj=None, gap_time=0, 
-                 #url='http://fanyi.youdao.com/translate',
+
+    """
+    def __init__(self, appkey_obj=None, gap_time=0,
                  url='https://itrans.xfyun.cn/v2/its',
                  lang_pool=['cn', 'en', 'ja', 'fr', 'es', 'ru']):
         self.host = 'itrans.xfyun.cn'
@@ -486,19 +486,21 @@ class XunfeiApi(TranslationApi):
 
         super(XunfeiApi, self).__init__(
             appkey_obj, gap_time, lang_pool)
-            
-    def hashlib_256(self, res):
+
+    @staticmethod
+    def hashlib_256(res):
         m = hashlib.sha256(bytes(res.encode(encoding='utf-8'))).digest()
         result = "SHA-256=" + base64.b64encode(m).decode(encoding='utf-8')
         return result
 
-    def httpdate(self, dt):
-        '''
+    @staticmethod
+    def httpdate(dt):
+        """
         Return a string representation of a date according to RFC 1123
         (HTTP/1.1).
 
         The supplied date must be in UTC.
-        '''
+        """
         weekday = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][dt.weekday()]
         month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 
                  'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][dt.month - 1]
@@ -523,8 +525,7 @@ class XunfeiApi(TranslationApi):
         sign = self.generate_signature(digest)
         auth_header = 'api_key="{0:s}", algorithm="{1:s}", ' \
                       'headers="host date request-line digest", ' \
-                      'signature="{2:s}"'.format(
-            self.appkey_obj['api_key'], self.algorithm, sign)
+                      'signature="{2:s}"'.format(self.appkey_obj['api_key'], self.algorithm, sign)
         
         headers = {
             'Content-Type': 'application/json',
@@ -539,7 +540,7 @@ class XunfeiApi(TranslationApi):
     
     def get_body(self, text, from_lang='cn', to_lang='en'):
         content = str(base64.b64encode(text.encode('utf-8')), 'utf-8')
-        postdata = {
+        post_data = {
             'common': {'app_id': self.appkey_obj['appid']},
             'business': {
                 'from': from_lang,
@@ -549,13 +550,13 @@ class XunfeiApi(TranslationApi):
                 'text': content,
             }
         }
-        body = json.dumps(postdata)
+        body = json.dumps(post_data)
         return body
     
     @check_lang_name
     @gap_sleep
     def __call__(self, text, from_lang='cn', to_lang='en'):
-        ''' 对一段文本进行翻译 '''
+        """ 对一段文本进行翻译 """
         if self.appkey_obj['appid'] == '':
             raise ValueError('APPID 为空')
         if self.appkey_obj['api_key'] == '':
@@ -640,4 +641,3 @@ if __name__ == '__main__':
     print(time.time() - start_time)
     print(res)
     '''
-    

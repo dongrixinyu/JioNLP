@@ -3,7 +3,7 @@
 
 def remove_undocumented(module_name, allowed_exception_list=None,
                         doc_string_modules=None):
-    """Removes symbols in a module that are not referenced by a docstring.
+    """ Removes symbols in a module that are not referenced by a docstring.
 
     Args:
         module_name: the name of the module (usually `__name__`).
@@ -31,4 +31,3 @@ def remove_undocumented(module_name, allowed_exception_list=None,
                                                             extra_symbol))
         delattr(target_module, extra_symbol)
 
-        

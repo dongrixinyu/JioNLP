@@ -1,13 +1,13 @@
 # -*- coding=utf-8 -*-
-'''
+"""
 DESCRIPTION:
     1、
-    
-    
-    
-    
-    
-'''
+
+
+
+
+
+"""
 
 import os
 import re
@@ -29,25 +29,23 @@ DIR_PATH = os.path.dirname(os.path.abspath(__file__))
 
 
 class Chunking(object):
-    ''' 根据词性和规则，从文本中找出名词类短语
-    '''
+    """ 根据词性和规则，从文本中找出名词类短语
+    """
     def __init__(self):
         pass
-        
-        
+
     def __call__(self, text):
         pass
 
 
 class ChineseKeyPhrasesExtractor(object):
-    '''
-    关键短语提取在生成词云、提供摘要阅读、关键信息检索等任务中有重要作用，
+    """ 关键短语提取在生成词云、提供摘要阅读、关键信息检索等任务中有重要作用，
     来作为文本的关键词。
-    
+
     原理简述：在 tfidf 方法提取的碎片化的关键词（默认使用 pkuseg 的分词工具）基础上，
     将在文本中相邻的关键词合并，并根据权重进行调整，同时合并较为相似的短语，并结合
     LDA 模型，寻找突出主题的词汇，增加权重，组合成结果进行返回。
-    
+
     Args:
         text: utf-8 编码中文文本
         top_k: (int) 选取多少个关键短语返回，默认为 5，若为 -1 返回所有短语
@@ -66,17 +64,17 @@ class ChineseKeyPhrasesExtractor(object):
         remove_words_list: (list) 将某些不想要的词剔除，使包含该词的短语不出现在最终结果中
         specified_words: (dict) 行业名词:词频，若不为空，则仅返回包含该词的短语
         bias: (int|float) 若指定 specified_words，则可选择定义权重增加值
-        
+
     Examples:
         >>> import jionlp as jio
         >>> text = '朝鲜确认金正恩出访俄罗斯 将与普京举行会谈...'
         >>> key_phrases = jio.keyphrase.extract_keyphrase(text)
         >>> print(key_phrases)
-        
+
         # ['俄罗斯克里姆林宫', '邀请金正恩访俄', '举行会谈',
         #  '朝方转交普京', '最高司令官金正恩']
-    
-    '''
+
+    """
     def __init__(self, ):
         self.unk_topic_prominence_value = 0.
         
@@ -120,7 +118,7 @@ class ChineseKeyPhrasesExtractor(object):
         self._lda_prob_matrix()
         
     def _lda_prob_matrix(self):
-        ''' 读取 lda 模型有关概率分布文件，并计算 unk 词的概率分布 '''
+        """ 读取 lda 模型有关概率分布文件，并计算 unk 词的概率分布 """
         # 读取 p(topic|word) 概率分布文件，由于 lda 模型过大，不方便加载并计算
         # 概率 p(topic|word)，所以未考虑 p(topic|doc) 概率，可能会导致不准
         # 但是，由于默认的 lda 模型 topic_num == 100，事实上，lda 模型是否在
@@ -332,7 +330,7 @@ class ChineseKeyPhrasesExtractor(object):
                                 {candidate_phrase_string: [candidate_phrase, 
                                                            candidate_phrase_weight]})
 
-            # step5: 将 overlaping 过量的短语进行去重过滤
+            # step5: 将 overlapping 过量的短语进行去重过滤
             # 尝试了依据权重高低，将较短的短语替代重复了的较长的短语，但效果不好，故删去
             candidate_phrases_list = sorted(
                 candidate_phrases_dict.items(), 
@@ -371,9 +369,10 @@ class ChineseKeyPhrasesExtractor(object):
             print('the text is not legal. \n{}'.format(e))
             return list()
 
-    def _mmr_similarity(self, candidate_item, 
+    @staticmethod
+    def _mmr_similarity(candidate_item,
                         de_duplication_candidate_phrases_list):
-        ''' 计算 mmr 相似度，用于考察信息量 '''
+        """ 计算 mmr 相似度，用于考察信息量 """
         # pdb.set_trace()
         sim_ratio = 0.0
         candidate_info = set([item[0] for item in candidate_item[1][0]])
@@ -388,7 +387,7 @@ class ChineseKeyPhrasesExtractor(object):
     def _loose_candidate_phrases_rules(self, candidate_phrase,
                                        max_phrase_len=25, 
                                        func_word_num=1, stop_word_num=0):
-        ''' 按照宽松规则筛选候选短语，对词性和停用词宽松 '''
+        """ 按照宽松规则筛选候选短语，对词性和停用词宽松 """
         # 条件一：一个短语不能超过 12个 token
         if len(candidate_phrase) > 12:
             return False
@@ -427,8 +426,8 @@ class ChineseKeyPhrasesExtractor(object):
         return True
     
     def _strict_candidate_phrases_rules(self, candidate_phrase, 
-                                          max_phrase_len=25):
-        ''' 按照严格规则筛选候选短语，严格限制在名词短语 '''
+                                        max_phrase_len=25):
+        """ 按照严格规则筛选候选短语，严格限制在名词短语 """
         # 条件一：一个短语不能超过 12个 token
         if len(candidate_phrase) > 12:
             return False
@@ -449,13 +448,13 @@ class ChineseKeyPhrasesExtractor(object):
                     return False
 
         # 条件四：短语中不可以有停用词
-        #for item in candidate_phrase:
+        # for item in candidate_phrase:
         #    if item[0] in self.stop_words and item[1] not in self.strict_pos_name:
         #        return False
         return True
         
     def _topic_prominence(self):
-        ''' 计算每个词语的主题突出度，并保存在内存 '''
+        """ 计算每个词语的主题突出度，并保存在内存 """
         init_prob_distribution = np.array([self.topic_num for i in range(self.topic_num)])
         
         topic_prominence_dict = dict()
@@ -483,7 +482,7 @@ class ChineseKeyPhrasesExtractor(object):
         # 计算未知词汇的主题突出度，由于停用词已经预先过滤，所以这里不需要再考停用词无突出度
         tmp_prominence_list = [item[1] for item in self.topic_prominence_dict.items()]
         self.unk_topic_prominence_value = sum(tmp_prominence_list) / (2 * len(tmp_prominence_list))
-        #pdb.set_trace()
+        # pdb.set_trace()
         
 
 if __name__ == '__main__':
@@ -497,9 +496,3 @@ if __name__ == '__main__':
     print('key_phrases_notopic: ', key_phrases)
     key_phrases = ckpe_obj(text, allow_length_weight=False, topic_theta=0.5, max_phrase_len=8)
     print('key_phrases_05topic: ', key_phrases)
-
-
-
-
-
-

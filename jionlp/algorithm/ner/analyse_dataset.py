@@ -1,12 +1,12 @@
 # -*- coding=utf-8 -*-
-'''
+"""
 DESCRIPTION:
     1、功能包括：NER 标注数据集的分割，列出各个类别的数据量以及占比，并计算训练集
         (training set)、验证集(validation set / dev set)、测试集(test set)的相对熵
         判断数据集分割是否合理。
     2、info dismatch 信息，百分比越小，说明数据子集类别分布越合理
-    
-'''
+
+"""
 
 
 import os
@@ -20,8 +20,8 @@ from jionlp import logging
 
 
 def _stat_class(dataset_y):
-    ''' 统计标签集合的结果 
-    '''
+    """ 统计标签集合的结果
+    """
     
     convert_y = list()
     for item in dataset_y:
@@ -36,10 +36,10 @@ def _stat_class(dataset_y):
 
 
 def _compute_kl_divergence(vector_1, vector_2):
-    ''' 计算两个概率分布的 kl 散度，其中 vector_1 为真实分布，vector_2 为估计分布 '''
+    """ 计算两个概率分布的 kl 散度，其中 vector_1 为真实分布，vector_2 为估计分布 """
     kl_value = np.sum(np.multiply(vector_1, np.log2(
         np.multiply(vector_1, 1 / vector_2))))
-    #cross_value = np.sum(np.multiply(vector_1, np.log2(1 / vector_2)))  # 交叉熵
+
     entropy_value = np.sum(np.multiply(vector_1, np.log2(1 / vector_1)))  # 交叉熵
     
     ratio = kl_value / entropy_value  # 信息量损失比例
@@ -47,24 +47,24 @@ def _compute_kl_divergence(vector_1, vector_2):
 
 
 def analyse_dataset(dataset_x, dataset_y, ratio=[0.8, 0.05, 0.15], shuffle=True):
-    ''' 将 NER 数据集按照训练、验证、测试进行划分，统计数据集中各个类别实体的数量和占比，
+    """ 将 NER 数据集按照训练、验证、测试进行划分，统计数据集中各个类别实体的数量和占比，
     计算训练、验证、测试集的相对熵，判断数据集分割是否合理。其中，dismatch 信息比例越低，
     证明数据集划分的各类别比例越贴近数据全集的分布。
-    
+
     Args:
         dataset_x: 数据集的输入数据部分
         dataset_y: 数据集的输出标签
         ratio: 训练集、验证集、测试集的比例
         shuffle: 打散数据集
-        
+
     Return:
         train_x, train_y, valid_x, valid_y, test_x, test_y, stats(dict):
             stats 为数据集的统计信息(数量、占比、相对熵)
-        
+
     Examples:
         >>> import jionlp as jio
-        >>> dataset_x = ['马成宇在...', 
-                         '金融国力教育公司...', 
+        >>> dataset_x = ['马成宇在...',
+                         '金融国力教育公司...',
                          '延平区人民法院曾经...',
                          ...]
         >>> dataset_y = [[{'type': 'Person', 'text': '马成宇', 'offset': (0, 3)}],
@@ -103,7 +103,7 @@ def analyse_dataset(dataset_x, dataset_y, ratio=[0.8, 0.05, 0.15], shuffle=True)
             valid KL divergence: 0.048423, info dismatch: 3.10%
             test KL divergence: 0.002364, info dismatch: 0.15%
 
-    '''
+    """
     dataset = [[sample_x, sample_y] for sample_x, sample_y
                in zip(dataset_x, dataset_y)]
     
@@ -197,5 +197,3 @@ def analyse_dataset(dataset_x, dataset_y, ratio=[0.8, 0.05, 0.15], shuffle=True)
         logging.info('test ' + kl_fmt.format(test_kl_value, test_ratio))
     
     return train_x, train_y, valid_x, valid_y, test_x, test_y, stats
-
-

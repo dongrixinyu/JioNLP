@@ -1,5 +1,5 @@
 # -*- coding=utf-8 -*-
-'''
+"""
 TODO:
     1、拼音词典并不完善
     2、拼音词典并不能完全涵盖所有多音字情况，如“任性”与“任家萱”，在人名中，“任”
@@ -9,7 +9,7 @@ TODO:
     5、汉语中轻声标记为数字 5
     6、声母共计 23 个，韵母共计 35 个，可以直接使用 embedding 对其进行编码
 
-'''
+"""
 
 import os
 import pdb
@@ -22,7 +22,7 @@ from .trie_tree import TrieTree
 
 
 class Pinyin(object):
-    ''' 
+    """
     将汉字转为拼音，并提供额外的拼音展示方案，若对应字符无拼音，或字母、字符等，
     则添加 <py_unk> 作为标记，并且提供两种格式的返回形式。
 
@@ -37,7 +37,7 @@ class Pinyin(object):
     return:
         list(str|dict): 拼音列表
 
-    '''
+    """
     
     def __init__(self):
         self.trie_tree_obj = None
@@ -56,7 +56,7 @@ class Pinyin(object):
         
         self.pinyin_phrase = pinyin_phrase_loader()
         self.pinyin_char = pinyin_char_loader()
-        #pdb.set_trace() 
+        # pdb.set_trace()
         # 加载 trie 树
         self.trie_tree_obj = TrieTree()
         self.trie_tree_obj.build_trie_tree(self.pinyin_phrase, 'phrase')
@@ -64,8 +64,9 @@ class Pinyin(object):
         
         # 格式转换
         self._pinyin_formater()
-        
-    def _pinyin_convert_standard_2_simple(self, standard_pinyin, letter_map_dict):
+
+    @staticmethod
+    def _pinyin_convert_standard_2_simple(standard_pinyin, letter_map_dict):
         suffix = '5'
         res = list()
         for letter in standard_pinyin:
@@ -174,7 +175,7 @@ class Pinyin(object):
 
                 record_list.append(cur_pinyin)
             else:
-                #print(step, typing, pointer[0])
+                # print(step, typing, pointer[0])
                 if formater == 'standard':
                     record_list.append(self.py_unk)
                 elif formater == 'simple':
@@ -188,12 +189,9 @@ class Pinyin(object):
         return record_list
 
 
-
 if __name__ == '__main__':
     pinyin = Pinyin()
     text = '今天L.A.洛杉矶天气好晴朗，一丘之貉，想吃方便面。你还在工作吗？在航天飞机上工作吗？'
     res = pinyin(text, formater='detail')
     for i, j in zip(text, res):
         print(i, j)
-
-

@@ -1,44 +1,44 @@
 # -*- coding=utf-8 -*-
-'''
+"""
 TODO:
     1、常用的分词器有 jieba、清华 thuseg、北大 pkuseg 等。
     2、在时间的过滤中，主要使用规则过滤，jieba 常常将 “2017年” 拆分开，
-       而北大分词器则作为整体返回，因此，需要在后续中，增加对“2017”, “年” 
+       而北大分词器则作为整体返回，因此，需要在后续中，增加对“2017”, “年”
        类时间的过滤。
-       
+
        rule:
        1. 时间格式仅用于滤除具体确切的时间点和时间段，如“2019年6月30日”，
           “第一季度”，“18:30:51”，“3~4月份”，“清晨”，“年前” 等等，此类词
           汇描述了具体的时间，在语言中一般作为时间状语存在，因此在停用词滤
           除中，需要将该部分词汇滤除。
-       2. 但不滤除模糊的时间范围，如“三十年”，“六七个月”，“十周”，“四日” 
+       2. 但不滤除模糊的时间范围，如“三十年”，“六七个月”，“十周”，“四日”
           等等，这些时间描述了一个模糊的时间段，并没有确切的指代，在语言中
           一般做宾语，补语，主语，因此在停用词滤除中，一般不将此类词汇滤除。
        3. 有些词汇含义指代不明，如“三十一日”，具体指某月 31日，还是31天的
           时间，并不确切，此时不予滤除。
        4. 节日名称不予滤除，如“圣诞节”、“除夕夜”，尽管其指示具体的时间点，
           但是一般做名词性成分，因此不予滤除。
-          
+
     3、地名使用词典过滤，主要是中国省市县三级以及国外主要国家首都城市，因此
        大量的地名无法被过滤，主要包括国内乡镇、村、山川、省市简称、道路、
        新区、桥梁、地标、楼房小区、海洋（海峡、海沟）、区域（华北、南疆）、
        地形（盆地、沙漠）。这些均有待使用地名词典过滤。
-       
+
        rule:
        1. 地名既可以做位置状语，也可以做名词性成分，因此其过滤需要大而全。
           首先根据工具内词典将匹配的地名识别出来，并做过滤。
        2. 然后，使用正则对剩余不在词典中的地名做匹配过滤。存在误差，如“窗
           含西岭”，“锦荣家园城”，“万国”由于尾字匹配而导致错误。
-          
+
     4、数字滤除使用正则匹配。数字主要以 “数词 + 量词” 的形式出现，但该工具
        目前并未考虑量词的情况。
-       
+
        rule:
        1. 融合了百分比，千分比，万分比，十分比格式、序数词，形容词如 “数千
           万、三千余”，负数，数字范围如 “2000~5000”等，还差分数表示未添加，
           如 “三十分之一”。
-    
-'''
+
+"""
 import os
 import re
 import pdb
@@ -49,7 +49,7 @@ from jionlp.rule.rule_pattern import TIME_PATTERN, NUMBER_PATTERN, CHINESE_CHAR_
 
 
 class RemoveStopwords(object):
-    ''' 给出分词之后的结果，做判定，其中分词器使用用户自定义的，推荐的有
+    """ 给出分词之后的结果，做判定，其中分词器使用用户自定义的，推荐的有
     jieba 分词器、清华分词器 thuseg、北大分词器 pkuseg。
     该方法处理速度较快，但由于大量的中文词汇包含多义，如“本”字包含名词、
     代词、连词等词性，因此准确性较差。是词性标注的简易替代品。
@@ -65,7 +65,7 @@ class RemoveStopwords(object):
     Return:
         list(str)
 
-    '''
+    """
     def __init__(self):
         self.stopwords_list = None
 
@@ -80,8 +80,9 @@ class RemoveStopwords(object):
         self.location_pattern = re.compile(LOCATION_PATTERN)
         self.number_pattern = re.compile(NUMBER_PATTERN)
         self.chinese_char_pattern = re.compile(CHINESE_CHAR_PATTERN)
-        
-    def _prepare_world_locations(self):
+
+    @staticmethod
+    def _prepare_world_locations():
         world_location = world_location_loader()
         world_list = list()
         world_list.extend(list(world_location.keys()))
@@ -94,8 +95,9 @@ class RemoveStopwords(object):
                 world_list.append(info['capital'])
 
         return world_list
-        
-    def _prepare_china_locations(self):
+
+    @staticmethod
+    def _prepare_china_locations():
         china_location = china_location_loader()
         china_list = list()
         china_list.extend(list(china_location.keys()))
@@ -177,6 +179,3 @@ class RemoveStopwords(object):
             res_text_segs.append(word)
             
         return res_text_segs
-        
-
-

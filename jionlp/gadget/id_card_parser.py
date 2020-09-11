@@ -9,7 +9,7 @@ from jionlp.rule.rule_pattern import ID_CARD_CHECK_PATTERN
 
 
 class IDCardParser(object):
-    ''' 身份证号码解析器 '''
+    """ 身份证号码解析器 """
     def __init__(self):
         self.china_locations = None
         self.id_card_check_pattern = re.compile(ID_CARD_CHECK_PATTERN)
@@ -40,8 +40,8 @@ class IDCardParser(object):
             
         # 检查是否是身份证号
         match_flag = self.id_card_check_pattern.match(id_card)
-        #print(match_flag)
-        #pdb.set_trace()
+        # print(match_flag)
+        # pdb.set_trace()
         if match_flag is None:
             return None
 
@@ -66,8 +66,3 @@ class IDCardParser(object):
                 'birth_day': id_card[12:14],
                 'gender': gender,
                 'check_code': check_code}
-
-
-
-
-

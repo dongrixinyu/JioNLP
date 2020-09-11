@@ -43,6 +43,3 @@ if __name__ == '__main__':
     print(fl.__name__)
     pdb.set_trace()
     print(dir(fl))
-    #print(getattr(fl, 'keras'))
-    import fl
-    

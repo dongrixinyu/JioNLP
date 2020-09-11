@@ -26,7 +26,7 @@ class Bias(Enum):
     
 def sigmoid(x):
     try:
-        x = x  #/ 10.0  # 为了使结果平滑
+        x = x  # / 10.0  # 为了使结果平滑
         ans = math.exp(-x)
     except OverflowError:
         ans = float('inf')
@@ -89,7 +89,7 @@ class Items(object):
 
 
 class LexiconSentiment(object):
-    ''' 基于词典的情感分析计算，首先分句，找出每句中的情感词，否定词，以及情感乘子副词，
+    """ 基于词典的情感分析计算，首先分句，找出每句中的情感词，否定词，以及情感乘子副词，
     否定词起到逆转情感的作用，情感乘子副词起到条件情感强度的作用。由此计算出每句的情感值。
     并求各句的均值，得到文本的情感值，再经过 sigmoid 形成 0~1 取值的情感值。其中，0代表
     极端负面，1代表极端正面。目前准确率在 70~80%，有较大优化空间。
@@ -107,7 +107,7 @@ class LexiconSentiment(object):
         >>> res = senti_analysis(text)
         >>> print(res)
     
-    '''
+    """
     def __init__(self):
         self.negative_list = negative_words_loader()
         self.sentiment_dict = sentiment_words_loader()
@@ -124,20 +124,20 @@ class LexiconSentiment(object):
     def get_sentence_sentiment(self, sentence):
         print(sentence)
         # rule1: 转折词汇，不考虑前面的情感词，仅考虑之后的情感词
-        trantision_item = self.transition_words.search(sentence)
-        if trantision_item:
-            match_word = trantision_item.group()
+        transition_item = self.transition_words.search(sentence)
+        if transition_item:
+            match_word = transition_item.group()
             sentence_split = sentence.split(match_word)
             if len(sentence_split) > 0:
                 sentence = sentence_split[-1]
                  
         items_object = Items()
         for item in self.lexicon_ner(sentence):
-            #tmp_end = tmp_end/3
+            # tmp_end = tmp_end/3
             it_object = Item(item['offset'][0], item['offset'][1],
                              20, 20, item['text'])
             
-            #print(item)
+            # print(item)
             items_object.put_note(it_object)  # 整理每一个情感词汇
         
         val_list = list()
@@ -148,7 +148,7 @@ class LexiconSentiment(object):
             word = x.word
             bias = x.bias
             next_len = x.next_len
-            
+            word_val = 0
             if word in self.sentiment_dict:
                 word_val = self.sentiment_dict.get(word)
                 if sentence_weight != 1.0:  # 前有乘子副词，则相乘
@@ -198,10 +198,12 @@ class LexiconSentiment(object):
         return sentiment_value
 
 
+class SentimentAnalysis(object):
+    pass
+
+
 if __name__ == '__main__':
     gs = SentimentAnalysis()
-    #s = "我坐在椅子上看城市的衰落，我摘下一片叶子，让它代替我"
+    # s = "我坐在椅子上看城市的衰落，我摘下一片叶子，让它代替我"
     s = '14岁女孩坠亡生前疑遭强奸致孕'
     print(gs.get_sentiment(s))
-
-

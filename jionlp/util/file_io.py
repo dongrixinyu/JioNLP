@@ -25,8 +25,9 @@ def read_file_by_iter(file_path, line_num=None,
 
     Examples:
         >>> file_path = '/path/to/stopwords.txt'
-        >>> print(bbd.read_file_by_iter(file_path, line_num=3))
-        ['在', '然后', '还有']
+        >>> print(jio.read_file_by_iter(file_path, line_num=3))
+
+        # ['在', '然后', '还有']
 
     """
     count = 0
@@ -72,7 +73,7 @@ def read_file_by_iter(file_path, line_num=None,
 def read_file_by_line(file_path, line_num=None, 
                       skip_empty_line=True, strip=True,
                       auto_loads_json=True):
-    """读取一个文件的前 N 行，按列表返回，
+    """ 读取一个文件的前 N 行，按列表返回，
     文件中按行组织，要求 utf-8 格式编码的自然语言文本。
     若每行元素为 json 格式可自动加载。
 
@@ -88,8 +89,9 @@ def read_file_by_line(file_path, line_num=None,
 
     Examples:
         >>> file_path = '/path/to/stopwords.txt'
-        >>> print(bbd.read_file_by_line(file_path, line_num=3))
-        ['在', '然后', '还有']
+        >>> print(jio.read_file_by_line(file_path, line_num=3))
+
+        # ['在', '然后', '还有']
 
     """
     content_list = list()
@@ -151,7 +153,7 @@ def read_file_by_line(file_path, line_num=None,
 
 def write_file_by_line(data_list, file_path, start_line_idx=None,
                        end_line_idx=None, replace_slash_n=True):
-    """将一个数据 list 按行写入文件中，
+    """ 将一个数据 list 按行写入文件中，
     文件中按行组织，以 utf-8 格式编码的自然语言文本。
 
     Args:
@@ -166,7 +168,7 @@ def write_file_by_line(data_list, file_path, start_line_idx=None,
 
     Examples:
         >>> data_list = [{'text': '上海'}, {'text': '广州'}]
-        >>> bbd.write_file_by_line(data_list, 'sample.json')
+        >>> jio.write_file_by_line(data_list, 'sample.json')
 
     """
     if start_line_idx is None:
@@ -187,11 +189,3 @@ def write_file_by_line(data_list, file_path, start_line_idx=None,
                 wrong_line = 'the type of `{}` in data_list is `{}`'.format(
                     item, type(item))
                 raise TypeError(wrong_line)
-    
-    
-
-
-
-
-
-

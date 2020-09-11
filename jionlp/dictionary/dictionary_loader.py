@@ -20,7 +20,7 @@ __all__ = ['china_location_loader', 'world_location_loader',
 
 
 def china_location_loader():
-    ''' 加载中国地名词典 china_location.txt '''
+    """ 加载中国地名词典 china_location.txt """
     location_jio = read_file_by_line(
         os.path.join(GRAND_DIR_PATH, 'dictionary/china_location.txt'), 
         strip=False)
@@ -65,7 +65,7 @@ def china_location_loader():
 
 
 def world_location_loader():
-    ''' 加载世界地名词典 world_location.txt '''
+    """ 加载世界地名词典 world_location.txt """
     content = read_file_by_line(
         os.path.join(GRAND_DIR_PATH, 'dictionary/world_location.txt'))
     
@@ -97,7 +97,7 @@ def world_location_loader():
     
     
 def stopwords_loader():
-    ''' 加载停用词典 stopwords.txt '''
+    """ 加载停用词典 stopwords.txt """
     res = read_file_by_line(os.path.join(
         GRAND_DIR_PATH, 'dictionary/stopwords.txt'))
     # 一般漏掉了若干转换符号
@@ -106,7 +106,7 @@ def stopwords_loader():
 
 
 def negative_words_loader():
-    ''' 加载否定词典 negative_words.txt '''
+    """ 加载否定词典 negative_words.txt """
     res = read_file_by_line(os.path.join(
         GRAND_DIR_PATH, 'dictionary/negative_words.txt'))
     
@@ -114,9 +114,9 @@ def negative_words_loader():
 
 
 def chinese_char_dictionary_loader():
-    ''' 加载新华字典，分别包括：
+    """ 加载新华字典，分别包括：
     汉字，释义，详细释义 3 部分
-    '''
+    """
     content = read_file_by_line(
         os.path.join(GRAND_DIR_PATH, 'dictionary',
                      'chinese_char_dictionary.txt'), strip=False)
@@ -135,13 +135,12 @@ def chinese_char_dictionary_loader():
     
     
 def chinese_idiom_loader():
-    ''' 加载成语词典 chinese_idiom.txt '''
+    """ 加载成语词典 chinese_idiom.txt """
     content = read_file_by_line(
         os.path.join(GRAND_DIR_PATH, 'dictionary/chinese_idiom.txt'))
     
     result = dict()
-    cur_item = dict()
-    import json
+
     for line in content:
         item_tup = line.split('\t')
         
@@ -157,9 +156,9 @@ def chinese_idiom_loader():
     
     
 def chinese_word_dictionary_loader():
-    ''' 加载新华词典，词典中有 20 万余个多音字，分别包括：
+    """ 加载新华词典，词典中有 20 万余个多音字，分别包括：
     词语及其释义
-    '''
+    """
     content = read_file_by_line(
         os.path.join(GRAND_DIR_PATH, 'dictionary',
                      'chinese_word_dictionary.txt'))
@@ -174,13 +173,13 @@ def chinese_word_dictionary_loader():
     
 
 def pornography_loader():
-    ''' 加载淫秽色情词典 pornography.txt '''
+    """ 加载淫秽色情词典 pornography.txt """
     return read_file_by_line(os.path.join(
         GRAND_DIR_PATH, 'dictionary/pornography.txt'))
     
     
 def char_radical_loader():
-    ''' 加载汉字字形词典 char_radical.txt '''
+    """ 加载汉字字形词典 char_radical.txt """
     structure_dict = {
         0: '一体结构', 1: '左右结构', 2: '上下结构', 3: '左中右结构',
         4: '上中下结构', 5: '右上包围结构', 6: '左上包围结构', 7: '左下包围结构',
@@ -200,7 +199,7 @@ def char_radical_loader():
     
     
 def idf_loader():
-    ''' 加载 idf 文件，属于 tfidf 算法的一部分 '''
+    """ 加载 idf 文件，属于 tfidf 算法的一部分 """
     content = read_file_by_line(os.path.join(
         GRAND_DIR_PATH, 'dictionary', 'idf.txt'))
     
@@ -213,7 +212,7 @@ def idf_loader():
     
     
 def traditional_simplified_loader(file_name):
-    ''' 加载繁简体转换词典 '''
+    """ 加载繁简体转换词典 """
     content = read_file_by_line(os.path.join(
         GRAND_DIR_PATH, 'dictionary', file_name))
     
@@ -253,9 +252,9 @@ def pinyin_char_loader():
 
 
 def sentiment_expand_words_loader():
-    ''' 加载情感词典，并附带其对应的情感权重
-    
-    '''
+    """ 加载情感词典，并附带其对应的情感权重
+
+    """
     content = read_file_by_line(os.path.join(
         GRAND_DIR_PATH, 'dictionary', 'sentiment_expand_words.txt'))
     
@@ -264,16 +263,16 @@ def sentiment_expand_words_loader():
         key, value = item.split('\t')
         assert len(item.split('\t')) == 2
         
-        #multi_pinyin = value.split('/')
+        # multi_pinyin = value.split('/')
         sentiment_expand_words_dict.update({key: float(value)})
 
     return sentiment_expand_words_dict
 
 
 def sentiment_words_loader():
-    ''' 加载情感词典，并附带其对应的情感权重
-    
-    '''
+    """ 加载情感词典，并附带其对应的情感权重
+
+    """
     content = read_file_by_line(os.path.join(
         GRAND_DIR_PATH, 'dictionary', 'sentiment_words.txt'))
     
@@ -282,18 +281,18 @@ def sentiment_words_loader():
         key, value = item.split('\t')
         assert len(item.split('\t')) == 2
         
-        #multi_pinyin = value.split('/')
+        # multi_pinyin = value.split('/')
         sentiment_words_dict.update({key: float(value)})
 
     return sentiment_words_dict
     
     
 def xiehouyu_loader():
-    ''' 加载歇后语词典，共计 17000 余条，其中有相似的歇后语，如：
+    """ 加载歇后语词典，共计 17000 余条，其中有相似的歇后语，如：
     一个模子出来的  一个样
     一个模子出来的  一模一样
     对于此类歇后语，均按不同的表达分为不同的歇后语，方便检索查询
-    '''
+    """
     xiehouyu = read_file_by_line(os.path.join(
         GRAND_DIR_PATH, 'dictionary', 'xiehouyu.txt'))
     
@@ -301,23 +300,3 @@ def xiehouyu_loader():
     xiehouyu = [item.split('\t') for item in xiehouyu]
 
     return xiehouyu
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

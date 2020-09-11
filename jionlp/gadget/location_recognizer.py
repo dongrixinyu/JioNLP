@@ -1,5 +1,5 @@
 # -*- coding=utf-8 -*-
-'''
+"""
 给定一篇中文文本，确定其归属地。主要应用在新闻领域，确定新闻的发生地
 注意事项：
     1、该方法主要应用于舆情分析与统计
@@ -21,7 +21,7 @@
        “日美同盟”中需要分别考虑日本、美国，此类简称也无法考虑。
     9、返回结果中，第一个地址属于文本的归属地的正确率为 93%。
 
-'''
+"""
 
 
 import os
@@ -95,19 +95,19 @@ class LocationRecognizer(object):
         self.world_administrative_map_list = world_administrative_map_list
         
     def get_china_candidates(self, location):
-        ''' 从地址中获取所有可能涉及到的候选地址，
+        """ 从地址中获取所有可能涉及到的候选地址，
         如给定，朝阳，匹配得到
             [
-                {'province': '北京市', 'city': '北京市', 'county': '朝阳区'}, 
-                {'province': '辽宁省', 'city': '朝阳市', 'county': None}, 
-                {'province': '辽宁省', 'city': '朝阳市', 'county': '朝阳县'}, 
+                {'province': '北京市', 'city': '北京市', 'county': '朝阳区'},
+                {'province': '辽宁省', 'city': '朝阳市', 'county': None},
+                {'province': '辽宁省', 'city': '朝阳市', 'county': '朝阳县'},
                 {'province': '吉林省', 'city': '长春市', 'county': '朝阳区'}
             ]
-            
+
         存在一个地址对应多个详细地址的情况，如 朝阳，匹配得到 北京朝阳，辽宁朝阳，吉林长春朝阳
         此种情况下需要全部返回。
-        
-        '''
+
+        """
         if self.china_administrative_map_list is None:
             self._prepare()
         
@@ -142,10 +142,10 @@ class LocationRecognizer(object):
         return candidate_admin_list
     
     def get_world_candidates(self, location):
-        ''' 给定一个地址字符串，找出其中的候选地址，
+        """ 给定一个地址字符串，找出其中的候选地址，
         如给定 科伦坡，匹配得到
             [{'country': '斯里兰卡', 'city': '科伦坡'}]
-        '''
+        """
         if self.world_administrative_map_list is None:
             self._prepare()
             
@@ -190,21 +190,22 @@ class LocationRecognizer(object):
             # 世界地名较少有重复的城市名称，因此可以考虑当匹配后，直接跳出循环
         return candidate_admin_list
 
-    def _combine_china_locations(self, china_combine_list, cur_location):
-        ''' 给定一个匹配的地名列表，以及一个当前的待合并地址，
+    @staticmethod
+    def _combine_china_locations(china_combine_list, cur_location):
+        """ 给定一个匹配的地名列表，以及一个当前的待合并地址，
         将当前的地址放入地名列表，须注意与该合并的地址进行合并。
         china_combine_list: 结构如下
             [[{'province': '江苏省', 'city': '南京市', 'county': '鼓楼区'}, 2, True],
              [{'province': '河南省', 'city': '开封市', 'county': '鼓楼区'}, 1, True],
              [{'province': '河南省', 'city': None, 'county': '鼓楼区'}, 6, False]]
-             
+
              其中 数字代表出现的频次，True 代表可以作为地址结果进行返回，
              False 表示不可以作为最终结果返回
-             
+
         cur_location: 结构如下：
             [{'province': '河南省', 'city': '开封市', 'county': None}, 8]
-            
-        '''
+
+        """
         if len(china_combine_list) == 0:
             cur_location.append(True)
             china_combine_list.append(cur_location)
@@ -223,6 +224,7 @@ class LocationRecognizer(object):
             if item[0]['county'] is not None and cur_location[0]['county'] is not None:
                 if item[0]['county'] != cur_location[0]['county']:
                     cur_combine_flag = False
+
             if cur_combine_flag:
                 # 可以合并了，因为都一样的公共部分
                 # 将较短的一个地名设置为 False，频次取两者最大值
@@ -247,30 +249,31 @@ class LocationRecognizer(object):
             china_combine_list.append(cur_location)
             
         return china_combine_list
-        
-    def _combine_world_locations(self, world_combine_list, cur_location):
-        ''' 给定一个匹配的地名列表，以及一个当前的待合并地址，
+
+    @staticmethod
+    def _combine_world_locations(world_combine_list, cur_location):
+        """ 给定一个匹配的地名列表，以及一个当前的待合并地址，
         将当前的地址放入地名列表，须注意与该合并的地址进行合并。
         world_combine_list: 结构如下
             [[{'country': '美国', 'city': '华盛顿'}, 2, True],
              [{'country': '斯里兰卡', 'city': '科伦坡'}, 1, True],
              [{'country': '斯里兰卡', 'city': None}, 6, False]]
-             
+
              其中 数字代表出现的频次，True 代表可以作为地址结果进行返回，
              False 表示不可以作为最终结果返回
-             
+
         cur_location: 结构如下：
             [{'country': '日本', 'city': None}, 8]
-            
-        '''
+
+        """
         if len(world_combine_list) == 0:
             cur_location.append(True)
             world_combine_list.append(cur_location)
             return world_combine_list
-            
+
         combine_flag = False
         for item in world_combine_list:
-            
+
             cur_combine_flag = True
             if item[0]['country'] is not None and cur_location[0]['country'] is not None:
                 if item[0]['country'] != cur_location[0]['country']:
@@ -278,6 +281,7 @@ class LocationRecognizer(object):
             if item[0]['city'] is not None and cur_location[0]['city'] is not None:
                 if item[0]['city'] != cur_location[0]['city']:
                     cur_combine_flag = False
+
             if cur_combine_flag:
                 # 可以合并了，因为都一样的公共部分
                 # 将较短的一个地名设置为 False，频次取两者最大值
@@ -287,27 +291,27 @@ class LocationRecognizer(object):
                     item[1] = item[1] + cur_location[1]
                     cur_location.append(False)
                     combine_flag = True  # 在计算最末将该地址添加进去
-                    
+
                 else:  # 替换掉该条较短的地址，作为最终结果
                     item[2] = False
                     cur_location[1] = item[1] + cur_location[1]
                     cur_location.append(True)
-                    
+
                     combine_flag = True
-                    
+
         if combine_flag:
             world_combine_list.append(cur_location)
         else:  # 并无合并，但是仍需加在所有结果的末尾
             cur_location.append(True)
             world_combine_list.append(cur_location)
-            
+
         return world_combine_list
-        
+
     def __call__(self, text, top_k='default'):
-        ''' 地域识别，识别出一篇文本中主要涉及的地址，即返回一篇文本的归属地，
-        返回的结果具体到地级市，国外具体到城市 
+        """ 地域识别，识别出一篇文本中主要涉及的地址，即返回一篇文本的归属地，
+        返回的结果具体到地级市，国外具体到城市
         具体假设为，每一个句子仅识别一个地址，然后统计所有的结果
-        
+
         计算方法：
         1、对文本做分词与词性标注（默认使用北大工具 pkuseg），找出其中地名词汇，统计词频；
         2、对所有地名词汇进行扩充，如，将“广州”扩展成
@@ -315,20 +319,20 @@ class LocationRecognizer(object):
         3、将存在上下级关系的地名进行合并，如“西藏”和“拉萨”，同属于一个地址，则进行合并，
            {'province': '西藏', 'city': '拉萨', 'county': None}；
         4、统计国内、国外、以及无法归纳的地址，按频次排序返回。
-        
+
         Args:
             text(str): 输入的文本，一般是网络新闻文本
-            
+
         Returns:
             dict: 地名结果，包含若干字段，见如下示例。地名分为国内和国外两部分，其中国内
                 按照省、市、县，国外按照国家、市的结构进行返回。每个分别默认返回最佳的结
                 果。如两个国家城市具有同样的权重，则同时返回。返回数量可以使用参数调节。
                 除此之外，仍有一些地名无法用地名行政区划进行匹配，则在 Addition 字段进
                 行返回。
-            
+
         Examples:
-            >>> text = '成都市召开了中日韩三国峰会，中国、日本、韩国三国首脑，日本东京和
-                尚家村缔结了互帮互助...'
+            >>> text = '成都市召开了中日韩三国峰会，中国、日本、韩国三国首脑，'
+                       '日本东京和尚家村缔结了互帮互助...'
             >>> print(jio.recognize_location(text))
             {
                 'domestic': [
@@ -364,15 +368,15 @@ class LocationRecognizer(object):
                     '直布罗陀海峡'
                 ]
             }
-        
-        '''
+
+        """
         if self.pkuseg is None:
             self._prepare()
         
         text_pos_seg = self.pkuseg.cut(text)
         text_location = [item[0] for item in text_pos_seg if item[1] == 'ns']
         if len(text_location) == 0:
-            return final_res
+            return {'domestic': None, 'foreign': None, 'others': None}
         
         location_count = dict(collections.Counter(text_location).most_common())
         
@@ -391,7 +395,7 @@ class LocationRecognizer(object):
         
         domestic_locations = sorted(
             [item[:2] for item in china_combine_list if item[-1]],
-            key=lambda i:i[1], reverse=True)
+            key=lambda i: i[1], reverse=True)
         
         # 世界部分
         world_combine_list = list()  # 将若干世界地名合并
@@ -435,4 +439,3 @@ if __name__ == '__main__':
     res = lr(text)
     print(json.dumps(res, ensure_ascii=False, 
                      indent=4, separators=(',', ':')))
-

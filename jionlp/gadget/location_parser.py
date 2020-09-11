@@ -12,7 +12,7 @@ from jionlp.dictionary.dictionary_loader import china_location_loader
 
 
 class LocationParser(object):
-    ''' 将给定中国地址字串进行解析出来，抽取或补全地址对应的省、市、县信息，此外还包
+    """ 将给定中国地址字串进行解析出来，抽取或补全地址对应的省、市、县信息，此外还包
     括详细地址、原地址等。其中，省市县的准确度高，而道路等详细字段准确度低，主要应用
     目标文本示例如下：
 
@@ -55,7 +55,7 @@ class LocationParser(object):
         >>> res = jio.parse_location(text)
         >>> print(res)
 
-    '''
+    """
     def __init__(self):
         self.administrative_map_list = None
         
@@ -99,7 +99,7 @@ class LocationParser(object):
         self.municipalities_cities = ['北京', '上海', '天津', '重庆', '香港', '澳门']
         
     def get_candidates(self, location_text):
-        ''' 从地址中获取所有可能涉及到的候选地址 '''
+        """ 从地址中获取所有可能涉及到的候选地址 """
         
         if self.administrative_map_list is None:
             self._prepare()
@@ -223,5 +223,3 @@ if __name__ == '__main__':
     print(json.dumps(res, ensure_ascii=False, 
                      indent=4, separators=(',', ':')))
     pdb.set_trace()
-
-

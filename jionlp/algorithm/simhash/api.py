@@ -8,18 +8,7 @@ from jionlp import logging
 
 
 class SimHash(object):
-    '''
-    使用范例:
-    >>> from bbd_tools.algorithms.lexicon_ner import LexiconNER
-    >>> lexicon_ner = LexiconNER(dicts_files)
-    >>> result = lexicon_ner.predict(text)
-    
-    Args:
-        dicts_files: str 类型，一个词典文件或文件夹的路径，
-            若非绝对
-            其中每一个词典文件的名
-        text: str 类型，被搜索的文本内容。
-    '''
+
     def __init__(self, use_redis=True, f_topN=500, redis_db_name=list([13, 14, 15, 16]),
                  redis_host='0.0.0.0', redis_port=6379, redis_password='password',
                  delete_date_before=30, 

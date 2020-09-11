@@ -1,5 +1,5 @@
 # -*- coding=utf-8 -*-
-'''
+"""
 TODO:
     1、繁简体字、词的映射表目前并不完善。
     2、简体字主要应用在中国大陆，繁体字主要应用在香港、台湾、新加坡等地。
@@ -14,8 +14,8 @@ TODO:
        “专业”必须在做名词时才可以替换，而形容词时不可替换，目前工具仍未保证
        该功能。
     5、一部分汉字简体，对应多个繁体字，在简体转繁体时，仅随机选取一个繁体字。
-    
-'''
+
+"""
 
 import os
 import pdb
@@ -25,10 +25,10 @@ from .trie_tree import TrieTree
 
 
 class TSConversion(object):
-    '''
+    """
     给定一段文本，将其中的简体字转换为繁体字，或将繁体字转换为简体字
-    
-    '''
+
+    """
     def __init__(self):
         self.trie_tree_obj = None
         
@@ -47,17 +47,17 @@ class TSConversion(object):
         self.trie_tree_obj.build_trie_tree(self.sim2tra_token, 'sim')
 
     def tra2sim(self, text, mode='char'):
-        ''' 给定一段文本，将其中的繁体字转换为简体字，提供 char 和 word 两种模式：
+        """ 给定一段文本，将其中的繁体字转换为简体字，提供 char 和 word 两种模式：
         char 模式是按照字符逐个替换为简体字。word 模式是将港台地区的词汇表述习惯，
         替换为符合大陆表述习惯的相应词汇。采用前向最大匹配的方式执行。
-        
+
         Args:
             text(str): 中文文本字符串
             mode(char|word): 选择按字逐个转换，还是按词替换。
-        
+
         return:
             str: 简体文本字符串
-            
+
         Examples:
             >>> import jionlp as jio
             >>> text = '今天天氣好晴朗，想喫速食麵。妳還在工作嗎？在太空梭上工作嗎？'
@@ -69,7 +69,7 @@ class TSConversion(object):
             # 今天天气好晴朗，想吃速食面。你还在工作吗？在太空梭上工作吗？
             # 今天天气好晴朗，想吃方便面。你还在工作吗？在航天飞机上工作吗？
 
-        '''
+        """
         if self.trie_tree_obj is None:
             self._prepare()
         
@@ -91,17 +91,17 @@ class TSConversion(object):
                 pointer = text[i: self.trie_tree_obj.depth + i]
                 step, typing = self.trie_tree_obj.search(pointer)
                 if typing == 'tra':
-                    #pdb.set_trace()
+                    # pdb.set_trace()
                     record_list.append(self.tra2sim_token[pointer[0: step]])
                 else:
                     record_list.append(pointer[0: step])
-                    #pdb.set_trace()
+                    # pdb.set_trace()
                 i += step
             
             return ''.join(record_list)
 
     def sim2tra(self, text, mode='char'):
-        ''' 将简体转换为繁体 '''
+        """ 将简体转换为繁体 """
         if self.trie_tree_obj is None:
             self._prepare()
             
@@ -123,16 +123,15 @@ class TSConversion(object):
                 pointer = text[i: self.trie_tree_obj.depth + i]
                 step, typing = self.trie_tree_obj.search(pointer)
                 if typing == 'sim':
-                    #pdb.set_trace()
+                    # pdb.set_trace()
                     record_list.append(self.sim2tra_token[pointer[0: step]])
                 else:
                     assert step == 1
                     record_list.append(pointer[0: step])
-                    #pdb.set_trace()
+                    # pdb.set_trace()
                 i += step
             
             return ''.join(record_list)
-
 
 
 if __name__ == '__main__':
@@ -145,6 +144,3 @@ if __name__ == '__main__':
     print(res)
     res = ts.tra2sim('今天天氣好晴朗，想吃速食麵。你還在工作嗎？在太空梭上工作嗎？', mode='word')
     print(res)
-
-
-

@@ -1,32 +1,29 @@
 # -*- coding=utf-8 -*-
 
-'''
+"""
 DESCRIPTION:
     1、NER 数据集有两种存储格式
         entity 格式，e.g.
-            ['胡静静在水利局工作。', 
+            ['胡静静在水利局工作。',
              [{'text': '胡静静', 'offset': [0, 3], 'type': 'Person'},
              {'text': '水利局', 'offset': [4, 7], 'type': 'Orgnization'}]]
         tag 格式，e.g.
             [['胡', '静', '静', '在', '水', '利', '局', '工', '作', '。'],
              ['B-Person', 'I-Person', 'E-Person', 'O', 'B-Orgnization',
              'I-Orgnization', 'E-Orgnization', 'O', 'O', 'O']]
-        
+
         所有的 NER 数据均在这两者之间进行转换，重叠标注的 NER 模型暂不在本项目的
         考虑范围内，为保证数据中 \n\r\t 等转义字符的稳定一致性，均采用 json 格式
         存储数据。
-             
-    2、默认采用的标注标准为 BIOES 
+
+    2、默认采用的标注标准为 BIOES
         NER 有多套标注标准，如 BIO、BMOE、BMOES 等等，相差均不大，为了明确实体边
         界考虑，默认选择 B(Begin)I(Inside)O(Others)E(End)S(Single) 标注标注。
-    
+
     3、NER 数据集常见的有两种 token 级别，字级别与词级别，两者的相互转换需要考虑分
         词器的错分、字词 offset 变化等情况。
-        
-TODO:
-    1、
-    2、 
-'''
+
+"""
 
 
 import pdb
@@ -41,27 +38,28 @@ __all__ = ['entity2tag', 'tag2entity', 'char2word', 'word2char']
 
 def entity2tag(token_list: List[str], entities: List[Dict[str, Any]], 
                formater='BIOES'):
-    ''' 将实体 entity 格式转为 tag 格式，若标注过程中有重叠标注，则会自动将靠后的
+    """ 将实体 entity 格式转为 tag 格式，若标注过程中有重叠标注，则会自动将靠后的
     实体忽略、删除。针对单条处理，不支持批量处理。
-    
+
     Args:
-        ner_entities(List[str, Dict[str, Any]]): 文本以及相应的实体。
+        token_list(List[str]): token 化的文本的 list
+        entities(List[str, Dict[str, Any]]): 文本相应的实体。
         formater(str): 选择的标注标准
     return:
         List[List[str], List[str]]: tag 格式的数据
-        
+
     Examples:
         >>> token_list = '胡静静在水利局工作。'  # 字级别
-        >>> token_list = ['胡', '静', '静', '在', '水', 
+        >>> token_list = ['胡', '静', '静', '在', '水',
                           '利', '局', '工', '作', '。']  # 字或词级别
-        >>> ner_entities =                 
+        >>> ner_entities =
                 [{'text': '胡静静', 'offset': [0, 3], 'type': 'Person'},
                  {'text': '水利局', 'offset': [4, 7], 'type': 'Orgnization'}]
         >>> print(jio.ner.entity2tag(token_list, ner_entities))
             ['B-Person', 'I-Person', 'E-Person', 'O', 'B-Orgnization',
              'I-Orgnization', 'E-Orgnization', 'O', 'O', 'O']
-             
-    '''
+
+    """
     tags = ['O' for i in range(len(token_list))]
     
     flag = 0  # 判断重叠标注
@@ -90,12 +88,12 @@ def entity2tag(token_list: List[str], entities: List[Dict[str, Any]],
     
 
 def tag2entity(token_list: List[str], tags: List[str], verbose=False):
-    ''' 将 tag 格式转为实体 entity 格式，若格式中有破损不满足 BIOES 标准，则不转
+    """ 将 tag 格式转为实体 entity 格式，若格式中有破损不满足 BIOES 标准，则不转
     换为实体并支持报错。针对单条数据处理，不支持批量处理。
-    
+
     Args:
-        in_str: 输入的文本 token 序列
-        tags: 文本 token 序列对应的标签
+        token_list(List[str]): 输入的文本 token 序列
+        tags(List[str]): 文本 token 序列对应的标签
         verbose(bool): 是否打印出抽取实体时的详细错误信息( BIOES 标准错误)
 
     Returns:
@@ -103,15 +101,15 @@ def tag2entity(token_list: List[str], tags: List[str], verbose=False):
 
     Examples:
         >>> token_list = '胡静静在水利局工作。'  # 字级别
-        >>> token_list = ['胡', '静', '静', '在', '水', 
+        >>> token_list = ['胡', '静', '静', '在', '水',
                           '利', '局', '工', '作', '。']  # 字或词级别
         >>> tags = ['B-Person', 'I-Person', 'E-Person', 'O', 'B-Orgnization',
                     'I-Orgnization', 'E-Orgnization', 'O', 'O', 'O']
         >>> print(jio.ner.tag2entity(token_list, tags))
             [{'text': '胡静静', 'offset': [0, 3], 'type': 'Person'},
              {'text': '水利局', 'offset': [4, 7], 'type': 'Orgnization'}]]
-    
-    '''
+
+    """
     entities = list()
     start = None
 
@@ -156,7 +154,7 @@ def tag2entity(token_list: List[str], tags: List[str], verbose=False):
     
     
 def char2word(char_entity_list, word_token_list, verbose=False):
-    '''将字 token 的 ner 训练数据组织成词 token，数据结构不变。针对单条数据处理，
+    """ 将字 token 的 ner 训练数据组织成词 token，数据结构不变。针对单条数据处理，
     不支持批量处理。
     根据经验，jieba 分词的分词错误造成实体被丢弃，其错误率在 4.62%，
     而 pkuseg 分词器错误率在 3.44%。
@@ -182,8 +180,8 @@ def char2word(char_entity_list, word_token_list, verbose=False):
         >>> print(jio.ner.char2word(char_entity_list, word_token_list))
             [{'text': '胡静静', 'offset': [0, 1], 'type': 'Person'},
              {'text': '江西红叶建筑公司', 'offset': [2, 6], 'type': 'Company'}]
-    
-    '''
+
+    """
 
     idx_flag = 0
     idx_list = [0]
@@ -226,13 +224,13 @@ def char2word(char_entity_list, word_token_list, verbose=False):
 
     
 def word2char(word_entity_list, word_token_list):
-    ''' 将 ner 数据由词级别转换为字级别，结构不变。针对单条数据处理，
+    """ 将 ner 数据由词级别转换为字级别，结构不变。针对单条数据处理，
     不支持批量处理。
 
     Args:
         word_entity_list: 词 token 的实体列表
         word_token_list: 词 token 的文本序列列表
-        
+
     Returns:
         list: 字级别的 ner 数据
 
@@ -245,7 +243,7 @@ def word2char(word_entity_list, word_token_list):
                 [{'text': '胡静静', 'offset': [0, 3], 'type': 'Person'},
                  {'text': '江西红叶建筑公司', 'offset': [5, 13], 'type': 'Company'}]
 
-    '''
+    """
 
     idx_flag = 0
     idx_list = list()
@@ -265,14 +263,3 @@ def word2char(word_entity_list, word_token_list):
                                  word_entity['offset'][1]])})
         
     return char_entity_list
-
-
-
-
-
-
-
-
-
-
-

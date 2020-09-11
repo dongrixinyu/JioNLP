@@ -6,7 +6,7 @@ import pdb
 
 
 class SplitSentence(object):
-    '''将文本切分为若干句子，其中处理引号的部分逻辑情况较多
+    """ 将文本切分为若干句子，其中处理引号的部分逻辑情况较多
 
     Args:
         text(str): 字符串文本
@@ -20,9 +20,10 @@ class SplitSentence(object):
     Examples:
         >>> text = '中华古汉语，泱泱大国，历史传承的瑰宝。'
         >>> print(jio.split_sentence(text, criterion='fine'))
-        ['中华古汉语，', '泱泱大国，', '历史传承的瑰宝。']
 
-    '''
+        # ['中华古汉语，', '泱泱大国，', '历史传承的瑰宝。']
+
+    """
     def __init__(self):
         self.puncs_fine = None
         
@@ -143,8 +144,3 @@ if __name__ == '__main__':
     text = '央视新闻消息，近日，特朗普老友皮尔斯·摩根喊话特朗普：“美国人的生命比你的选举更重要。如果你继续以自己为中心，继续玩弄愚蠢的政治……如果你意识不到自己>的错误，你就做不对”。目前，特朗普已“取关”了这位老友。'
     res = split_sentence(text, criterion='fine')
     print(res)
-    
-    
-    
-    
-    

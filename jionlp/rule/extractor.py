@@ -5,19 +5,13 @@ import re
 import pdb
 
 from .rule_pattern import *
-from jionlp.dictionary.dictionary_loader import china_location_loader
 
 
-__all__ = ['clean_text', 'extract_email', 'extract_id_card', 
-           'extract_ip_address', 'extract_money', 'extract_parentheses', 
-           'extract_phone_number', 'extract_qq', 'extract_url', 
-           'remove_email', 'remove_html_tag', 'remove_id_card', 
-           'remove_ip_address', 'remove_phone_number', 'remove_qq', 
-           'remove_url', 'remove_exception_char', 'remove_parentheses']
+__all__ = ['Extractor']
 
 
 class Extractor(object):
-    ''' 规则抽取器 '''
+    """ 规则抽取器 """
     def __init__(self):
         self.money_pattern = None
         self.email_pattern = None
@@ -28,28 +22,30 @@ class Extractor(object):
         self.id_card_pattern = None
         self.html_tag_pattern = None
         self.qq_pattern = None
+        self.strict_qq_pattern = None
         self.cell_phone_pattern = None
         self.landline_phone_pattern = None
         self.extract_parentheses_pattern = None
         self.remove_parentheses_pattern = None
         self.parentheses_pattern = PARENTHESES_PATTERN
+        self.parentheses_dict = None
         self.redundent_pattern = None
         self.exception_pattern = None
         self.full_angle_pattern = None
         self.chinese_char_pattern = None
 
-    #@staticmethod
-    def _extract_base(self, pattern, text, with_offset=False):
-        '''正则抽取器的基础函数
-        
+    @staticmethod
+    def _extract_base(pattern, text, with_offset=False):
+        """ 正则抽取器的基础函数
+
         Args:
             text(str): 字符串文本
             with_offset(bool): 是否携带 offset （抽取内容字段在文本中的位置信息）
 
         Returns:
             list: 返回结果
-        
-        '''
+
+        """
         if with_offset:
             '''
             if pattern == self.strict_qq_pattern:
@@ -69,7 +65,8 @@ class Extractor(object):
         """生成 redundant
 
         Args:
-            redundant_char: 冗余字符集
+            # redundant_char: 冗余字符集
+            text: 待处理文本
 
         Returns:
             正则pattern
@@ -92,7 +89,7 @@ class Extractor(object):
                    remove_exception_char=True, remove_url=True,
                    remove_redundant_char=True, remove_parentheses=True,
                    remove_email=True, remove_phone_number=True):
-        """清洗文本
+        """ 清洗文本
 
         Args:
             text(str): 待清理文本
@@ -130,9 +127,9 @@ class Extractor(object):
         return text
         
     def convert_full2half(self, text):
-        '''将全角字符转换为半角字符
+        """ 将全角字符转换为半角字符
         其中分为空格字符和非空格字符
-        '''
+        """
         if self.full_angle_pattern is None:
             self.full_angle_pattern = re.compile(FULL_ANGLE_ALPHABET)
         
@@ -147,7 +144,6 @@ class Extractor(object):
                 
             # 替换
             for char in item.group():
-                flag = True
                 if char == '\u3000':  # 全角空格直接替换
                     final_text_list.append(' ')
                 else:
@@ -160,11 +156,11 @@ class Extractor(object):
         return ''.join(final_text_list)
         
     def extract_email(self, text, detail=False):
-        """提取文本中的 E-mail
+        """ 提取文本中的 E-mail
 
         Args:
             text(str): 字符串文本
-            with_offset(bool): 是否携带 offset （E-mail 在文本中的位置信息）
+            detail(bool): 是否携带 offset （E-mail 在文本中的位置信息）
 
         Returns:
             list: email列表
@@ -191,14 +187,14 @@ class Extractor(object):
             return detail_results
             
     def extract_id_card(self, text, detail=False):
-        """提取文本中的 ID 身份证号
+        """ 提取文本中的 ID 身份证号
 
         Args:
             text(str): 字符串文本
-            detail(bool): 是否携带 offset （E-mail 在文本中的位置信息）
+            detail(bool): 是否携带 offset （身份证在文本中的位置信息）
 
         Returns:
-            list: email列表
+            list: 身份证信息列表
 
         """
         if self.id_card_pattern is None:
@@ -209,14 +205,14 @@ class Extractor(object):
                                   with_offset=detail)
         
     def extract_ip_address(self, text, detail=False):
-        """提取文本中的 IP 地址
+        """ 提取文本中的 IP 地址
 
         Args:
             text(str): 字符串文本
-            detail(bool): 是否携带 offset （E-mail 在文本中的位置信息）
+            detail(bool): 是否携带 offset （IP 地址在文本中的位置信息）
 
         Returns:
-            list: email列表
+            list: IP 地址列表
 
         """
         if self.ip_address_pattern is None:
@@ -226,7 +222,7 @@ class Extractor(object):
         return self._extract_base(self.ip_address_pattern, text, 
                                   with_offset=detail)
     
-    def extract_money(self, text, detail=False):
+    def extract_money(self, text):
         """从文本中抽取出金额字符串，可以和 money_standardization 函数配合使用，
         得到数字金额
 
@@ -242,7 +238,7 @@ class Extractor(object):
             
         res = list()
         for item in self.money_pattern.finditer(text):
-            #print(item.group())
+            # print(item.group())
             res.append(item.group())
         
         return res
@@ -252,9 +248,10 @@ class Extractor(object):
 
         Args:
             text(str): 字符串文本
+            detail(bool): 是否携带 offset （电话号码在文本中的位置信息）
 
         Returns:
-            list: email列表
+            list: 电话号码列表
 
         """
         if self.cell_phone_pattern is None:
@@ -286,6 +283,8 @@ class Extractor(object):
 
         Args:
             text(str): 字符串文本
+            detail(bool): 是否携带 offset （QQ 在文本中的位置信息）
+            strict(bool): QQ号很容易和其他数字混淆，因此选择采用严格或宽松规则匹配
 
         Returns:
             list: email列表
@@ -314,6 +313,7 @@ class Extractor(object):
 
         Args:
             text(str): 字符串文本
+            detail(bool): 是否携带 offset （URL 在文本中的位置信息）
 
         Returns:
             list: url列表
@@ -327,14 +327,14 @@ class Extractor(object):
                                   with_offset=detail)
     
     def extract_parentheses(self, text, parentheses=PARENTHESES_PATTERN):
-        """提取文本中的括号及括号内内容，当有括号嵌套时，提取每一对
+        """ 提取文本中的括号及括号内内容，当有括号嵌套时，提取每一对
         成对的括号的内容
 
         Args:
             text(str): 字符串文本
             parentheses: 要删除的括号类型，格式为:
-            '左括号1右括号1左括号2右括号2...'，必须为成对的括号如'{}()[]'，
-            默认为self.parentheses
+                '左括号1右括号1左括号2右括号2...'，必须为成对的括号如'{}()[]'，
+                默认为self.parentheses
 
         Returns:
             list: 括号内容列表
@@ -377,13 +377,13 @@ class Extractor(object):
         return content_list
 
     def remove_email(self, text):
-        """删除文本中的email
+        """ 删除文本中的 email
 
         Args:
             text(str): 字符串文本
 
         Returns:
-            str: 删除email后的文本
+            str: 删除 email 后的文本
 
         """
         if self.email_pattern is None:
@@ -393,7 +393,7 @@ class Extractor(object):
         return self.email_pattern.sub('', text)[1:-1]
 
     def remove_exception_char(self, text):
-        """删除文本中的异常字符
+        """ 删除文本中的异常字符
 
         Args:
             text(str): 字符串文本
@@ -407,13 +407,13 @@ class Extractor(object):
         return self.exception_pattern.sub(' ', text)
 
     def remove_html_tag(self, text):
-        """删除文本中的html标签
+        """ 删除文本中的 html 标签
 
         Args:
             text(str): 字符串文本
 
         Returns:
-            str: 删除html标签后的文本
+            str: 删除 html 标签后的文本
 
         """
         if self.html_tag_pattern is None:
@@ -421,13 +421,13 @@ class Extractor(object):
         return re.sub(self.html_tag_pattern, '', text)
     
     def remove_id_card(self, text):
-        """删除文本中的email
+        """ 删除文本中的身份证号
 
         Args:
             text(str): 字符串文本
 
         Returns:
-            str: 删除email后的文本
+            str: 删除身份证 id 后的文本
 
         """
         if self.id_card_pattern is None:
@@ -437,13 +437,13 @@ class Extractor(object):
         return self.id_card_pattern.sub('', text)[1:-1]
     
     def remove_ip_address(self, text):
-        """删除文本中的email
+        """ 删除文本中的 ip 地址
 
         Args:
             text(str): 字符串文本
 
         Returns:
-            str: 删除email后的文本
+            str: 删除 ip 地址后的文本
 
         """
         if self.ip_address_pattern is None:
@@ -453,16 +453,17 @@ class Extractor(object):
         return self.ip_address_pattern.sub('', text)[1:-1]
     
     def remove_parentheses(self, text, parentheses=PARENTHESES_PATTERN):
-        """删除文本中的括号及括号内内容
+        """ 删除文本中的括号及括号内内容
 
         Args:
             text(str): 字符串文本
             parentheses: 要删除的括号类型，格式为:
-            '左括号1右括号1左括号2右括号2...'，必须为成对的括号如'{}()[]'，
-            默认为self.parentheses
+                '左括号1右括号1左括号2右括号2...'，必须为成对的括号如'{}()[]'，
+                默认为self.parentheses
 
         Returns:
             str: 删除括号及括号中内容后的文本
+
         """
         if self.remove_parentheses_pattern is None or self.parentheses_pattern != parentheses:
             self.parentheses_pattern = parentheses
@@ -490,13 +491,13 @@ class Extractor(object):
             length = len(text)
 
     def remove_phone_number(self, text):
-        """删除文本中的电话号码
+        """ 删除文本中的电话号码
 
         Args:
             text(str): 字符串文本
 
         Returns:
-            str: 删除email后的文本
+            str: 删除电话号码后的文本
 
         """
         if self.cell_phone_pattern is None:
@@ -512,13 +513,14 @@ class Extractor(object):
         return text[1:-1]
     
     def remove_qq(self, text, strict=True):
-        """删除文本中的电话号码
+        """ 删除文本中的电 QQ 号
 
         Args:
             text(str): 字符串文本
+            strict(bool): QQ 号容易与其他数字混淆，因此选择严格规则或宽松规则
 
         Returns:
-            str: 删除email后的文本
+            str: 删除 QQ 后的文本
 
         """
         if self.qq_pattern is None:
@@ -535,13 +537,13 @@ class Extractor(object):
         return self.qq_pattern.sub('', text)[1:-1]
     
     def remove_url(self, text):
-        """删除文本中的url链接
+        """ 删除文本中的 url 链接
 
         Args:
             text(str): 字符串文本
 
         Returns:
-            text: 删除url链接后的文本
+            text: 删除 url 链接后的文本
 
         """
         if self.url_pattern is None:
@@ -549,16 +551,14 @@ class Extractor(object):
             
         text = ''.join(['￥', text, '￥'])
         return self.url_pattern.sub('', text)[1:-1]
-    
-        
+
     def replace_chinese(self, text):
+        """ 删除文本中的所有中文字符串
+
+        将中文文字，替换为空格
+
         """
-        remove all the chinese characters in text
-        eg: replace_chinese('我的email是ifee@baidu.com和dsdsd@dsdsd.com,李林的邮箱是eewewe@gmail.com哈哈哈')
-        :param: raw_text
-        :return: text_without_chinese<str>
-        """
-        if text=='':
+        if text == '':
             return []
         if self.chinese_char_pattern is None:
             self.chinese_char_pattern = re.compile(CHINESE_CHAR_PATTERN)
@@ -566,11 +566,11 @@ class Extractor(object):
         text_without_chinese = self.chinese_char_pattern.sub(r' ', text)
         return text_without_chinese
 
-        #{'phone': '18100065143', 'province': '上海', 'city': '上海', 'zip_code': '200000', 'area_code': '021', 'phone_type': '电信'}
+        # {'phone': '18100065143', 'province': '上海', 'city': '上海',
+        # 'zip_code': '200000', 'area_code': '021', 'phone_type': '电信'}
 
     def check_chinese_char(self, text):
-        ''' 检查文本中是否包含中文字符
-        '''
+        """ 检查文本中是否包含中文字符 """
         if text == '':
             return False
         if self.chinese_char_pattern is None:
@@ -580,7 +580,3 @@ class Extractor(object):
             return True
 
         return False
-
-
-
-

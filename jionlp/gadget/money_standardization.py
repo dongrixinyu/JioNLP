@@ -51,7 +51,7 @@ class MoneyStandardization(object):
 
         Examples:
             >>> num = 30.5
-            >>> print(bbd.turn_num_std_fmt(num))
+            >>> print(self.turn_num_std_fmt(num))
             '30.50'
         """
         rtn_std_num = None
@@ -117,7 +117,7 @@ class MoneyStandardization(object):
         rtn_num = 0.0
         if '万' in num or '萬' in num:
             seg_num = self.wan_pattern.split(num)
-            #pdb.set_trace()
+            # pdb.set_trace()
             if len(seg_num) == 2:
                 prev, nxt = seg_num
                 tmp_prev_num = self.turn_money_std_fmt_util1(prev)
@@ -129,7 +129,7 @@ class MoneyStandardization(object):
         return rtn_num
 
     def _get_currency_case(self, input_num):
-        ''' 获取金额中的货币类型 '''
+        """ 获取金额中的货币类型 """
         res = self.currency_case_pattern.search(input_num)
         if res is not None:
             # 规定标准的货币类型
@@ -149,8 +149,7 @@ class MoneyStandardization(object):
                 return unit, input_num
         else:
             return '元', input_num  # 默认是人民币元
-        
-    
+
     def __call__(self, inp_num, unit='元', std_fmt='%.2f', rtn_def_num='null'):
         """将各种金额形式转换成指定的形式。
         使用该函数将中文金额转换成易于计算的float形式，该函数可以转换如下金额格式：
@@ -177,9 +176,11 @@ class MoneyStandardization(object):
             转换后指定格式的带`unit`的金额。
 
         Examples:
+            >>> import jionlp as jio
             >>> money = "六十四万零一百四十三元一角七分"
-            >>> print(bbd.turn_money_std_fmt(money))
+            >>> print(jio.money_standardization(money))
             "640143.17元"
+
         """
         if self.number_pattern is None:
             self._prepare()
@@ -193,8 +194,8 @@ class MoneyStandardization(object):
         
         # 判断货币类型
         unit, inp_num = self._get_currency_case(inp_num)
-        #print(unit, inp_num)
-        #pdb.set_trace()
+        # print(unit, inp_num)
+        # pdb.set_trace()
         
         if self.number_pattern.match(inp_num): 
             tmp_money = self.turn_num_std_fmt(inp_num, std_fmt)
@@ -237,4 +238,3 @@ class MoneyStandardization(object):
                     rtn_money = self.turn_num_std_fmt(tmp_money, std_fmt) + unit
                     
         return rtn_money
-
