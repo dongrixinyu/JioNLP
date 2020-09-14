@@ -1,7 +1,6 @@
 # -*- coding=utf-8 -*-
 
 
-import os
 import pdb
 import time
 import traceback
@@ -63,10 +62,43 @@ class BackTranslation(object):
         list(str): 回译得到的文本 list
 
     Example:
-        >>>
-        >>>
+        >>> import jionlp as jio
+        >>> xunfei_api = jio.XunfeiApi(
+                [{"appid": "5f5846b1",
+                  "api_key": "52465bb3de9a258379e6909c4b1f2b4b",
+                  "secret": "b21fdc62a7ed0e287f31cdc4bf4ab9a3"}])
+        >>> tencent_api = jio.TencentApi(
+                [{"project_id": "0",
+                  "secret_id": "AKID5zGGuInJwmLehbyKyYXGS3NXOXYLE96o",
+                  "secret_key": "buwiGXXifLt888rKQLwGH3dsfsdmeCX"},  # 错误的 api
+                 {"project_id": "0",
+                  "secret_id": "AKID5zGGuInJwmLehbyKyYXGS3NXOXYLE",
+                  "secret_key": "buwiGXXifLt888rKQLwGH3asuhFbmeCX"}])  # 错误的 api
+        >>> youdao_free_api = jio.YoudaoFreeApi()
+        >>> youdao_api = jio.YoudaoApi(
+                [{'appid': '39856bd56b482cfc',
+                  'app_secret': '87XpTE63nBVnrR0b6Hy0aTDWlkoq2l4A'}])
+        >>> google_api = jio.GoogleApi()
+        >>> baidu_api = jio.BaiduApi(
+                [{'appid': '20200618000498778',
+                  'secretKey': 'raHalLakgYitNuzGOoB2'},  # 错误的密钥
+                 {'appid': '20200618000498778',
+                  'secretKey': 'raHalLakgYitNuzGdsoB2'},  # 错误的密钥
+                 {'appid': '20200618000498778',
+                  'secretKey': 'raHalLakgYitNuzGOoBZ'}], gap_time=0.5)
 
+        >>> apis = [baidu_api, youdao_api, google_api,
+                    youdao_free_api, tencent_api, xunfei_api]
 
+        >>> back_trans = jio.BackTranslation(mt_apis=apis)
+        >>> text = '饿了么凌晨发文将推出新功能，用户可选择是否愿意多等外卖员 5 分钟，你愿意多等这 5 分钟吗？'
+        >>> result = back_trans(text)
+        >>> print(result)
+
+        # ['饿了么将在凌晨推出一项新功能。用户可以选择是否愿意额外等待外卖人员5分钟。您想多等5分钟吗？',
+        #  '《饿了么》将在凌晨推出一档新节目。用户可以选择是否愿意等待餐饮人员多花5分钟。您愿意再等五分钟吗？',
+        #  'Ele.me将在早晨的最初几个小时启动一个新的功能。用户可以选择是否准备好再等5分钟。你不想再等五分钟吗？',
+        #  'Eleme将在清晨推出新的功能。用户可以选择是否愿意再等5分钟工作人员。你想再等五分钟吗？']
 
     """
 
@@ -100,10 +132,11 @@ class BackTranslation(object):
                     traceback.print_exc()
                     api_pool.terminate()
                 api_pool.join()
+
                 back_tran_result = [item for item in iter(result_list)]
-                print(result_list, len(result_list))
-                for i in back_tran_result:
-                    print(i)
+                # print(result_list, len(result_list))
+                # for i in back_tran_result:
+                #     print(i)
                 # pdb.set_trace()
 
         # 过滤回译结果
@@ -166,10 +199,9 @@ class BackTranslation(object):
                 # print('tran: ', tmp)
                 result = mt_api(tmp, from_lang=foreign_lang, to_lang=chinese_lang)
                 # print('resl: ', result)
-            except Exception as e:
+                api_result_list.append(result)
+            except Exception as err:
                 traceback.print_exc()
-
-            api_result_list.append(result)
 
         return api_result_list
 

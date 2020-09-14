@@ -1,3 +1,4 @@
 pkuseg
 jieba
 numpy
+requests

@@ -1,7 +1,5 @@
 # -*- coding=utf-8 -*-
 
-#from . import trie_tree
-#from .ts_conversion import TSConversion
 
 from .money_standardization import MoneyStandardization
 from .split_sentence import SplitSentence
@@ -12,6 +10,8 @@ from .remove_stopwords import RemoveStopwords
 from .ts_conversion import TSConversion
 from .pinyin import Pinyin
 from .char_radical import CharRadical
+from .back_translation import BackTranslation, BaiduApi, YoudaoFreeApi, \
+    YoudaoApi, GoogleApi, TencentApi, XunfeiApi
 from jionlp.util.fast_loader import FastLoader
 
 
@@ -27,7 +27,6 @@ sim2tra = tra_sim_conversion.sim2tra
 pinyin = Pinyin()
 char_radical = CharRadical()
 
-#rule = FastLoader('rule', globals(), 'jionlp.rule')
+# rule = FastLoader('rule', globals(), 'jionlp.rule')
 del tra_sim_conversion
-del FastLoader
-
+# del FastLoader

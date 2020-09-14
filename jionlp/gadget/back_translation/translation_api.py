@@ -21,7 +21,8 @@ import hashlib
 import datetime
 import binascii
 import requests
-import traceback
+
+from jionlp import logging
 
 
 __all__ = ['BaiduApi', 'GoogleApi', 'YoudaoApi', 
@@ -31,7 +32,6 @@ __all__ = ['BaiduApi', 'GoogleApi', 'YoudaoApi',
 def check_lang_name(func):
     """ 检查源语言和目标语言的缩写名是否正确 """
     def wrapper(self, *args, **kargs):
-        # pdb.set_trace()
         from_lang = kargs['from_lang']
         to_lang = kargs['to_lang']
         exception_string = 'The API does not contain {} language'
@@ -50,10 +50,50 @@ def gap_sleep(func):
     """ 两次调用之间的时间间隔，以在每次调用之前等待实现 """
     def wrapper(self, *args, **kargs):
         time.sleep(self.gap_time)
-        # pdb.set_trace()
         f = func(self, *args, **kargs)
         return f
     
+    return wrapper
+
+
+def manage_appkey(func):
+
+    def wrapper(self, *args, **kargs):
+        # 按索引检索的 appkey
+        if self.appkey_obj_list is not None:
+            count = 0
+            while count <= self.appkey_num:
+                self.appkey_obj = self.appkey_obj_list[self.appkey_index]
+
+                count += 1
+                try:
+                    f = func(self, *args, **kargs)
+                    break
+
+                except Exception as err:
+
+                    # 替换密钥的索引
+                    if self.appkey_index == self.appkey_num - 1:
+                        self.appkey_index = 0
+                    else:
+                        self.appkey_index += 1
+
+                    # 统计，若循环次数大于密钥个数，即全部密钥被尝试，则退出；否则继续尝试下一个密钥
+                    if count < self.appkey_num:
+                        logging.warning(
+                            'The appkey {} of `{}` is invalid.'.format(
+                                json.dumps(self.appkey_obj, ensure_ascii=False),
+                                self.__class__.__name__))
+                    else:
+                        logging.error(err)
+                        raise Exception(err)
+                        break
+
+        else:
+            f = func(self, *args, **kargs)
+
+        return f
+
     return wrapper
 
 
@@ -66,7 +106,7 @@ class TranslationApi(object):
     4、检查语言缩写编号是否符合要求，装饰器实现
 
     """
-    def __init__(self, appkey_obj, gap_time, 
+    def __init__(self, appkey_obj_list, gap_time,
                  lang_pool=['zh', 'en']):
         """
         appkey_obj: 调用接口的用户密钥，各个接口各不一样
@@ -74,16 +114,39 @@ class TranslationApi(object):
 
         """
         self.gap_time = gap_time
-        self.appkey_obj = appkey_obj
-        self.lang_pool = lang_pool
+        self.appkey_obj_list = appkey_obj_list
+
+        self.appkey_obj = self.appkey_obj_list[0] if self.appkey_obj_list is not None else None
+        self.appkey_num = len(self.appkey_obj_list) if self.appkey_obj_list is not None else 0  # 密钥总个数
+        self.appkey_index = 0  # 从第 0 个开始计数
+        """
+        self.appkey_manager = dict()
+        for i, _ in enumerate(self.appkey_obj):
+            self.appkey_manager.update(
+                {i: {'total_num': 0, 'wrong_num': 0, 'ratio': 1.0}})
+        """
+        self.lang_pool = lang_pool  # 语言种类池
         
     def manage_appkey(self):
-        """ 管理有效的请求密钥，将结果返回 """
+        """ 管理有效的请求 密钥，将结果返回
+        针对一个 api 接口，所有的密钥都存于 self.appkey_obj 中，该 list 中存在多个
+        密钥，每次调用都从中抽取一个使用，当该密钥的允许次数耗尽，则跳转下一个可用的密钥
+        在使用密钥报错时，进行日志跟踪。
+
+        Args:
+            self: 无需传参数
+
+        Returns:
+            obj: 密钥列表中的其中一个
+
+        """
         if self.appkey_obj is None:
             return None
-        else:
-            appkey_obj = random.choice(self.appkey_obj)
-            return appkey_obj
+
+        # 按照 self.appkey_index 从前向后索引密钥，如报错，则进行下一个密钥请求
+        appkey_obj = self.appkey_obj[self.appkey_index]
+
+        return appkey_obj
     
     
 class BaiduApi(TranslationApi):
@@ -100,8 +163,8 @@ class BaiduApi(TranslationApi):
 
     Examples:
         >>> baidu_api = BaiduApi(
-                {'appid': '20200618000498778',
-                 'secretKey': 'raHalLakgYitNuzGOoBZ'})
+                [{'appid': '20200618000498778',
+                 'secretKey': 'raHalLakgYitNuzGOoBZ'}])
         >>> text = '她很好看。'
         >>> res = baidu_api(text, from_lang='zh', to_lang='en')
         >>> print(res)
@@ -109,15 +172,16 @@ class BaiduApi(TranslationApi):
         # She looks good.
 
     """
-    def __init__(self, appkey_obj=None, gap_time=0, 
+    def __init__(self, appkey_obj_list=None, gap_time=0,
                  url='http://api.fanyi.baidu.com/api/trans/vip/translate',
                  lang_pool=['zh', 'en', 'jp', 'spa', 'de',
                             'fra', 'jp', 'ru', 'pt']):
         self.url = url
-        super(BaiduApi, self).__init__(appkey_obj, gap_time, lang_pool)
+        super(BaiduApi, self).__init__(appkey_obj_list, gap_time, lang_pool)
         
     @check_lang_name
     @gap_sleep
+    @manage_appkey
     def __call__(self, text, from_lang='zh', to_lang='en'):
         """ 对一段文本进行翻译 """
         salt = random.randint(32768, 65536)
@@ -130,15 +194,21 @@ class BaiduApi(TranslationApi):
                      'from': from_lang, 'to': to_lang,
                      'appid': self.appkey_obj['appid'],
                      'salt': salt, 'sign': sign}
-        result = requests.post(self.url, data=post_data)
+        response = requests.post(self.url, data=post_data)
 
-        if result.status_code == 200:
-            result = json.loads(result.text)
-            return result['trans_result'][0]['dst']
+        if response.status_code == 200:
+            try:
+                response_json = json.loads(response.text)
+                return response_json['trans_result'][0]['dst']
+            except Exception:
+                exception_string = ''.join(
+                    ['Http请求失败，状态码：', str(response.status_code),
+                     '，错误信息：\n', response.text])
+                raise Exception(exception_string)
         else:
             exception_string = ''.join(
-                ['Http请求失败，状态码：', str(result.status_code),
-                 '，错误信息：\n', result.text])
+                ['Http请求失败，状态码：', str(response.status_code),
+                 '，错误信息：\n', response.text])
             raise Exception(exception_string)
 
 
@@ -164,14 +234,15 @@ class GoogleApi(TranslationApi):
         # She is pretty.
 
     """
-    def __init__(self, appkey_obj=None, gap_time=0, 
+    def __init__(self, appkey_obj_list=None, gap_time=0,
                  url='http://translate.google.cn/translate_a/single',
                  lang_pool=['zh', 'en', 'ja', 'es', 'de', 'fr', 'ru']):
         self.url = url
-        super(GoogleApi, self).__init__(appkey_obj, gap_time, lang_pool)
+        super(GoogleApi, self).__init__(appkey_obj_list, gap_time, lang_pool)
         
     @check_lang_name
     @gap_sleep
+    @manage_appkey
     def __call__(self, text, from_lang='zh', to_lang='en'):
         """ 对一段文本进行翻译 """
         post_data = {'client': 'gtx', 'dt': 't',
@@ -179,17 +250,23 @@ class GoogleApi(TranslationApi):
                      'sl': from_lang, 'tl': to_lang,
                      'q': text}
         # print(to_lang)
-        result = requests.post(self.url, data=post_data)
+        response = requests.post(self.url, data=post_data, timeout=3)
         
         time.sleep(self.gap_time)
         
-        if result.status_code == 200:
-            result = json.loads(result.text)
-            return result['sentences'][0]['trans']
+        if response.status_code == 200:
+            try:
+                response_json = json.loads(response.text)
+                return response_json['sentences'][0]['trans']
+            except Exception:
+                exception_string = ''.join(
+                    ['Http请求失败，状态码：', str(response.status_code),
+                     '，错误信息：\n', response.text])
+                raise Exception(exception_string)
         else:
             exception_string = ''.join(
-                ['Http请求失败，状态码：', str(result.status_code),
-                 '，错误信息：\n', result.text])
+                ['Http请求失败，状态码：', str(response.status_code),
+                 '，错误信息：\n', response.text])
             raise Exception(exception_string)
         
         
@@ -209,9 +286,9 @@ class YoudaoApi(TranslationApi):
 
     Examples:
         >>> youdao_api = YoudaoApi(
-                appkey_obj={
+                appkey_obj_list=[{
                     'appid': '39856bd56b482cfc',
-                    'app_secret': '87XpTE63nBVnrR0b6Hy0aTDWlkoq2l4A'})
+                    'app_secret': '87XpTE63nBVnrR0b6Hy0aTDWlkoq2l4A'}])
         >>> text = '她很好看。'
         >>> res = youdao_api(text, from_lang='zh-CHS', to_lang='ne')
         >>> print(res)
@@ -219,15 +296,16 @@ class YoudaoApi(TranslationApi):
         # She's pretty.
 
     """
-    def __init__(self, appkey_obj=None, gap_time=0,
+    def __init__(self, appkey_obj_list=None, gap_time=0,
                  url='https://openapi.youdao.com/api',
                  lang_pool=['zh-CHS', 'en', 'ja', 'fr', 'es', 'ko',
                             'pt', 'ru', 'de']):
         self.url = url
-        super(YoudaoApi, self).__init__(appkey_obj, gap_time, lang_pool)
+        super(YoudaoApi, self).__init__(appkey_obj_list, gap_time, lang_pool)
         
     @check_lang_name
     @gap_sleep
+    @manage_appkey
     def __call__(self, text, from_lang='zh-CHS', to_lang='en'):
         """ 对一段文本进行翻译 """
         def _encrypt(sign_tr):
@@ -301,15 +379,16 @@ class YoudaoFreeApi(TranslationApi):
         # She looks very nice.
 
     """
-    def __init__(self, appkey_obj=None, gap_time=0, 
+    def __init__(self, appkey_obj_list=None, gap_time=0,
                  url='http://fanyi.youdao.com/translate?&doctype=json&type=AUTO&i=',
                  lang_pool=['zh-CHS', 'en']):
         self.url = url
         super(YoudaoFreeApi, self).__init__(
-            appkey_obj, gap_time, lang_pool)
+            appkey_obj_list, gap_time, lang_pool)
         
     @check_lang_name
     @gap_sleep
+    @manage_appkey
     def __call__(self, text, from_lang='zh-CHS', to_lang='en'):
         """ 对一段文本进行翻译 """
         response = requests.get(self.url + text)
@@ -344,9 +423,9 @@ class TencentApi(TranslationApi):
 
     Examples:
         >>> tencent_api = TencentApi(
-                {"project_id": "0",
+                [{"project_id": "0",
                 "secret_id": "AKID5zGGuInJwmLehbyKyYXGS3NXOXYLE96o",
-                "secret_key": "buwiGXXifLt888rKQLwGH3asuhFbmeCX"})
+                "secret_key": "buwiGXXifLt888rKQLwGH3asuhFbmeCX"}])
         >>> text = '她很好看。'
         >>> res = tencent_api(text, from_lang='zh', to_lang='en')
         >>> print(res)
@@ -354,18 +433,19 @@ class TencentApi(TranslationApi):
         # She's pretty.
 
     """
-    def __init__(self, appkey_obj=None, gap_time=1, 
+    def __init__(self, appkey_obj_list=None, gap_time=1,
                  url='https://tmt.tencentcloudapi.com/',
                  host_name='tmt.tencentcloudapi.com',
                  lang_pool=['zh', 'en', 'ja', 'fr', 'es', 'ko',
                             'pt', 'ru', 'de']):
         self.url = url
         self.host_name = host_name
-        super(TencentApi, self).__init__(appkey_obj, gap_time, lang_pool)
+        super(TencentApi, self).__init__(appkey_obj_list, gap_time, lang_pool)
         headers = {'Content-Type': 'application/json'}
         
     @check_lang_name
     @gap_sleep
+    @manage_appkey
     def __call__(self, text, from_lang='zh-CHS', to_lang='en'):
         ''' 对一段文本进行翻译 '''
         data = dict()
@@ -412,14 +492,15 @@ class TencentApi(TranslationApi):
         sign_str = sign_str.encode('utf-8')
         secret_key = self.appkey_obj['secret_key'].encode('utf-8')
 
+        digest_mod = ''
         # 根据参数中的sign_method来选择加密方式
         if sign_method == 'HmacSHA256':
-            digestmod = hashlib.sha256
+            digest_mod = hashlib.sha256
         elif sign_method == 'HmacSHA1':
-            digestmod = hashlib.sha1
+            digest_mod = hashlib.sha1
 
         # 完成加密，生成加密后的数据
-        hashed = hmac.new(secret_key, sign_str, digestmod)
+        hashed = hmac.new(secret_key, sign_str, digest_mod)
         base64 = binascii.b2a_base64(hashed.digest())[:-1]
         base64 = base64.decode()
         return base64
@@ -455,12 +536,12 @@ class XunfeiApi(TranslationApi):
 
     Examples:
         >>> xunfei_api = XunfeiApi(
-                appkey_obj={
+                appkey_obj_list=[{
                     "appid": "5f5846b1",  # 应用ID（到控制台获取）
                     # 接口APIKey（到控制台机器翻译服务页面获取）
                     "api_key": "52465bb3de9a258379e6909c4b1f2b4b",
                     # 接口APISercet（到控制台机器翻译服务页面获取）
-                    "secret": "b21fdc62a7ed0e287f31cdc4bf4ab9a3"})
+                    "secret": "b21fdc62a7ed0e287f31cdc4bf4ab9a3"}])
         >>> text = '她很好看。'
         >>> res = xunfei_api(text, from_lang='cn', to_lang='en')
         >>> print(res)
@@ -468,7 +549,7 @@ class XunfeiApi(TranslationApi):
         # She's good-looking.
 
     """
-    def __init__(self, appkey_obj=None, gap_time=0,
+    def __init__(self, appkey_obj_list=None, gap_time=0,
                  url='https://itrans.xfyun.cn/v2/its',
                  lang_pool=['cn', 'en', 'ja', 'fr', 'es', 'ru']):
         self.host = 'itrans.xfyun.cn'
@@ -485,7 +566,7 @@ class XunfeiApi(TranslationApi):
         self.date = self.httpdate(curtime_utc)
 
         super(XunfeiApi, self).__init__(
-            appkey_obj, gap_time, lang_pool)
+            appkey_obj_list, gap_time, lang_pool)
 
     @staticmethod
     def hashlib_256(res):
@@ -555,6 +636,7 @@ class XunfeiApi(TranslationApi):
     
     @check_lang_name
     @gap_sleep
+    @manage_appkey
     def __call__(self, text, from_lang='cn', to_lang='en'):
         """ 对一段文本进行翻译 """
         if self.appkey_obj['appid'] == '':
