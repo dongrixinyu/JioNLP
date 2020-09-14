@@ -1,13 +1,12 @@
 # -*- coding=utf-8 -*-
 
 
-import pdb
-import time
 import traceback
 
 from multiprocessing import Pool, Manager, Lock, RLock
 
 import jionlp as jio
+from jionlp.util.time_it import TimeIt
 
 from .translation_api import BaiduApi
 from .translation_api import GoogleApi
@@ -17,43 +16,10 @@ from .translation_api import TencentApi
 from .translation_api import XunfeiApi
 
 
-def add_res_to_main_process(func):
-    """ 将函数的处理结果添加到 manager 的 list 容器中 """
-
-    def wrapper(self, *args, **kargs):
-        manager = args[-1]
-        args = args[:-1]
-        pdb.set_trace()
-        f = func(self, *args, **kargs)
-        manager.extend(f)
-        return f
-
-    return wrapper
-
-
-class TimeIt(object):
-    def __init__(self, name=None):
-        self.start_time = None
-        self.cost_time = None
-        self.name = name if name is not None else 'None'
-
-    def __enter__(self):
-        self.start_time = time.time()
-        return self
-
-    def __exit__(self, *args, **kwargs):
-        self.cost_time = time.time() - self.start_time
-        print('{0:s} costs {1:.3f} s.'.format(
-            self.name, self.cost_time))
-
-    def break_point(self):
-        cost_time = time.time() - self.start_time
-        print('Break point costs {0:.3f} s.'.format(cost_time))
-
-
 class BackTranslation(object):
     """ 回译接口，集成多个公开免费试用机器翻译接口，进行数据增强
-    即，给定一条文本，分别使用多个接口，对数据进行回译增强
+    即，给定一条文本，分别使用多个接口，对数据进行回译增强，该接口
+    实现了针对各个厂商的 API 的并行处理
 
     Args:
         text(str): 待回译文本

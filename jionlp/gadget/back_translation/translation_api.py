@@ -447,7 +447,7 @@ class TencentApi(TranslationApi):
     @gap_sleep
     @manage_appkey
     def __call__(self, text, from_lang='zh-CHS', to_lang='en'):
-        ''' 对一段文本进行翻译 '''
+        """ 对一段文本进行翻译 """
         data = dict()
         data['Action'] = 'TextTranslate'
         data['Nonce'] = int(random.random() * 10000)
