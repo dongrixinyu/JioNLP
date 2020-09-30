@@ -373,6 +373,8 @@ class LocationRecognizer(object):
         if self.pkuseg is None:
             self._prepare()
         
+        final_res = {'domestic': None, 'foreign': None, 'others': None}
+        
         text_pos_seg = self.pkuseg.cut(text)
         text_location = [item[0] for item in text_pos_seg if item[1] == 'ns']
         if len(text_location) == 0:
@@ -414,7 +416,6 @@ class LocationRecognizer(object):
             [item[:2] for item in world_combine_list if item[-1]],
             key=lambda i:i[1], reverse=True)
         
-        final_res = {'domestic': None, 'foreign': None, 'others': None}
         if len(domestic_locations) > 0:
             if top_k == 'default':
                 final_res['domestic'] = domestic_locations[:3]
