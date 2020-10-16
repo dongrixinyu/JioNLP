@@ -4,7 +4,13 @@ import time
 
 
 class TimeIt(object):
-    ''' 程序运行的消耗时间统计 '''
+    ''' 程序运行的消耗时间统计
+    Args:
+        name(str): 指定代码段的功能含义，可不指定
+        unit(str): 计时单位，包括 秒(s)与毫秒(ms)
+        no_print(bool): 指定是否打印计时
+
+    '''
     def __init__(self, name=None, unit='s', no_print=False):
         self.start_time = None
         self.restart_time = None  # 每次执行断点的重新计数时间
@@ -30,7 +36,10 @@ class TimeIt(object):
                     self.name, self.cost_time * 1000))
     
     def break_point(self, restart=True):
-        """ 计算从起始（或上一断点）到当前断点调用的时间 """
+        """ 计算从起始（或上一断点）到当前断点调用的时间
+        Args:
+             restart(bool): 指定代码段的计时是否接下来从 0 开始。
+        """
         if not restart:
             cost_time = time.time() - self.start_time
         else:

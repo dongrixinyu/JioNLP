@@ -114,6 +114,7 @@ $ pip install .
 |[**按行读取文件**](https://github.com/dongrixinyu/jionlp/wiki/文件读写-说明文档#user-content-文件读取iter)     |read_file_by_iter    |以迭代器形式方便按行读取文件，节省内存，支持指定**行数**，<br>**跳过空行**  |
 |[**按行读取文件**](https://github.com/dongrixinyu/jionlp/wiki/文件读写-说明文档#user-content-文件读取list)     |read_file_by_line |按行读取文件，支持指定**行数**，**跳过空行** |
 |[将 list 中元素按行写入文件](https://github.com/dongrixinyu/jionlp/wiki/文件读写-说明文档#user-content-文件写入) | write_file_by_line | 将 list 中元素按行写入文件 |
+|[计时工具]((https://github.com/dongrixinyu/jionlp/wiki/文件读写-说明文档#user-content-计时器)                 |TimeIt             | 统计某一代码段的耗时    |
 
 ### 3.小工具集 Gadgets
 
