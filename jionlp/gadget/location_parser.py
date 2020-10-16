@@ -45,6 +45,8 @@ class LocationParser(object):
     Args:
         location_text(str): 包含地名的字符串，若字符串中无中国地名，则返回结果是
                             无意义的。
+        town_village(bool): 若为 True，则返回 省、市、县区、乡镇街道、村社区 五级信息；
+                            若为 False，则返回 省、市、县区 三级信息
 
     Returns:
         dict[str,]: 字典格式，如上例所示。
@@ -58,11 +60,13 @@ class LocationParser(object):
     """
     def __init__(self):
         self.administrative_map_list = None
+        self.town_village = False
+        self.town_village_dict = dict()
         
     def _mapping(self, china_loc):
         # 整理行政区划码映射表
         self.administrative_map_list = list()  # 地址别称
-        
+
         for prov in china_loc:
             if prov.startswith('_'):
                 continue
@@ -87,13 +91,21 @@ class LocationParser(object):
                          [prov, china_loc[prov]['_alias']],
                          [city, china_loc[prov][city]['_alias']],
                          [county, china_loc[prov][city][county]['_alias']]])
-        
+
+                    if self.town_village:  # 补充 self.town_village_list
+
+                        key_name = prov + city + county
+                        value_dict = china_loc[prov][city][county]
+                        self.town_village_dict.update({key_name: value_dict})
+
     def _prepare(self):
         # 添加中国区划词典
-        china_loc = china_location_loader()
+        china_loc = china_location_loader(detail=self.town_village)
         self._mapping(china_loc)
-        
+
         self.loc_level_key_list = ['省', '市', '县']
+        if self.town_village:
+            self.loc_level_key_list.extend(['乡', '村'])
         self.loc_level_key_dict = dict(
             [(loc_level, None) for loc_level in self.loc_level_key_list])
         self.municipalities_cities = ['北京', '上海', '天津', '重庆', '香港', '澳门']
@@ -103,7 +115,7 @@ class LocationParser(object):
         
         if self.administrative_map_list is None:
             self._prepare()
-        
+
         candidate_admin_list = list()  # 候选列表 
         for admin_item in self.administrative_map_list:
             count = 0
@@ -131,9 +143,12 @@ class LocationParser(object):
                 
         return candidate_admin_list
 
-    def __call__(self, location_text):
-        
+    def __call__(self, location_text, town_village=False):
+
+        self.town_village = town_village
         if self.administrative_map_list is None:
+            self._prepare()
+        if self.town_village and self.town_village_dict == dict():
             self._prepare()
         
         # 获取文本中的省、市、县三级行政区划
@@ -141,12 +156,15 @@ class LocationParser(object):
         candidate_admin_list = self.get_candidates(location_text)
 
         if len(candidate_admin_list) == 0:
-            return {'province': None, 
-                    'city': None,
-                    'county': None,
-                    'detail': location_text,
-                    'full_location': location_text,
-                    'orig_location': location_text}
+            result = {'province': None,
+                      'city': None,
+                      'county': None,
+                      'detail': location_text,
+                      'full_location': location_text,
+                      'orig_location': location_text}
+            if self.town_village:
+                result.update({'town': None, 'village': None})
+            return result
             
         # 寻找匹配最多的候选地址，然后寻找匹配最靠前的候选地址，作为最终的省市县的判断结果
         candidate_admin_list = sorted(
@@ -190,7 +208,13 @@ class LocationParser(object):
 
         # 获取详细地址部分
         detail_part = location_text[detail_idx:]
-        
+
+        # 将地址中的 省直辖、市直辖，去掉
+        if final_city is not None and '直辖' in final_city:
+            final_city = None
+        if final_county is not None and '直辖' in final_county:
+            final_county = None
+
         # 获取省市区行政区划部分
         admin_part = ''
         if final_prov is not None:
@@ -205,14 +229,51 @@ class LocationParser(object):
                 admin_part += final_city
         if final_county is not None:
             admin_part += final_county
-        
-        return {'province': final_prov, 
-                'city': final_city,
-                'county': final_county,
-                'detail': detail_part,
-                'full_location': admin_part + detail_part,
-                'orig_location': location_text}
-        
+
+        result = {'province': final_prov,
+                  'city': final_city,
+                  'county': final_county,
+                  'detail': detail_part,
+                  'full_location': admin_part + detail_part,
+                  'orig_location': location_text}
+
+        if town_village:
+            result = self._get_town_village(result)
+
+        return result
+
+    def _get_town_village(self, result):
+        # 从后续地址中，获取乡镇和村、社区信息
+        town = None
+        village = None
+
+        prov = result['province']
+        city = result['city'] if result['city'] is not None else '省直辖行政区划'
+        county = result['county'] if result['county'] is not None else '市直辖行政区划'
+        key_name = ''.join([prov, city, county])
+
+        if key_name not in self.town_village_dict:
+            result.update({'town': town, 'village': village})
+            return result
+
+        # 确定乡镇
+        town_list = list(self.town_village_dict[key_name].keys())
+        for _town in town_list:
+            if _town in result['detail']:
+                town = _town
+                break
+
+        # 确定村、社区
+        if town is not None:
+            village_list = list(self.town_village_dict[key_name][town].keys())
+            for _village in village_list:
+                if _village in result['detail']:
+                    village = _village
+                    break
+
+        result.update({'town': town, 'village': village})
+        return result
+
 
 if __name__ == '__main__':
     import json

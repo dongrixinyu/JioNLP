@@ -19,15 +19,23 @@ __all__ = ['china_location_loader', 'world_location_loader',
            'pornography_loader', 'traditional_simplified_loader']
 
 
-def china_location_loader():
-    """ 加载中国地名词典 china_location.txt """
+def china_location_loader(detail=False):
+    """ 加载中国地名词典 china_location.txt
+
+    Args:
+        detail(bool): 若为 True，则返回 省、市、县区、乡镇街道、村社区 五级信息；
+            若为 False，则返回 省、市、县区 三级信息
+
+    """
     location_jio = read_file_by_line(
-        os.path.join(GRAND_DIR_PATH, 'dictionary/china_location.txt'), 
+        os.path.join(GRAND_DIR_PATH, 'dictionary/china_location.txt'),
         strip=False)
     
     cur_province = None
     cur_city = None
     cur_county = None
+    cur_town = None
+    cur_village = None
     location_dict = dict()
 
     for item in location_jio:
@@ -41,7 +49,21 @@ def china_location_loader():
                                 '_alias': alias_name,
                                 '_admin_code': admin_code}})
 
-        elif item.startswith('\t\t'):  # 县
+        elif item.startswith('\t\t\t\t'):  # 村、社区
+            if not detail:
+                continue
+            cur_village = item.strip()
+            location_dict[cur_province][cur_city][cur_county][cur_town].update(
+                {cur_village: None})
+
+        elif item.startswith('\t\t\t'):  # 乡镇、街道
+            if not detail:
+                continue
+            cur_town = item.strip()
+            location_dict[cur_province][cur_city][cur_county].update(
+                {cur_town: dict()})
+
+        elif item.startswith('\t\t'):  # 县、区
             if len(item.strip().split('\t')) != 3:
                 continue
             county, admin_code, alias_name = item.strip().split('\t')
