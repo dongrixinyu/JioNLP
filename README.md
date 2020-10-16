@@ -38,6 +38,9 @@
 #### Update 2020-09-14
 ## 新增 [回译数据增强](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-回译数据增强)：采用各大厂的机器翻译 API，实现文本数据增强
 ```
+# ! 需要自己去各厂的平台申请 api和密钥。否则如下的若干 api 和密钥不可用。
+>>> print(jio.TencentApi.__doc__)  # 查看腾讯api的接口使用说明与注册说明。其它厂的接口同理
+
 >>> import jionlp as jio
 >>> xunfei_api = jio.XunfeiApi(
         [{"appid": "5f5846b1",
@@ -61,8 +64,6 @@
 #  '《饿了么》将在凌晨推出一档新节目。用户可以选择是否愿意等待餐饮人员多花5分钟。您愿意再等五分钟吗？', 
 #  'Ele.me将在早晨的最初几个小时启动一个新的功能。用户可以选择是否准备好再等5分钟。你不想再等五分钟吗？', 
 #  'Eleme将在清晨推出新的功能。用户可以选择是否愿意再等5分钟工作人员。你想再等五分钟吗？']
-
->>> print(jio.TencentApi.__doc__)  # 查看腾讯api的接口使用说明与注册说明。其它厂的接口同理
 
 ```
 
