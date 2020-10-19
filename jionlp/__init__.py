@@ -1,14 +1,20 @@
 # -*- coding=utf-8 -*-
 
 
-__version__ = '1.2.0'
+__version__ = '1.3.0'
 
 import os
 
 from jionlp.util.logger import set_logger
+from jionlp.util.zip_file import unzip_file
 
 
 logging = set_logger('INFO')
+
+# unzip dictionary files
+DIR_PATH = os.path.dirname(os.path.abspath(__file__))
+if not os.path.exists(os.path.join(DIR_PATH, 'dictionary', 'china_location.txt')):
+    unzip_file()
 
 
 guide = """
@@ -16,19 +22,17 @@ guide = """
 │ ◎ ○ ○ ░░░░░░░░░░░░░░░░░░░░░  Important Message  ░░░░░░░░░░░░░░░░░░░░░░░░│
 ├─────────────────────────────────────────────────────────────────────────┤
 │                                                                         │
-│              We renamed again for consistency and clarity.              │
-│                   From now on, it is all `kashgari`.                    │
-│  Changelog: https://github.com/BrikerMan/Kashgari/releases/tag/v1.0.0   │
+│              JioNLP, a python tool for Chinese NLP coding.              │
+│               URL: https://github.com/dongrixinyu/JioNLP                │
 │                                                                         │
-│         | Backend          | pypi version   | desc           |          │
-│         | ---------------- | -------------- | -------------- |          │
-│         | TensorFlow 2.x   | kashgari 2.x.x | coming soon    |          │
-│         | TensorFlow 1.14+ | kashgari 1.x.x |                |          │
-│         | Keras            | kashgari 0.x.x | legacy version |          │
+│   | date       | updated funcs and infos                            |   │
+│   | ---------- | -------------------------------------------------- |   │
+│   | 2020-09-14 | add back translation for data augmentation         |   │
+│   | 2020-10-16 | update 2020 china location dictionary              |   │
+│   | 2020-10-19 | add zip_file for compressing the size of dict files|   │
 │                                                                         │
 ╰─────────────────────────────────────────────────────────────────────────╯
 """
-
 
 
 from jionlp.util import *

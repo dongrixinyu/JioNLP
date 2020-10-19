@@ -1,11 +1,15 @@
 # -*- coding=utf-8 -*-
 """
 DESCRIPTION:
-    1、
-
-
-
-
+    1、首先基于 pkuseg 工具做分词和词性标注，再使用 tfidf 计算文本的关键词权重，
+    2、关键词提取算法找出碎片化的关键词，然后再根据相邻关键碎片词进行融合，重新计算权重，去除相似词汇。得到的融合的多个关键碎片即为关键短语。
+        1、短语的 token 长度不超过 12
+        2、短语中不可出现超过1个虚词
+        3、短语的两端 token 不可是虚词和停用词
+        4、短语中停用词数量不可以超过规定个数
+        5、短语重复度计算 MMR 添加其中
+        6、提供仅抽取名词短语功能
+    3、使用预训练好的 LDA 模型，计算文本的主题概率分布，以及每一个候选短语的主题概率分布，得到最终权重
 
 """
 
@@ -123,13 +127,16 @@ class ChineseKeyPhrasesExtractor(object):
         # 概率 p(topic|word)，所以未考虑 p(topic|doc) 概率，可能会导致不准
         # 但是，由于默认的 lda 模型 topic_num == 100，事实上，lda 模型是否在
         # 预测的文档上收敛对结果影响不大（topic_num 越多，越不影响）。
-        with open(os.path.join(DIR_PATH, 'topic_word_weight.json'), 
+
+        dict_dir_path = os.path.join(os.path.dirname(os.path.dirname(DIR_PATH)), 'dictionary')
+
+        with open(os.path.join(dict_dir_path, 'topic_word_weight.json'),
                   'r', encoding='utf8') as f:
             self.topic_word_weight = json.load(f)
         self.word_num = len(self.topic_word_weight)
         
         # 读取 p(word|topic) 概率分布文件
-        with open(os.path.join(DIR_PATH, 'word_topic_weight.json'),
+        with open(os.path.join(dict_dir_path, 'word_topic_weight.json'),
                   'r', encoding='utf8') as f:
             self.word_topic_weight = json.load(f)
         self.topic_num = len(self.word_topic_weight)
