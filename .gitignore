@@ -4,6 +4,15 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+china_location.txt
+chinese_char_dictionary.txt
+chinese_idiom.txt
+chinese_word_dictionary.txt
+idf.txt
+pinyin_phrase.txt
+topic_word_weight.json
+word_topic_weight.json
+
 # C extensions
 *.so
 
