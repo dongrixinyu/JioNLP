@@ -2,3 +2,4 @@ pkuseg
 jieba
 numpy
 requests
+zipfile
