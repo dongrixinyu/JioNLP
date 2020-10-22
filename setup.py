@@ -23,6 +23,9 @@ $ pip install .
 >>> import jionlp as jio
 ```
 '''
+with open(os.path.join(DIR_PATH, 'README.md'),
+          'r') as f:
+    LONGDOC = f.read()
 
 __name__ = 'jionlp'
 __author__ = "cuiguoer"
@@ -41,12 +44,13 @@ with open(os.path.join(DIR_PATH, 'requirements.txt'),
     requirements = f.readlines()
 
 setup(name=__name__,
-      version='0.1.0',
+      version='1.3.0',
       url=__url__,
       author=__author__,
       author_email=__email__,
       description=__description__,
       long_description=LONGDOC,
+      long_description_content_type='text/markdown',
       license=__license__,
       py_modules=[],
       packages=find_packages(),
