@@ -24,7 +24,7 @@ $ pip install .
 ```
 '''
 with open(os.path.join(DIR_PATH, 'README.md'),
-          'r') as f:
+          'r', encoding='utf-8') as f:
     LONGDOC = f.read()
 
 __name__ = 'jionlp'
@@ -35,7 +35,7 @@ __license__ = "Apache License 2.0"
 __maintainer__ = "dongrixinyu"
 __email__ = "dongrixinyu.89@163.com"
 __url__ = 'https://github.com/dongrixinyu/JioNLP'
-__description__ = LONGDOC.split('安装\n```')[0]
+__description__ = ''#LONGDOC.split('安装：\n```')[0]
 
 
 
@@ -44,7 +44,7 @@ with open(os.path.join(DIR_PATH, 'requirements.txt'),
     requirements = f.readlines()
 
 setup(name=__name__,
-      version='1.3.0',
+      version='1.3.1',
       url=__url__,
       author=__author__,
       author_email=__email__,
