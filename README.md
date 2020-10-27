@@ -3,7 +3,7 @@
 
 ### &emsp;&emsp; ——无模型中文 NLP 工具包，做您的 NLP 任务的垫 jio 石，飞速 NLP 开发
 ### &emsp;&emsp; ——A python library for chinese NLP
-
+### &emsp;&emsp; ```pip install -i https://test.pypi.org/simple/ jionlp```
 
 #### JioNLP 是一个提供常用 NLP 功能的工具包，宗旨是直接提供方便快捷的解析、词典类、深度学习模型加速的面向中文的工具接口，并提供一步到位的查阅入口。帮助开发者解决基础的 NLP 需求和操作。
 
@@ -74,6 +74,10 @@
 $ git clone https://github.com/dongrixinyu/JioNLP
 $ cd ./JioNLP
 $ pip install .
+```
+- pip 安装
+```
+$ pip install -i https://test.pypi.org/simple/ jionlp
 ```
 
 ## 使用 Features
