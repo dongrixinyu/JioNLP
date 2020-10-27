@@ -2,4 +2,4 @@ pkuseg
 jieba
 numpy
 requests
-zipfile36==0.1.2
+zipfile36

@@ -44,7 +44,7 @@ with open(os.path.join(DIR_PATH, 'requirements.txt'),
     requirements = f.readlines()
 
 setup(name=__name__,
-      version='1.3.2',
+      version='1.3.3',
       url=__url__,
       author=__author__,
       author_email=__email__,
