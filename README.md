@@ -11,7 +11,7 @@
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP" /></a>
 </p>
 
-### &emsp;&emsp; ——无模型中文 NLP 工具包，做您的 NLP 任务的垫 jio 石，飞速 NLP 开发
+### &emsp;&emsp; ——JioNLP：无模型中文 NLP 工具包，做您的 NLP 任务的垫 jio 石，飞速 NLP 开发
 ### &emsp;&emsp; ——A python library for chinese NLP
 ### &emsp;&emsp; ```pip install -i https://test.pypi.org/simple/ jionlp```
 
