@@ -1,5 +1,7 @@
-# &emsp;&emsp; **JioNLP**
-
+<p align="center">
+    <a alt="jionlp logo">
+        <img src="https://github.com/dongrixinyu/JioNLP/blob/master/jionlp_logo.jpg" /></a>
+</p>
 <p align="center">
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-2k-brightgreen" /></a>
