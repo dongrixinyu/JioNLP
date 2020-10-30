@@ -1,6 +1,10 @@
 # &emsp;&emsp; **JioNLP**
 
-&emsp;&emsp;![GitHub All Releases](https://img.shields.io/github/downloads/dongrixinyu/JioNLP/total)
+<p align="center">
+    <a alt="Downloads">
+        <img src="https://img.shields.io/badge/downloads-2k-brightgreen" /></a>
+
+</p>
 
 ### &emsp;&emsp; ——无模型中文 NLP 工具包，做您的 NLP 任务的垫 jio 石，飞速 NLP 开发
 ### &emsp;&emsp; ——A python library for chinese NLP
