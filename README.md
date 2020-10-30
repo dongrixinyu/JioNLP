@@ -4,9 +4,11 @@
 </p>
 <p align="center">
     <a alt="Downloads">
+        <img src="https://img.shields.io/badge/size-35.6m-yellow" /></a>
+    <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-2k-brightgreen" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.3-blue" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.4-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP" /></a>
 </p>
@@ -157,8 +159,8 @@ $ pip install -i https://test.pypi.org/simple/ jionlp
 |[**歇后语**词典](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载歇后语词典) | xiehouyu_loader |加载歇后语词典 |
 |[**中国地名**词典](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载中国省市县地名词典) | china_location_loader |加载中国**省、市、县**三级词典 |
 |[**世界地名**词典](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载世界国家城市地名词典) | world_location_loader |加载世界**大洲、国家、城市**词典 |
-|[**新华字典**](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载新华字典) | chinese_char_dictionary_loader |加载新华字典 |
-|[**新华词典**](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载新华词典) | chinese_word_dictionary_loader |加载新华词典 |
+|[新华**字典**](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载新华字典) | chinese_char_dictionary_loader |加载新华字典 |
+|[新华**词典**](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载新华词典) | chinese_word_dictionary_loader |加载新华词典 |
 
 ### 5.实体识别(NER)算法辅助工具集
 
@@ -166,12 +168,12 @@ $ pip install -i https://test.pypi.org/simple/ jionlp
 
 | 功能   | 函数   |描述   |
 |--------|--------|-------|
-|[**基于词典NER**](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-基于词典-ner) | LexiconNER |依据指定的实体词典，前向最大匹配实体 |
+|[基于**词典NER**](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-基于词典-ner) | LexiconNER |依据指定的实体词典，前向最大匹配实体 |
 |[**entity 转 tag**](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-entity-转-tag) | entity2tag |将 json 格式实体转换为模型处理的 tag 序列 |
 |[**tag 转 entity**](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-tag-转-entity) | tag2entity |将模型处理的 tag 序列转换为 json 格式实体 |
 |[**字 token 转词 token**](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-字-token-转词-token) | char2word |将字符级别 token 转换为词汇级别 token |
 |[**词 token 转字 token**](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-词-token-转字-token) | word2char |将词汇级别 token 转换为字符级别 token |
-|[**比较标注与模型预测的实体差异**](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-比较-ner-标注实体与模型预测实体之间的差异) | entity_compare |针对人工标注的实体，与模型预测出的实体结果<br>，做差异比对 |
+|[比较标注与模型预测的**实体差异**](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-比较-ner-标注实体与模型预测实体之间的差异) | entity_compare |针对人工标注的实体，与模型预测出的实体结果<br>，做差异比对 |
 |[**NER模型预测加速**](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-ner-模型预测加速)  |TokenSplitSentence<br>TokenBreakLongSentence<br>TokenBatchBucket   |对 NER 模型预测并行加速的方法  |
 |[**分割数据集**](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-分割数据集) | analyse_dataset |对 NER 标注语料，分为训练集、验证集、测试集，并给出各个子集的实体类型分布统计  |
 
@@ -188,12 +190,12 @@ $ pip install -i https://test.pypi.org/simple/ jionlp
 
 | 功能   | 函数   |描述   |
 |--------|--------|-------|
-|[**基于词典情感分析**](https://github.com/dongrixinyu/JioNLP/wiki/情感分析-说明文档#user-content-基于词典的情感分析) | LexiconSentiment | 依据人工构建的情感词典，计算文本的情感值，介于0~1之间 |
+|[基于**词典情感分析**](https://github.com/dongrixinyu/JioNLP/wiki/情感分析-说明文档#user-content-基于词典的情感分析) | LexiconSentiment | 依据人工构建的情感词典，计算文本的情感值，介于0~1之间 |
 
 
 ### 初衷
 
-- NLP 开发一个模型，并不仅仅是标注数据、训练模型、进而上线这么简单。其中涉及到数据分析、数据预处理、矫正标注数据、加速模型并行、想尽办法提升模型稳定性等等方面。抛开论文中千奇百怪的模型，如何快速完成上述的任务，才是非常依赖工程师经验的。因此，想开发这个工具包，能够快速辅助工程师完成各种琐碎的操作，加速开发进度，把有限的精力用在思考而非 code 上。
+- NLP 开发一个模型，并不仅仅是标注数据、训练模型、进而上线这么简单。其中涉及到数据分析、数据预处理、矫正标注数据、加速模型并行、保证模型稳定性等等方面。抛开论文中千奇百怪的模型，如何快速完成上述的任务，才是非常依赖工程师经验的。本工具包能够快速辅助工程师完成各种琐碎的操作，加速开发进度，把有限的精力用在思考而非 code 上。
 
 ### 开源不易，欢迎自由投食 (#^.^#)
 

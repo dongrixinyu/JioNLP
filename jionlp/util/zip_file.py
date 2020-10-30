@@ -9,12 +9,13 @@ FILE_PATH = os.path.abspath(__file__)
 DIR_PATH = os.path.dirname(os.path.dirname(FILE_PATH))
 
 
-def zip_file():
+def zip_file(file_list=None):
     """ 将某些 txt 文件压缩 """
-    file_list = ['china_location.txt', 'chinese_char_dictionary.txt',
-                 'chinese_idiom.txt', 'chinese_word_dictionary.txt',
-                 'idf.txt', 'pinyin_phrase.txt',
-                 'word_topic_weight.json', 'topic_word_weight.json']
+    if file_list is None:
+        file_list = ['china_location.txt', 'chinese_char_dictionary.txt',
+                     'chinese_idiom.txt', 'chinese_word_dictionary.txt',
+                     'idf.txt', 'pinyin_phrase.txt',
+                     'word_topic_weight.json', 'topic_word_weight.json']
 
     dict_dir_path = os.path.join(DIR_PATH, 'dictionary')
     for _file in file_list:
