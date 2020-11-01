@@ -5,7 +5,7 @@ import re
 import pdb
 import regex as reg
 
-from rule_pattern import *
+from .rule_pattern import *
 
 
 __all__ = ['Extractor']
