@@ -55,7 +55,7 @@ class Extractor(object):
                 pdb.set_trace()
             #'''
             results = [{'text': item.group(1), 
-                        'offset': [item.span()[0] - 1, item.span()[1] - 1]} 
+                        'offset': (item.span()[0] - 1, item.span()[1] - 1)} 
                       for item in pattern.finditer(text)]
         else:
             results = [item.group(1) for item in pattern.finditer(text)]
@@ -341,7 +341,7 @@ class Extractor(object):
             list: [
                     {
                         'context'(str):'the context between parentheses',
-                        'span'(tuple):'the location of extracted text',
+                        'offset'(tuple):'the location of extracted text',
                         'origin'(str):'the extracted text'
                     },
                     {
@@ -358,9 +358,9 @@ class Extractor(object):
 
             parentheses_per=zip(self.parentheses_pattern[:-1],self.parentheses_pattern[1:])
             
-            self.extract_parentheses_pattern = f"(?:{'|'.join(reg.escape(f)+'(.*?)'+reg.escape(e) for f,e in parentheses_per)})"
+            self.extract_parentheses_pattern = f"(?:{'|'.join(reg.escape(f)+'([^'+reg.escape(f)+reg.escape(e)+']*)'+reg.escape(e) for f,e in parentheses_per)})"
         
-        return [{'context':[j for j in i.groups() if j][0],'span':i.span(),'origin':i.group()} for i in reg.compile(self.extract_parentheses_pattern).finditer(text)]
+        return [{'context':[j for j in i.groups() if j][0],'offset':i.span(),'origin':i.group()} for i in reg.compile(self.extract_parentheses_pattern).finditer(text)]
 
     def remove_email(self, text):
         """ 删除文本中的 email
