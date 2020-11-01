@@ -358,7 +358,7 @@ class Extractor(object):
 
             parentheses_per=zip(self.parentheses_pattern[:-1],self.parentheses_pattern[1:])
             
-            self.extract_parentheses_pattern = f"(?:{'|'.join(reg.escape(f)+'([^'+reg.escape(f)+reg.escape(e)+']*)'+reg.escape(e) for f,e in parentheses_per)})"
+            self.extract_parentheses_pattern = f"(?:{'|'.join('{left}([^{left}{right}]*){right}'.format(left=reg.escape(f),right=reg.escape(e)) for f,e in parentheses_per)})"
         
         return [{'context':[j for j in i.groups() if j][0],'offset':i.span(),'origin':i.group()} for i in reg.compile(self.extract_parentheses_pattern).finditer(text)]
 
@@ -453,28 +453,11 @@ class Extractor(object):
         """
         if self.remove_parentheses_pattern is None or self.parentheses_pattern != parentheses:
             self.parentheses_pattern = parentheses
-
-            p_length = len(self.parentheses_pattern)
-            remove_pattern_list = list()
-            remove_pattern_format = '{left}[^{left}{right}]*{right}'
             
-            for i in range(0, p_length, 2):
-                left = re.escape(self.parentheses_pattern[i])
-                right = re.escape(self.parentheses_pattern[i + 1])
-                remove_pattern_list.append(
-                    remove_pattern_format.format(left=left, right=right))
-                
-            remove_pattern = '|'.join(remove_pattern_list)
-            remove_pattern = re.compile(remove_pattern)
+            self.remove_parentheses_pattern = reg.compile('|'.join('{left}[^{left}{right}]*{right}'.format(left=reg.escape(f),right=reg.escape(e)) for f,e in zip(self.parentheses_pattern[:-1],self.parentheses_pattern[1:])))
 
-            self.remove_parentheses_pattern = remove_pattern
-
-        length = len(text)
-        while True:
-            text = self.remove_parentheses_pattern.sub('', text)
-            if len(text) == length:
-                return text
-            length = len(text)
+        rep=dict((i.group(),'') for i in self.remove_parentheses_pattern.finditer(text))
+        return self.remove_parentheses_pattern.sub(lambda m:rep[m.group(0)], text)
 
     def remove_phone_number(self, text):
         """ 删除文本中的电话号码
@@ -569,4 +552,4 @@ class Extractor(object):
 
 if __name__=='__main__':
     e=Extractor()
-    print(e.extract_parentheses('地铁[一号线]{四惠东}站站台（开往国贸方向）'))
+    print(e.remove_parentheses('地铁[一号线]{四惠东}站站台（开往国贸方向）'))
