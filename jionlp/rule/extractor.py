@@ -54,7 +54,7 @@ class Extractor(object):
                 pdb.set_trace()
             #'''
             results = [{'text': item.group(1), 
-                        'offset': [item.span()[0] - 1, item.span()[1] - 1]} 
+                        'offset': (item.span()[0] - 1, item.span()[1] - 1)}
                       for item in pattern.finditer(text)]
         else:
             results = [item.group(1) for item in pattern.finditer(text)]
@@ -325,8 +325,19 @@ class Extractor(object):
         
         return self._extract_base(self.url_pattern, text, 
                                   with_offset=detail)
-    
-    def extract_parentheses(self, text, parentheses=PARENTHESES_PATTERN):
+
+    def _extract_parentheses(self, text, parentheses=PARENTHESES_PATTERN):
+        # 额外分支 Ghs 提供的方法
+        if self.extract_parentheses_pattern is None or self.parentheses_pattern != parentheses:
+            import regex as reg
+            self.parentheses_pattern = parentheses
+            parentheses_per = zip(self.parentheses_pattern[:-1], self.parentheses_pattern[1:])
+            self.extract_parentheses_pattern = f"(?:{'|'.join('{left}([^{left}{right}]*){right}'.format(left=reg.escape(f), right=reg.escape(e)) for f, e in parentheses_per)})"
+
+        return [{'context': [j for j in i.groups() if j][0], 'offset': i.span(), 'origin': i.group()}
+                for i in reg.compile(self.extract_parentheses_pattern).finditer(text)]
+
+    def extract_parentheses(self, text, parentheses=PARENTHESES_PATTERN, detail=False):
         """ 提取文本中的括号及括号内内容，当有括号嵌套时，提取每一对
         成对的括号的内容
 
@@ -335,9 +346,17 @@ class Extractor(object):
             parentheses: 要删除的括号类型，格式为:
                 '左括号1右括号1左括号2右括号2...'，必须为成对的括号如'{}()[]'，
                 默认为self.parentheses
+            detail: 是否打印括号内容位置信息
 
         Returns:
-            list: 括号内容列表
+            list: [
+                    {
+                        'context'(str): 'the context between parentheses',
+                        'offset'(tuple): 'the location of extracted text'
+                    },  # 当 detail 为 True 时
+                    'the context between parentheses',  # 当 detail 为 False 时
+                    ...
+                ]
 
         """
         if self.extract_parentheses_pattern is None or self.parentheses_pattern != parentheses:
@@ -364,12 +383,19 @@ class Extractor(object):
         for i in finditer:
             idx = i.start()
             parentheses = text[idx]
-            
+
             if parentheses in self.parentheses_dict.keys():
                 if len(parentheses_list) > 0:
                     if parentheses_list[-1] == self.parentheses_dict[parentheses]:
                         parentheses_list.pop()
-                        content_list.append(text[idx_list.pop(): idx + 1])
+                        if detail:
+                            start_idx = idx_list.pop()
+                            end_idx = idx + 1
+                            content_list.append(
+                                {'content': text[start_idx: end_idx],
+                                 'offset': (start_idx, end_idx)})
+                        else:
+                            content_list.append(text[idx_list.pop(): idx + 1])
             else:
                 parentheses_list.append(parentheses)
                 idx_list.append(idx)

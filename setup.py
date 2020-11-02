@@ -1,6 +1,7 @@
 # -*- coding=utf-8 -*-
 
 import os
+import re
 
 from setuptools import setup, find_packages
 
@@ -23,28 +24,36 @@ $ pip install .
 >>> import jionlp as jio
 ```
 '''
+__version__ = ''
 with open(os.path.join(DIR_PATH, 'README.md'),
           'r', encoding='utf-8') as f:
-    LONGDOC = f.read()
+    readme_lines = f.readlines()
+    version_pattern = re.compile('badge/version-(\d\.\d+\.\d+)-')
+    for line in readme_lines:
+        result = version_pattern.search(line)
+        if result is not None:
+            __version__ = result.group(1)
+
+    LONGDOC = '\n'.join(readme_lines)
 
 __name__ = 'jionlp'
-__author__ = "cuiguoer"
+__author__ = "dongrixinyu"
 __copyright__ = "Copyright 2020, dongrixinyu"
 __credits__ = []
 __license__ = "Apache License 2.0"
 __maintainer__ = "dongrixinyu"
 __email__ = "dongrixinyu.89@163.com"
 __url__ = 'https://github.com/dongrixinyu/JioNLP'
-__description__ = ''#LONGDOC.split('安装：\n```')[0]
-
+__description__ = 'Preprocessing tool for Chinese NLP'
 
 
 with open(os.path.join(DIR_PATH, 'requirements.txt'), 
           'r', encoding='utf-8') as f:
     requirements = f.readlines()
 
+
 setup(name=__name__,
-      version='1.3.4',
+      version=__version__,
       url=__url__,
       author=__author__,
       author_email=__email__,

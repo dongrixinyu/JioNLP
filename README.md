@@ -8,16 +8,19 @@
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-2k-brightgreen" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.4-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.5-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP" /></a>
 </p>
 
-### &emsp;&emsp; ——JioNLP：无模型中文 NLP 工具包，做您的 NLP 任务的垫 jio 石，飞速 NLP 开发
-### &emsp;&emsp; ——A python library for chinese NLP
+### &emsp;&emsp; ——JioNLP：中文 NLP 预处理工具包 A python library for chinese NLP preprocessing
 ### &emsp;&emsp; ```pip install -i https://test.pypi.org/simple/ jionlp```
 
-#### JioNLP 是一个提供常用 NLP 功能的工具包，宗旨是直接提供方便快捷的解析、词典类、深度学习模型加速的面向中文的工具接口，并提供一步到位的查阅入口。帮助开发者解决基础的 NLP 需求和操作。
+#### 做 NLP 任务，需要清洗、过滤语料？用 JioNLP
+#### 做 NLP 任务，需要做信息抽取？用 JioNLP
+#### 做 NLP 任务，需要做数据增强？用 JioNLP
+#### 做 NLP 任务，需要给模型添加偏旁、拼音、繁体转换？用 JioNLP
+#### 总之，JioNLP 提供 NLP 任务预处理功能，准确、高效、零使用门槛，并提供一步到位的查阅入口。
 
 #### 功能主要包括：文本清洗，去除HTML标签、异常字符、冗余字符，转换全角字母、数字、空格为半角，抽取及删除E-mail及域名、电话号码、QQ号、括号内容、身份证号、IP地址、URL超链接、货币金额与单位，解析身份证号信息、手机号码归属地、座机区号归属地，按行快速读写文件，（多功能）停用词过滤，（优化的）分句，地址解析，新闻地域识别，繁简体转换，汉字转拼音，汉字偏旁、字形、四角编码拆解，基于词典的情感分析，色情数据过滤，反动数据过滤，关键短语抽取，成语词典、歇后语词典、新华字典、新华词典、停用词典、中国地名词典、世界地名词典，基于词典的NER，NER的字、词级别转换，NER的entity和tag格式转换，NER模型的预测阶段加速并行工具集，NER标注和模型预测的结果差异对比，NER标注数据集分割与统计，文本分类标注数据集的分割与统计，回译数据增强。
 
@@ -94,17 +97,19 @@ $ pip install -i https://test.pypi.org/simple/ jionlp
 
 ## 使用 Features
 
-- 导入工具包，查看工具包的主要功能
+- 导入工具包，查看工具包的主要功能与函数注释
 ```
 >>> import jionlp as jio
 >>> dir(jio)
 >>> dir(jio.ner)
+>>> print(jio.extract_parentheses.__doc__)
 ```
 
 ### 1、正则抽取与解析
 
 | 功能   | 函数   |描述   |
 |--------|--------|-------|
+|[**清洗文本**](https://github.com/dongrixinyu/jionlp/wiki/正则抽取与解析-说明文档#user-content-清洗文本)      |clean_text |去除文本中的**异常字符、冗余字符、HTML标签、括号信息、**<br>**URL、E-mail、电话号码，全角字母数字转换为半角**|
 |[抽取 **E-mail**](https://github.com/dongrixinyu/JioNLP/wiki/正则抽取与解析-说明文档#user-content-抽取-e-mail)|extract_email |抽取文本中的 E-mail，返回**位置**与**域名** |
 |[抽取 **金额**](https://github.com/dongrixinyu/JioNLP/wiki/正则抽取与解析-说明文档#user-content-抽取金额字符串)|extract_money |抽取文本中的金额，并将其以**数字 + 单位**标准形式输出 |
 |[抽取**电话号码**](https://github.com/dongrixinyu/JioNLP/wiki/正则抽取与解析-说明文档#user-content-抽取电话号码) | extract_phone_number | 抽取电话号码(含**手机**、**座机**)，返回**域名**、**类型**与**位置**
@@ -113,7 +118,6 @@ $ pip install -i https://test.pypi.org/simple/ jionlp
 |[抽取 **URL**](https://github.com/dongrixinyu/jionlp/wiki/正则抽取与解析-说明文档#user-content-抽取-url-超链接)         |extract_url         |抽取 URL 超链接  |
 |[抽取 **IP**地址](https://github.com/dongrixinyu/jionlp/wiki/正则抽取与解析-说明文档#user-content-抽取-ip-地址)      |extract_ip_address  |抽取 IP 地址|
 |[抽取**括号**中的内容](https://github.com/dongrixinyu/jionlp/wiki/正则抽取与解析-说明文档#user-content-抽取文本括号信息) |extract_parentheses |抽取括号内容，包括 **{}「」[]【】()（）<>《》** |
-|[**清洗文本**](https://github.com/dongrixinyu/jionlp/wiki/正则抽取与解析-说明文档#user-content-清洗文本)      |clean_text |去除文本中的**异常字符、冗余字符、HTML标签、括号信息、**<br>**URL、E-mail、电话号码，全角字母数字转换为半角**|
 |[删除 **E-mail**](https://github.com/dongrixinyu/jionlp/wiki/正则抽取与解析-说明文档#user-content-删除文本中的-e-mail) |remove_email  |删除文本中的 E-mail 信息 |
 |[删除 **URL**](https://github.com/dongrixinyu/jionlp/wiki/正则抽取与解析-说明文档#user-content-删除文本中的-url)     |remove_url          |删除文本中的 URL 信息|
 |[删除 **电话号码**](https://github.com/dongrixinyu/jionlp/wiki/正则抽取与解析-说明文档#user-content-删除电话号码)    |remove_phone_number |删除文本中的电话号码 |
@@ -195,7 +199,7 @@ $ pip install -i https://test.pypi.org/simple/ jionlp
 
 ### 初衷
 
-- NLP 开发一个模型，并不仅仅是标注数据、训练模型、进而上线这么简单。其中涉及到数据分析、数据预处理、矫正标注数据、加速模型并行、保证模型稳定性等等方面。抛开论文中千奇百怪的模型，如何快速完成上述的任务，才是非常依赖工程师经验的。本工具包能够快速辅助工程师完成各种琐碎的操作，加速开发进度，把有限的精力用在思考而非 code 上。
+- 开发 NLP 模型，预处理至关重要，常常占到工程师大部分时间。本工具包能快速辅助工程师完成各种琐碎的预处理操作，加速开发进度，把有限的精力用在思考而非 code 上。
 
 ### 开源不易，欢迎自由投食 (#^.^#)
 
