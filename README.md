@@ -8,7 +8,7 @@
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-2k-brightgreen" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.5-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.6-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP" /></a>
 </p>
@@ -24,6 +24,22 @@
 
 #### 功能主要包括：文本清洗，去除HTML标签、异常字符、冗余字符，转换全角字母、数字、空格为半角，抽取及删除E-mail及域名、电话号码、QQ号、括号内容、身份证号、IP地址、URL超链接、货币金额与单位，解析身份证号信息、手机号码归属地、座机区号归属地，按行快速读写文件，（多功能）停用词过滤，（优化的）分句，地址解析，新闻地域识别，繁简体转换，汉字转拼音，汉字偏旁、字形、四角编码拆解，基于词典的情感分析，色情数据过滤，反动数据过滤，关键短语抽取，成语词典、歇后语词典、新华字典、新华词典、停用词典、中国地名词典、世界地名词典，基于词典的NER，NER的字、词级别转换，NER的entity和tag格式转换，NER模型的预测阶段加速并行工具集，NER标注和模型预测的结果差异对比，NER标注数据集分割与统计，文本分类标注数据集的分割与统计，回译数据增强。
 
+
+#### Update 2020-11-10
+## 新增更新 [文本摘要](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-抽取式文本摘要)
+
+#### jio.summary.extract_summary
+
+给定一篇文本（尤指新闻），返回其抽取式摘要。
+
+```
+>>> import jionlp as jio
+>>> text = '海外网11月10日电当地时间9日，美国总统特朗普在推特上发文表示，美国国防部长马克·埃斯珀已经被开除。...'
+>>> res = jio.summary.extract_summary(text)
+>>> print(res)
+
+# 特朗普的推文写道：“马克 埃斯珀已经被开除。...
+```
 
 #### Update 2020-10-16
 ## 新增更新 [地址解析](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-地址解析)
@@ -50,37 +66,6 @@
 #  'orig_location': '武侯区红牌楼街19号红星大厦9楼2号'}
 ```
 
-#### Update 2020-09-14
-## 新增 [回译数据增强](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-回译数据增强)：采用各大厂的机器翻译 API，实现文本数据增强
-```
-# ! 需要自己去各厂的平台申请 api和密钥。否则如下的若干 api 和密钥不可用。
->>> print(jio.TencentApi.__doc__)  # 查看腾讯api的接口使用说明与注册说明。其它厂的接口同理
-
->>> import jionlp as jio
->>> xunfei_api = jio.XunfeiApi(
-        [{"appid": "5f5846b1",
-          "api_key": "52465bb3de9a258379e6909c4b1f2b4b",
-          "secret": "b21fdc62a7ed0e287f31cdc4bf4ab9a3"}])
->>> google_api = jio.GoogleApi()
->>> baidu_api = jio.BaiduApi(
-        [{'appid': '20200618000498778',
-          'secretKey': 'raHalLakgYitNuzGOoB2'},  # 错误的密钥
-         {'appid': '20200618000498778',
-          'secretKey': 'raHalLakgYitNuzGOoBZ'}], gap_time=0.5)
-
->>> apis = [baidu_api, google_api, xunfei_api]
-
->>> back_trans = jio.BackTranslation(mt_apis=apis)
->>> text = '饿了么凌晨发文将推出新功能，用户可选择是否愿意多等外卖员 5 分钟，你愿意多等这 5 分钟吗？'
->>> result = back_trans(text)
->>> print(result)
-
-# ['饿了么将在凌晨推出一项新功能。用户可以选择是否愿意额外等待外卖人员5分钟。您想多等5分钟吗？', 
-#  '《饿了么》将在凌晨推出一档新节目。用户可以选择是否愿意等待餐饮人员多花5分钟。您愿意再等五分钟吗？', 
-#  'Ele.me将在早晨的最初几个小时启动一个新的功能。用户可以选择是否准备好再等5分钟。你不想再等五分钟吗？', 
-#  'Eleme将在清晨推出新的功能。用户可以选择是否愿意再等5分钟工作人员。你想再等五分钟吗？']
-
-```
 
 ## 安装 Installation
 
@@ -142,6 +127,7 @@ $ pip install -i https://test.pypi.org/simple/ jionlp
 | 功能   | 函数   |描述   |
 |--------|--------|-------|
 |[**关键短语抽取**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-关键短语抽取)   |extract_keyphrase|给定一篇文本，抽取其对应关键短语    |
+|[抽取式**文本摘要**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-抽取式文本摘要)   |extract_summary|给定一篇文本，抽取其对应文摘    |
 |[**回译数据增强**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-回译数据增强)   |BackTranslation|给定一篇文本，采用各大厂云平台的机器翻译接口，实现数据增强    |
 |[**停用词过滤**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-去除停用词)       |remove_stopwords|给定一个文本被分词后的词 list，去除其中的停用词            |
 |[**分句**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-文本分句)             |split_sentence    |对文本按标点分句。  |

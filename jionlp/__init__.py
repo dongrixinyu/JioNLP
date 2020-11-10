@@ -1,7 +1,7 @@
 # -*- coding=utf-8 -*-
 
 
-__version__ = '1.3.5'
+__version__ = '1.3.6'
 
 import os
 
@@ -30,6 +30,7 @@ guide = """
 │   | 2020-09-14 | add back translation for data augmentation         |   │
 │   | 2020-10-16 | update 2020 china location dictionary              |   │
 │   | 2020-10-19 | add zip_file for compressing the size of dict files|   │
+│   | 2020-11-10 | add extractive summary func                        |   │
 │                                                                         │
 ╰─────────────────────────────────────────────────────────────────────────╯
 """
@@ -44,13 +45,4 @@ from jionlp.algorithm import *
 from jionlp.util.fast_loader import FastLoader
 
 
-#rule = FastLoader('rule', globals(), 'jionlp.rule')
-
-
-
-
-
-
-
-
-
+# rule = FastLoader('rule', globals(), 'jionlp.rule')

@@ -15,7 +15,6 @@ DESCRIPTION:
 
 import os
 import re
-import pdb
 import json
 import numpy as np
 import pkuseg
@@ -23,7 +22,6 @@ import pkuseg
 from jionlp import logging
 from jionlp.rule import clean_text
 from jionlp.gadget import split_sentence
-from jionlp.gadget import remove_stopwords
 from jionlp.dictionary import stopwords_loader
 from jionlp.dictionary import idf_loader
 from jionlp.util import pkuseg_postag_loader
@@ -93,8 +91,8 @@ class ChineseKeyPhrasesExtractor(object):
                                 'ad', 'an', 'vn', 'vd', 'vx']
         
         # 去除冗余短语的规则
-        self.redundent_strict_pattern = re.compile('[\*\|`\;:丨－\<\>]')  # 有一个字符即抛弃
-        self.redundent_loose_pattern = re.compile('[/\d\.\-:=a-z+,%]+')  # 全部是该字符即抛弃
+        self.redundant_strict_pattern = re.compile('[\*\|`\;:丨－\<\>]')  # 有一个字符即抛弃
+        self.redundant_loose_pattern = re.compile('[/\d\.\-:=a-z+,%]+')  # 全部是该字符即抛弃
         self.extra_date_ptn = re.compile('\d{1,2}[月|日]')
         
         # 加载 idf，计算其 oov 均值
@@ -261,18 +259,18 @@ class ChineseKeyPhrasesExtractor(object):
                             continue
 
                         # 由于 pkuseg 的缺陷，会把一些杂质符号识别为 n、v、adj，故须删除
-                        redundent_flag = False
+                        redundant_flag = False
                         for item in candidate_phrase:
-                            matched = self.redundent_strict_pattern.search(item[0])
+                            matched = self.redundant_strict_pattern.search(item[0])
                             if matched is not None:
-                                redundent_flag = True
+                                redundant_flag = True
                                 break
-                            matched = self.redundent_loose_pattern.search(item[0])
+                            matched = self.redundant_loose_pattern.search(item[0])
 
                             if matched is not None and matched.group() == item[0]:
-                                redundent_flag = True
+                                redundant_flag = True
                                 break
-                        if redundent_flag:
+                        if redundant_flag:
                             continue
                             
                         # 如果短语中包含了某些不想要的词，则跳过
@@ -489,12 +487,31 @@ class ChineseKeyPhrasesExtractor(object):
         # 计算未知词汇的主题突出度，由于停用词已经预先过滤，所以这里不需要再考停用词无突出度
         tmp_prominence_list = [item[1] for item in self.topic_prominence_dict.items()]
         self.unk_topic_prominence_value = sum(tmp_prominence_list) / (2 * len(tmp_prominence_list))
-        # pdb.set_trace()
         
 
 if __name__ == '__main__':
     title = '巴黎圣母院大火：保安查验火警失误 现场找到7根烟头'
-    text = '法国媒体最新披露，巴黎圣母院火灾当晚，第一次消防警报响起时，负责查验的保安找错了位置，因而可能贻误了救火的最佳时机。据法国BFMTV电视台报道，4月15日晚，巴黎圣母院起火之初，教堂内的烟雾报警器两次示警。当晚18时20分，值班人员响应警报前往电脑指示地点查看，但没有发现火情。20分钟后，警报再次响起，保安赶到教堂顶部确认起火。然而为时已晚，火势已迅速蔓延开来。报道援引火因调查知情者的话说，18时20分首次报警时，监控系统侦测到的失火位置准确无误。当时没有发生电脑故障，而是负责现场查验的工作人员走错了地方，因而属于人为失误。报道称，究竟是人机沟通出错，还是电脑系统指示有误，亦或是工作人员对机器提示理解不当？事发当时的具体情形尚待调查确认，以厘清责任归属。该台还证实了此前法媒的另一项爆料：调查人员在巴黎圣母院顶部施工工地上找到了7个烟头，但并未得出乱扔烟头引发火灾的结论。截至目前，警方尚未排除其它可能性。大火发生当天（15日）晚上，巴黎检察机关便以“因火灾导致过失损毁”为由展开司法调查。目前，巴黎司法警察共抽调50名警力参与调查工作。参与圣母院顶部翻修施工的工人、施工方企业负责人以及圣母院保安等30余人相继接受警方问话。此前，巴黎市共和国检察官海伊茨曾表示，目前情况下，并无任何针对故意纵火行为的调查，因此优先考虑的调查方向是意外失火。调查将是一个“漫长而复杂”的过程。现阶段，调查人员尚未排除任何追溯火源的线索。因此，烟头、短路、喷焊等一切可能引发火灾的因素都有待核实，尤其是圣母院顶部的电路布线情况将成为调查的对象。负责巴黎圣母院顶部翻修工程的施工企业负责人在接受法国电视一台新闻频道采访时表示，该公司部分员工向警方承认曾在脚手架上抽烟，此举违反了工地禁烟的规定。他对此感到遗憾，但同时否认工人吸烟与火灾存在任何直接关联。该企业负责人此前还曾在新闻发布会上否认检方关于起火时尚有工人在场的说法。他声称，火灾发生前所有在现场施工的工人都已经按点下班，因此事发时无人在场。《鸭鸣报》在其报道中称，警方还将调查教堂电梯、电子钟或霓虹灯短路的可能性。但由于教堂内的供电系统在大火中遭严重破坏，有些电路配件已成灰烬，几乎丧失了分析价值。此外，目前尚难以判定究竟是短路引发大火还是火灾造成短路。25日，即巴黎圣母院发生震惊全球的严重火灾10天后，法国司法警察刑事鉴定专家进入失火现场展开勘查取证工作，标志着火因调查的技术程序正式启动。此前，由于灾后建筑结构仍不稳定和现场积水过多，调查人员一直没有真正开始采集取样。'
+    text = '法国媒体最新披露，巴黎圣母院火灾当晚，第一次消防警报响起时，负责查验的保安找错了位置，因而可能贻误了救火的最佳时机。' \
+           '据法国BFMTV电视台报道，4月15日晚，巴黎圣母院起火之初，教堂内的烟雾报警器两次示警。' \
+           '当晚18时20分，值班人员响应警报前往电脑指示地点查看，但没有发现火情。20分钟后，警报再次响起，保安赶到教堂顶部确认起火。' \
+           '然而为时已晚，火势已迅速蔓延开来。报道援引火因调查知情者的话说，18时20分首次报警时，监控系统侦测到的失火位置准确无误。' \
+           '当时没有发生电脑故障，而是负责现场查验的工作人员走错了地方，因而属于人为失误。' \
+           '报道称，究竟是人机沟通出错，还是电脑系统指示有误，亦或是工作人员对机器提示理解不当？' \
+           '事发当时的具体情形尚待调查确认，以厘清责任归属。' \
+           '该台还证实了此前法媒的另一项爆料：调查人员在巴黎圣母院顶部施工工地上找到了7个烟头，但并未得出乱扔烟头引发火灾的结论。' \
+           '截至目前，警方尚未排除其它可能性。大火发生当天（15日）晚上，巴黎检察机关便以“因火灾导致过失损毁”为由展开司法调查。' \
+           '目前，巴黎司法警察共抽调50名警力参与调查工作。参与圣母院顶部翻修施工的工人、施工方企业负责人以及圣母院保安等30余人相继接受警方问话。' \
+           '此前，巴黎市共和国检察官海伊茨曾表示，目前情况下，并无任何针对故意纵火行为的调查，因此优先考虑的调查方向是意外失火。' \
+           '调查将是一个“漫长而复杂”的过程。现阶段，调查人员尚未排除任何追溯火源的线索。' \
+           '因此，烟头、短路、喷焊等一切可能引发火灾的因素都有待核实，尤其是圣母院顶部的电路布线情况将成为调查的对象。' \
+           '负责巴黎圣母院顶部翻修工程的施工企业负责人在接受法国电视一台新闻频道采访时表示，该公司部分员工向警方承认曾在脚手架上抽烟，' \
+           '此举违反了工地禁烟的规定。他对此感到遗憾，但同时否认工人吸烟与火灾存在任何直接关联。' \
+           '该企业负责人此前还曾在新闻发布会上否认检方关于起火时尚有工人在场的说法。他声称，火灾发生前所有在现场施工的工人都已经按点下班，' \
+           '因此事发时无人在场。《鸭鸣报》在其报道中称，警方还将调查教堂电梯、电子钟或霓虹灯短路的可能性。' \
+           '但由于教堂内的供电系统在大火中遭严重破坏，有些电路配件已成灰烬，几乎丧失了分析价值。' \
+           '此外，目前尚难以判定究竟是短路引发大火还是火灾造成短路。25日，即巴黎圣母院发生震惊全球的严重火灾10天后，' \
+           '法国司法警察刑事鉴定专家进入失火现场展开勘查取证工作，标志着火因调查的技术程序正式启动。' \
+           '此前，由于灾后建筑结构仍不稳定和现场积水过多，调查人员一直没有真正开始采集取样。'
     
     ckpe_obj = ChineseKeyPhrasesExtractor()
     key_phrases = ckpe_obj(text, topic_theta=1)
