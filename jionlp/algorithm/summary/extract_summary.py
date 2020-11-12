@@ -8,6 +8,7 @@ import pkuseg
 
 from jionlp import logging
 from jionlp.rule import clean_text
+from jionlp.rule import check_chinese_char
 from jionlp.gadget import split_sentence
 from jionlp.dictionary import stopwords_loader
 from jionlp.dictionary import idf_loader
@@ -87,121 +88,129 @@ class ChineseSummaryExtractor(object):
 
     def __call__(self, text, summary_length=200, lead_3_weight=1.2,
                  topic_theta=0.2, allow_topic_weight=True):
+
         # 输入检查
         if type(text) is not str:
             raise ValueError('type of `text` should only be str')
+        try:
+            # 初始化加载
+            if self.unk_topic_prominence_value == 0.:
+                self._prepare()
 
-        # 初始化加载
-        if self.unk_topic_prominence_value == 0.:
-            self._prepare()
+            if lead_3_weight < 1:
+                raise ValueError('the params `lead_3_weight` should not be less than 1.0')
+            if len(text) <= summary_length:
+                return text
 
-        if lead_3_weight < 1:
-            raise ValueError('the params `lead_3_weight` should not be less than 1.0')
-        if len(text) <= summary_length:
-            return text
+            # step 0: 清洗文本
+            text = clean_text(text)
 
-        # step 0: 清洗文本
-        text = clean_text(text)
+            # step 1: 分句，并逐句清理杂质
+            sentences_list = split_sentence(text)
 
-        # step 1: 分句，并逐句清理杂质
-        sentences_list = split_sentence(text)
+            # step 2: 分词与词性标注
+            sentences_segs_dict = dict()
+            counter_segs_list = list()
+            for idx, sen in enumerate(sentences_list):
+                if not check_chinese_char(sen):  # 若无中文字符，则略过
+                    continue
 
-        # step 2: 分词与词性标注
-        sentences_segs_dict = dict()
-        counter_segs_list = list()
-        for idx, sen in enumerate(sentences_list):
-            sen_segs = self.seg.cut(sen)
-            sentences_segs_dict.update({sen: [idx, sen_segs, list(), 0]})
-            counter_segs_list.extend(sen_segs)
+                sen_segs = self.seg.cut(sen)
+                sentences_segs_dict.update({sen: [idx, sen_segs, list(), 0]})
+                counter_segs_list.extend(sen_segs)
 
-        # step 3: 计算词频
-        total_length = len(counter_segs_list)
-        freq_dict = dict()
-        for word_pos in counter_segs_list:
-            word, pos = word_pos
-            if word in freq_dict:
-                freq_dict[word][1] += 1
-            else:
-                freq_dict.update({word: [pos, 1]})
-
-        # step 4: 计算每一个词的权重
-        for sen, sen_segs in sentences_segs_dict.items():
-            sen_segs_weights = list()
-            for word_pos in sen_segs[1]:
+            # step 3: 计算词频
+            total_length = len(counter_segs_list)
+            freq_dict = dict()
+            for word_pos in counter_segs_list:
                 word, pos = word_pos
-                if pos not in self.pos_name and word in self.stop_words:  # 虚词权重为 0
-                    weight = 0.0
+                if word in freq_dict:
+                    freq_dict[word][1] += 1
                 else:
-                    weight = freq_dict[word][1] * self.idf_dict.get(
-                        word, self.median_idf) / total_length
-                sen_segs_weights.append(weight)
+                    freq_dict.update({word: [pos, 1]})
 
-            sen_segs[2] = sen_segs_weights
-            sen_segs[3] = len([w for w in sen_segs_weights if w != 0]) / len(sen_segs_weights)
+            # step 4: 计算每一个词的权重
+            for sen, sen_segs in sentences_segs_dict.items():
+                sen_segs_weights = list()
+                for word_pos in sen_segs[1]:
+                    word, pos = word_pos
+                    if pos not in self.pos_name and word in self.stop_words:  # 虚词权重为 0
+                        weight = 0.0
+                    else:
+                        weight = freq_dict[word][1] * self.idf_dict.get(
+                            word, self.median_idf) / total_length
+                    sen_segs_weights.append(weight)
 
-        # step 5: 得到每个句子的权重
-        for sen, sen_segs in sentences_segs_dict.items():
-            # tfidf 权重
-            tfidf_weight = sum(sen_segs[2]) / len(sen_segs[2])
+                sen_segs[2] = sen_segs_weights
+                sen_segs[3] = len([w for w in sen_segs_weights if w != 0]) / len(sen_segs_weights) \
+                    if len(sen_segs_weights) == 0 else 0
 
-            # 主题模型权重
-            if allow_topic_weight:
-                topic_weight = 0.0
-                for item in sen_segs[1]:
-                    topic_weight += self.topic_prominence_dict.get(
-                        item[0], self.unk_topic_prominence_value)
-                topic_weight = topic_weight / len(sen_segs[1])
-            else:
-                topic_weight = 0.0
+            # step 5: 得到每个句子的权重
+            for sen, sen_segs in sentences_segs_dict.items():
+                # tfidf 权重
+                tfidf_weight = sum(sen_segs[2]) / len(sen_segs[2])
 
-            sen_weight = topic_weight * topic_theta + tfidf_weight
-
-            # 句子长度超过限制，权重削减
-            if len(sen) < 15 or len(sen) > 70:
-                sen_weight = 0.7 * sen_weight
-
-            # LEAD-3 权重
-            if sen_segs[0] < 3:
-                sen_weight *= lead_3_weight
-
-            sen_segs[3] = sen_weight
-
-        # step 6: 按照 MMR 算法重新计算权重，并把不想要的过滤掉
-        sentences_info_list = sorted(sentences_segs_dict.items(),
-                                     key=lambda item: item[1][3], reverse=True)
-
-        mmr_list = list()
-        for sentence_info in sentences_info_list:
-            # 计算与已有句子的相似度
-            sim_ratio = self._mmr_similarity(sentence_info, mmr_list)
-            sentence_info[1][3] = (1 - sim_ratio) * sentence_info[1][3]
-            mmr_list.append(sentence_info)
-
-        # step 7: 按重要程度进行排序，选取若干个句子作为摘要
-        if len(sentences_info_list) == 1:
-            return sentences_info_list[0][0]
-        total_length = 0
-        summary_list = list()
-        for idx, item in enumerate(sentences_info_list):
-            if len(item[0]) + total_length > summary_length:
-                if idx == 0:
-                    return item[0]
+                # 主题模型权重
+                if allow_topic_weight:
+                    topic_weight = 0.0
+                    for item in sen_segs[1]:
+                        topic_weight += self.topic_prominence_dict.get(
+                            item[0], self.unk_topic_prominence_value)
+                    topic_weight = topic_weight / len(sen_segs[1])
                 else:
-                    # 按序号排序
-                    summary_list = sorted(
-                        summary_list, key=lambda item: item[1][0])
-                    summary = ''.join([item[0] for item in summary_list])
-                    return summary
-            else:
-                summary_list.append(item)
-                total_length += len(item[0])
-                if idx == len(sentences_info_list) - 1:
-                    summary_list = sorted(
-                        summary_list, key=lambda item: item[1][0])
-                    summary = ''.join([item[0] for item in summary_list])
-                    return summary
+                    topic_weight = 0.0
 
-        return text[:summary_length]
+                sen_weight = topic_weight * topic_theta + tfidf_weight
+
+                # 句子长度超过限制，权重削减
+                if len(sen) < 15 or len(sen) > 70:
+                    sen_weight = 0.7 * sen_weight
+
+                # LEAD-3 权重
+                if sen_segs[0] < 3:
+                    sen_weight *= lead_3_weight
+
+                sen_segs[3] = sen_weight
+
+            # step 6: 按照 MMR 算法重新计算权重，并把不想要的过滤掉
+            sentences_info_list = sorted(sentences_segs_dict.items(),
+                                         key=lambda item: item[1][3], reverse=True)
+
+            mmr_list = list()
+            for sentence_info in sentences_info_list:
+                # 计算与已有句子的相似度
+                sim_ratio = self._mmr_similarity(sentence_info, mmr_list)
+                sentence_info[1][3] = (1 - sim_ratio) * sentence_info[1][3]
+                mmr_list.append(sentence_info)
+
+            # step 7: 按重要程度进行排序，选取若干个句子作为摘要
+            if len(sentences_info_list) == 1:
+                return sentences_info_list[0][0]
+            total_length = 0
+            summary_list = list()
+            for idx, item in enumerate(sentences_info_list):
+                if len(item[0]) + total_length > summary_length:
+                    if idx == 0:
+                        return item[0]
+                    else:
+                        # 按序号排序
+                        summary_list = sorted(
+                            summary_list, key=lambda item: item[1][0])
+                        summary = ''.join([item[0] for item in summary_list])
+                        return summary
+                else:
+                    summary_list.append(item)
+                    total_length += len(item[0])
+                    if idx == len(sentences_info_list) - 1:
+                        summary_list = sorted(
+                            summary_list, key=lambda item: item[1][0])
+                        summary = ''.join([item[0] for item in summary_list])
+                        return summary
+
+            return text[:summary_length]
+        except Exception as e:
+            print('the text is not legal. \n{}'.format(e))
+            return ''
 
     def _mmr_similarity(self, sentence_info, mmr_list):
         """ 计算出每个句子和之前的句子相似性 """
