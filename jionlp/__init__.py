@@ -1,7 +1,7 @@
 # -*- coding=utf-8 -*-
 
 
-__version__ = '1.3.6'
+__version__ = '1.3.7'
 
 import os
 
@@ -31,6 +31,7 @@ guide = """
 │   | 2020-10-16 | update 2020 china location dictionary              |   │
 │   | 2020-10-19 | add zip_file for compressing the size of dict files|   │
 │   | 2020-11-10 | add extractive summary func                        |   │
+│   | 2020-11-24 | add phone location recognization                   |   │
 │                                                                         │
 ╰─────────────────────────────────────────────────────────────────────────╯
 """

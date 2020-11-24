@@ -12,6 +12,7 @@ from .pinyin import Pinyin
 from .char_radical import CharRadical
 from .back_translation import BackTranslation, BaiduApi, YoudaoFreeApi, \
     YoudaoApi, GoogleApi, TencentApi, XunfeiApi
+from .phone_location import PhoneLocation
 from jionlp.util.fast_loader import FastLoader
 
 
@@ -26,6 +27,10 @@ tra2sim = tra_sim_conversion.tra2sim
 sim2tra = tra_sim_conversion.sim2tra
 pinyin = Pinyin()
 char_radical = CharRadical()
+phone_location = PhoneLocation()
+cell_phone_location = phone_location.cell_phone_location
+landline_phone_location = phone_location.landline_phone_location
+
 
 # rule = FastLoader('rule', globals(), 'jionlp.rule')
 del tra_sim_conversion

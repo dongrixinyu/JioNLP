@@ -1,7 +1,6 @@
 # -*- coding=utf-8 -*-
 
 import os
-import pdb
 
 from jionlp import logging
 from jionlp.util.file_io import read_file_by_line
@@ -16,7 +15,8 @@ __all__ = ['china_location_loader', 'world_location_loader',
            'pinyin_phrase_loader', 'pinyin_char_loader',
            'xiehouyu_loader', 'chinese_char_dictionary_loader',
            'chinese_word_dictionary_loader',
-           'pornography_loader', 'traditional_simplified_loader']
+           'pornography_loader', 'traditional_simplified_loader',
+           'phone_location_loader', 'telecom_operator_loader']
 
 
 def china_location_loader(detail=False):
@@ -243,7 +243,48 @@ def traditional_simplified_loader(file_name):
         key, value = item.split('\t')
         map_dict.update({key: value})
     return map_dict
-    
+
+
+def phone_location_loader():
+    """ 加载电话号码地址与运营商解析词典 """
+    content = read_file_by_line(os.path.join(
+        GRAND_DIR_PATH, 'dictionary', 'phone_location.txt'), strip=False)
+
+    def return_all_num(line):
+        """ 返回所有的手机号码中间四位字符串 """
+        front, info = line.strip().split('\t')
+        num_string_list = info.split(',')
+        result_list = list()
+
+        for num_string in num_string_list:
+            if '-' in num_string:
+                start_num, end_num = num_string.split('-')
+                for i in range(int(start_num), int(end_num) + 1):
+                    result_list.append('{:0>4d}'.format(i))
+            else:
+                result_list.append(num_string)
+
+        result_list = [front + res for res in result_list]
+
+        return result_list
+
+    phone_location_dict = dict()
+    cur_location = ''
+    zip_code_location_dict = dict()
+    area_code_location_dict = dict()
+    for line in content:
+        if line.startswith('\t'):
+            res = return_all_num(line)
+            for i in res:
+                phone_location_dict.update({i: cur_location})
+
+        else:
+            cur_location, area_code, zip_code = line.strip().split('\t')
+            zip_code_location_dict.update({zip_code: cur_location})
+            area_code_location_dict.update({area_code: cur_location})
+
+    return phone_location_dict, zip_code_location_dict, area_code_location_dict
+
     
 def pinyin_phrase_loader():
     content = read_file_by_line(os.path.join(
@@ -307,7 +348,21 @@ def sentiment_words_loader():
         sentiment_words_dict.update({key: float(value)})
 
     return sentiment_words_dict
-    
+
+
+def telecom_operator_loader():
+    """ 加载通信运营商手机号码的匹配词典
+    """
+    telecom_operator = read_file_by_line(os.path.join(
+        GRAND_DIR_PATH, 'dictionary', 'telecom_operator.txt'))
+
+    telecom_operator_dict = dict()
+    for line in telecom_operator:
+        num, operator = line.strip().split(' ')
+        telecom_operator_dict.update({num: operator})
+
+    return telecom_operator_dict
+
     
 def xiehouyu_loader():
     """ 加载歇后语词典，共计 17000 余条，其中有相似的歇后语，如：

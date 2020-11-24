@@ -8,7 +8,7 @@
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-2k-brightgreen" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.6-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.7-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP" /></a>
 </p>
@@ -16,13 +16,37 @@
 ### &emsp;&emsp; ——JioNLP：中文 NLP 预处理工具包 A python library for chinese NLP preprocessing
 ### &emsp;&emsp; ```pip install -i https://test.pypi.org/simple/ jionlp```
 
-#### 做 NLP 任务，需要清洗、过滤语料？用 JioNLP
-#### 做 NLP 任务，需要做信息抽取？用 JioNLP
-#### 做 NLP 任务，需要做数据增强？用 JioNLP
-#### 做 NLP 任务，需要给模型添加偏旁、拼音、繁体转换？用 JioNLP
+- 做 NLP 任务，需要清洗、过滤语料？用 JioNLP
+- 做 NLP 任务，需要做信息抽取？用 JioNLP
+- 做 NLP 任务，需要做数据增强？用 JioNLP
+- 做 NLP 任务，需要给模型添加偏旁、拼音、繁体转换信息？用 JioNLP
 #### 总之，JioNLP 提供 NLP 任务预处理功能，准确、高效、零使用门槛，并提供一步到位的查阅入口。
 
-#### 功能主要包括：文本清洗，去除HTML标签、异常字符、冗余字符，转换全角字母、数字、空格为半角，抽取及删除E-mail及域名、电话号码、QQ号、括号内容、身份证号、IP地址、URL超链接、货币金额与单位，解析身份证号信息、手机号码归属地、座机区号归属地，按行快速读写文件，（多功能）停用词过滤，（优化的）分句，地址解析，新闻地域识别，繁简体转换，汉字转拼音，汉字偏旁、字形、四角编码拆解，基于词典的情感分析，色情数据过滤，反动数据过滤，关键短语抽取，抽取式文本摘要，成语词典、歇后语词典、新华字典、新华词典、停用词典、中国地名词典、世界地名词典，基于词典的NER，NER的字、词级别转换，NER的entity和tag格式转换，NER模型的预测阶段加速并行工具集，NER标注和模型预测的结果差异对比，NER标注数据集分割与统计，文本分类标注数据集的分割与统计，回译数据增强。
+#### 功能主要包括：文本清洗，去除HTML标签、异常字符、冗余字符，转换全角字母、数字、空格为半角，抽取及删除E-mail及域名、电话号码、QQ号、括号内容、身份证号、IP地址、URL超链接、货币金额与单位，解析身份证号信息、手机号码归属地、座机区号归属地、手机号码运营商，按行快速读写文件，（多功能）停用词过滤，（优化的）分句，地址解析，新闻地域识别，繁简体转换，汉字转拼音，汉字偏旁、字形、四角编码拆解，基于词典的情感分析，色情数据过滤，反动数据过滤，关键短语抽取，抽取式文本摘要，成语词典、歇后语词典、新华字典、新华词典、停用词典、中国地名词典、世界地名词典，基于词典的NER，NER的字、词级别转换，NER的entity和tag格式转换，NER模型的预测阶段加速并行工具集，NER标注和模型预测的结果差异对比，NER标注数据集分割与统计，文本分类标注数据集的分割与统计，回译数据增强。
+
+
+#### Update 2020-11-24
+## 新增更新 [电话号码归属地、运行商解析](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-电话号码归属地、运营商解析)
+
+#### jio.phone_location
+
+给定一个电话号码字符串，识别其中的**省、市二级地名**，**手机运营商**。
+
+```
+>>> import jionlp as jio
+>>> text = '联系电话：13288568202. (021)32830431'
+>>> num_list = jio.extract_phone_number(text)
+>>> print(num_list)
+>>> res = [jio.phone_location(item['text']) for item in num_list]
+>>> print(res)
+
+# [{'text': '13288568202', 'offset': (5, 16), 'type': 'cell_phone'},
+   {'text': '(021)32830431', 'offset': (18, 31), 'type': 'landline_phone'}]
+
+# {'number': '(021)32830431', 'province': '上海', 'city': '上海', 'type': 'landline_phone'}
+# {'number': '13288568202', 'province': '广东', 'city': '揭阳',
+   'type': 'cell_phone', 'operator': '中国联通'}
+```
 
 
 #### Update 2020-11-10
@@ -39,31 +63,6 @@
 >>> print(res)
 
 # 特朗普的推文写道：“马克 埃斯珀已经被开除。...
-```
-
-#### Update 2020-10-16
-## 新增更新 [地址解析](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-地址解析)
-
-#### parse_location
-
-给定一个（地址）字符串，识别其中的**省、市、县三级地名**，指定参数```town_village(bool)```，可获取**乡镇、村、社区两级详细地名**。
-使用了一份最新的[**2019年末国家统计局整理的全国行政区划**](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2019)中国地名词典，词典位置：```jionlp/dictionary/china_location.txt```。
-
-```
-# 例 1
->>> import jionlp as jio
->>> text = '武侯区红牌楼街道19号红星大厦9楼2号'
->>> res = jio.parse_location(text, town_village=True)
->>> print(res)
-
-# {'province': '四川省',
-#  'city': '成都市',
-#  'county': '武侯区',
-#  'town': '红牌楼街道',
-#  'village': None,
-#  'detail': '红牌楼街道19号红星大厦9楼2号',
-#  'full_location': '四川省成都市武侯区红牌楼街19号红星大厦9楼2号',
-#  'orig_location': '武侯区红牌楼街19号红星大厦9楼2号'}
 ```
 
 
@@ -132,6 +131,7 @@ $ pip install -i https://test.pypi.org/simple/ jionlp
 |[**停用词过滤**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-去除停用词)       |remove_stopwords|给定一个文本被分词后的词 list，去除其中的停用词            |
 |[**分句**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-文本分句)             |split_sentence    |对文本按标点分句。  |
 |[**地址解析**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-地址解析)         |parse_location    |给定一个包含国内地址字符串，识别其中的**省、市、县区、乡镇街道、村社**等信息     |
+|[电话号码**归属地、运营商**解析](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-电话号码归属地、运营商解析) |phone_location<br>cell_phone_location<br>landline_phone_location    |给定一个电话号码字符串，识别其中的**省、市、运营商**     |
 |[新闻**地名识别**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-新闻地名识别) |recognize_location|给定新闻文本，识别其中的**国内省、市、县，国外国家、城市**等信息     |
 |[**身份证号**解析](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-身份证号码解析) |parse_id_card   |给定一个身份证号，识别对应的**省、市、县、出生年月、**<br>**性别、校验码**等信息 |
 |[色情数据过滤]()     |
@@ -186,6 +186,7 @@ $ pip install -i https://test.pypi.org/simple/ jionlp
 ### 初衷
 
 - 开发 NLP 模型，预处理至关重要，常常占到工程师大部分时间。本工具包能快速辅助工程师完成各种琐碎的预处理操作，加速开发进度，把有限的精力用在思考而非 code 上。
+- 如有功能建议，可以通过 issue 提出。
 
 ### 开源不易，欢迎自由投食 (#^.^#)
 

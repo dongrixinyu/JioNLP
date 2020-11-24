@@ -15,7 +15,8 @@ def zip_file(file_list=None):
         file_list = ['china_location.txt', 'chinese_char_dictionary.txt',
                      'chinese_idiom.txt', 'chinese_word_dictionary.txt',
                      'idf.txt', 'pinyin_phrase.txt',
-                     'word_topic_weight.json', 'topic_word_weight.json']
+                     'word_topic_weight.json', 'topic_word_weight.json',
+                     'phone_location.txt']
 
     dict_dir_path = os.path.join(DIR_PATH, 'dictionary')
     for _file in file_list:
@@ -38,7 +39,8 @@ def unzip_file():
     file_list = ['china_location.zip', 'chinese_char_dictionary.zip',
                  'chinese_idiom.zip', 'chinese_word_dictionary.zip',
                  'idf.zip', 'pinyin_phrase.zip',
-                 'word_topic_weight.zip', 'topic_word_weight.zip']
+                 'word_topic_weight.zip', 'topic_word_weight.zip',
+                 'phone_location.zip']
 
     dict_dir_path = os.path.join(DIR_PATH, 'dictionary')
     for _zip_file in file_list:

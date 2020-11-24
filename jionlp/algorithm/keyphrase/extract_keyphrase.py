@@ -89,7 +89,7 @@ class ChineseKeyPhrasesExtractor(object):
         self.loose_pos_name = self.pos_name - self.pos_exception
         self.strict_pos_name = ['a', 'n', 'j', 'nr', 'ns', 'nt', 'nx', 'nz', 
                                 'ad', 'an', 'vn', 'vd', 'vx']
-        
+
         # 去除冗余短语的规则
         self.redundant_strict_pattern = re.compile('[\*\|`\;:丨－\<\>]')  # 有一个字符即抛弃
         self.redundant_loose_pattern = re.compile('[/\d\.\-:=a-z+,%]+')  # 全部是该字符即抛弃
