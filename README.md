@@ -26,7 +26,7 @@
 
 
 #### Update 2020-11-24
-## 新增更新 [电话号码归属地、运行商解析](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-电话号码归属地、运营商解析)
+## 新增 [电话号码归属地、运行商解析](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-电话号码归属地运营商解析)
 
 #### jio.phone_location
 
@@ -131,7 +131,7 @@ $ pip install -i https://test.pypi.org/simple/ jionlp
 |[**停用词过滤**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-去除停用词)       |remove_stopwords|给定一个文本被分词后的词 list，去除其中的停用词            |
 |[**分句**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-文本分句)             |split_sentence    |对文本按标点分句。  |
 |[**地址解析**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-地址解析)         |parse_location    |给定一个包含国内地址字符串，识别其中的**省、市、县区、乡镇街道、村社**等信息     |
-|[电话号码**归属地、运营商**解析](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-电话号码归属地、运营商解析) |phone_location<br>cell_phone_location<br>landline_phone_location    |给定一个电话号码字符串，识别其中的**省、市、运营商**     |
+|[电话号码**归属地、运营商**解析](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-电话号码归属地运营商解析) |phone_location<br>cell_phone_location<br>landline_phone_location    |给定一个电话号码字符串，识别其中的**省、市、运营商**     |
 |[新闻**地名识别**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-新闻地名识别) |recognize_location|给定新闻文本，识别其中的**国内省、市、县，国外国家、城市**等信息     |
 |[**身份证号**解析](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-身份证号码解析) |parse_id_card   |给定一个身份证号，识别对应的**省、市、县、出生年月、**<br>**性别、校验码**等信息 |
 |[色情数据过滤]()     |
