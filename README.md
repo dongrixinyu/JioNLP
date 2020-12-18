@@ -101,7 +101,7 @@ $ pip install -i https://test.pypi.org/simple/ jionlp
 |[**停用词过滤**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-去除停用词)       |remove_stopwords|给定一个文本被分词后的词 list，去除其中的停用词            |
 |[**分句**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-文本分句)             |split_sentence    |对文本按标点分句。  |
 |[**地址解析**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-地址解析)         |parse_location    |给定一个包含国内地址字符串，识别其中的**省、市、县区、乡镇街道、村社**等信息     |
-|[电话号码**归属地、运营商**解析](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-电话号码归属地运营商解析) |phone_location<br>cell_phone_location<br>landline_phone_location    |给定一个电话号码字符串，识别其中的**省、市、运营商**     |
+|[电话号码**归属地**、<br>**运营商**解析](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-电话号码归属地运营商解析) |phone_location<br>cell_phone_location<br>landline_phone_location    |给定一个电话号码字符串，识别其中的**省、市、运营商**     |
 |[新闻**地名识别**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-新闻地名识别) |recognize_location|给定新闻文本，识别其中的**国内省、市、县，国外国家、城市**等信息     |
 |[**身份证号**解析](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-身份证号码解析) |parse_id_card   |给定一个身份证号，识别对应的**省、市、县、出生年月、**<br>**性别、校验码**等信息 |
 |[**成语接龙**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-成语接龙)   |idiom_solitaire|成语接龙，即前一成语的尾字和后一成语的首字（读音）相同    |
@@ -110,7 +110,7 @@ $ pip install -i https://test.pypi.org/simple/ jionlp
 |[繁体转简体](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-繁体转简体字) |tra2sim |繁体转简体，支持**逐字转**与**最大匹配**两种模式 |
 |[简体转繁体](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-简体转繁体字) |sim2tra |简体转繁体，支持**逐字转**与**最大匹配**两种模式 |
 |[汉字转**拼音**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-汉字转拼音)    | pinyin | 找出中文文本对应的汉语拼音，并可返回**声母**、**韵母**、**声调**   |
-|[汉字转**偏旁与字形**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-汉字转偏旁与字形)    | char_radical | 找出中文文本对应的汉字字形结构信息，包括**偏旁部首**(“河”氵)、<br>**字形结构**(“河”左右结构)、**四角编码**(“河”31120)、<br>**汉字拆解**(“河”水可) |
+|[汉字转**偏旁与字形**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-汉字转偏旁与字形)    | char_radical | 找出中文文本对应的汉字字形结构信息，<br>包括**偏旁部首**(“河”氵)、**字形结构**(“河”左右结构)、<br>**四角编码**(“河”31120)、**汉字拆解**(“河”水可) |
 
 ### 2、正则抽取与解析
 
@@ -139,7 +139,7 @@ $ pip install -i https://test.pypi.org/simple/ jionlp
 
 | 功能   | 函数   |描述   |
 |--------|--------|-------|
-|[**按行读取文件**](https://github.com/dongrixinyu/jionlp/wiki/文件读写-说明文档#user-content-文件读取iter)     |read_file_by_iter    |以迭代器形式方便按行读取文件，节省内存，支持指定**行数**，<br>**跳过空行**  |
+|[**按行读取文件**](https://github.com/dongrixinyu/jionlp/wiki/文件读写-说明文档#user-content-文件读取iter)     |read_file_by_iter    |以迭代器形式方便按行读取文件，节省内存，<br>支持指定**行数**，**跳过空行**  |
 |[**按行读取文件**](https://github.com/dongrixinyu/jionlp/wiki/文件读写-说明文档#user-content-文件读取list)     |read_file_by_line |按行读取文件，支持指定**行数**，**跳过空行** |
 |[将 list 中元素按行写入文件](https://github.com/dongrixinyu/jionlp/wiki/文件读写-说明文档#user-content-文件写入) | write_file_by_line | 将 list 中元素按行写入文件 |
 |[计时工具](https://github.com/dongrixinyu/jionlp/wiki/文件读写-说明文档#user-content-计时器)                 |TimeIt             | 统计某一代码段的耗时    |

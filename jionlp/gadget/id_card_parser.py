@@ -2,7 +2,6 @@
 
 import os
 import re
-import pdb
 
 from jionlp.dictionary.dictionary_loader import china_location_loader
 from jionlp.rule.rule_pattern import ID_CARD_CHECK_PATTERN

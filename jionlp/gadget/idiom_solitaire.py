@@ -35,7 +35,6 @@ class IdiomSolitaire(object):
 
         # 千方百计  # 每次结果不一
 
-
     """
     def __init__(self):
         self.idiom_list = None
