@@ -51,7 +51,7 @@ class IdiomSolitaire(object):
 
         self.pure_idiom_list = [item['idiom'] for item in self.idiom_list]
 
-        self.already_used_idioms = list()
+        self.already_used_idioms = set()
 
     def __call__(self, cur_idiom, same_pinyin=True, check_idiom=False,
                  same_tone=True, with_prob=True, restart=False):
@@ -60,7 +60,7 @@ class IdiomSolitaire(object):
 
         if restart:
             # 重新开始游戏，清空历史记录
-            self.already_used_idioms = list()
+            self.already_used_idioms = set()
 
         if cur_idiom not in self.pure_idiom_list:
             logging.warning('{} may not be a Chinese idiom.'.format(cur_idiom))
@@ -70,15 +70,14 @@ class IdiomSolitaire(object):
                 pass
         else:
             # add cur idiom into the already-list
-            self.already_used_idioms.extend(
-                [item for item in self.idiom_list if item['idiom'] == cur_idiom])
+            self.already_used_idioms.add(cur_idiom)
 
         if same_pinyin:
             cur_last_pinyin = self.pinyin_obj(cur_idiom, formater='simple')[-1]
             backup_idioms = list()
             if same_tone:
                 for idiom_obj in self.idiom_list:
-                    if idiom_obj in self.already_used_idioms:
+                    if idiom_obj['idiom'] in self.already_used_idioms:
                         continue
 
                     if cur_last_pinyin == idiom_obj['pinyin'][0]:
@@ -86,7 +85,7 @@ class IdiomSolitaire(object):
 
             else:
                 for idiom_obj in self.idiom_list:
-                    if idiom_obj in self.already_used_idioms:
+                    if idiom_obj['idiom'] in self.already_used_idioms:
                         continue
 
                     if cur_last_pinyin[:-1] == idiom_obj['pinyin'][0][:-1]:
@@ -107,11 +106,11 @@ class IdiomSolitaire(object):
 
         if not with_prob:
             result = random.choice(backup_idioms)
-            self.already_used_idioms.append(result)
+            self.already_used_idioms.add(result['idiom'])
             return result['idiom']
         else:
             result = self._random_select(backup_idioms)
-            self.already_used_idioms.append(result)
+            self.already_used_idioms.add(result['idiom'])
             return result['idiom']
 
     @staticmethod
