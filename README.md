@@ -191,7 +191,7 @@ $ pip install -i https://test.pypi.org/simple/ jionlp
 - 开发 NLP 模型，预处理至关重要，常常占到工程师大部分时间。本工具包能快速辅助工程师完成各种琐碎的预处理操作，加速开发进度，把有限的精力用在思考而非 code 上。
 - 如有功能建议，可以通过 issue 提出。
 
-### 开源不易，欢迎自由投食 (#^.^#)
+### 做NLP不易，欢迎加入自然语言处理交流群 (#^.^#)
 
 ![image](https://github.com/dongrixinyu/JioNLP/blob/master/qr_code_for_collection.jpg)
 
