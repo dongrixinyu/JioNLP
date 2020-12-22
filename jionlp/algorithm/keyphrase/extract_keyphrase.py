@@ -228,6 +228,7 @@ class ChineseKeyPhrasesExtractor(object):
                     sen_segs_weights.append(weight)
                 sentences_segs_weights_list.append(sen_segs_weights)
 
+
             # pdb.set_trace()
             # step4: 通过一定规则，找到候选短语集合，以及其权重
             candidate_phrases_dict = dict()
@@ -371,14 +372,13 @@ class ChineseKeyPhrasesExtractor(object):
             return final_res
 
         except Exception as e:
-            print('the text is not legal. \n{}'.format(e))
+            logging.error('the text is illegal. \n{}'.format(e))
             return list()
 
     @staticmethod
     def _mmr_similarity(candidate_item,
                         de_duplication_candidate_phrases_list):
         """ 计算 mmr 相似度，用于考察信息量 """
-        # pdb.set_trace()
         sim_ratio = 0.0
         candidate_info = set([item[0] for item in candidate_item[1][0]])
         

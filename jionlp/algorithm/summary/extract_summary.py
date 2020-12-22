@@ -209,7 +209,7 @@ class ChineseSummaryExtractor(object):
 
             return text[:summary_length]
         except Exception as e:
-            print('the text is not legal. \n{}'.format(e))
+            logging.error('the text is illegal. \n{}'.format(e))
             return ''
 
     def _mmr_similarity(self, sentence_info, mmr_list):
