@@ -32,6 +32,7 @@ guide = """
 │   | 2020-10-19 | add zip_file for compressing the size of dict files|   │
 │   | 2020-11-10 | add extractive summary func                        |   │
 │   | 2020-11-24 | add phone location recognization                   |   │
+│   | 2020-12-18 | add idiom solitairing                              |   │
 │                                                                         │
 ╰─────────────────────────────────────────────────────────────────────────╯
 """

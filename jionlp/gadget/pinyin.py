@@ -34,6 +34,21 @@ class Pinyin(object):
 
     return:
         list(str|dict): 拼音列表
+        
+    Examples:
+        >>> import jionlp as jio
+        >>> text = '中华人民共和国。'
+        >>> res1 = jio.pinyin(text)
+        >>> res2 = jio.pinyin(text, formater='simple')
+        >>> res3 = jio.pinyin('中国', formater='detail')
+        >>> print(res1)
+        >>> print(res2)
+        >>> print(res3)
+        
+        # ['zhōng', 'huá', 'rén', 'mín', 'gòng', 'hé', 'guó', '<unk>']
+        # ['zhong1', 'hua2', 'ren2', 'min2', 'gong4', 'he2', 'guo2', '<unk>']
+        # [{'consonant': 'zh', 'vowel': 'ong', 'tone': '1'}, 
+        #  {'consonant': 'g', 'vowel': 'uo', 'tone': '2'}]
 
     """
     
