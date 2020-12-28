@@ -10,6 +10,37 @@ __all__ = ['MoneyStandardization']
 
 
 class MoneyStandardization(object):
+    """将各种金额形式转换成指定的形式。
+    使用该函数将中文金额转换成易于计算的float形式，该函数可以转换如下金额格式：
+    "六十四万零一百四十三元一角七分",
+    "一万二千三百四十五元",
+    "82，225.00元",
+    "25481元",
+    "1.2万元",
+    "三百万",
+    "45564.44美元",
+    "四百三十万",
+    "二十五万三千二百美元",
+    "两个亿",
+    "二千九百六十美元",
+    "233,333，333,434.344元"。
+
+    Args:
+        inp_num: 一个金额形式。
+        unit: 金额单位，默认是”元“，支持”美元“。
+        std_fmt：指定的转换后的格式，默认带两位小数
+        rtn_def_num：转换失败的默认值。
+
+    Returns:
+        转换后指定格式的带`unit`的金额。
+
+    Examples:
+        >>> import jionlp as jio
+        >>> money = "六十四万零一百四十三元一角七分"
+        >>> print(jio.money_standardization(money))
+        "640143.17元"
+
+    """
     def __init__(self):
         self.number_pattern = None
         
@@ -151,37 +182,7 @@ class MoneyStandardization(object):
             return '元', input_num  # 默认是人民币元
 
     def __call__(self, inp_num, unit='元', std_fmt='%.2f', rtn_def_num='null'):
-        """将各种金额形式转换成指定的形式。
-        使用该函数将中文金额转换成易于计算的float形式，该函数可以转换如下金额格式：
-        "六十四万零一百四十三元一角七分",
-        "一万二千三百四十五元",
-        "82，225.00元",
-        "25481元",
-        "1.2万元",
-        "三百万",
-        "45564.44美元",
-        "四百三十万",
-        "二十五万三千二百美元",
-        "两个亿",
-        "二千九百六十美元",
-        "233,333，333,434.344元"。
 
-        Args:
-            inp_num: 一个金额形式。
-            unit: 金额单位，默认是”元“，支持”美元“。
-            std_fmt：指定的转换后的格式，默认带两位小数
-            rtn_def_num：转换失败的默认值。
-
-        Returns:
-            转换后指定格式的带`unit`的金额。
-
-        Examples:
-            >>> import jionlp as jio
-            >>> money = "六十四万零一百四十三元一角七分"
-            >>> print(jio.money_standardization(money))
-            "640143.17元"
-
-        """
         if self.number_pattern is None:
             self._prepare()
         

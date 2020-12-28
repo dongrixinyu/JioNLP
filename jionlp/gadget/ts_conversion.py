@@ -101,7 +101,29 @@ class TSConversion(object):
             return ''.join(record_list)
 
     def sim2tra(self, text, mode='char'):
-        """ 将简体转换为繁体 """
+        """ 给定一段文本，将其中的简体字转换为繁体字，提供 char 和 word 两种模式：
+        char 模式是按照字符逐个替换为简体字。word 模式是将港台地区的词汇表述习惯，
+        替换为符合大陆表述习惯的相应词汇。采用前向最大匹配的方式执行。
+
+        Args:
+            text(str): 中文文本字符串
+            mode(char|word): 选择按字逐个转换，还是按词替换。
+
+        return:
+            str: 繁体文本字符串
+
+        Examples:
+            >>> import jionlp as jio
+            >>> text = '今天天气好晴朗，想吃方便面。你还在工作吗？在航天飞机上工作吗？'
+            >>> res1 = jio.sim2tra(text, mode='char')
+            >>> res2 = jio.sim2tra(text, mode='word')
+            >>> print(res1)
+            >>> print(res2)
+
+            # 今天天氣好晴朗，想喫方便面。妳還在工作嗎？在航天飛機上工作嗎？
+            # 今天天氣好晴朗，想喫速食麵。妳還在工作嗎？在太空梭上工作嗎？
+
+        """
         if self.trie_tree_obj is None:
             self._prepare()
             

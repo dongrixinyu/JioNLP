@@ -1,7 +1,7 @@
 # -*- coding=utf-8 -*-
 
 
-__version__ = '1.3.8'
+__version__ = '1.3.9'
 
 import os
 
@@ -33,6 +33,7 @@ guide = """
 │   | 2020-11-10 | add extractive summary func                        |   │
 │   | 2020-11-24 | add phone location recognization                   |   │
 │   | 2020-12-18 | add idiom solitairing                              |   │
+│   | 2020-12-28 | add help searching tool                            |   │
 │                                                                         │
 ╰─────────────────────────────────────────────────────────────────────────╯
 """

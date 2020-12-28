@@ -8,39 +8,38 @@
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-3k-brightgreen" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.8-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.9-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP" /></a>
 </p>
 
-### &emsp;&emsp; ——JioNLP：中文 NLP 预处理工具包 A python library for chinese NLP preprocessing
+### &emsp;&emsp; ——JioNLP：中文 NLP 预处理工具包 A Python Library for Chinese NLP Preprocessing
 ### &emsp;&emsp; ```pip install -i https://test.pypi.org/simple/ jionlp```
 
 - 做 NLP 任务，需要清洗、过滤语料？用 JioNLP
 - 做 NLP 任务，需要做信息抽取？用 JioNLP
 - 做 NLP 任务，需要做数据增强？用 JioNLP
-- 做 NLP 任务，需要给模型添加偏旁、拼音、繁体转换信息？用 JioNLP
+- 做 NLP 任务，需要给模型添加偏旁、拼音、词典、繁体转换信息？用 JioNLP
 #### 总之，JioNLP 提供 NLP 任务预处理功能，准确、高效、零使用门槛，并提供一步到位的查阅入口。
 
 #### 功能主要包括：文本清洗，去除HTML标签、异常字符、冗余字符，转换全角字母、数字、空格为半角，抽取及删除E-mail及域名、电话号码、QQ号、括号内容、身份证号、IP地址、URL超链接、货币金额与单位，解析身份证号信息、手机号码归属地、座机区号归属地、手机号码运营商，按行快速读写文件，（多功能）停用词过滤，（优化的）分句，地址解析，新闻地域识别，繁简体转换，汉字转拼音，汉字偏旁、字形、四角编码拆解，基于词典的情感分析，色情数据过滤，反动数据过滤，关键短语抽取，抽取式文本摘要，成语接龙，成语词典、歇后语词典、新华字典、新华词典、停用词典、中国地名词典、世界地名词典，基于词典的NER，NER的字、词级别转换，NER的entity和tag格式转换，NER模型的预测阶段加速并行工具集，NER标注和模型预测的结果差异对比，NER标注数据集分割与统计，文本分类标注数据集的分割与统计，回译数据增强。
 
 
-#### Update 2020-12-18
-## 新增 [成语接龙](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-成语接龙)
+#### Update 2020-12-28
+## 新增 [查找帮助](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-查找帮助)
 
-#### jio.idiom_solitaire
+#### jio.help
 
-给定一条成语，返回其尾字为首的成语。
+若不知道 JioNLP 有哪些功能，可根据命令行提示键入若干关键词做搜索。
 
 ```
 >>> import jionlp as jio
->>> res = jio.idiom_solitaire(
-        '见异思迁', same_pinyin=True, same_tone=True, with_prob=True)
->>> print(res)
+>>> jio.help()
 
-# 千方百计  # 每次结果不一
+> please enter keywords in Chinese separated by space:数据增强
+> function name ==> jio.BackTranslation
+> 回译接口，集成多个公开免费试用机器翻译接 ...
 ```
-
 
 #### Update 2020-11-24
 ## 新增 [电话号码归属地、运行商解析](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-电话号码归属地运营商解析)
@@ -95,6 +94,7 @@ $ pip install -i https://test.pypi.org/simple/ jionlp
 
 | 功能   | 函数   |描述   |
 |--------|--------|-------|
+|[**查找帮助**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-查找帮助)   |help|若不知道 JioNLP 有哪些功能，可根据命令行提示键入若干关键词做搜索    |
 |[**关键短语抽取**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-关键短语抽取)   |extract_keyphrase|给定一篇文本，抽取其对应关键短语    |
 |[抽取式**文本摘要**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-抽取式文本摘要)   |extract_summary|给定一篇文本，抽取其对应文摘    |
 |[**回译数据增强**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-回译数据增强)   |BackTranslation|给定一篇文本，采用各大厂云平台的机器翻译接口，实现数据增强    |

@@ -6,7 +6,7 @@ import pdb
 
 
 class SplitSentence(object):
-    """ 将文本切分为若干句子，其中处理引号的部分逻辑情况较多
+    """ 分句，将文本切分为若干句子，其中处理引号的部分逻辑情况较多
 
     Args:
         text(str): 字符串文本
@@ -15,7 +15,7 @@ class SplitSentence(object):
             默认按照粗粒度进行切分
 
     Returns:
-        list(str): 句子列表
+        list(str): 分句后的句子列表
 
     Examples:
         >>> text = '中华古汉语，泱泱大国，历史传承的瑰宝。'

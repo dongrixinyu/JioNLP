@@ -8,7 +8,30 @@ from jionlp.rule.rule_pattern import ID_CARD_CHECK_PATTERN
 
 
 class IDCardParser(object):
-    """ 身份证号码解析器 """
+    """ 身份证号码解析器，给定一个身份证号码，解析其对应的省、市、县、出生年月、性别、校验码。
+
+    Args:
+        None
+
+    Returns:
+        dict: 身份证号解析结果字段
+
+    Examples:
+        >>> import jionlp as jio
+        >>> text = '52010320171109002X'
+        >>> res = jio.parse_id_card(text)
+        >>> print(res)
+
+        # {'province': '贵州省',
+        #  'city': '贵阳市',
+        #  'county': '云岩区',
+        #  'birth_year': '2017',
+        #  'birth_month': '11',
+        #  'birth_day': '09',
+        #  'gender': '女',
+        #  'check_code': 'x'}
+
+    """
     def __init__(self):
         self.china_locations = None
         self.id_card_check_pattern = re.compile(ID_CARD_CHECK_PATTERN)
