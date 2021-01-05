@@ -21,7 +21,7 @@ class HelpSearch(object):
 
     """
     def __init__(self):
-        print('you could use `jio.help()` to search how to use jio functions.')
+        print('You could use `jio.help()` to search how to use jio functions.')
         self.function_dict = None
         self.non_function_list = [
             # 辅助工具
@@ -96,7 +96,7 @@ class HelpSearch(object):
 
         function_name_tuple = sorted(function_name_dict.items(),
                                      key=lambda i: i[1], reverse=True)
-        print(function_name_tuple)
+        # print(function_name_tuple)
         for function_name, value in function_name_tuple:
             yield function_name
 
