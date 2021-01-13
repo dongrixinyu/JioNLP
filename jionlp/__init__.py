@@ -1,5 +1,12 @@
 # -*- coding=utf-8 -*-
-
+'''
+# library: jionlp
+# author: dongrixinyu
+# license: Apache License 2.0
+# Email: dongrixinyu.89@163.com
+# github: https://github.com/dongrixinyu/JioNLP
+# description: Preprocessing tool for Chinese NLP
+'''
 
 __version__ = '1.3.9'
 
@@ -27,6 +34,7 @@ guide = """
 │                                                                         │
 │   | date       | updated funcs and infos                            |   │
 │   | ---------- | -------------------------------------------------- |   │
+│   | 2020-03-13 | first push                                         |   │
 │   | 2020-09-14 | add back translation for data augmentation         |   │
 │   | 2020-10-16 | update 2020 china location dictionary              |   │
 │   | 2020-10-19 | add zip_file for compressing the size of dict files|   │
