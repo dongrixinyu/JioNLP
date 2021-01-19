@@ -1,14 +1,14 @@
 # -*- coding=utf-8 -*-
-'''
+"""
 # library: jionlp
 # author: dongrixinyu
 # license: Apache License 2.0
 # Email: dongrixinyu.89@163.com
 # github: https://github.com/dongrixinyu/JioNLP
 # description: Preprocessing tool for Chinese NLP
-'''
+"""
 
-__version__ = '1.3.9'
+__version__ = '1.3.10'
 
 import os
 
@@ -42,6 +42,7 @@ guide = """
 │   | 2020-11-24 | add phone location recognization                   |   │
 │   | 2020-12-18 | add idiom solitairing                              |   │
 │   | 2020-12-28 | add help searching tool                            |   │
+│   | 2021-01-19 | add money number to character tool                 |   │
 │                                                                         │
 ╰─────────────────────────────────────────────────────────────────────────╯
 """

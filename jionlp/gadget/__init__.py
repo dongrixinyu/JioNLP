@@ -2,6 +2,7 @@
 
 
 from .money_standardization import MoneyStandardization
+from .money_num2char import MoneyNum2Char
 from .split_sentence import SplitSentence
 from .id_card_parser import IDCardParser
 from .location_parser import LocationParser
@@ -18,6 +19,7 @@ from jionlp.util.fast_loader import FastLoader
 
 
 money_standardization = MoneyStandardization()
+money_num2char = MoneyNum2Char()
 parse_id_card = IDCardParser()
 split_sentence = SplitSentence()
 parse_location = LocationParser()

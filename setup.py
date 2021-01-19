@@ -67,7 +67,7 @@ setup(name=__name__,
       install_requires=requirements,
       entry_points={
           'console_scripts': [
-              # 'scheduler_start = algorithm_platform.scheduler.server: start',
+              'jio_help = jionlp.util:help',
           ]
       },
       test_suite='nose.collector',

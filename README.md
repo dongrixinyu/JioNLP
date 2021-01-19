@@ -1,6 +1,7 @@
 <p align="center">
     <a alt="jionlp logo">
-        <img src="https://github.com/dongrixinyu/JioNLP/blob/master/jionlp_logo.jpg" / style="width: 100px;height: 100px"></a>
+        <img src="https://github.com/dongrixinyu/JioNLP/blob/master/jionlp_logo.jpg" / style="width:100px;height:100px">
+    </a>
 </p>
 <p align="center">
     <a alt="Downloads">
@@ -8,7 +9,7 @@
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-3k-brightgreen" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.9-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.10-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP" /></a>
 </p>
@@ -22,7 +23,23 @@
 - 做 NLP 任务，需要给模型添加偏旁、拼音、词典、繁体转换信息？用 JioNLP
 #### 总之，JioNLP 提供 NLP 任务预处理功能，准确、高效、零使用门槛，并提供一步到位的查阅入口。
 
-#### 功能主要包括：文本清洗，去除HTML标签、异常字符、冗余字符，转换全角字母、数字、空格为半角，抽取及删除E-mail及域名、电话号码、QQ号、括号内容、身份证号、IP地址、URL超链接、货币金额与单位，解析身份证号信息、手机号码归属地、座机区号归属地、手机号码运营商，按行快速读写文件，（多功能）停用词过滤，（优化的）分句，地址解析，新闻地域识别，繁简体转换，汉字转拼音，汉字偏旁、字形、四角编码拆解，基于词典的情感分析，色情数据过滤，反动数据过滤，关键短语抽取，抽取式文本摘要，成语接龙，成语词典、歇后语词典、新华字典、新华词典、停用词典、中国地名词典、世界地名词典，基于词典的NER，NER的字、词级别转换，NER的entity和tag格式转换，NER模型的预测阶段加速并行工具集，NER标注和模型预测的结果差异对比，NER标注数据集分割与统计，文本分类标注数据集的分割与统计，回译数据增强。
+#### 功能主要包括：文本清洗，去除HTML标签、异常字符、冗余字符，转换全角字母、数字、空格为半角，抽取及删除E-mail及域名、电话号码、QQ号、括号内容、身份证号、IP地址、URL超链接、货币金额与单位，金额数字转大写汉字，解析身份证号信息、手机号码归属地、座机区号归属地、手机号码运营商，按行快速读写文件，（多功能）停用词过滤，（优化的）分句，地址解析，新闻地域识别，繁简体转换，汉字转拼音，汉字偏旁、字形、四角编码拆解，基于词典的情感分析，色情数据过滤，反动数据过滤，关键短语抽取，抽取式文本摘要，成语接龙，成语词典、歇后语词典、新华字典、新华词典、停用词典、中国地名词典、世界地名词典，基于词典的NER，NER的字、词级别转换，NER的entity和tag格式转换，NER模型的预测阶段加速并行工具集，NER标注和模型预测的结果差异对比，NER标注数据集分割与统计，文本分类标注数据集的分割与统计，回译数据增强。
+
+
+#### Update 2021-01-19
+## 新增 [金额数字转汉字](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-金额数字转汉字)
+
+#### jio.money_num2char
+
+给定一条数字金额，返回其汉字大写结果。
+
+```
+>>> import jionlp as jio
+>>> num = 120402810.03
+>>> print(jio.money_num2char(num, sim_or_tra='tra'))
+
+# 壹亿贰仟零肆拾萬贰仟捌佰壹拾點零叁
+```
 
 
 #### Update 2020-12-28
@@ -40,28 +57,11 @@
 > function name ==> jio.BackTranslation
 > 回译接口，集成多个公开免费试用机器翻译接 ...
 ```
-
-#### Update 2020-11-24
-## 新增 [电话号码归属地、运行商解析](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-电话号码归属地运营商解析)
-
-#### jio.phone_location
-
-给定一个电话号码字符串，识别其中的**省、市二级地名**，**手机运营商**。
-
+在 Linux 系统，可使用以下命令做搜索：
 ```
->>> import jionlp as jio
->>> text = '联系电话：13288568202. (021)32830431'
->>> num_list = jio.extract_phone_number(text)
->>> print(num_list)
->>> res = [jio.phone_location(item['text']) for item in num_list]
->>> print(res)
-
-# [{'text': '13288568202', 'offset': (5, 16), 'type': 'cell_phone'},
-   {'text': '(021)32830431', 'offset': (18, 31), 'type': 'landline_phone'}]
-
-# {'number': '(021)32830431', 'province': '上海', 'city': '上海', 'type': 'landline_phone'}
-# {'number': '13288568202', 'province': '广东', 'city': '揭阳',
-   'type': 'cell_phone', 'operator': '中国联通'}
+$ jio_help
+$ You could use `jio.help()` to search how to use jio functions.
+$ please enter keywords in Chinese separated by space:
 ```
 
 
@@ -111,6 +111,7 @@ $ pip install -i https://test.pypi.org/simple/ jionlp
 |[简体转繁体](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-简体转繁体字) |sim2tra |简体转繁体，支持**逐字转**与**最大匹配**两种模式 |
 |[汉字转**拼音**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-汉字转拼音)    | pinyin | 找出中文文本对应的汉语拼音，并可返回**声母**、**韵母**、**声调**   |
 |[汉字转**偏旁与字形**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-汉字转偏旁与字形)    | char_radical | 找出中文文本对应的汉字字形结构信息，<br>包括**偏旁部首**(“河”氵)、**字形结构**(“河”左右结构)、<br>**四角编码**(“河”31120)、**汉字拆解**(“河”水可) |
+|[金额**数字转汉字**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-金额数字转汉字) |money_num2char| 给定一条数字金额，返回其**汉字**大写结果 |
 
 ### 2、正则抽取与解析
 
