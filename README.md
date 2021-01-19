@@ -27,7 +27,7 @@
 
 
 #### Update 2021-01-19
-## 新增 [金额数字转汉字](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-金额数字转汉字)
+## 新增 [金额数字转汉字](https://github.com/dongrixinyu/JioNLP/wiki/正则抽取与解析-说明文档#user-content-金额数字转汉字)
 
 #### jio.money_num2char
 
@@ -111,7 +111,7 @@ $ pip install -i https://test.pypi.org/simple/ jionlp
 |[简体转繁体](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-简体转繁体字) |sim2tra |简体转繁体，支持**逐字转**与**最大匹配**两种模式 |
 |[汉字转**拼音**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-汉字转拼音)    | pinyin | 找出中文文本对应的汉语拼音，并可返回**声母**、**韵母**、**声调**   |
 |[汉字转**偏旁与字形**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-汉字转偏旁与字形)    | char_radical | 找出中文文本对应的汉字字形结构信息，<br>包括**偏旁部首**(“河”氵)、**字形结构**(“河”左右结构)、<br>**四角编码**(“河”31120)、**汉字拆解**(“河”水可) |
-|[金额**数字转汉字**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-金额数字转汉字) |money_num2char| 给定一条数字金额，返回其**汉字**大写结果 |
+|[金额**数字转汉字**](https://github.com/dongrixinyu/JioNLP/wiki/正则抽取与解析-说明文档#user-content-金额数字转汉字) |money_num2char| 给定一条数字金额，返回其**汉字**大写结果 |
 
 ### 2、正则抽取与解析
 
