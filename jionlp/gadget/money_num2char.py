@@ -11,7 +11,7 @@ class MoneyNum2Char(object):
 
     Args:
         num(int|float|str): 数字金额
-        sim_or_tra(str): 可选 'sim' 或 'tra'，控制汉字类型
+        sim_or_tra(str): 可选 'sim' 或 'tra'，控制汉字类型，默认为 'tra'
 
     Returns:
         str: 汉字金额
@@ -56,7 +56,7 @@ class MoneyNum2Char(object):
         self.sim_deci_start_pattern = re.compile('^(一十)')
         self.tra_deci_start_pattern = re.compile('^(壹拾)')
 
-    def __call__(self, num, sim_or_tra='sim'):
+    def __call__(self, num, sim_or_tra='tra'):
         """ 调用函数 """
         if self.integer_pattern is None:
             self._prepare()

@@ -1,7 +1,7 @@
 # -*- coding=utf-8 -*-
 
-import os
 import re
+from jionlp import logging
 
 from jionlp.dictionary.dictionary_loader import china_location_loader
 from jionlp.rule.rule_pattern import ID_CARD_CHECK_PATTERN
@@ -62,9 +62,9 @@ class IDCardParser(object):
             
         # 检查是否是身份证号
         match_flag = self.id_card_check_pattern.match(id_card)
-        # print(match_flag)
-        # pdb.set_trace()
+
         if match_flag is None:
+            logging.error('the id card is wrong.')
             return None
 
         if id_card[:6] in self.china_locations.keys():
@@ -75,6 +75,7 @@ class IDCardParser(object):
             prov, city, county = self.china_locations[id_card[:2] + '0' * 4]
         else:
             # 前六位行政区划全错
+            logging.error('the administration code of id card is wrong.')
             return None
         gender = '男' if int(id_card[-2]) % 2 else '女'
         check_code = id_card[-1]
@@ -88,3 +89,4 @@ class IDCardParser(object):
                 'birth_day': id_card[12:14],
                 'gender': gender,
                 'check_code': check_code}
+

@@ -9,7 +9,7 @@
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-3k-brightgreen" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.10-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.11-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP" /></a>
 </p>
@@ -26,6 +26,26 @@
 #### 功能主要包括：文本清洗，去除HTML标签、异常字符、冗余字符，转换全角字母、数字、空格为半角，抽取及删除E-mail及域名、电话号码、QQ号、括号内容、身份证号、IP地址、URL超链接、货币金额与单位，金额数字转大写汉字，解析身份证号信息、手机号码归属地、座机区号归属地、手机号码运营商，按行快速读写文件，（多功能）停用词过滤，（优化的）分句，地址解析，新闻地域识别，繁简体转换，汉字转拼音，汉字偏旁、字形、四角编码拆解，基于词典的情感分析，色情数据过滤，反动数据过滤，关键短语抽取，抽取式文本摘要，成语接龙，成语词典、歇后语词典、新华字典、新华词典、停用词典、中国地名词典、世界地名词典，基于词典的NER，NER的字、词级别转换，NER的entity和tag格式转换，NER模型的预测阶段加速并行工具集，NER标注和模型预测的结果差异对比，NER标注数据集分割与统计，文本分类标注数据集的分割与统计，回译数据增强。
 
 
+#### Update 2021-01-22
+## 更新 [地址解析](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-地址解析)
+
+#### jio.parse_location
+
+给定一个包含国内地址字符串，识别其中的**省、市、县区、乡镇街道、村社**等信息。新增**旧地名自动转为新地名**
+
+```
+>>> import jionlp as jio
+>>> text = '长岛县小冯村'
+>>> print(jio.parse_location(text, change2new=True, town_village=False))
+
+# {'province': '山东省',
+# 'city': '烟台市',
+# 'county': '蓬莱区',
+# 'detail': '小冯村',
+# 'full_location': '山东省烟台市蓬莱区小冯村',
+# 'orig_location': '长岛县小冯村'}
+```
+
 #### Update 2021-01-19
 ## 新增 [金额数字转汉字](https://github.com/dongrixinyu/JioNLP/wiki/正则抽取与解析-说明文档#user-content-金额数字转汉字)
 
@@ -39,29 +59,6 @@
 >>> print(jio.money_num2char(num, sim_or_tra='tra'))
 
 # 壹亿贰仟零肆拾萬贰仟捌佰壹拾點零叁
-```
-
-
-#### Update 2020-12-28
-## 新增 [查找帮助](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-查找帮助)
-
-#### jio.help
-
-若不知道 JioNLP 有哪些功能，可根据命令行提示键入若干关键词做搜索。
-
-```
->>> import jionlp as jio
->>> jio.help()
-
-> please enter keywords in Chinese separated by space:数据增强
-> function name ==> jio.BackTranslation
-> 回译接口，集成多个公开免费试用机器翻译接 ...
-```
-在 Linux 系统，可使用以下命令做搜索：
-```
-$ jio_help
-$ You could use `jio.help()` to search how to use jio functions.
-$ please enter keywords in Chinese separated by space:
 ```
 
 
@@ -85,9 +82,13 @@ $ pip install -i https://test.pypi.org/simple/ jionlp
 - 导入工具包，查看工具包的主要功能与函数注释
 ```
 >>> import jionlp as jio
+>>> jio.help()  # 输入关键词搜索工具包是否包含某功能，如输入“回译”
 >>> dir(jio)
->>> dir(jio.ner)
 >>> print(jio.extract_parentheses.__doc__)
+```
+- 在 Linux 系统，可使用以下命令做搜索：
+```
+$ jio_help
 ```
 
 ### 1.小工具集 Gadgets

@@ -6,6 +6,7 @@ import os
 DICTIONARY_DESCRIPTION = {
     'stopwords.txt': '停用词词典',
     'china_location.txt': '中国地名词典，包括省、地市、县三级。且涵盖了该地名的简称、俗称、行政区划码。',
+    'china_location_change.txt': '中国地名变更词典，包括省、地市、县三级。且涵盖了该地名的变更时间、批准部门。',
     'world_location.txt': '世界地名词典，包括洲、国家两级，国家名下包括国家全名、首都（首府）、主要城市（不完全）等属性信息。',
     'pornography.txt': '色情词典',
     'chinese_idiom.txt': '中国成语词典，包含成语词条、释义、出处来源、汉语拼音、例句（多数成语无）、在 100 万文本中的出现次数，默认平滑次数为 1。',
@@ -28,6 +29,7 @@ DICTIONARY_DESCRIPTION = {
 
 
 from .dictionary_loader import china_location_loader
+from .dictionary_loader import china_location_change_loader
 from .dictionary_loader import world_location_loader
 from .dictionary_loader import stopwords_loader
 from .dictionary_loader import idf_loader

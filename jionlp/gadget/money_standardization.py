@@ -1,7 +1,6 @@
 # -*- coding=utf-8 -*-
 
 import re
-import pdb
 
 from jionlp.rule.rule_pattern import CURRENCY_CASE
 
@@ -89,7 +88,6 @@ class MoneyStandardization(object):
 
         if type(num) is str:
             if self.float_num_boundry_pattern.match(num):
-                # pdb.set_trace()
                 num = float(num)
                 num = std_fmt % num
                 rtn_std_num = num
@@ -148,7 +146,6 @@ class MoneyStandardization(object):
         rtn_num = 0.0
         if '万' in num or '萬' in num:
             seg_num = self.wan_pattern.split(num)
-            # pdb.set_trace()
             if len(seg_num) == 2:
                 prev, nxt = seg_num
                 tmp_prev_num = self.turn_money_std_fmt_util1(prev)
@@ -195,8 +192,6 @@ class MoneyStandardization(object):
         
         # 判断货币类型
         unit, inp_num = self._get_currency_case(inp_num)
-        # print(unit, inp_num)
-        # pdb.set_trace()
         
         if self.number_pattern.match(inp_num): 
             tmp_money = self.turn_num_std_fmt(inp_num, std_fmt)
@@ -239,3 +234,4 @@ class MoneyStandardization(object):
                     rtn_money = self.turn_num_std_fmt(tmp_money, std_fmt) + unit
                     
         return rtn_money
+

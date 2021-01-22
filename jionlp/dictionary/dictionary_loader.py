@@ -10,7 +10,8 @@ DIR_PATH = os.path.dirname(os.path.abspath(__file__))
 GRAND_DIR_PATH = os.path.dirname(DIR_PATH)
 
 
-__all__ = ['china_location_loader', 'world_location_loader',
+__all__ = ['china_location_loader', 'china_location_change_loader',
+           'world_location_loader',
            'stopwords_loader', 'chinese_idiom_loader', 
            'pinyin_phrase_loader', 'pinyin_char_loader',
            'xiehouyu_loader', 'chinese_char_dictionary_loader',
@@ -84,6 +85,36 @@ def china_location_loader(detail=False):
                             '_admin_code': admin_code}})
 
     return location_dict
+
+
+def china_location_change_loader():
+    """ 加载中国地名变更词典 china_location_change.txt
+
+    Args:
+        None
+
+    Returns:
+        dict: 返回 省、市、县区 三级的变更地址，以及变更日期和批准部门；
+            '国批' 表示国务院批准，'民批' 表示国务院民政部批准，
+            '省批'表示省级政府或民政部批准。
+
+    """
+    location_change_jio = read_file_by_line(
+        os.path.join(GRAND_DIR_PATH, 'dictionary/china_location_change.txt'))
+
+    location_change_list = list()
+    for line in location_change_jio:
+        location_change_dict = dict()
+        line_seg = line.split('=>')
+        orig_line_seg = line_seg[0].split('\t')
+        new_line_seg = line_seg[1].split('\t')
+        location_change_dict.update(
+            {'date': orig_line_seg[0], 'department': orig_line_seg[1],
+             'old_loc': [orig_line_seg[2: 4], orig_line_seg[4: 6], orig_line_seg[6: 8]],
+             'new_loc': new_line_seg})
+        location_change_list.append(location_change_dict)
+
+    return location_change_list
 
 
 def world_location_loader():
