@@ -520,3 +520,4 @@ if __name__ == '__main__':
     print('key_phrases_notopic: ', key_phrases)
     key_phrases = ckpe_obj(text, allow_length_weight=False, topic_theta=0.5, max_phrase_len=8)
     print('key_phrases_05topic: ', key_phrases)
+
