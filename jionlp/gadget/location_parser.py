@@ -2,9 +2,7 @@
 
 
 # --------------------------------------------------------------------------------
-import os
-import re
-import pdb
+
 import copy
 import collections
 
@@ -48,6 +46,8 @@ class LocationParser(object):
                             无意义的。
         town_village(bool): 若为 True，则返回 省、市、县区、乡镇街道、村社区 五级信息；
                             若为 False，则返回 省、市、县区 三级信息
+        change2new(bool): 若为 True，则遇到旧有地名，自动转为当前最新的地址，如黑龙江伊春市美溪区
+                          自动转为黑龙江伊春市伊美区；若为 False，则按旧地名返回
 
     Returns:
         dict[str,]: 字典格式，如上例所示。

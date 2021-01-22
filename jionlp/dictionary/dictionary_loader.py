@@ -89,6 +89,8 @@ def china_location_loader(detail=False):
 
 def china_location_change_loader():
     """ 加载中国地名变更词典 china_location_change.txt
+    整理了 2018 年至今国内政府批复修改的县级以上的地名变化。仅添加了地名的撤销变更，
+    而对未撤销地名的新增地名，如深圳市光明区，不做记录，因为不影响工具的使用。
 
     Args:
         None
