@@ -7,8 +7,10 @@
 # description: Preprocessing tool for Chinese NLP
 
 
-from .extract_summary import ChineseSummaryExtractor
+from .back_translation import BackTranslation, BaiduApi, YoudaoFreeApi, \
+    YoudaoApi, GoogleApi, TencentApi, XunfeiApi
+from .exchange_char_position import ExchangeCharPosition
 
 
-extract_summary = ChineseSummaryExtractor()
+exchange_char_position = ExchangeCharPosition()
 

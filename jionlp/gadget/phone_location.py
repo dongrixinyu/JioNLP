@@ -1,4 +1,12 @@
 # -*- coding=utf-8 -*-
+# library: jionlp
+# author: dongrixinyu
+# license: Apache License 2.0
+# Email: dongrixinyu.89@163.com
+# github: https://github.com/dongrixinyu/JioNLP
+# description: Preprocessing tool for Chinese NLP
+
+
 """
 DESCRIPTION:
     1、手机号搜索地名，仅取前三位作为基准，如 1702 电信虚拟 1703 移动虚拟 1704 联通虚拟 不予考虑

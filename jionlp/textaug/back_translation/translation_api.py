@@ -1,4 +1,12 @@
 # -*- coding=utf-8 -*-
+# library: jionlp
+# author: dongrixinyu
+# license: Apache License 2.0
+# Email: dongrixinyu.89@163.com
+# github: https://github.com/dongrixinyu/JioNLP
+# description: Preprocessing tool for Chinese NLP
+
+
 """
 调用公开大厂翻译 API 完成文本回译数据增强
 

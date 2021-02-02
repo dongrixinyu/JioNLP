@@ -1,4 +1,11 @@
 # -*- coding=utf-8 -*-
+# library: jionlp
+# author: dongrixinyu
+# license: Apache License 2.0
+# Email: dongrixinyu.89@163.com
+# github: https://github.com/dongrixinyu/JioNLP
+# description: Preprocessing tool for Chinese NLP
+
 """
 DESCRIPTION:
     1、功能包括：NER 标注数据集的分割，列出各个类别的数据量以及占比，并计算训练集

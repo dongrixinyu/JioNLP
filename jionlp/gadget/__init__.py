@@ -1,4 +1,10 @@
 # -*- coding=utf-8 -*-
+# library: jionlp
+# author: dongrixinyu
+# license: Apache License 2.0
+# Email: dongrixinyu.89@163.com
+# github: https://github.com/dongrixinyu/JioNLP
+# description: Preprocessing tool for Chinese NLP
 
 
 from .money_standardization import MoneyStandardization
@@ -11,8 +17,6 @@ from .remove_stopwords import RemoveStopwords
 from .ts_conversion import TSConversion
 from .pinyin import Pinyin
 from .char_radical import CharRadical
-from .back_translation import BackTranslation, BaiduApi, YoudaoFreeApi, \
-    YoudaoApi, GoogleApi, TencentApi, XunfeiApi
 from .phone_location import PhoneLocation
 from .idiom_solitaire import IdiomSolitaire
 from jionlp.util.fast_loader import FastLoader

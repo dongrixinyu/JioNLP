@@ -1,12 +1,16 @@
 # -*- encoding: utf-8 -*-
+# library: jionlp
+# author: dongrixinyu
+# license: Apache License 2.0
+# Email: dongrixinyu.89@163.com
+# github: https://github.com/dongrixinyu/JioNLP
+# description: Preprocessing tool for Chinese NLP
+
 
 import os
 import re
-import pdb
 import math
-import sys
 
-#from typing import 
 from enum import Enum, unique
 
 from jionlp.dictionary import negative_words_loader, sentiment_expand_words_loader, sentiment_words_loader
