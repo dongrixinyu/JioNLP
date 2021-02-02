@@ -61,6 +61,7 @@ guide = """
 │   | 2021-01-19 | add money number to character tool                  |   │
 │   | 2021-01-22 | update outdated china location conversion           |   │
 │   | 2021-02-01 | acquire 400 stars and 58 forks on Github            |   │
+│   | 2021-02-02 | add exchange char position text augmentation        |   │
 │                                                                          │
 ╰──────────────────────────────────────────────────────────────────────────╯
 """
