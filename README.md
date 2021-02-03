@@ -23,15 +23,15 @@
 - 做 NLP 任务，需要给模型添加偏旁、拼音、词典、繁体转换信息？用 JioNLP
 #### 总之，JioNLP 提供 NLP 任务预处理功能，准确、高效、零使用门槛，并提供一步到位的查阅入口。
 
-#### 功能主要包括：文本清洗，去除HTML标签、异常字符、冗余字符，转换全角字母、数字、空格为半角，抽取及删除E-mail及域名、电话号码、QQ号、括号内容、身份证号、IP地址、URL超链接、货币金额与单位，金额数字转大写汉字，解析身份证号信息、手机号码归属地、座机区号归属地、手机号码运营商，按行快速读写文件，（多功能）停用词过滤，（优化的）分句，地址解析，新闻地域识别，繁简体转换，汉字转拼音，汉字偏旁、字形、四角编码拆解，基于词典的情感分析，色情数据过滤，反动数据过滤，关键短语抽取，抽取式文本摘要，成语接龙，成语词典、歇后语词典、新华字典、新华词典、停用词典、中国地名词典、世界地名词典，基于词典的NER，NER的字、词级别转换，NER的entity和tag格式转换，NER模型的预测阶段加速并行工具集，NER标注和模型预测的结果差异对比，NER标注数据集分割与统计，文本分类标注数据集的分割与统计，回译数据增强。
+#### 功能主要包括：文本清洗，去除HTML标签、异常字符、冗余字符，转换全角字母、数字、空格为半角，抽取及删除E-mail及域名、电话号码、QQ号、括号内容、身份证号、IP地址、URL超链接、货币金额与单位，金额数字转大写汉字，解析身份证号信息、手机号码归属地、座机区号归属地、手机号码运营商，按行快速读写文件，（多功能）停用词过滤，（优化的）分句，地址解析，新闻地域识别，繁简体转换，汉字转拼音，汉字偏旁、字形、四角编码拆解，基于词典的情感分析，色情数据过滤，反动数据过滤，关键短语抽取，抽取式文本摘要，成语接龙，成语词典、歇后语词典、新华字典、新华词典、停用词典、中国地名词典、中国县级地名变更词典、世界地名词典，基于词典的NER，NER的字、词级别转换，NER的entity和tag格式转换，NER模型的预测阶段加速并行工具集，NER标注和模型预测的结果差异对比，NER标注数据集分割与统计，文本分类标注数据集的分割与统计，回译数据增强，相邻近汉字换位数据增强。
 
 
 #### Update 2021-02-02
-## 新增 [临近汉字换位-数据增强](https://github.com/dongrixinyu/JioNLP/wiki/数据增强-说明文档#user-content-临近汉字换位)
+## 新增 [邻近汉字换位-数据增强](https://github.com/dongrixinyu/JioNLP/wiki/数据增强-说明文档#user-content-邻近汉字换位)
 
 #### jio.exchange_char_position
 
-随机交换相近字符的位置，用以增强文本数据，理论依据为随机对调临近汉字位置不影响人的阅读理解。
+随机交换相邻近字符的位置，用以增强文本数据，理论依据为随机对调临近汉字位置不影响人的阅读理解。
 如 “民盟发言人：昂季素山目前情况良好”
 
 ```
@@ -116,14 +116,14 @@ $ jio_help
 |[汉字转**偏旁与字形**](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-汉字转偏旁与字形)    | char_radical | 找出中文文本对应的汉字字形结构信息，<br>包括**偏旁部首**(“河”氵)、**字形结构**(“河”左右结构)、<br>**四角编码**(“河”31120)、**汉字拆解**(“河”水可) |
 |[金额**数字转汉字**](https://github.com/dongrixinyu/JioNLP/wiki/正则抽取与解析-说明文档#user-content-金额数字转汉字) |money_num2char| 给定一条数字金额，返回其**汉字**大写结果 |
 
-### 2、数据增强
+### 2.数据增强
 
 | 功能   | 函数   |描述   |
 |--------|--------|-------|
 |[**回译**](https://github.com/dongrixinyu/JioNLP/wiki/数据增强-说明文档#user-content-回译数据增强)        |BackTranslation|给定一篇文本，采用各大厂云平台的机器翻译接口，实现数据增强    |
-|[**临近汉字换位**](https://github.com/dongrixinyu/JioNLP/wiki/数据增强-说明文档#user-content-临近汉字换位) |exchange_char_position |随机交换相近字符的位置，实现数据增强   |
+|[**邻近汉字换位**](https://github.com/dongrixinyu/JioNLP/wiki/数据增强-说明文档#user-content-邻近汉字换位) |exchange_char_position |随机交换相近字符的位置，实现数据增强   |
 
-### 3、正则抽取与解析
+### 3.正则抽取与解析
 
 | 功能   | 函数   |描述   |
 |--------|--------|-------|
@@ -146,7 +146,7 @@ $ jio_help
 |[删除**括号**中的内容](https://github.com/dongrixinyu/jionlp/wiki/正则抽取与解析-说明文档#user-content-删除文本括号信息) |remove_parentheses |删除括号内容，包括 **{}「」[]【】()（）<>《》** |
 |[删除异常字符](https://github.com/dongrixinyu/jionlp/wiki/正则抽取与解析-说明文档#user-content-删除文本中的异常字符)    |remove_exception_char     |删除文本中异常字符，主要保留汉字、常用的标点，<br>单位计算符号，字母数字等。 |
 
-### 4、文件读写工具
+### 4.文件读写工具
 
 | 功能   | 函数   |描述   |
 |--------|--------|-------|
@@ -155,7 +155,7 @@ $ jio_help
 |[将 list 中元素按行写入文件](https://github.com/dongrixinyu/jionlp/wiki/文件读写-说明文档#user-content-文件写入) | write_file_by_line | 将 list 中元素按行写入文件 |
 |[计时工具](https://github.com/dongrixinyu/jionlp/wiki/文件读写-说明文档#user-content-计时器)                 |TimeIt             | 统计某一代码段的耗时    |
 
-### 5、词典加载与使用
+### 5.词典加载与使用
 
 | 功能   | 函数   |描述   |
 |--------|--------|-------|
@@ -167,7 +167,7 @@ $ jio_help
 |[新华**字典**](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载新华字典) | chinese_char_dictionary_loader |加载新华字典 |
 |[新华**词典**](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载新华词典) | chinese_word_dictionary_loader |加载新华词典 |
 
-### 6、实体识别(NER)算法辅助工具集
+### 6.实体识别(NER)算法辅助工具集
 
 - [工具包 NER 数据规定说明](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-前言)
 
@@ -183,7 +183,7 @@ $ jio_help
 |[**分割数据集**](https://github.com/dongrixinyu/JioNLP/wiki/NER-说明文档#user-content-分割数据集) | analyse_dataset |对 NER 标注语料，分为训练集、验证集、测试集，并给出各个子集的实体类型分布统计  |
 
 
-### 7、文本分类
+### 7.文本分类
 
 | 功能   | 函数   |描述   |
 |--------|--------|-------|
@@ -191,7 +191,7 @@ $ jio_help
 |[**分割数据集**](https://github.com/dongrixinyu/JioNLP/wiki/文本分类-说明文档#user-content-分割数据集) | analyse_dataset |对文本分类的标注语料，切分为训练集、验证集、测试集，<br>并给出各个子集的分类分布统计  |
 
 
-### 8、情感分析
+### 8.情感分析
 
 | 功能   | 函数   |描述   |
 |--------|--------|-------|
@@ -202,7 +202,7 @@ $ jio_help
 
 - 开发 NLP 模型，预处理至关重要且非常耗时。本工具包能快速辅助工程师完成各种琐碎的预处理操作，加速开发进度，把有限的精力用在思考而非 code 上。
 - 如有功能建议、bug，可通过 issue 按模板提出。
-- 如感兴趣合作完善本工具包，请参考 TODO.txt 文件进行功能添加。
+- 如感兴趣合作完善本工具包，请参考 **TODO.txt** 文件进行功能添加。
 
 ### 做NLP不易，欢迎加入自然语言处理交流群 (#^.^#) 
 

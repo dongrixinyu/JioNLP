@@ -15,8 +15,8 @@ from jionlp.rule import check_chinese_char
 
 
 class ExchangeCharPosition(object):
-    """ 临近汉字换位。
-    随机交换相近字符的位置，且交换位置的距离以正态分布得到，scale 参数为1，默认比例为
+    """ 邻近汉字换位。
+    随机交换相邻近字符的位置，且交换位置的距离以正态分布得到，scale 参数为1，默认比例为
     相邻字符交换占 76.4%，中间隔1个字符占比 21.8%，中间隔两个字符占比为 1.8%
 
     Args:
