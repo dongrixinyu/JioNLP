@@ -206,6 +206,6 @@ $ jio_help
 
 ### 做NLP不易，欢迎加入自然语言处理交流群 (#^.^#) 
 
-![image](https://github.com/dongrixinyu/JioNLP/blob/master/qr_code_for_collection.jpg)
+![image](https://github.com/dongrixinyu/JioNLP/blob/master/qr_code_for_collection.png)
 
 
