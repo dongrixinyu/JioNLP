@@ -100,6 +100,7 @@ $ jio_help
 ### 2.数据增强
 
 - [**文本数据增强各方法说明**](https://github.com/dongrixinyu/JioNLP/wiki/数据增强-说明文档#user-content-数据增强方法对比)
+
 | 功能   | 函数   |描述   |
 |--------|--------|-------|
 |[**回译**](https://github.com/dongrixinyu/JioNLP/wiki/数据增强-说明文档#user-content-回译数据增强)        |BackTranslation|给定一篇文本，采用各大厂云平台的机器翻译接口，实现数据增强    |
