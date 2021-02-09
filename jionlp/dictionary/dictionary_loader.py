@@ -8,6 +8,7 @@
 
 
 import os
+import math
 
 from jionlp import logging
 from jionlp.util.file_io import read_file_by_line
@@ -17,14 +18,45 @@ DIR_PATH = os.path.dirname(os.path.abspath(__file__))
 GRAND_DIR_PATH = os.path.dirname(DIR_PATH)
 
 
-__all__ = ['china_location_loader', 'china_location_change_loader',
-           'world_location_loader',
-           'stopwords_loader', 'chinese_idiom_loader', 
-           'pinyin_phrase_loader', 'pinyin_char_loader',
-           'xiehouyu_loader', 'chinese_char_dictionary_loader',
-           'chinese_word_dictionary_loader',
-           'pornography_loader', 'traditional_simplified_loader',
-           'phone_location_loader', 'telecom_operator_loader']
+__all__ = ['char_distribution_loader', 'char_radical_loader',
+           'china_location_change_loader', 'china_location_loader',
+           'chinese_char_dictionary_loader',
+           'chinese_idiom_loader', 'chinese_word_dictionary_loader',
+           'idf_loader', 'negative_words_loader',
+           'phone_location_loader',
+           'pinyin_char_loader', 'pinyin_phrase_loader',
+           'pornography_loader',
+           'sentiment_expand_words_loader',
+           'sentiment_words_loader', 'stopwords_loader',
+           'telecom_operator_loader',
+           'traditional_simplified_loader',
+           'world_location_loader', 'xiehouyu_loader']
+
+
+def char_distribution_loader():
+    """ 加载 utf-8 编码字符在中文文本中的分布，返回每个字在语料中的出现总次数、概率、
+    概率的 -log10 值。
+
+    Returns:
+        dict(list): 例如
+            {'中': {'total_num': 61980430,
+                    'prob': 0.0054539722,
+                    'log_prob': 2.2632870},
+             ...}
+
+    """
+    char_info = read_file_by_line(
+        os.path.join(GRAND_DIR_PATH, 'dictionary', 'char_distribution.json'))
+
+    char_info_dict = dict()
+    total_num = sum([item[1] for item in char_info])
+    for item in char_info:
+        char_info_dict.update(
+            {item[0]: {'total_num': item[1],
+                       'prob': item[1] / total_num,
+                       'log_prob': - math.log10(item[1] / total_num)}})
+
+    return char_info_dict
 
 
 def china_location_loader(detail=False):
@@ -178,6 +210,12 @@ def negative_words_loader():
 def chinese_char_dictionary_loader():
     """ 加载新华字典，分别包括：
     汉字，释义，详细释义 3 部分
+
+    考虑到新华字典无法与时俱进，其中有相当多的老旧内容，故增删说明如下：
+        1、删除了所有的日本和字 -> 释义中仅一条解释，且包含 “日本和字” 内容；
+        2、删除了过时的人名 -> “谌容：女作家，四川人。”
+        3、
+
     """
     content = read_file_by_line(
         os.path.join(GRAND_DIR_PATH, 'dictionary',
@@ -220,6 +258,11 @@ def chinese_idiom_loader():
 def chinese_word_dictionary_loader():
     """ 加载新华词典，词典中有 20 万余个多音字，分别包括：
     词语及其释义
+
+    考虑到新华词典无法与时俱进，其中有相当多的老旧内容，故增删说明如下：
+        1、删除了过时的人名 -> “谌容：女作家，四川人。”
+        3、删除了古文中的词汇，已经被当代语言淘汰的用法。
+
     """
     content = read_file_by_line(
         os.path.join(GRAND_DIR_PATH, 'dictionary',
@@ -403,6 +446,32 @@ def telecom_operator_loader():
 
     return telecom_operator_dict
 
+
+def word_distribution_loader():
+    """ 加载 jieba 分词后的词汇结果在中文文本中的词频分布，返回每个词在语料中的出现总次数、概率、
+    概率的 -log10 值。
+
+    Returns:
+        dict(list): 例如
+            {'国家': {'total_num': 101930,
+                    'prob': 0.0014539722,
+                    'log_prob': 3.2632870},
+             ...}
+
+    """
+    word_info = read_file_by_line(
+        os.path.join(GRAND_DIR_PATH, 'dictionary', 'word_distribution.json'))
+
+    word_info_dict = dict()
+    total_num = sum([item[1] for item in word_info])
+    for item in word_info:
+        word_info_dict.update(
+            {item[0]: {'total_num': item[1],
+                       'prob': item[1] / total_num,
+                       'log_prob': - math.log10(item[1] / total_num)}})
+
+    return word_info_dict
+
     
 def xiehouyu_loader():
     """ 加载歇后语词典，共计 17000 余条，其中有相似的歇后语，如：
@@ -417,3 +486,4 @@ def xiehouyu_loader():
     xiehouyu = [item.split('\t') for item in xiehouyu]
 
     return xiehouyu
+

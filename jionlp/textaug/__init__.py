@@ -9,8 +9,11 @@
 
 from .back_translation import BackTranslation, BaiduApi, YoudaoFreeApi, \
     YoudaoApi, GoogleApi, TencentApi, XunfeiApi
-from .exchange_char_position import ExchangeCharPosition
+from .swap_char_position import SwapCharPosition
+from .homophone_substitution import HomophoneSubstitution
+from .random_add_delete import RandomAddDelete
 
-
-exchange_char_position = ExchangeCharPosition()
+swap_char_position = SwapCharPosition()
+homophone_substitution = HomophoneSubstitution()
+random_add_delete = RandomAddDelete()
 

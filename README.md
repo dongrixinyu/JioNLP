@@ -4,14 +4,16 @@
     </a>
 </p>
 <p align="center">
+    <a alt="License">
+        <img src="https://img.shields.io/github/license/dongrixinyu/JioNLP?color=crimson" /></a>
+    <a alt="Size">
+        <img src="https://img.shields.io/badge/size-36.4m-orange" /></a>
     <a alt="Downloads">
-        <img src="https://img.shields.io/badge/size-36.4m-yellow" /></a>
-    <a alt="Downloads">
-        <img src="https://img.shields.io/badge/downloads-4k-brightgreen" /></a>
+        <img src="https://img.shields.io/badge/downloads-4k-yellow" /></a>
     <a alt="Version">
         <img src="https://img.shields.io/badge/version-1.3.12-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
-        <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP" /></a>
+        <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
 
 ### &emsp;&emsp; ——JioNLP：中文 NLP 预处理工具包 A Python Library for Chinese NLP Preprocessing
@@ -29,14 +31,14 @@
 #### Update 2021-02-02
 ## 新增 [邻近汉字换位-数据增强](https://github.com/dongrixinyu/JioNLP/wiki/数据增强-说明文档#user-content-邻近汉字换位)
 
-#### jio.exchange_char_position
+#### jio.swap_char_position
 
 随机交换相邻近字符的位置，用以增强文本数据，理论依据为随机对调临近汉字位置不影响人的阅读理解。
 如 “民盟发言人：昂季素山目前情况良好”
 
 ```
 >>> import jionlp as jio
->>> res = jio.exchange_char_position('民盟发言人：昂山素季目前情况良好')
+>>> res = jio.swap_char_position('民盟发言人：昂山素季目前情况良好')
 >>> print(res)
 
 # ['民盟发言人：昂季素山目前情况良好',
@@ -67,7 +69,7 @@
 
 ## 安装 Installation
 
-- python>=3.6 优先使用
+- python>=3.6 **优先使用**
 ```
 $ git clone https://github.com/dongrixinyu/JioNLP
 $ cd ./JioNLP
@@ -121,7 +123,7 @@ $ jio_help
 | 功能   | 函数   |描述   |
 |--------|--------|-------|
 |[**回译**](https://github.com/dongrixinyu/JioNLP/wiki/数据增强-说明文档#user-content-回译数据增强)        |BackTranslation|给定一篇文本，采用各大厂云平台的机器翻译接口，实现数据增强    |
-|[**邻近汉字换位**](https://github.com/dongrixinyu/JioNLP/wiki/数据增强-说明文档#user-content-邻近汉字换位) |exchange_char_position |随机交换相近字符的位置，实现数据增强   |
+|[**邻近汉字换位**](https://github.com/dongrixinyu/JioNLP/wiki/数据增强-说明文档#user-content-邻近汉字换位) |swap_char_position |随机交换相近字符的位置，实现数据增强   |
 
 ### 3.正则抽取与解析
 
@@ -162,7 +164,7 @@ $ jio_help
 |[**成语**词典](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载成语词典) | chinese_idiom_loader |加载成语词典 |
 |[**歇后语**词典](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载歇后语词典) | xiehouyu_loader |加载歇后语词典 |
 |[**中国地名**词典](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载中国省市县地名词典) | china_location_loader |加载中国**省、市、县**三级词典 |
-|[**区划调整**词典](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载中国区划调整词典) | china_location_change_loader |加载 2018 年以来中国**县级**以上区划调整更名记录 |
+|[**中国区划调整**词典](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载中国区划调整词典) | china_location_change_loader |加载 2018 年以来中国**县级**以上区划调整更名记录 |
 |[**世界地名**词典](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载世界国家城市地名词典) | world_location_loader |加载世界**大洲、国家、城市**词典 |
 |[新华**字典**](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载新华字典) | chinese_char_dictionary_loader |加载新华字典 |
 |[新华**词典**](https://github.com/dongrixinyu/JioNLP/wiki/词典加载-说明文档#user-content-加载新华词典) | chinese_word_dictionary_loader |加载新华词典 |
