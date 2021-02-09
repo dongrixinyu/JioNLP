@@ -28,42 +28,22 @@
 #### 功能主要包括：文本清洗，去除HTML标签、异常字符、冗余字符，转换全角字母、数字、空格为半角，抽取及删除E-mail及域名、电话号码、QQ号、括号内容、身份证号、IP地址、URL超链接、货币金额与单位，金额数字转大写汉字，解析身份证号信息、手机号码归属地、座机区号归属地、手机号码运营商，按行快速读写文件，（多功能）停用词过滤，（优化的）分句，地址解析，新闻地域识别，繁简体转换，汉字转拼音，汉字偏旁、字形、四角编码拆解，基于词典的情感分析，色情数据过滤，反动数据过滤，关键短语抽取，抽取式文本摘要，成语接龙，成语词典、歇后语词典、新华字典、新华词典、停用词典、中国地名词典、中国县级地名变更词典、世界地名词典，基于词典的NER，NER的字、词级别转换，NER的entity和tag格式转换，NER模型的预测阶段加速并行工具集，NER标注和模型预测的结果差异对比，NER标注数据集分割与统计，文本分类标注数据集的分割与统计，回译数据增强，相邻近汉字换位数据增强。
 
 
-#### Update 2021-02-02
-## 新增 [邻近汉字换位-数据增强](https://github.com/dongrixinyu/JioNLP/wiki/数据增强-说明文档#user-content-邻近汉字换位)
+#### Update 2021-02-09
+## 新增 多个[数据增强工具](https://github.com/dongrixinyu/JioNLP/wiki/数据增强-说明文档#user-content-数据增强方法对比)
 
-#### jio.swap_char_position
+#### 邻近汉字换位、同音词替换、随即增删字符 
 
-随机交换相邻近字符的位置，用以增强文本数据，理论依据为随机对调临近汉字位置不影响人的阅读理解。
-如 “民盟发言人：昂季素山目前情况良好”
-
-```
+``` python
 >>> import jionlp as jio
->>> res = jio.swap_char_position('民盟发言人：昂山素季目前情况良好')
->>> print(res)
+>>> text = '人口危机如果无法得到及时解决，80后、90后们将受到巨大的冲击。'
+>>> res1 = jio.swap_char_position(text)  # 邻近汉字换位
+>>> res2 = jio.homophone_substitution(text)  # 同音词替换
+>>> res3 = jio.random_add_delete(text)  # 随机增删字符
+>>> print(res1[0] + '\n' + res2[0] + '\n' + res3[0])
 
-# ['民盟发言人：昂季素山目前情况良好',
-#  '民盟发言人：昂山季素目前情况良好',
-#  '民盟发言人：素山昂季目前情况良好']
-```
-
-#### Update 2021-01-22
-## 更新 [地址解析](https://github.com/dongrixinyu/JioNLP/wiki/Gadget-说明文档#user-content-地址解析)
-
-#### jio.parse_location
-
-给定一个包含国内地址字符串，识别其中的**省、市、县区、乡镇街道、村社**等信息。新增**旧地名自动转为新地名**
-
-```
->>> import jionlp as jio
->>> text = '长岛县小冯村'
->>> print(jio.parse_location(text, change2new=True, town_village=False))
-
-# {'province': '山东省',
-# 'city': '烟台市',
-# 'county': '蓬莱区',
-# 'detail': '小冯村',
-# 'full_location': '山东省烟台市蓬莱区小冯村',
-# 'orig_location': '长岛县小冯村'}
+# 人口危机如果无法得时及到解决，80后、90后们将受到巨大的冲击。
+# 人口危机如果无法得到即时解决，80后、90后们将受到巨大的冲击。
+# 人D口危机如果无法得到及时解决，80后90后们将到巨大的冲击。
 ```
 
 
@@ -75,8 +55,7 @@ $ git clone https://github.com/dongrixinyu/JioNLP
 $ cd ./JioNLP
 $ pip install .
 ```
-- pip 安装
-有时存在版本滞后
+- pip 安装 **有时存在版本滞后**
 ```
 $ pip install -i https://test.pypi.org/simple/ jionlp
 ```
@@ -120,10 +99,13 @@ $ jio_help
 
 ### 2.数据增强
 
+- [**文本数据增强各方法说明**](https://github.com/dongrixinyu/JioNLP/wiki/数据增强-说明文档#user-content-数据增强方法对比)
 | 功能   | 函数   |描述   |
 |--------|--------|-------|
 |[**回译**](https://github.com/dongrixinyu/JioNLP/wiki/数据增强-说明文档#user-content-回译数据增强)        |BackTranslation|给定一篇文本，采用各大厂云平台的机器翻译接口，实现数据增强    |
 |[**邻近汉字换位**](https://github.com/dongrixinyu/JioNLP/wiki/数据增强-说明文档#user-content-邻近汉字换位) |swap_char_position |随机交换相近字符的位置，实现数据增强   |
+|[**同音词替换**](https://github.com/dongrixinyu/JioNLP/wiki/数据增强-说明文档#user-content-同音词替换)|homophone_substitution|相同读音词汇替换，实现数据增强 |
+|[**随机增删字符**](https://github.com/dongrixinyu/JioNLP/wiki/数据增强-说明文档#user-content-随即增删字符)|random_add_delete |随机在文本中增加、删除某个字符，对语义不造成影响|
 
 ### 3.正则抽取与解析
 

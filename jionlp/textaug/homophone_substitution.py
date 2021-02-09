@@ -33,8 +33,8 @@ class HomophoneSubstitution(object):
     Args:
         text(str): 原始文本
         augmentation_num(int): 数据增强对该条样本的扩展个数，默认为 3
-        homo_ratio(float): 对每一个词汇的同音词替换概率，默认为 0.03
-        allow_mispronounce(bool): 是否允许方言读音误读，如 zh 与 z 卷舌不分，默认为 True，考虑此情况
+        homo_ratio(float): 对每一个词汇的同音词替换概率，默认为 0.02
+        allow_mispronounce(bool): 是否允许方言读音误读，如 zh 与 z 卷舌不分，默认为 True，允许词汇错音
         seed(int): 控制随机替换词汇每次不变，默认为 1，当为 0 时，每次调用产生结果不固定
 
     Returns:
@@ -54,7 +54,7 @@ class HomophoneSubstitution(object):
     def __init__(self):
         self.word_pinyin_dict = None
 
-    def _prepare(self, homo_ratio=0.03, seed=1):
+    def _prepare(self, homo_ratio=0.02, seed=1):
         self.jieba_obj = jieba
         self.jieba_obj.initialize()
 
