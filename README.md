@@ -7,7 +7,7 @@
     <a alt="License">
         <img src="https://img.shields.io/github/license/dongrixinyu/JioNLP?color=crimson" /></a>
     <a alt="Size">
-        <img src="https://img.shields.io/badge/size-28.3m-orange" /></a>
+        <img src="https://img.shields.io/badge/size-28.8m-orange" /></a>
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-4k-yellow" /></a>
     <a alt="Version">
@@ -16,8 +16,8 @@
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
 
-### &emsp;&emsp; ——JioNLP：中文 NLP 预处理工具包 A Python Library for Chinese NLP Preprocessing
-### &emsp;&emsp; ```pip install -i https://test.pypi.org/simple/ jionlp```
+### &emsp;&emsp; ——JioNLP：中文 NLP 预处理工具包 A Python Lib for Chinese NLP Preprocessing
+### &emsp;&emsp; ```pip install jionlp```
 
 - 做 NLP 任务，需要清洗、过滤语料？用 JioNLP
 - 做 NLP 任务，需要做信息抽取？用 JioNLP
@@ -55,9 +55,9 @@ $ git clone https://github.com/dongrixinyu/JioNLP
 $ cd ./JioNLP
 $ pip install .
 ```
-- pip 安装 **有时存在版本滞后**
+- pip 安装
 ```
-$ pip install -i https://test.pypi.org/simple/ jionlp
+$ pip install jionlp
 ```
 
 
