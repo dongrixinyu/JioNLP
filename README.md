@@ -106,7 +106,7 @@ $ jio_help
 |[**回译**](https://github.com/dongrixinyu/JioNLP/wiki/数据增强-说明文档#user-content-回译数据增强)        |BackTranslation|给定一篇文本，采用各大厂云平台的机器翻译接口，实现数据增强    |
 |[**邻近汉字换位**](https://github.com/dongrixinyu/JioNLP/wiki/数据增强-说明文档#user-content-邻近汉字换位) |swap_char_position |随机交换相近字符的位置，实现数据增强   |
 |[**同音词替换**](https://github.com/dongrixinyu/JioNLP/wiki/数据增强-说明文档#user-content-同音词替换)|homophone_substitution|相同读音词汇替换，实现数据增强 |
-|[**随机增删字符**](https://github.com/dongrixinyu/JioNLP/wiki/数据增强-说明文档#user-content-随机增删字符)|random_add_delete |随机在文本中增加、删除某个字符，对语义不造成影响|
+|[随机**增删字符**](https://github.com/dongrixinyu/JioNLP/wiki/数据增强-说明文档#user-content-随机增删字符)|random_add_delete |随机在文本中增加、删除某个字符，对语义不造成影响|
 
 ### 3.正则抽取与解析
 

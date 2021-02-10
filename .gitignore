@@ -13,6 +13,10 @@ pinyin_phrase.txt
 topic_word_weight.json
 word_topic_weight.json
 phone_location.txt
+pornography.txt
+word_distribution.json
+char_distribution.json
+xiehouyu.txt
 
 # C extensions
 *.so

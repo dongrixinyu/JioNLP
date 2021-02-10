@@ -212,9 +212,10 @@ def chinese_char_dictionary_loader():
     汉字，释义，详细释义 3 部分
 
     考虑到新华字典无法与时俱进，其中有相当多的老旧内容，故增删说明如下：
-        1、删除了所有的日本和字 -> 释义中仅一条解释，且包含 “日本和字” 内容；
-        2、删除了过时的人名 -> “谌容：女作家，四川人。”
-        3、
+        1、删除了所有的日本和字 -> 释义中包含 “日本和字” 内容，如 “桛 ā 1.日本和字。”；
+        2、删除了释义未详的字 -> 释义中包含 “义未详” 内容，如 “穝zuō## ⒈义未详。”
+        3、删除了低频汉字 -> 释义中字频低于亿分之一的，且不在 char_distribution.json 中的字。
+            如 “葨	葨wēi 1.见"葨芝"。”
 
     """
     content = read_file_by_line(
@@ -222,9 +223,9 @@ def chinese_char_dictionary_loader():
                      'chinese_char_dictionary.txt'), strip=False)
     
     char_dict = dict()
-    for line in content:
+    for idx, line in enumerate(content):
         segs = line.split('\t')
-        
+
         assert len(segs) == 3
         char_dict.update({
             segs[0]: {'explanation': segs[1],
@@ -260,8 +261,8 @@ def chinese_word_dictionary_loader():
     词语及其释义
 
     考虑到新华词典无法与时俱进，其中有相当多的老旧内容，故增删说明如下：
-        1、删除了过时的人名 -> “谌容：女作家，四川人。”
-        3、删除了古文中的词汇，已经被当代语言淘汰的用法。
+        1、删除了所有未出现在 word_distribution.json 中的词汇；
+            可发现，词典由原先 26万条锐减至 3.3万条，即新华词典中大量的词条都已被淘汰，且有很多新词未加入词典。
 
     """
     content = read_file_by_line(

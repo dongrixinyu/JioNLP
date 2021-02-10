@@ -7,7 +7,6 @@
 # description: Preprocessing tool for Chinese NLP
 
 
-import random
 import numpy as np
 
 from jionlp.rule import check_chinese_char

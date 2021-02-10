@@ -17,13 +17,15 @@ DIR_PATH = os.path.dirname(os.path.dirname(FILE_PATH))
 
 
 def zip_file(file_list=None):
-    """ 将某些 txt 文件压缩 """
+    """ 将某些 txt, json 文件压缩 """
     if file_list is None:
         file_list = ['china_location.txt', 'chinese_char_dictionary.txt',
                      'chinese_idiom.txt', 'chinese_word_dictionary.txt',
                      'idf.txt', 'pinyin_phrase.txt',
+                     'char_distribution.json', 'word_distribution.json',
                      'word_topic_weight.json', 'topic_word_weight.json',
-                     'phone_location.txt']
+                     'phone_location.txt', 'xiehouyu.txt',
+                     'pornography.txt']
 
     dict_dir_path = os.path.join(DIR_PATH, 'dictionary')
     for _file in file_list:
