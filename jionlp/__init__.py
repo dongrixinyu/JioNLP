@@ -8,7 +8,7 @@
 # description: Preprocessing tool for Chinese NLP
 """
 
-__version__ = '1.3.12'
+__version__ = '1.3.14'
 
 import os
 
@@ -62,6 +62,8 @@ guide = """
 │   | 2021-01-22 | update outdated china location conversion           |   │
 │   | 2021-02-01 | acquire 400 stars and 58 forks on Github            |   │
 │   | 2021-02-02 | add swap char position text augmentation            |   │
+│   | 2021-02-09 | add homophone and add & delete text augmentation    |   │
+│   | 2021-02-10 | update dictionaries                                 |   │
 │                                                                          │
 ╰──────────────────────────────────────────────────────────────────────────╯
 """

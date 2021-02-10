@@ -48,8 +48,10 @@ def unzip_file():
     file_list = ['china_location.zip', 'chinese_char_dictionary.zip',
                  'chinese_idiom.zip', 'chinese_word_dictionary.zip',
                  'idf.zip', 'pinyin_phrase.zip',
+                 'char_distribution.zip', 'word_distribution.zip',
                  'word_topic_weight.zip', 'topic_word_weight.zip',
-                 'phone_location.zip']
+                 'phone_location.zip', 'xiehouyu.zip',
+                 'pornography.zip']
 
     dict_dir_path = os.path.join(DIR_PATH, 'dictionary')
     for _zip_file in file_list:
