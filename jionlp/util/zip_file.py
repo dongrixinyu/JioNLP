@@ -21,7 +21,9 @@ def zip_file(file_list=None):
     if file_list is None:
         file_list = ['china_location.txt', 'chinese_char_dictionary.txt',
                      'chinese_idiom.txt', 'chinese_word_dictionary.txt',
-                     'idf.txt', 'pinyin_phrase.txt',
+                     'idf.txt',
+                     'pinyin_char.txt', 'pinyin_phrase.txt',
+                     'char_radical.txt', 'sentiment_words.txt'
                      'char_distribution.json', 'word_distribution.json',
                      'word_topic_weight.json', 'topic_word_weight.json',
                      'phone_location.txt', 'xiehouyu.txt',
@@ -47,7 +49,9 @@ def unzip_file():
     """ 将某些 txt 文件解压缩 """
     file_list = ['china_location.zip', 'chinese_char_dictionary.zip',
                  'chinese_idiom.zip', 'chinese_word_dictionary.zip',
-                 'idf.zip', 'pinyin_phrase.zip',
+                 'idf.zip',
+                 'pinyin_char.zip', 'pinyin_phrase.zip',
+                 'char_radical.zip', 'sentiment_words.zip'
                  'char_distribution.zip', 'word_distribution.zip',
                  'word_topic_weight.zip', 'topic_word_weight.zip',
                  'phone_location.zip', 'xiehouyu.zip',
