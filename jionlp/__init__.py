@@ -76,7 +76,6 @@ from jionlp.gadget import *
 from jionlp.textaug import *
 from jionlp.algorithm import *
 
-from jionlp.util.fast_loader import FastLoader
-
-
+# from jionlp.util.fast_loader import FastLoader
 # rule = FastLoader('rule', globals(), 'jionlp.rule')
+

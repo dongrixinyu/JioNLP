@@ -30,6 +30,7 @@ __all__ = ['char_distribution_loader', 'char_radical_loader',
            'sentiment_words_loader', 'stopwords_loader',
            'telecom_operator_loader',
            'traditional_simplified_loader',
+           'word_distribution_loader',
            'world_location_loader', 'xiehouyu_loader']
 
 

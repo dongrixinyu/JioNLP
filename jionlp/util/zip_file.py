@@ -23,7 +23,7 @@ def zip_file(file_list=None):
                      'chinese_idiom.txt', 'chinese_word_dictionary.txt',
                      'idf.txt',
                      'pinyin_char.txt', 'pinyin_phrase.txt',
-                     'char_radical.txt', 'sentiment_words.txt'
+                     'char_radical.txt', 'sentiment_words.txt',
                      'char_distribution.json', 'word_distribution.json',
                      'word_topic_weight.json', 'topic_word_weight.json',
                      'phone_location.txt', 'xiehouyu.txt',
@@ -51,7 +51,7 @@ def unzip_file():
                  'chinese_idiom.zip', 'chinese_word_dictionary.zip',
                  'idf.zip',
                  'pinyin_char.zip', 'pinyin_phrase.zip',
-                 'char_radical.zip', 'sentiment_words.zip'
+                 'char_radical.zip', 'sentiment_words.zip',
                  'char_distribution.zip', 'word_distribution.zip',
                  'word_topic_weight.zip', 'topic_word_weight.zip',
                  'phone_location.zip', 'xiehouyu.zip',
