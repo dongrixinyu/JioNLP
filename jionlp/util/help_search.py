@@ -38,6 +38,7 @@ class HelpSearch(object):
             'CharRadical', 'IdiomSolitaire', 'LocationParser',
             'PhoneLocation', 'Pinyin', 'RemoveStopwords', 'SplitSentence',
             'TSConversion', 'MoneyStandardization', 'LocationRecognizer',
+            'HomophoneSubstitution', 'RandomAddDelete', 'SwapCharPosition',
             # 文件说明
             'ts_conversion', 'location_recognizer',
             # 多层函数的误例
@@ -111,14 +112,14 @@ class HelpSearch(object):
         if self.function_dict is None:
             self._prepare()
 
-        input_string = input('please enter keywords in Chinese separated by space:')
+        input_string = input('please enter Chinese keywords separated by space: ')
 
         search_word_list = self.command_parser(input_string)
         for function_name in self.search(search_word_list):
-            print('function name ==> jio.' + function_name)
+            print('\nfunction name ==> jio.' + function_name)
             print(self.function_dict[function_name])
             print('function name ==> jio.' + function_name)
-            input_string = input('type in `n` for next function, `q` for quitting.')
+            input_string = input('type in `n` for next function, `q` for quitting: ')
             if input_string == 'n':
                 continue
             elif input_string == 'q':

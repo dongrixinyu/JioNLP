@@ -1,4 +1,12 @@
 # -*- coding=utf-8 -*-
+"""
+# library: jionlp
+# author: dongrixinyu
+# license: Apache License 2.0
+# Email: dongrixinyu.89@163.com
+# github: https://github.com/dongrixinyu/JioNLP
+# description: Preprocessing tool for Chinese NLP
+"""
 
 import os
 import re
@@ -7,22 +15,20 @@ from setuptools import setup, find_packages
 
 
 DIR_PATH = os.path.dirname(os.path.abspath(__file__))
-LONGDOC = '''
+LONG_DOC = '''
 ==================================== JioNLP ====================================
 
-一个全面简便的中文 NLP 工具包，做您的 NLP 任务的垫 jio 石。提供丰富的 NLP 功能。
+中文 NLP 数据预处理工具包，完成训练 NLP 模型前后的数据预处理，如文本数据增强、文本清洗、特定
+信息抽取、数据集概况分析、模型加速、相关模型任务 baseline、词典等。
 
-安装：
-```
-$ git clone https://github.com/dongrixinyu/JioNLP
-$ cd ./JioNLP
-$ pip install .
-```
+# 安装：
+    $ git clone https://github.com/dongrixinyu/JioNLP
+    $ cd ./JioNLP
+    $ pip install .
 
-导入：
-```
->>> import jionlp as jio
-```
+# 导入：
+    >>> import jionlp as jio
+
 '''
 __version__ = ''
 with open(os.path.join(DIR_PATH, 'README.md'),
@@ -34,12 +40,12 @@ with open(os.path.join(DIR_PATH, 'README.md'),
         if result is not None:
             __version__ = result.group(1)
 
-    LONGDOC = '\n'.join(readme_lines)
+    LONG_DOC = '\n'.join(readme_lines)
 
 __name__ = 'jionlp'
 __author__ = "dongrixinyu"
 __copyright__ = "Copyright 2020, dongrixinyu"
-__credits__ = []
+__credits__ = list()
 __license__ = "Apache License 2.0"
 __maintainer__ = "dongrixinyu"
 __email__ = "dongrixinyu.89@163.com"
@@ -58,10 +64,10 @@ setup(name=__name__,
       author=__author__,
       author_email=__email__,
       description=__description__,
-      long_description=LONGDOC,
+      long_description=LONG_DOC,
       long_description_content_type='text/markdown',
       license=__license__,
-      py_modules=[],
+      py_modules=list(),
       packages=find_packages(),
       include_package_data=True,
       install_requires=requirements,
@@ -72,4 +78,3 @@ setup(name=__name__,
       },
       test_suite='nose.collector',
       tests_require=['nose'])
-

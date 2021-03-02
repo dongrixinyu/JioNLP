@@ -29,10 +29,10 @@ guide = """
 │ • • • ░░░░░░░░░░░░░░░░░░░░░░  Important Message  ░░░░░░░░░░░░░░░░░░░░░░░ │
 ├──────────────────────────────────────────────────────────────────────────┤
 │                                                                          │
-│              JioNLP, a python tool for Chinese NLP coding.               │
+│           JioNLP, a python tool for Chinese NLP preprocessing.           │
 │               URL: https://github.com/dongrixinyu/JioNLP                 │
 │                                                                          │
-│   | date       | updated funcs and infos                             |   │
+│   | date       | updated funcs and info                              |   │
 │   | ---------- | --------------------------------------------------- |   │
 │   | 2020-03-13 | first push                                          |   │
 │   | 2020-03-18 | update rules                                        |   │
@@ -78,4 +78,3 @@ from jionlp.algorithm import *
 
 # from jionlp.util.fast_loader import FastLoader
 # rule = FastLoader('rule', globals(), 'jionlp.rule')
-
