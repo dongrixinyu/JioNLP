@@ -34,7 +34,7 @@ DICTIONARY_DESCRIPTION = {
     'char_distribution.json': '统计中文文本全量语料中有效 utf-8 字符的频次与分布',
     'china_location.txt': '中国地名词典，包括省、地市、县三级。且涵盖了该地名的简称、俗称、行政区划码。',
     'china_location_change.txt': '中国地名变更词典，包括省、地市、县三级。且涵盖了该地名的变更时间、批准部门。',
-    'chinese_char_dictionary.txt': '新华字典，字典中有两千余个多音字，每个字分别包括汉字，释义，详细释义 7 部分',
+    'chinese_char_dictionary.txt': '百度汉语新华字典，字典中有两千余个多音字，每个字分别包括汉字，释义，详细释义 7 部分',
     'chinese_idiom.txt': '中国成语词典，包含成语词条、释义、出处来源、汉语拼音、例句（多数成语无）、在 100 万文本中的出现次数，默认平滑次数为 1。',
     'chinese_word_dictionary.txt': '新华词典，词典中包含 20 万余词汇，分别包括词汇和释义',
     'landline_phone_area_code.txt': '固定电话区号对照表，用于定位区号的归属地',

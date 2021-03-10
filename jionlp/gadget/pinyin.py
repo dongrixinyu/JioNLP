@@ -77,7 +77,7 @@ class Pinyin(object):
         
         self.pinyin_phrase = pinyin_phrase_loader()
         self.pinyin_char = pinyin_char_loader()
-        # pdb.set_trace()
+
         # 加载 trie 树
         self.trie_tree_obj = TrieTree()
         self.trie_tree_obj.build_trie_tree(self.pinyin_phrase, 'phrase')
@@ -126,13 +126,14 @@ class Pinyin(object):
         
     def _pinyin_formater(self):
         letter_map_dict = {
-            'à': 'a4', 'á': 'a2','ā': 'a1','ǎ': 'a3',
-            'ò': 'o4', 'ó': 'o2','ō': 'o1','ǒ': 'o3',
-            'è': 'e4', 'é': 'e2','ē': 'e1','ě': 'e3',
-            'ì': 'i4', 'í': 'i2','ī': 'i1','ǐ': 'i3',
-            'ù': 'u4', 'ú': 'u2','ū': 'u1','ǔ': 'u3',
-            'ǜ': 'v4', 'ǘ': 'v2','ǖ': 'v1','ǚ': 'v3', 
-            'ǹ': 'n4', 'ń': 'n2', 'ň': 'n3', 'ü' : 'v'}
+            'à': 'a4', 'á': 'a2', 'ā': 'a1', 'ǎ': 'a3',
+            'ò': 'o4', 'ó': 'o2', 'ō': 'o1', 'ǒ': 'o3',
+            'è': 'e4', 'é': 'e2', 'ē': 'e1', 'ě': 'e3',
+            'ì': 'i4', 'í': 'i2', 'ī': 'i1', 'ǐ': 'i3',
+            'ù': 'u4', 'ú': 'u2', 'ū': 'u1', 'ǔ': 'u3',
+            'ǜ': 'v4', 'ǘ': 'v2', 'ǖ': 'v1', 'ǚ': 'v3',
+            'ǹ': 'n4', 'ń': 'n2', 'ň': 'n3', 'ü': 'v',
+            'ḿ': 'm2'}
         
         pinyin_list = list()
         for char, pinyin in self.pinyin_char.items():

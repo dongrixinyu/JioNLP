@@ -23,7 +23,6 @@ TODO:
        7: 左下包围结构, 远
        8: 全包围结构, 国
        9: 半包围结构，冈
-
     5、数字、字母、符号，以及一些未登录汉字等，无结构，均以 <char_radical_unk> 替代
     6、一些汉字的偏旁部首确实与本意有较大差别，如“爱”字，其部首为“爪”，而实际繁体字部
        首为“心”，“矮”字部首为“矢”，部首与字本意已无联系。因此，词典尽量以靠近本意的部
@@ -37,13 +36,11 @@ TODO:
 
 
 import os
-import pdb
-import numpy as np
 
 from typing import Union
 
 from jionlp.dictionary.dictionary_loader import char_radical_loader
-from .trie_tree import TrieTree
+from jionlp.dictionary.dictionary_loader import STRUCTURE_DICT
 
 
 class CharRadical(object):
@@ -64,15 +61,11 @@ class CharRadical(object):
         self.radicals = None
         
     def _prepare(self):
-        self.radicals, self.structure_detail = char_radical_loader()
+        self.radicals = char_radical_loader()
         self.cr_unk = '<cr_unk>'
-        self.four_corner_unk = '00000'
-        
-    def get_structure_detail(self):
-        if self.radicals is None:
-            self._prepare()
-        
-        return self.structure_detail
+        self.corner_coding_unk = '00000'
+        self.wubi_coding_unk = 'XXXX'
+        self.stroke_order_unk = '<so_unk>'
         
     def __call__(self, text: str):
         
@@ -81,9 +74,13 @@ class CharRadical(object):
         
         record_list = list()  # 输出最终结果
         for char in text:
-            cur_radical = self.radicals.get(
-                char, [self.cr_unk, 0, self.four_corner_unk, char])
-            record_list.append(cur_radical)
+            radical = self.radicals.get(
+                char, {'radical': self.cr_unk,
+                       'structure': '一体结构',
+                       'corner_coding': self.corner_coding_unk,
+                       'stroke_order': self.stroke_order_unk,
+                       'wubi_coding': self.wubi_coding_unk})
+            record_list.append(radical)
 
         assert len(record_list) == len(text)
         return record_list

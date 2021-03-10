@@ -8,6 +8,7 @@
 
 
 import os
+import re
 import math
 
 from jionlp import logging
@@ -32,6 +33,11 @@ __all__ = ['char_distribution_loader', 'char_radical_loader',
            'traditional_simplified_loader',
            'word_distribution_loader',
            'world_location_loader', 'xiehouyu_loader']
+
+STRUCTURE_DICT = {
+    0: '一体结构', 1: '左右结构', 2: '上下结构', 3: '左中右结构',
+    4: '上中下结构', 5: '右上包围结构', 6: '左上包围结构', 7: '左下包围结构',
+    8: '全包围结构', 9: '半包围结构'}
 
 
 def char_distribution_loader():
@@ -209,33 +215,58 @@ def negative_words_loader():
 
 
 def chinese_char_dictionary_loader():
-    """ 加载新华字典，分别包括：
-    汉字，释义，详细释义 3 部分
+    """ 加载百度汉语字典，字典与新华字典大同小异，分别包括：
+    汉字，偏旁，字形结构，四角编码，笔画顺序，繁体字，五笔输入编码，拼音，释义
 
-    考虑到新华字典无法与时俱进，其中有相当多的老旧内容，故增删说明如下：
-        1、删除了所有的日本和字 -> 释义中包含 “日本和字” 内容，如 “桛 ā 1.日本和字。”；
-        2、删除了释义未详的字 -> 释义中包含 “义未详” 内容，如 “穝zuō## ⒈义未详。”
+    本词典囊括了 utf-8 编码中，“一~龥”的所有汉字，但有所删减
+    考虑到百度汉语字典无法与时俱进，其中有相当多的老旧内容，故增删说明如下：
+        1、删除了所有的日本和字 -> 释义中包含 “日本汉字/日本地名用字” 内容，如 “桛 ā 1.日本和字。”；
+        2、删除了释义未详的字 -> 释义中包含 “义未详” 内容，或某个字的某个读音义未详，如 “穝zuō## ⒈义未详。”
         3、删除了低频汉字 -> 释义中字频低于亿分之一的，且不在 char_distribution.json 中的字。
-            如 “葨	葨wēi 1.见"葨芝"。”
+            如 “葨wēi 1.见"葨芝"。”
+        4、删除了所有的韩国、朝鲜创字、用字、用意 -> 櫷guī槐木的一种（韩国汉字）
+        5、删除了古代用字、用意 -> 释义中包含  “古同~/古代~/古通~/古书~/古地名/古人名” 内容，
+            但如有多个释义，且其中有非古代释义，则保留该汉字；如 “鼃 wā 古同蛙”。但常见古字，如“巙kuí”
+
+        共计删减 3402 字。
 
     """
     content = read_file_by_line(
         os.path.join(GRAND_DIR_PATH, 'dictionary',
                      'chinese_char_dictionary.txt'), strip=False)
-    
+
+    pinyin_ptn = re.compile('\[[a-zàáāǎòóōǒèéēěìíīǐùúūǔǜǘǖǚǹńňüḿ]{1,8}\]')
+    explanation_ptn = re.compile('\d{1,2}\.')
+
     char_dict = dict()
     for idx, line in enumerate(content):
         segs = line.split('\t')
 
-        assert len(segs) == 3
+        assert len(segs) == 8
+
+        # 拆解每个读音的各个含义
+        pinyin_list = [item[1:-1] for item in pinyin_ptn.findall(segs[-1])]
+        explanation_list = [item for item in pinyin_ptn.split(segs[-1].replace('~', segs[0]).strip())
+                            if item != '']
+        assert len(pinyin_list) == len(explanation_list)
+
+        pinyin_explanation_dict = dict()
+        for pinyin, explanations in zip(pinyin_list, explanation_list):
+            explanations = [ex for ex in explanation_ptn.split(explanations) if ex != '']
+            pinyin_explanation_dict.update({pinyin: explanations})
+
         char_dict.update({
-            segs[0]: {'explanation': segs[1],
-                      'more_details': segs[2].replace('\n', '')
-                      if segs[2] != '\n' else None}})
+            segs[0]: {'radical': segs[1],
+                      'structure': STRUCTURE_DICT[int(segs[2])],
+                      'corner_coding': segs[3],
+                      'stroke_order': segs[4],
+                      'traditional_version': segs[5],
+                      'wubi_coding': segs[6],
+                      'pinyin': pinyin_explanation_dict}})
         
     return char_dict
-    
-    
+
+
 def chinese_idiom_loader():
     """ 加载成语词典 chinese_idiom.txt """
     content = read_file_by_line(
@@ -255,8 +286,8 @@ def chinese_idiom_loader():
         result.update({item_tup[0]: cur_item})
     
     return result
-    
-    
+
+
 def chinese_word_dictionary_loader():
     """ 加载新华词典，词典中有 20 万余个多音字，分别包括：
     词语及其释义
@@ -286,23 +317,26 @@ def pornography_loader():
     
     
 def char_radical_loader():
-    """ 加载汉字字形词典 char_radical.txt """
-    structure_dict = {
-        0: '一体结构', 1: '左右结构', 2: '上下结构', 3: '左中右结构',
-        4: '上中下结构', 5: '右上包围结构', 6: '左上包围结构', 7: '左下包围结构',
-        8: '全包围结构', 9: '半包围结构'}
-    
-    content = read_file_by_line(os.path.join(
-        GRAND_DIR_PATH, 'dictionary', 'char_radical.txt'))
-    
-    map_dict = dict()
-    for item in content:
-        assert len(item.split('\t')) == 5
-        char, radical, structure, four_corner, components = item.split('\t')
-        map_dict.update({char: [radical, int(structure),
-                                four_corner, components]})
+    """ 加载汉字字形词典 chinese_char_dictionary.txt ，字形内容包括
+    偏旁部首、字形结构、四角编码、字形笔画与偏旁组成。"""
+
+    char_dict = chinese_char_dictionary_loader()
+    char_radical_dict = dict()
+    for char, item in char_dict.items():
+
+        radical = item['radical']
+        structure = item['structure']
+        corner_coding = item['corner_coding']  # 四角编码
+        stroke_order = item['stroke_order']  # 笔画顺序
+        wubi_coding = item['wubi_coding']  # 五笔打字编码
+
+        char_radical_dict.update(
+            {char: {'radical': radical, 'structure': structure,
+                    'corner_coding': corner_coding,
+                    'stroke_order': stroke_order,
+                    'wubi_coding': wubi_coding}})
         
-    return map_dict, structure_dict
+    return char_radical_dict
     
     
 def idf_loader():
@@ -385,18 +419,15 @@ def pinyin_phrase_loader():
 
 
 def pinyin_char_loader():
-    content = read_file_by_line(os.path.join(
-        GRAND_DIR_PATH, 'dictionary', 'pinyin_char.txt'))
-    
-    map_dict = dict()
-    for item in content:
-        key, value = item.split('\t')
-        assert len(item.split('\t')) == 2
-        
-        multi_pinyin = value.split('/')
-        map_dict.update({key: multi_pinyin})
+    """加载拼音词典 chinese_char_dictionary.txt，以 list 返回，多音字也标出。"""
 
-    return map_dict
+    char_dict = chinese_char_dictionary_loader()
+    pinyin_char_dict = dict()
+    for char, item in char_dict.items():
+        pinyin_list = list(item['pinyin'].keys())
+        pinyin_char_dict.update({char: pinyin_list})
+
+    return pinyin_char_dict
 
 
 def sentiment_expand_words_loader():

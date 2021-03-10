@@ -9,9 +9,7 @@ chinese_char_dictionary.txt
 chinese_idiom.txt
 chinese_word_dictionary.txt
 idf.txt
-pinyin_char.txt
 pinyin_phrase.txt
-char_radical.txt
 topic_word_weight.json
 word_topic_weight.json
 phone_location.txt
