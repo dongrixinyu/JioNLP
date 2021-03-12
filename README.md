@@ -7,7 +7,7 @@
     <a alt="License">
         <img src="https://img.shields.io/github/license/dongrixinyu/JioNLP?color=crimson" /></a>
     <a alt="Size">
-        <img src="https://img.shields.io/badge/size-28.8m-orange" /></a>
+        <img src="https://img.shields.io/badge/size-23.4m-orange" /></a>
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-4k-yellow" /></a>
     <a alt="Version">
@@ -91,10 +91,10 @@ $ jio_help
 |[**成语接龙**](../../wiki/Gadget-说明文档#user-content-成语接龙) |idiom_solitaire|成语接龙，即前一成语的尾字和后一成语的首字（读音）相同 |
 |[色情数据过滤]() | |
 |[反动数据过滤]() | |
-|[繁体转简体](../../wiki/Gadget-说明文档#user-content-繁体转简体字) |tra2sim|繁体转简体，支持**逐字转**与**最大匹配**两种模式 |
-|[简体转繁体](../../wiki/Gadget-说明文档#user-content-简体转繁体字) |sim2tra|简体转繁体，支持**逐字转**与**最大匹配**两种模式 |
+|[**繁**体转**简**体](../../wiki/Gadget-说明文档#user-content-繁体转简体字) |tra2sim|繁体转简体，支持**逐字转**与**最大匹配**两种模式 |
+|[**简**体转**繁**体](../../wiki/Gadget-说明文档#user-content-简体转繁体字) |sim2tra|简体转繁体，支持**逐字转**与**最大匹配**两种模式 |
 |[汉字转**拼音**](../../wiki/Gadget-说明文档#user-content-汉字转拼音) |pinyin| 找出中文文本对应的汉语拼音，并可返回**声母**、**韵母**、**声调** |
-|[汉字转**偏旁与字形**](../../wiki/Gadget-说明文档#user-content-汉字转偏旁与字形) |char_radical| 找出中文文本对应的汉字字形结构信息，<br>包括**偏旁部首**(“河”氵)、**字形结构**(“河”左右结构)、<br>**四角编码**(“河”31120)、**汉字拆解**(“河”水可) |
+|[汉字转**偏旁与字形**](../../wiki/Gadget-说明文档#user-content-汉字转偏旁与字形) |char_radical| 找出中文文本对应的汉字字形结构信息，<br>包括**偏旁部首**(“河”氵)、**字形结构**(“河”左右结构)、<br>**四角编码**(“河”31120)、**汉字拆解**(“河”水可)、<br>**五笔编码**(“河”ISKG) |
 |[金额**数字转汉字**](../../wiki/正则抽取与解析-说明文档#user-content-金额数字转汉字)|money_num2char| 给定一条数字金额，返回其**汉字**大写结果 |
 
 ### 2.数据增强
@@ -142,8 +142,8 @@ $ jio_help
 
 ### 5.词典加载与使用
 
-| 功能   | 函数   |描述   |
-|--------|--------|-------|
+| 功能 | 函数 | 描述 |
+|-----|-----|------|
 |[**成语**词典](../../wiki/词典加载-说明文档#user-content-加载成语词典) |chinese_idiom_loader|加载成语词典 |
 |[**歇后语**词典](../../wiki/词典加载-说明文档#user-content-加载歇后语词典) |xiehouyu_loader|加载歇后语词典 |
 |[**中国地名**词典](../../wiki/词典加载-说明文档#user-content-加载中国省市县地名词典) |china_location_loader|加载中国**省、市、县**三级词典 |

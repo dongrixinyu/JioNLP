@@ -41,7 +41,6 @@ DICTIONARY_DESCRIPTION = {
     'negative_words.txt': '常用否定词汇词典',
     'phone_location.txt': '电话号码归属地词典',
     'phrase_pinyin.txt': '包含多音字的词汇和短语的注音词典',
-    'pinyin_char.txt': '所有汉字的注音词典',
     'pornography.txt': '色情词典',
     'sentiment_expand_words.txt': '情感词分析中，情感扩张性副词',
     'sentiment_words.txt': '情感分析中，情感词及其权重',
