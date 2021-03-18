@@ -1,13 +1,13 @@
 <p align="center">
     <a alt="jionlp logo">
-        <img src="./jionlp_logo.jpg" / style="width:100px;height:100px">
+        <img src="./jionlp_logo.jpg" / style="width:90px;height:90px">
     </a>
 </p>
 <p align="center">
     <a alt="License">
         <img src="https://img.shields.io/github/license/dongrixinyu/JioNLP?color=crimson" /></a>
     <a alt="Size">
-        <img src="https://img.shields.io/badge/size-21.4m-orange" /></a>
+        <img src="https://img.shields.io/badge/size-20.4m-orange" /></a>
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-4k-yellow" /></a>
     <a alt="Version">
@@ -113,11 +113,11 @@ $ jio_help
 
 | 功能   | 函数   |描述   |
 |--------|--------|-------|
-|[**回译**](../../wiki/数据增强-说明文档#user-content-回译数据增强) |BackTranslation|给定一篇文本，采用各大厂云平台的机器翻译接口，实现数据增强 |
+|[**回译**](../../wiki/数据增强-说明文档#user-content-回译数据增强) |BackTranslation|给定一篇文本，采用各大厂云平台的机器翻译接口，<br>实现数据增强 |
 |[**邻近汉字换位**](../../wiki/数据增强-说明文档#user-content-邻近汉字换位) |swap_char_position|随机交换相近字符的位置，实现数据增强 |
 |[**同音词替换**](../../wiki/数据增强-说明文档#user-content-同音词替换) |homophone_substitution|相同读音词汇替换，实现数据增强 |
 |[随机**增删字符**](../../wiki/数据增强-说明文档#user-content-随机增删字符) |random_add_delete|随机在文本中增加、删除某个字符，对语义不造成影响 |
-|[NER**实体替换**](../../wiki/数据增强-说明文档#user-content-ner实体替换) |replace_entity|根据实体词典，随机在文本中替换某个实体，对语义不造成影响，也广泛适用于序列标注、文本分类 |
+|[NER**实体替换**](../../wiki/数据增强-说明文档#user-content-ner实体替换) |replace_entity|根据实体词典，随机在文本中替换某个实体，对语义不<br>造成影响，也广泛适用于序列标注、文本分类 |
 
 
 ### 3.正则抽取与解析
@@ -185,7 +185,7 @@ $ jio_help
 
 | 功能   | 函数   |描述   |
 |--------|--------|-------|
-|[**朴素贝叶斯分析类别词汇**](../../wiki/文本分类-说明文档#user-content-朴素贝叶斯分析类别词汇) |analyse_freq_words|对文本分类的标注语料，做朴素贝叶斯词频分析，返回各类<br>文本的高条件概率词汇 |
+|[朴素贝叶斯**分析类别词汇**](../../wiki/文本分类-说明文档#user-content-朴素贝叶斯分析类别词汇) |analyse_freq_words|对文本分类的标注语料，做朴素贝叶斯词频分析，返回各类<br>文本的高条件概率词汇 |
 |[**分割数据集**](../../wiki/文本分类-说明文档#user-content-分割数据集) |analyse_dataset|对文本分类的标注语料，切分为训练集、验证集、测试集，<br>并给出各个子集的分类分布统计 |
 
 
@@ -202,7 +202,7 @@ $ jio_help
 - 如有功能建议、bug，可通过 issue 按模板提出。
 - 如感兴趣合作完善本工具包，请参考 **TODO.txt** 文件进行功能添加。
 
-### 做NLP不易，欢迎加入自然语言处理交流群 (#^.^#) 
+### 做NLP不易，欢迎加入自然语言处理 Wechat 交流群 (#^.^#) 
 
 ![image](./qr_code_for_collection.png)
 
