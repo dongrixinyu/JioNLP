@@ -98,8 +98,11 @@ class ReplaceEntity(object):
             if self.random.random() < self.replace_ratio:
                 # 将该实体从词典中随机选择一个做替换
                 orig_entity = self.random.choice(entities)
-                new_entity_text = self.random.choice(
-                    list(self.entities_dict[orig_entity['type']].keys()))
+
+                candidate_list = list(self.entities_dict[orig_entity['type']].keys())
+                if len(candidate_list) == 0:
+                    continue
+                new_entity_text = self.random.choice(candidate_list)
 
                 orig_len = len(orig_entity['text'])
                 new_len = len(new_entity_text)
