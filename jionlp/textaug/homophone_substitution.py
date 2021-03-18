@@ -117,7 +117,7 @@ class HomophoneSubstitution(object):
             augmented_text = self._augment_one(
                 pinyin_segs, segs, allow_mispronounce=allow_mispronounce)
             count += 1
-            if count > min(augmentation_num / self.homo_ratio, len(text) / 2):
+            if count > min(augmentation_num / self.homo_ratio, len(text)):
                 break
 
             if augmented_text == text:

@@ -70,7 +70,7 @@ def entity2tag(token_list: List[str], entities: List[Dict[str, Any]],
     
     flag = 0  # 判断重叠标注
     
-    entities = sorted(entities, key=lambda i:i['offset'][0])
+    entities = sorted(entities, key=lambda i: i['offset'][0])
 
     for idx, entity in enumerate(entities):
         if entity['offset'][1] < flag:  # 说明重叠标注，要删除

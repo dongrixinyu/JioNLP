@@ -53,6 +53,47 @@ def _compute_kl_divergence(vector_1, vector_2):
     return kl_value, ratio
 
 
+def collect_dataset_entities(dataset_y):
+    """ 收集样本数据集内，所有的实体，并按照类型进行汇总。
+    主要用于整理实体词典，用于 NER 的数据增强等。
+
+    Args:
+         dataset_y: 数据集的所有样本中，包含的实体的输出标签，如样例所示
+
+    Return:
+        dict(dict):
+            各个类型实体的词典(实体类型、出现频数)
+
+    Examples:
+        >>> import jionlp as jio
+        >>> dataset_y = [[{'type': 'Person', 'text': '马成宇', 'offset': (0, 3)},
+                          {'type': 'Company', 'text': '百度', 'offset': (10, 12)}],
+                         [{'type': 'Company', 'text': '国力教育公司', 'offset': (2, 8)}],
+                         [{'type': 'Organization', 'text': '延平区人民法院', 'offset': (0, 7)}],
+                         ...]  #
+        >>> entities_dict = jio.ner.collect_dataset_entities(dataset_y)
+        >>> print(entities_dict)
+
+        # {'Person': {'马成宇': 1, '小倩': 1},
+        #  'Company': {'百度': 4, '国力教育公司': 2},
+        #  'Organization': {'延平区人民法院': 1, '教育局': 3}}
+
+    """
+    entities_dict = dict()
+    for sample_y in dataset_y:
+        for entity in sample_y:
+            if entity['type'] in entities_dict:
+                if entity['text'] in entities_dict[entity['type']]:
+                    entities_dict[entity['type']][entity['text']] += 1
+                else:
+                    entities_dict[entity['type']].update({entity['text']: 1})
+            else:
+                entities_dict.update({entity['type']: dict()})
+                entities_dict[entity['type']].update({entity['text']: 1})
+
+    return entities_dict
+
+
 def analyse_dataset(dataset_x, dataset_y, ratio=[0.8, 0.05, 0.15], shuffle=True):
     """ 将 NER 数据集按照训练、验证、测试进行划分，统计数据集中各个类别实体的数量和占比，
     计算训练、验证、测试集的相对熵，判断数据集分割是否合理。其中，dismatch 信息比例越低，

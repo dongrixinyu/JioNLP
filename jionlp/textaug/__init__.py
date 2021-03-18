@@ -12,6 +12,7 @@ from .back_translation import BackTranslation, BaiduApi, YoudaoFreeApi, \
 from .swap_char_position import SwapCharPosition
 from .homophone_substitution import HomophoneSubstitution
 from .random_add_delete import RandomAddDelete
+from .replace_entity import ReplaceEntity
 
 swap_char_position = SwapCharPosition()
 homophone_substitution = HomophoneSubstitution()

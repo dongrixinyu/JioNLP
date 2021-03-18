@@ -23,6 +23,7 @@ from .dictionary_loader import pornography_loader
 from .dictionary_loader import sentiment_expand_words_loader
 from .dictionary_loader import sentiment_words_loader
 from .dictionary_loader import stopwords_loader
+from .dictionary_loader import STRUCTURE_DICT
 from .dictionary_loader import telecom_operator_loader
 from .dictionary_loader import traditional_simplified_loader
 from .dictionary_loader import word_distribution_loader

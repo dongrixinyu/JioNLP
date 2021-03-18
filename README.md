@@ -7,11 +7,11 @@
     <a alt="License">
         <img src="https://img.shields.io/github/license/dongrixinyu/JioNLP?color=crimson" /></a>
     <a alt="Size">
-        <img src="https://img.shields.io/badge/size-23.4m-orange" /></a>
+        <img src="https://img.shields.io/badge/size-21.4m-orange" /></a>
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-4k-yellow" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.15-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.16-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -21,35 +21,46 @@
 
 - 做 NLP 任务，需要清洗、过滤语料？用 JioNLP
 - 做 NLP 任务，需要做信息抽取？用 JioNLP
-- 做 NLP 任务，需要做数据增强？用 JioNLP
+- 做 NLP 任务，需要数据增强？用 JioNLP
 - 做 NLP 任务，需要给模型添加偏旁、拼音、词典、繁体转换信息？用 JioNLP
 #### 总之，JioNLP 提供 NLP 任务预处理功能，准确、高效、零使用门槛，并提供一步到位的查阅入口。
 
-#### 功能主要包括：文本清洗，去除HTML标签、异常字符、冗余字符，转换全角字母、数字、空格为半角，抽取及删除E-mail及域名、电话号码、QQ号、括号内容、身份证号、IP地址、URL超链接、货币金额与单位，金额数字转大写汉字，解析身份证号信息、手机号码归属地、座机区号归属地、手机号码运营商，按行快速读写文件，（多功能）停用词过滤，（优化的）分句，地址解析，新闻地域识别，繁简体转换，汉字转拼音，汉字偏旁、字形、四角编码拆解，基于词典的情感分析，色情数据过滤，反动数据过滤，关键短语抽取，抽取式文本摘要，成语接龙，成语词典、歇后语词典、新华字典、新华词典、停用词典、中国地名词典、中国县级地名变更词典、世界地名词典，基于词典的NER，NER的字、词级别转换，NER的entity和tag格式转换，NER模型的预测阶段加速并行工具集，NER标注和模型预测的结果差异对比，NER标注数据集分割与统计，文本分类标注数据集的分割与统计，回译数据增强，相邻近汉字换位数据增强，同音词替换数据增强，随机增删字符数据增强。
+#### 功能主要包括：文本清洗，去除HTML标签、异常字符、冗余字符，转换全角字母、数字、空格为半角，抽取及删除E-mail及域名、电话号码、QQ号、括号内容、身份证号、IP地址、URL超链接、货币金额与单位，金额数字转大写汉字，解析身份证号信息、手机号码归属地、座机区号归属地、手机号码运营商，按行快速读写文件，（多功能）停用词过滤，（优化的）分句，地址解析，新闻地域识别，繁简体转换，汉字转拼音，汉字偏旁、字形、四角编码、五笔编码拆解，基于词典的情感分析，色情数据过滤，反动数据过滤，关键短语抽取，抽取式文本摘要，成语接龙，成语词典、歇后语词典、新华字典、新华词典、停用词典、中国地名词典、中国县级地名变更词典、世界地名词典，基于词典的NER，NER的字、词级别转换，NER的entity和tag格式转换，NER模型的预测阶段加速并行工具集，NER标注和模型预测的结果差异对比，NER标注数据集分割与统计，NER实体收集、文本分类标注数据集的分割与统计、回译数据增强、相邻近汉字换位数据增强、同音词替换数据增强、随机增删字符数据增强、实体替换数据增强
 
 
-#### Update 2021-02-09
-## 新增 多个[数据增强工具](../../wiki/数据增强-说明文档#user-content-数据增强方法对比)
+#### Update 2021-03-18
+## 新增 [实体替换数据增强](../../wiki/数据增强-说明文档#user-content-ner实体替换)
 
-#### 邻近汉字换位、同音词替换、随机增删字符 
+#### 根据实体词典，对文本中的实体进行替换。
 
 ``` python
 >>> import jionlp as jio
->>> text = '人口危机如果无法得到及时解决，80后、90后们将受到巨大的冲击。'
->>> res1 = jio.swap_char_position(text)  # 邻近汉字换位
->>> res2 = jio.homophone_substitution(text)  # 同音词替换
->>> res3 = jio.random_add_delete(text)  # 随机增删字符
->>> print(res1[0] + '\n' + res2[0] + '\n' + res3[0])
+>>> replace_entity = jio.ReplaceEntity(
+        {'Person':{'张守住': 3, '三矢水介':1, '刘美婷':2},
+         'Country':{'马来西亚': 2}})
+>>> aug_texts, aug_entities = jio.replace_entity(
+              '一位名叫“伊藤慧太”的男子身着日本匠人常穿的作务衣，面带微笑，用日语侃侃而谈',
+              [{'text': '伊藤慧太', 'type': 'Person', 'offset': (5, 9)},
+               {'text': '日本', 'type': 'Country', 'offset': (15, 17)}])
+>>> print(aug_texts, aug_entities)
 
-# 人口危机如果无法得时及到解决，80后、90后们将受到巨大的冲击。
-# 人口危机如果无法得到即时解决，80后、90后们将受到巨大的冲击。
-# 人D口危机如果无法得到及时解决，80后90后们将到巨大的冲击。
+# aug_texts:
+# ['一位名叫“伊藤慧太”的男子身着马来西亚匠人常穿的作务衣，面带微笑，用日语侃侃而谈',
+#  '一位名叫“刘美婷”的男子身着日本匠人常穿的作务衣，面带微笑，用日语侃侃而谈',  # 语义矛盾，但不影响任务训练
+#  '一位名叫“张守住”的男子身着日本匠人常穿的作务衣，面带微笑，用日语侃侃而谈'],
+# aug_entities:
+# [[{'text': '伊藤慧太', 'type': 'Person', 'offset': (5, 9)},
+#   {'text': '马来西亚', 'type': 'Country', 'offset': [15, 19]}],
+#  [{'text': '刘美婷', 'type': 'Person', 'offset': [5, 8]},
+#   {'text': '日本', 'type': 'Country', 'offset': (14, 16)}],
+#  [{'text': '张守住', 'type': 'Person', 'offset': [5, 8]},
+#   {'text': '日本', 'type': 'Country', 'offset': (14, 16)}]])
 ```
 
 
 ## 安装 Installation
 
-- python>=3.6 **优先使用**
+- python>=3.6 **github 版本略领先于 pip**
 ```
 $ git clone https://github.com/dongrixinyu/JioNLP
 $ cd ./JioNLP
@@ -59,7 +70,6 @@ $ pip install .
 ```
 $ pip install jionlp
 ```
-
 
 ## 使用 Features
 
@@ -107,6 +117,8 @@ $ jio_help
 |[**邻近汉字换位**](../../wiki/数据增强-说明文档#user-content-邻近汉字换位) |swap_char_position|随机交换相近字符的位置，实现数据增强 |
 |[**同音词替换**](../../wiki/数据增强-说明文档#user-content-同音词替换) |homophone_substitution|相同读音词汇替换，实现数据增强 |
 |[随机**增删字符**](../../wiki/数据增强-说明文档#user-content-随机增删字符) |random_add_delete|随机在文本中增加、删除某个字符，对语义不造成影响 |
+|[NER**实体替换**](../../wiki/数据增强-说明文档#user-content-ner实体替换) |replace_entity|根据实体词典，随机在文本中替换某个实体，对语义不造成影响，也广泛适用于序列标注、文本分类 |
+
 
 ### 3.正则抽取与解析
 
@@ -161,11 +173,12 @@ $ jio_help
 |[基于**词典NER**](../../wiki/NER-说明文档#user-content-基于词典-ner) |LexiconNER|依据指定的实体词典，前向最大匹配实体 |
 |[**entity 转 tag**](../../wiki/NER-说明文档#user-content-entity-转-tag) |entity2tag|将 json 格式实体转换为模型处理的 tag 序列 |
 |[**tag 转 entity**](../../wiki/NER-说明文档#user-content-tag-转-entity) |tag2entity|将模型处理的 tag 序列转换为 json 格式实体 |
-|[**字 token 转词 token**](../../wiki/NER-说明文档#user-content-字-token-转词-token) |char2word|将字符级别 token 转换为词汇级别 token |
-|[**词 token 转字 token**](../../wiki/NER-说明文档#user-content-词-token-转字-token) |word2char|将词汇级别 token 转换为字符级别 token |
+|[**字** token 转**词** token](../../wiki/NER-说明文档#user-content-字-token-转词-token) |char2word|将字符级别 token 转换为词汇级别 token |
+|[**词** token 转**字** token](../../wiki/NER-说明文档#user-content-词-token-转字-token) |word2char|将词汇级别 token 转换为字符级别 token |
 |[比较标注与模型预测的**实体差异**](../../wiki/NER-说明文档#user-content-比较-ner-标注实体与模型预测实体之间的差异) |entity_compare|针对人工标注的实体，与模型预测出的实体结果<br>，做差异比对 |
-|[**NER模型预测加速**](../../wiki/NER-说明文档#user-content-ner-模型预测加速) |TokenSplitSentence<br>TokenBreakLongSentence<br>TokenBatchBucket|对 NER 模型预测并行加速的方法  |
+|[NER模型**预测加速**](../../wiki/NER-说明文档#user-content-ner-模型预测加速) |TokenSplitSentence<br>TokenBreakLongSentence<br>TokenBatchBucket|对 NER 模型预测并行加速的方法  |
 |[**分割数据集**](../../wiki/NER-说明文档#user-content-分割数据集) |analyse_dataset|对 NER 标注语料，分为训练集、验证集、测试集，并给出各个子集的实体类型分布统计 |
+|[实体**收集**](../../wiki/NER-说明文档#user-content-实体收集) |collect_dataset_entities|将标注语料中的实体收集起来，形成词典 |
 
 
 ### 7.文本分类
