@@ -28,6 +28,8 @@ class MoneyStandardization(object):
     "四百三十万",
     "二十五万三千二百美元",
     "两个亿",
+    "十块三毛",
+    "一百三十五块六角钱"
     "二千九百六十美元",
     "233,333，333,434.344元"。
 
@@ -106,16 +108,16 @@ class MoneyStandardization(object):
         return rtn_std_num
 
     def turn_money_std_fmt_util1(self, num):
-        """将中文金额形式转换成float形式。
+        """将中文金额形式转换成 float 形式。
 
-        使用该函数将中文金额转换成易于计算的float形式，注意该函数是 turn_money_std_fmt 
+        使用该函数将中文金额转换成易于计算的 float 形式，注意该函数是 turn_money_std_fmt
         辅助函数，只能方便将一万这种转换，一千万无法转换。
 
         Args:
           num: 一个中文格式表示的金额。
 
         Returns:
-          转换后float类型的数字。
+          转换后 float 类型的数字。
         """
         
         rtn_std_num = 0.0
@@ -139,16 +141,16 @@ class MoneyStandardization(object):
         return rtn_std_num
 
     def turn_money_std_fmt_util2(self, num):
-        """将中文金额形式转换成float形式。
+        """将中文金额形式转换成 float 形式。
 
-        使用该函数将中文金额转换成易于计算的float形式，注意该函数是turn_money_std_fmt的
-        另一个辅助函数，与turn_money_std_fmt_util1搭配起来转换类似“1千万”数字。
+        使用该函数将中文金额转换成易于计算的 float 形式，注意该函数是 turn_money_std_fmt 的
+        另一个辅助函数，与 turn_money_std_fmt_util1 搭配起来转换类似“1千万”数字。
 
         Args:
             num: 一个中文格式表示的金额。
 
         Returns:
-            转换后float类型的数字。
+            转换后 float 类型的数字。
         """
         rtn_num = 0.0
         if '万' in num or '萬' in num:
@@ -194,7 +196,7 @@ class MoneyStandardization(object):
         if not inp_num:
             return rtn_money
         
-        # 去除其中的标点符号 ，，等
+        # 去除其中的标点符号 ，,等
         inp_num = self.punc_pattern.sub('', inp_num)
         
         # 判断货币类型

@@ -105,14 +105,18 @@ CHI_U = CHINESE_UNIT
 MONEY_PATTERN_1 = '((\d{1,3}([,，]\d{1,3})*(\.\d{0,2})?)' + CURRENCY_CASE + ')'
 # 纯数字格式 340000.0元
 MONEY_PATTERN_2 = '((\d{1,12}(\.\d{0,2})?)' + CURRENCY_CASE + ')'
-# 中文金额格式 一万二千三百四十五元
-MONEY_PATTERN_3 = '(((' + CHI_N + '?' + CHI_U + '{1,2})*' + CHI_N + '?)' + CURRENCY_CASE + '(' + CHI_N + '角)?(' + CHI_N + '分)?)'
+# 中文金额格式 一万二千三百四十五
+CHINESE_MONEY_PATTERN = '(((' + CHI_N + '?' + CHI_U + '{1,2})*' + CHI_N + '?)'
+# 正式文本中文金额格式 一万二千三百四十五元
+MONEY_PATTERN_3 = CHINESE_MONEY_PATTERN + CURRENCY_CASE + '(' + CHI_N + '[角|毛])?(' + CHI_N + '分)?)'
+# 口语文本中文金额格式 “三十五块八毛”，但不允许 “三十五块”或“三十五块八”出现：有歧义
+MONEY_PATTERN_4 = CHINESE_MONEY_PATTERN + '(块)' + '(' + CHI_N + '[角|毛])(' + CHI_N + '分)?)'
 # 数字+汉字单位格式 9300万元  1.2万元  9佰元
-MONEY_PATTERN_4 = '(\d{1,4}(\.\d{0,4})?' + CHI_U + CURRENCY_CASE + ')'
+MONEY_PATTERN_5 = '(\d{1,4}(\.\d{0,4})?' + CHI_U + CURRENCY_CASE + ')'
 
 MONEY_PATTERN = '(' + '|'.join(
     [MONEY_PATTERN_1, MONEY_PATTERN_2,
-     MONEY_PATTERN_3, MONEY_PATTERN_4]) + ')'
+     MONEY_PATTERN_3, MONEY_PATTERN_4, MONEY_PATTERN_5]) + ')'
 
 # ---------------------------------------------------------------------
 # 中文括号

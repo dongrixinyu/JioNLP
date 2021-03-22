@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-4k-yellow" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.16-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.17-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -126,7 +126,7 @@ $ jio_help
 |--------|--------|-------|
 |[**清洗文本**](../../wiki/正则抽取与解析-说明文档#user-content-清洗文本) |clean_text|去除文本中的**异常字符、冗余字符、HTML标签、括号信息、**<br>**URL、E-mail、电话号码，全角字母数字转换为半角** |
 |[抽取 **E-mail**](../../wiki/正则抽取与解析-说明文档#user-content-抽取-e-mail) |extract_email|抽取文本中的 E-mail，返回**位置**与**域名** |
-|[抽取 **金额**](../../wiki/正则抽取与解析-说明文档#user-content-抽取金额字符串) |extract_money|抽取文本中的金额，并将其以**数字 + 单位**标准形式输出 |
+|[抽取 **金额**](../../wiki/正则抽取与解析-说明文档#user-content-抽取金额字符串) |extract_money<br>money_standardization|抽取文本中的金额，并将其以**数字 + 单位**标准形式输出 |
 |[抽取**电话号码**](../../wiki/正则抽取与解析-说明文档#user-content-抽取电话号码) |extract_phone_number| 抽取电话号码(含**手机**、**座机**)，返回**域名**、**类型**与**位置** |
 |[抽取中国**身份证** ID](../../wiki/正则抽取与解析-说明文档#user-content-抽取身份证号) |extract_id_card|抽取身份证 ID，配合 **jio.parse_id_card** 返回身份证的<br>详细信息(**省市县**、**出生日期**、**性别**、**校验码**)|
 |[抽取 **QQ** 号](../../wiki/正则抽取与解析-说明文档#user-content-抽取-qq) |extract_qq|抽取 QQ 号，分为严格规则和宽松规则 |
@@ -198,11 +198,12 @@ $ jio_help
 
 ### 初衷
 
-- 开发 NLP 模型，预处理至关重要且非常耗时。本工具包能快速辅助工程师完成各种琐碎的预处理操作，加速开发进度，把有限的精力用在思考而非 code 上。
+- 开发 NLP 模型，预处理至关重要，且非常耗时。本工具包能快速辅助完成各种琐碎的预处理操作，加速开发进度，把有限的精力用在思考而非 code 上。
 - 如有功能建议、bug，可通过 issue 按模板提出。
 - 如感兴趣合作完善本工具包，请参考 **TODO.txt** 文件进行功能添加。
 
-### 做NLP不易，欢迎加入自然语言处理 Wechat 交流群 (#^.^#) 
+### 做 NLP不易，欢迎加入自然语言处理 Wechat 交流群
+### 请翻到本页面最上方点一下 star，让更多人看到 (#^.^#) 
 
 ![image](./qr_code_for_collection.png)
 
