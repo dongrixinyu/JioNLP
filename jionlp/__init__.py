@@ -8,7 +8,7 @@
 # description: Preprocessing tool for Chinese NLP
 """
 
-__version__ = '1.3.17'
+__version__ = '1.3.18'
 
 import os
 
@@ -55,7 +55,7 @@ guide = """
 │   | 2020-10-16 | update 2020 china location dictionary               |   │
 │   | 2020-10-19 | add zip_file for compressing the size of dict files |   │
 │   | 2020-11-10 | add extractive summary func                         |   │
-│   | 2020-11-24 | add phone location recognization                    |   │
+│   | 2020-11-24 | add phone location recognition                      |   │
 │   | 2020-12-18 | add idiom solitaire                                 |   │
 │   | 2020-12-28 | add help searching tool                             |   │
 │   | 2021-01-19 | add money number to character tool                  |   │
@@ -66,6 +66,7 @@ guide = """
 │   | 2021-02-10 | update dictionaries                                 |   │
 │   | 2021-03-15 | update chinese char dictionaries                    |   │
 │   | 2021-03-18 | add replace entity text augmentation                |   │
+│   | 2021-03-24 | update extract money and standardization            |   │
 │                                                                          │
 ╰──────────────────────────────────────────────────────────────────────────╯
 """

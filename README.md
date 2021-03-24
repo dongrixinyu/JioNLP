@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-4k-yellow" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.17-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.18-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -161,8 +161,8 @@ $ jio_help
 |[**中国地名**词典](../../wiki/词典加载-说明文档#user-content-加载中国省市县地名词典) |china_location_loader|加载中国**省、市、县**三级词典 |
 |[**中国区划调整**词典](../../wiki/词典加载-说明文档#user-content-加载中国区划调整词典) |china_location_change_loader|加载 2018 年以来中国**县级**以上区划调整更名记录 |
 |[**世界地名**词典](../../wiki/词典加载-说明文档#user-content-加载世界国家城市地名词典) |world_location_loader|加载世界**大洲、国家、城市**词典 |
-|[新华**字典**](../../wiki/词典加载-说明文档#user-content-加载新华字典) |chinese_char_dictionary_loader|加载新华字典 |
-|[新华**词典**](../../wiki/词典加载-说明文档#user-content-加载新华词典) |chinese_word_dictionary_loader|加载新华词典 |
+|[新华**字**典](../../wiki/词典加载-说明文档#user-content-加载新华字典) |chinese_char_dictionary_loader|加载新华字典 |
+|[新华**词**典](../../wiki/词典加载-说明文档#user-content-加载新华词典) |chinese_word_dictionary_loader|加载新华词典 |
 
 ### 6.实体识别(NER)算法辅助工具集
 

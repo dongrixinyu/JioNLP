@@ -59,6 +59,8 @@ class MoneyStandardization(object):
         self.punc_pattern = re.compile('[,， ]')
         self.wan_pattern = re.compile('万|萬')
         self.yi_pattern = re.compile('亿')
+        self.chinese_yuan_currency_pattern = re.compile('(块钱|元|块)')
+        self.chinese_jiao_currency_pattern = re.compile('(角|毛)')
         self.currency_case_pattern = re.compile(CURRENCY_CASE)
         
         self.mult_nums = {
@@ -125,10 +127,23 @@ class MoneyStandardization(object):
             num = '一' + num
         if num.startswith('拾'):
             num = '壹' + num
+        # 对角、分进行规范化
+        if self.chinese_yuan_currency_pattern.search(num):
+            jiao_fen = self.chinese_yuan_currency_pattern.split(num)[-1]
+            if self.chinese_jiao_currency_pattern.search(jiao_fen):
+                fen = self.chinese_jiao_currency_pattern.split(jiao_fen)[-1]
+                if '分' not in fen and len(fen) == 1:
+                    # 分 字符串无“分”字且长度为 1
+                    num = num + '分'
+            else:
+                if len(jiao_fen) == 1:
+                    # 即 角分 字符串仅有一个字符，即角的数字
+                    num = num + '角'
+
         if not num or type(num) is not str:
             return rtn_std_num
 
-        tmp_nums = []
+        tmp_nums = list()
         for ch in list(num):
             plus_num = self.plus_nums.get(ch, 0)
             if plus_num != 0:
