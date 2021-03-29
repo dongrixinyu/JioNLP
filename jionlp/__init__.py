@@ -13,15 +13,16 @@ __version__ = '1.3.18'
 import os
 
 from jionlp.util.logger import set_logger
-from jionlp.util.zip_file import unzip_file
+from jionlp.util.zip_file import unzip_file, UNZIP_FILE_LIST
 
 
 logging = set_logger('INFO')
 
 # unzip dictionary files
 DIR_PATH = os.path.dirname(os.path.abspath(__file__))
-if not os.path.exists(os.path.join(DIR_PATH, 'dictionary', 'china_location.txt')):
-    unzip_file()
+for file_name in UNZIP_FILE_LIST:
+    if not os.path.exists(os.path.join(DIR_PATH, 'dictionary', file_name)):
+        unzip_file()
 
 
 guide = """
