@@ -13,6 +13,7 @@ from .split_sentence import SplitSentence
 from .id_card_parser import IDCardParser
 from .location_parser import LocationParser
 from .location_recognizer import LocationRecognizer
+from .lunar_solar_date import LunarSolarDate
 from .remove_stopwords import RemoveStopwords
 from .ts_conversion import TSConversion
 from .pinyin import Pinyin
@@ -38,6 +39,9 @@ char_radical = CharRadical()
 phone_location = PhoneLocation()
 cell_phone_location = phone_location.cell_phone_location
 landline_phone_location = phone_location.landline_phone_location
+lunar_solar_date = LunarSolarDate()
+lunar2solar = LunarSolarDate.to_solar_date
+solar2lunar = LunarSolarDate.to_lunar_date
 
 
 # rule = FastLoader('rule', globals(), 'jionlp.rule')

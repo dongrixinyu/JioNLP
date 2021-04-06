@@ -7,7 +7,7 @@
     <a alt="License">
         <img src="https://img.shields.io/github/license/dongrixinyu/JioNLP?color=crimson" /></a>
     <a alt="Size">
-        <img src="https://img.shields.io/badge/size-19.7m-orange" /></a>
+        <img src="https://img.shields.io/badge/size-18.3m-orange" /></a>
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-4k-yellow" /></a>
     <a alt="Version">
@@ -97,10 +97,11 @@ $ jio_help
 |[**地址解析**](../../wiki/Gadget-说明文档#user-content-地址解析) |parse_location|给定一个包含国内地址字符串，识别其中的**省、市、县区、乡镇街道、村社**等信息 |
 |[电话号码**归属地**、<br>**运营商**解析](../../wiki/Gadget-说明文档#user-content-电话号码归属地运营商解析) |phone_location<br>cell_phone_location<br>landline_phone_location |给定一个电话号码字符串，识别其中的**省、市、运营商** |
 |[新闻**地名识别**](../../wiki/Gadget-说明文档#user-content-新闻地名识别) |recognize_location|给定新闻文本，识别其中的**国内省、市、县，国外国家、城市**等信息 |
+|[**公历农历**日期互转](../../wiki/Gadget-说明文档#user-content-公历农历日期互转)|lunar2solar<br>solar2lunar |给定某公（农）历日期，将其转换为农（公）历 |
 |[**身份证号**解析](../../wiki/Gadget-说明文档#user-content-身份证号码解析) |parse_id_card|给定一个身份证号，识别对应的**省、市、县、出生年月、**<br>**性别、校验码**等信息 |
 |[**成语接龙**](../../wiki/Gadget-说明文档#user-content-成语接龙) |idiom_solitaire|成语接龙，即前一成语的尾字和后一成语的首字（读音）相同 |
-|[色情数据过滤]() | |
-|[反动数据过滤]() | |
+|[**色情**数据过滤]() | |
+|[**反动**数据过滤]() | |
 |[**繁**体转**简**体](../../wiki/Gadget-说明文档#user-content-繁体转简体字) |tra2sim|繁体转简体，支持**逐字转**与**最大匹配**两种模式 |
 |[**简**体转**繁**体](../../wiki/Gadget-说明文档#user-content-简体转繁体字) |sim2tra|简体转繁体，支持**逐字转**与**最大匹配**两种模式 |
 |[汉字转**拼音**](../../wiki/Gadget-说明文档#user-content-汉字转拼音) |pinyin| 找出中文文本对应的汉语拼音，并可返回**声母**、**韵母**、**声调** |
@@ -198,12 +199,11 @@ $ jio_help
 
 ### 初衷
 
-- 开发 NLP 模型，预处理至关重要，且非常耗时。本工具包能快速辅助完成各种琐碎的预处理操作，加速开发进度，把有限的精力用在思考而非 code 上。
+- NLP 预处理至关重要，且非常耗时。本 lib 能快速辅助完成各种琐碎的预处理操作，加速开发进度，把有限的精力用在思考而非 code 上。
 - 如有功能建议、bug，可通过 issue 按模板提出。
 - 如感兴趣合作完善本工具包，请参考 **TODO.txt** 文件进行功能添加。
 
 ### 做 NLP不易，欢迎加入自然语言处理 Wechat 交流群
-### 请翻到本页面最上方点一下 star，让更多人看到 (#^.^#) 
 
 ![image](./qr_code_for_collection.png)
 
