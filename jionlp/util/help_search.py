@@ -28,7 +28,7 @@ class HelpSearch(object):
 
     """
     def __init__(self):
-        print('You could use `jio.help()` to search how to use jio functions.')
+        print('`jio.help()` is provided to search how to use jio functions.')
         self.function_dict = None
         self.non_function_list = [
             # 辅助工具
