@@ -46,7 +46,7 @@ class LunarSolarDate(object):
         45683, 26928, 29495, 27296, 44368, 84821, 19296, 42352, 21732, 53600, 59752, 54560,
         55968, 92838, 22224, 19168, 43476, 41680, 53584, 62034, 54560]
 
-    # 从1900年，至2100年每年的农历春节的公历日期
+    # 从 1900 年，至 2100 年每年的农历春节的公历日期
     CHINESE_NEW_YEAR = [
         '19000131',
         '19010219', '19020208', '19030129', '19040216', '19050204', '19060125', '19070213',
@@ -87,7 +87,7 @@ class LunarSolarDate(object):
         self.chinese_nums = '零一二三四五六七八九十'
 
     def to_solar_date(self, lunar_year, lunar_month, lunar_day, leap_month=False):
-        """农历日期转换为公历日期
+        """农历日期转换为公历日期，若农历日期不存在，则报错
 
         Args:
             lunar_year(int): 农历年
@@ -97,6 +97,14 @@ class LunarSolarDate(object):
 
         Returns:
             datetime: 当前农历对应的公历日期
+
+        Examples:
+            >>> import datetime
+            >>> import jionlp as jio
+            >>> res = jio.lunar2solar(1989, 9, 23, False)
+            >>> print('1989-9-23 非闰月 ==> ', res)
+
+            # 1989-9-23 非闰月 ==> 1989-10-22 00:00:00
 
         """
         if not self._validate(lunar_year, lunar_month, lunar_day, leap_month):
@@ -115,6 +123,14 @@ class LunarSolarDate(object):
 
         Returns:
             tuple: 生成的农历日期，4元组，分别为农历年、月、日、是否为闰月
+
+        Examples:
+            >>> import datetime
+            >>> import jionlp as jio
+            >>> res = jio.solar2lunar(datetime(1989, 10, 22))
+            >>> print('1989-10-22 ==> ', res)
+
+            # 1989-10-22 ==> (1989, 9, 23, False)
 
         """
         lunar_year = solar_date.year

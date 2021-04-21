@@ -8,7 +8,7 @@
 # description: Preprocessing tool for Chinese NLP
 """
 
-__version__ = '1.3.18'
+__version__ = '1.3.19'
 
 import os
 
@@ -68,6 +68,7 @@ guide = """
 │   | 2021-03-15 | update chinese char dictionaries                    |   │
 │   | 2021-03-18 | add replace entity text augmentation                |   │
 │   | 2021-03-24 | update extract money and standardization            |   │
+│   | 2021-04-21 | add solar lunar date conversion                     |   │
 │                                                                          │
 ╰──────────────────────────────────────────────────────────────────────────╯
 """

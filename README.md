@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-4k-yellow" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.18-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.19-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -25,36 +25,24 @@
 - 做 NLP 任务，需要给模型添加偏旁、拼音、词典、繁体转换信息？用 JioNLP
 #### 总之，JioNLP 提供 NLP 任务预处理功能，准确、高效、零使用门槛，并提供一步到位的查阅入口。
 
-#### 功能主要包括：文本清洗，删除HTML标签、删除异常字符、删除冗余字符，转换全角字母、数字、空格为半角，抽取及删除E-mail及域名、抽取及删除（手机号、座机号）电话号码、抽取及删除QQ号、抽取及删除括号内容、抽取及删除身份证号、抽取及删除IP地址、抽取及删除URL超链接、抽取及删除货币金额与单位，金额数字转大写汉字，解析身份证号信息、解析手机号码归属地、解析座机区号归属地、解析手机号码运营商，按行快速读写文件，（多功能）停用词过滤，（优化的）分句，地址解析，新闻地域识别，繁简体转换，汉字转拼音，汉字偏旁、字形、四角编码、五笔编码拆解，基于词典的情感分析，色情数据过滤，反动数据过滤，关键短语抽取，抽取式文本摘要，成语接龙，成语词典、歇后语词典、新华字典、新华词典、停用词典、中国地名词典、中国县级地名变更词典、世界地名词典，基于词典的NER，NER的字、词级别转换，NER的entity和tag格式转换，NER模型的预测阶段加速并行工具集，NER标注和模型预测的结果差异对比，NER标注数据集分割与统计，NER实体收集、文本分类标注数据集的分割与统计、回译数据增强、相邻近汉字换位数据增强、同音词替换数据增强、随机增删字符数据增强、实体替换数据增强
+#### 功能主要包括：文本清洗，删除HTML标签、删除异常字符、删除冗余字符，转换全角字母、数字、空格为半角，抽取及删除E-mail及域名、抽取及删除（手机号、座机号）电话号码、抽取及删除QQ号、抽取及删除括号内容、抽取及删除身份证号、抽取及删除IP地址、抽取及删除URL超链接、抽取及删除货币金额与单位，金额数字转大写汉字，解析身份证号信息、解析手机号码归属地、解析座机区号归属地、解析手机号码运营商，按行快速读写文件，（多功能）停用词过滤，（优化的）分句，地址解析，新闻地域识别，繁简体转换，汉字转拼音，汉字偏旁、字形、四角编码、五笔编码拆解，基于词典的情感分析，色情数据过滤，反动数据过滤，关键短语抽取，抽取式文本摘要，成语接龙，成语词典、歇后语词典、新华字典、新华词典、停用词典、中国地名词典、中国县级地名变更词典、世界地名词典，基于词典的NER，NER的字、词级别转换，NER的entity和tag格式转换，NER模型的预测阶段加速并行工具集，NER标注和模型预测的结果差异对比，NER标注数据集分割与统计，NER实体收集、文本分类标注数据集的分割与统计、回译数据增强、相邻近汉字换位数据增强、同音词替换数据增强、随机增删字符数据增强、实体替换数据增强、公历转农历日期、农历转公历日期
 
 
-#### Update 2021-03-18
-## 新增 [实体替换数据增强](../../wiki/数据增强-说明文档#user-content-ner实体替换)
+#### Update 2021-04-21
+## 新增 [公历农历日期互转](../../wiki/Gadget-说明文档#user-content-公历农历日期互转)
 
-#### 根据实体词典，对文本中的实体进行替换。
+#### jio.lunar2solar、jio.solar2lunar 给定公（农）历日期，获取其相对应的农（公）历日期。
 
 ``` python
+>>> import datetime
 >>> import jionlp as jio
->>> replace_entity = jio.ReplaceEntity(
-        {'Person':{'张守住': 3, '三矢水介':1, '刘美婷':2},
-         'Country':{'马来西亚': 2}})
->>> aug_texts, aug_entities = jio.replace_entity(
-              '一位名叫“伊藤慧太”的男子身着日本匠人常穿的作务衣，面带微笑，用日语侃侃而谈',
-              [{'text': '伊藤慧太', 'type': 'Person', 'offset': (5, 9)},
-               {'text': '日本', 'type': 'Country', 'offset': (15, 17)}])
->>> print(aug_texts, aug_entities)
+>>> res = jio.solar2lunar(datetime(1989, 10, 22))
+>>> print('1989-10-22 ==> ', res)
+>>> res = jio.lunar2solar(1989, 9, 23, False)
+>>> print('1989-9-23 非闰月 ==> ', res)
 
-# aug_texts:
-# ['一位名叫“伊藤慧太”的男子身着马来西亚匠人常穿的作务衣，面带微笑，用日语侃侃而谈',
-#  '一位名叫“刘美婷”的男子身着日本匠人常穿的作务衣，面带微笑，用日语侃侃而谈',  # 语义矛盾，但不影响任务训练
-#  '一位名叫“张守住”的男子身着日本匠人常穿的作务衣，面带微笑，用日语侃侃而谈'],
-# aug_entities:
-# [[{'text': '伊藤慧太', 'type': 'Person', 'offset': (5, 9)},
-#   {'text': '马来西亚', 'type': 'Country', 'offset': [15, 19]}],
-#  [{'text': '刘美婷', 'type': 'Person', 'offset': [5, 8]},
-#   {'text': '日本', 'type': 'Country', 'offset': (14, 16)}],
-#  [{'text': '张守住', 'type': 'Person', 'offset': [5, 8]},
-#   {'text': '日本', 'type': 'Country', 'offset': (14, 16)}]])
+# 1989-10-22 ==> (1989, 9, 23, False)
+# 1989-9-23 非闰月 ==> 1989-10-22 00:00:00
 ```
 
 
@@ -96,7 +84,7 @@ $ jio_help
 |[**停用词过滤**](../../wiki/Gadget-说明文档#user-content-去除停用词) |remove_stopwords|给定一个文本被分词后的词 list，去除其中的停用词 |⭐⭐⭐|
 |[**分句**](../../wiki/Gadget-说明文档#user-content-文本分句) |split_sentence|对文本按标点分句 |⭐⭐|
 |[**地址解析**](../../wiki/Gadget-说明文档#user-content-地址解析) |parse_location|给定一个包含国内地址字符串，识别其中的**省、市、县区、乡镇街道、村社**等信息 |⭐⭐⭐|
-|[电话号码**归属地**、<br>**运营商**解析](../../wiki/Gadget-说明文档#user-content-电话号码归属地运营商解析) |phone_location<br>cell_phone_location<br>landline_phone_location |给定一个电话号码字符串，识别其中的**省、市、运营商** |⭐⭐|
+|[电话号码**归属地**、<br>**运营商**解析](../../wiki/Gadget-说明文档#user-content-电话号码归属地运营商解析) |phone_location<br>cell_phone_location<br>landline_phone_location |给定一个电话号码（手机号、座机号）字符串，识别其中的**省、市、运营商** |⭐⭐|
 |[新闻**地名识别**](../../wiki/Gadget-说明文档#user-content-新闻地名识别) |recognize_location|给定新闻文本，识别其中的**国内省、市、县，国外国家、城市**等信息 |⭐⭐⭐|
 |[**公历农历**日期互转](../../wiki/Gadget-说明文档#user-content-公历农历日期互转)|lunar2solar<br>solar2lunar |给定某公（农）历日期，将其转换为农（公）历 |⭐|
 |[**身份证号**解析](../../wiki/Gadget-说明文档#user-content-身份证号码解析) |parse_id_card|给定一个身份证号，识别对应的**省、市、县、出生年月、**<br>**性别、校验码**等信息 |⭐⭐⭐|
@@ -129,7 +117,7 @@ $ jio_help
 |[**清洗文本**](../../wiki/正则抽取与解析-说明文档#user-content-清洗文本) |clean_text|去除文本中的**异常字符、冗余字符、HTML标签、括号信息、**<br>**URL、E-mail、电话号码，全角字母数字转换为半角** |⭐⭐⭐ |
 |[抽取 **E-mail**](../../wiki/正则抽取与解析-说明文档#user-content-抽取-e-mail) |extract_email|抽取文本中的 E-mail，返回**位置**与**域名** |⭐⭐ |
 |[抽取 **金额**](../../wiki/正则抽取与解析-说明文档#user-content-抽取金额字符串) |extract_money<br>money_standardization|抽取文本中的金额，并将其以**数字 + 单位**标准形式输出 |⭐⭐⭐ |
-|[抽取**电话号码**](../../wiki/正则抽取与解析-说明文档#user-content-抽取电话号码) |extract_phone_number| 抽取电话号码(含**手机**、**座机**)，返回**域名**、**类型**与**位置** |⭐⭐⭐ |
+|[抽取**电话号码**](../../wiki/正则抽取与解析-说明文档#user-content-抽取电话号码) |extract_phone_number| 抽取电话号码(含**手机号**、**座机号**)，返回**域名**、**类型**与**位置** |⭐⭐⭐ |
 |[抽取中国**身份证** ID](../../wiki/正则抽取与解析-说明文档#user-content-抽取身份证号) |extract_id_card|抽取身份证 ID，配合 **jio.parse_id_card** 返回身份证的<br>详细信息(**省市县**、**出生日期**、**性别**、**校验码**)|⭐⭐⭐ |
 |[抽取 **QQ** 号](../../wiki/正则抽取与解析-说明文档#user-content-抽取-qq) |extract_qq|抽取 QQ 号，分为严格规则和宽松规则 |⭐⭐ |
 |[抽取 **URL**](../../wiki/正则抽取与解析-说明文档#user-content-抽取-url-超链接) |extract_url|抽取 URL 超链接 |⭐⭐⭐ |
