@@ -40,8 +40,8 @@ phone_location = PhoneLocation()
 cell_phone_location = phone_location.cell_phone_location
 landline_phone_location = phone_location.landline_phone_location
 lunar_solar_date = LunarSolarDate()
-lunar2solar = LunarSolarDate.to_solar_date
-solar2lunar = LunarSolarDate.to_lunar_date
+lunar2solar = lunar_solar_date.to_solar_date
+solar2lunar = lunar_solar_date.to_lunar_date
 
 
 # rule = FastLoader('rule', globals(), 'jionlp.rule')

@@ -127,7 +127,7 @@ class LunarSolarDate(object):
         Examples:
             >>> import datetime
             >>> import jionlp as jio
-            >>> res = jio.solar2lunar(datetime(1989, 10, 22))
+            >>> res = jio.solar2lunar(datetime.datetime(1989, 10, 22))
             >>> print('1989-10-22 ==> ', res)
 
             # 1989-10-22 ==> (1989, 9, 23, False)
@@ -280,5 +280,5 @@ if __name__ == '__main__':
     res = ls.to_lunar_date(datetime(1989, 10, 22))
     print(res)
     res = ls.to_solar_date(1989, 9, 23, False)
-    print(res)
+    print(type(res))
 

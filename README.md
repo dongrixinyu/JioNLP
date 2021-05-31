@@ -36,7 +36,7 @@
 ``` python
 >>> import datetime
 >>> import jionlp as jio
->>> res = jio.solar2lunar(datetime(1989, 10, 22))
+>>> res = jio.solar2lunar(datetime.datetime(1989, 10, 22))
 >>> print('1989-10-22 ==> ', res)
 >>> res = jio.lunar2solar(1989, 9, 23, False)
 >>> print('1989-9-23 非闰月 ==> ', res)
