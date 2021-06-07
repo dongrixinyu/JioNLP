@@ -73,29 +73,29 @@ $ pip install jionlp
 $ jio_help
 ```
 
-- **星级⭐**代表该功能的质量与完善度，共三个等级
+- **星级⭐**代表优质特色功能
 ### 1.小工具集 Gadgets
 
 | 功能   | 函数   |描述   |星级   |
 |--------|-------|-------|-------|
-|[**查找帮助**](../../wiki/Gadget-说明文档#user-content-查找帮助) |help|若不知道 JioNLP 有哪些功能，可根据命令行提示键入若干关键词做搜索 |⭐ |
-|[**关键短语抽取**](../../wiki/Gadget-说明文档#user-content-关键短语抽取) |extract_keyphrase|给定一篇文本，抽取其对应关键短语 |⭐⭐⭐|
-|[抽取式**文本摘要**](../../wiki/Gadget-说明文档#user-content-抽取式文本摘要) |extract_summary|给定一篇文本，抽取其对应文摘 |⭐ |
-|[**停用词过滤**](../../wiki/Gadget-说明文档#user-content-去除停用词) |remove_stopwords|给定一个文本被分词后的词 list，去除其中的停用词 |⭐⭐⭐|
-|[**分句**](../../wiki/Gadget-说明文档#user-content-文本分句) |split_sentence|对文本按标点分句 |⭐⭐|
-|[**地址解析**](../../wiki/Gadget-说明文档#user-content-地址解析) |parse_location|给定一个包含国内地址字符串，识别其中的**省、市、县区、乡镇街道、村社**等信息 |⭐⭐⭐|
-|[电话号码**归属地**、<br>**运营商**解析](../../wiki/Gadget-说明文档#user-content-电话号码归属地运营商解析) |phone_location<br>cell_phone_location<br>landline_phone_location |给定一个电话号码（手机号、座机号）字符串，识别其中的**省、市、运营商** |⭐⭐|
-|[新闻**地名识别**](../../wiki/Gadget-说明文档#user-content-新闻地名识别) |recognize_location|给定新闻文本，识别其中的**国内省、市、县，国外国家、城市**等信息 |⭐⭐⭐|
-|[**公历农历**日期互转](../../wiki/Gadget-说明文档#user-content-公历农历日期互转)|lunar2solar<br>solar2lunar |给定某公（农）历日期，将其转换为农（公）历 |⭐|
-|[**身份证号**解析](../../wiki/Gadget-说明文档#user-content-身份证号码解析) |parse_id_card|给定一个身份证号，识别对应的**省、市、县、出生年月、**<br>**性别、校验码**等信息 |⭐⭐⭐|
-|[**成语接龙**](../../wiki/Gadget-说明文档#user-content-成语接龙) |idiom_solitaire|成语接龙，即前一成语的尾字和后一成语的首字（读音）相同 |⭐⭐⭐|
+|[**查找帮助**](../../wiki/Gadget-说明文档#user-content-查找帮助) |help|若不知道 JioNLP 有哪些功能，可根据命令行提示键入若干关键词做搜索 | |
+|[**关键短语抽取**](../../wiki/Gadget-说明文档#user-content-关键短语抽取) |extract_keyphrase|给定一篇文本，抽取其对应关键短语 |⭐|
+|[抽取式**文本摘要**](../../wiki/Gadget-说明文档#user-content-抽取式文本摘要) |extract_summary|给定一篇文本，抽取其对应文摘 | |
+|[**停用词过滤**](../../wiki/Gadget-说明文档#user-content-去除停用词) |remove_stopwords|给定一个文本被分词后的词 list，去除其中的停用词 |⭐|
+|[**分句**](../../wiki/Gadget-说明文档#user-content-文本分句) |split_sentence|对文本按标点分句 |⭐|
+|[**地址解析**](../../wiki/Gadget-说明文档#user-content-地址解析) |parse_location|给定一个包含国内地址字符串，识别其中的**省、市、县区、乡镇街道、村社**等信息 |⭐|
+|[电话号码**归属地**、<br>**运营商**解析](../../wiki/Gadget-说明文档#user-content-电话号码归属地运营商解析) |phone_location<br>cell_phone_location<br>landline_phone_location |给定一个电话号码（手机号、座机号）字符串，识别其中的**省、市、运营商** ||
+|[新闻**地名识别**](../../wiki/Gadget-说明文档#user-content-新闻地名识别) |recognize_location|给定新闻文本，识别其中的**国内省、市、县，国外国家、城市**等信息 |⭐|
+|[**公历农历**日期互转](../../wiki/Gadget-说明文档#user-content-公历农历日期互转)|lunar2solar<br>solar2lunar |给定某公（农）历日期，将其转换为农（公）历 ||
+|[**身份证号**解析](../../wiki/Gadget-说明文档#user-content-身份证号码解析) |parse_id_card|给定一个身份证号，识别对应的**省、市、县、出生年月、**<br>**性别、校验码**等信息 |⭐|
+|[**成语接龙**](../../wiki/Gadget-说明文档#user-content-成语接龙) |idiom_solitaire|成语接龙，即前一成语的尾字和后一成语的首字（读音）相同 ||
 |[**色情**数据过滤]() | | |
 |[**反动**数据过滤]() | | |
-|[**繁**体转**简**体](../../wiki/Gadget-说明文档#user-content-繁体转简体字) |tra2sim|繁体转简体，支持**逐字转**与**最大匹配**两种模式 |⭐⭐ |
-|[**简**体转**繁**体](../../wiki/Gadget-说明文档#user-content-简体转繁体字) |sim2tra|简体转繁体，支持**逐字转**与**最大匹配**两种模式 |⭐⭐ |
-|[汉字转**拼音**](../../wiki/Gadget-说明文档#user-content-汉字转拼音) |pinyin| 找出中文文本对应的汉语拼音，并可返回**声母**、**韵母**、**声调** |⭐⭐ |
-|[汉字转**偏旁与字形**](../../wiki/Gadget-说明文档#user-content-汉字转偏旁与字形) |char_radical| 找出中文文本对应的汉字字形结构信息，<br>包括**偏旁部首**(“河”氵)、**字形结构**(“河”左右结构)、<br>**四角编码**(“河”31120)、**汉字拆解**(“河”水可)、<br>**五笔编码**(“河”ISKG) |⭐⭐ |
-|[金额**数字转汉字**](../../wiki/正则抽取与解析-说明文档#user-content-金额数字转汉字)|money_num2char| 给定一条数字金额，返回其**汉字**大写结果 |⭐⭐⭐ |
+|[**繁**体转**简**体](../../wiki/Gadget-说明文档#user-content-繁体转简体字) |tra2sim|繁体转简体，支持**逐字转**与**最大匹配**两种模式 | |
+|[**简**体转**繁**体](../../wiki/Gadget-说明文档#user-content-简体转繁体字) |sim2tra|简体转繁体，支持**逐字转**与**最大匹配**两种模式 | |
+|[汉字转**拼音**](../../wiki/Gadget-说明文档#user-content-汉字转拼音) |pinyin| 找出中文文本对应的汉语拼音，并可返回**声母**、**韵母**、**声调** |⭐ |
+|[汉字转**偏旁与字形**](../../wiki/Gadget-说明文档#user-content-汉字转偏旁与字形) |char_radical| 找出中文文本对应的汉字字形结构信息，<br>包括**偏旁部首**(“河”氵)、**字形结构**(“河”左右结构)、<br>**四角编码**(“河”31120)、**汉字拆解**(“河”水可)、<br>**五笔编码**(“河”ISKG) |⭐ |
+|[金额**数字转汉字**](../../wiki/正则抽取与解析-说明文档#user-content-金额数字转汉字)|money_num2char| 给定一条数字金额，返回其**汉字**大写结果 | |
 
 ### 2.数据增强
 
@@ -103,56 +103,56 @@ $ jio_help
 
 | 功能   | 函数   |描述   |星级  |
 |--------|--------|-------|------|
-|[**回译**](../../wiki/数据增强-说明文档#user-content-回译数据增强) |BackTranslation|给定一篇文本，采用各大厂云平台的机器翻译接口，<br>实现数据增强 | ⭐⭐⭐ |
-|[**邻近汉字换位**](../../wiki/数据增强-说明文档#user-content-邻近汉字换位) |swap_char_position|随机交换相近字符的位置，实现数据增强 |⭐⭐⭐ |
-|[**同音词替换**](../../wiki/数据增强-说明文档#user-content-同音词替换) |homophone_substitution|相同读音词汇替换，实现数据增强 |⭐⭐⭐ |
-|[随机**增删字符**](../../wiki/数据增强-说明文档#user-content-随机增删字符) |random_add_delete|随机在文本中增加、删除某个字符，对语义不造成影响 |⭐⭐ |
-|[NER**实体替换**](../../wiki/数据增强-说明文档#user-content-ner实体替换) |replace_entity|根据实体词典，随机在文本中替换某个实体，对语义不<br>造成影响，也广泛适用于序列标注、文本分类 |⭐⭐⭐ |
+|[**回译**](../../wiki/数据增强-说明文档#user-content-回译数据增强) |BackTranslation|给定一篇文本，采用各大厂云平台的机器翻译接口，<br>实现数据增强 |⭐ |
+|[**邻近汉字换位**](../../wiki/数据增强-说明文档#user-content-邻近汉字换位) |swap_char_position|随机交换相近字符的位置，实现数据增强 | |
+|[**同音词替换**](../../wiki/数据增强-说明文档#user-content-同音词替换) |homophone_substitution|相同读音词汇替换，实现数据增强 |⭐ |
+|[随机**增删字符**](../../wiki/数据增强-说明文档#user-content-随机增删字符) |random_add_delete|随机在文本中增加、删除某个字符，对语义不造成影响 | |
+|[NER**实体替换**](../../wiki/数据增强-说明文档#user-content-ner实体替换) |replace_entity|根据实体词典，随机在文本中替换某个实体，对语义不<br>造成影响，也广泛适用于序列标注、文本分类 |⭐ |
 
 
 ### 3.正则抽取与解析
 
 | 功能   | 函数   |描述   |星级    |
 |--------|--------|-------|-------|
-|[**清洗文本**](../../wiki/正则抽取与解析-说明文档#user-content-清洗文本) |clean_text|去除文本中的**异常字符、冗余字符、HTML标签、括号信息、**<br>**URL、E-mail、电话号码，全角字母数字转换为半角** |⭐⭐⭐ |
-|[抽取 **E-mail**](../../wiki/正则抽取与解析-说明文档#user-content-抽取-e-mail) |extract_email|抽取文本中的 E-mail，返回**位置**与**域名** |⭐⭐ |
-|[抽取 **金额**](../../wiki/正则抽取与解析-说明文档#user-content-抽取金额字符串) |extract_money<br>money_standardization|抽取文本中的金额，并将其以**数字 + 单位**标准形式输出 |⭐⭐⭐ |
-|[抽取**电话号码**](../../wiki/正则抽取与解析-说明文档#user-content-抽取电话号码) |extract_phone_number| 抽取电话号码(含**手机号**、**座机号**)，返回**域名**、**类型**与**位置** |⭐⭐⭐ |
-|[抽取中国**身份证** ID](../../wiki/正则抽取与解析-说明文档#user-content-抽取身份证号) |extract_id_card|抽取身份证 ID，配合 **jio.parse_id_card** 返回身份证的<br>详细信息(**省市县**、**出生日期**、**性别**、**校验码**)|⭐⭐⭐ |
-|[抽取 **QQ** 号](../../wiki/正则抽取与解析-说明文档#user-content-抽取-qq) |extract_qq|抽取 QQ 号，分为严格规则和宽松规则 |⭐⭐ |
-|[抽取 **URL**](../../wiki/正则抽取与解析-说明文档#user-content-抽取-url-超链接) |extract_url|抽取 URL 超链接 |⭐⭐⭐ |
-|[抽取 **IP**地址](../../wiki/正则抽取与解析-说明文档#user-content-抽取-ip-地址) |extract_ip_address|抽取 IP 地址|⭐⭐⭐ |
-|[抽取**括号**中的内容](../../wiki/正则抽取与解析-说明文档#user-content-抽取文本括号信息) |extract_parentheses|抽取括号内容，包括 **{}「」[]【】()（）<>《》** |⭐⭐⭐ |
-|[删除 **E-mail**](../../wiki/正则抽取与解析-说明文档#user-content-删除文本中的-e-mail) |remove_email|删除文本中的 E-mail 信息 |⭐⭐⭐ |
-|[删除 **URL**](../../wiki/正则抽取与解析-说明文档#user-content-删除文本中的-url) |remove_url |删除文本中的 URL 信息|⭐⭐⭐ |
-|[删除 **电话号码**](../../wiki/正则抽取与解析-说明文档#user-content-删除电话号码) |remove_phone_number|删除文本中的电话号码 |⭐⭐⭐ |
-|[删除 **IP地址**](../../wiki/正则抽取与解析-说明文档#user-content-删除文本中的-ip-地址)|remove_ip_address|删除文本中的 IP 地址 |⭐⭐⭐ |
-|[删除 **身份证号**](../../wiki/正则抽取与解析-说明文档#user-content-删除文本中的身份证号) |remove_id_card|删除文本中的身份证信息 |⭐⭐⭐ |
-|[删除 **QQ**](../../wiki/正则抽取与解析-说明文档#user-content-删除文本中的-qq-号) |remove_qq|删除文本中的 qq 号|⭐⭐ |
-|[删除 **HTML**标签](../../wiki/正则抽取与解析-说明文档#user-content-删除文本中的-html-标签) |remove_html_tag|删除文本中残留的 HTML 标签 |⭐⭐⭐ |
-|[删除**括号**中的内容](../../wiki/正则抽取与解析-说明文档#user-content-删除文本括号信息) |remove_parentheses|删除括号内容，包括 **{}「」[]【】()（）<>《》** |⭐⭐⭐ |
-|[删除异常字符](../../wiki/正则抽取与解析-说明文档#user-content-删除文本中的异常字符) |remove_exception_char|删除文本中异常字符，主要保留汉字、常用的标点，<br>单位计算符号，字母数字等 |⭐⭐⭐ |
+|[**清洗文本**](../../wiki/正则抽取与解析-说明文档#user-content-清洗文本) |clean_text|去除文本中的**异常字符、冗余字符、HTML标签、括号信息、**<br>**URL、E-mail、电话号码，全角字母数字转换为半角** |⭐ |
+|[抽取 **E-mail**](../../wiki/正则抽取与解析-说明文档#user-content-抽取-e-mail) |extract_email|抽取文本中的 E-mail，返回**位置**与**域名** | |
+|[抽取 **金额**](../../wiki/正则抽取与解析-说明文档#user-content-抽取金额字符串) |extract_money<br>money_standardization|抽取文本中的金额，并将其以**数字 + 单位**标准形式输出 |⭐ |
+|[抽取**电话号码**](../../wiki/正则抽取与解析-说明文档#user-content-抽取电话号码) |extract_phone_number| 抽取电话号码(含**手机号**、**座机号**)，返回**域名**、**类型**与**位置** | |
+|[抽取中国**身份证** ID](../../wiki/正则抽取与解析-说明文档#user-content-抽取身份证号) |extract_id_card|抽取身份证 ID，配合 **jio.parse_id_card** 返回身份证的<br>详细信息(**省市县**、**出生日期**、**性别**、**校验码**)| |
+|[抽取 **QQ** 号](../../wiki/正则抽取与解析-说明文档#user-content-抽取-qq) |extract_qq|抽取 QQ 号，分为严格规则和宽松规则 | |
+|[抽取 **URL**](../../wiki/正则抽取与解析-说明文档#user-content-抽取-url-超链接) |extract_url|抽取 URL 超链接 | |
+|[抽取 **IP**地址](../../wiki/正则抽取与解析-说明文档#user-content-抽取-ip-地址) |extract_ip_address|抽取 IP 地址| |
+|[抽取**括号**中的内容](../../wiki/正则抽取与解析-说明文档#user-content-抽取文本括号信息) |extract_parentheses|抽取括号内容，包括 **{}「」[]【】()（）<>《》** |⭐ |
+|[删除 **E-mail**](../../wiki/正则抽取与解析-说明文档#user-content-删除文本中的-e-mail) |remove_email|删除文本中的 E-mail 信息 | |
+|[删除 **URL**](../../wiki/正则抽取与解析-说明文档#user-content-删除文本中的-url) |remove_url |删除文本中的 URL 信息| |
+|[删除 **电话号码**](../../wiki/正则抽取与解析-说明文档#user-content-删除电话号码) |remove_phone_number|删除文本中的电话号码 | |
+|[删除 **IP地址**](../../wiki/正则抽取与解析-说明文档#user-content-删除文本中的-ip-地址)|remove_ip_address|删除文本中的 IP 地址 | |
+|[删除 **身份证号**](../../wiki/正则抽取与解析-说明文档#user-content-删除文本中的身份证号) |remove_id_card|删除文本中的身份证信息 | |
+|[删除 **QQ**](../../wiki/正则抽取与解析-说明文档#user-content-删除文本中的-qq-号) |remove_qq|删除文本中的 qq 号| |
+|[删除 **HTML**标签](../../wiki/正则抽取与解析-说明文档#user-content-删除文本中的-html-标签) |remove_html_tag|删除文本中残留的 HTML 标签 | |
+|[删除**括号**中的内容](../../wiki/正则抽取与解析-说明文档#user-content-删除文本括号信息) |remove_parentheses|删除括号内容，包括 **{}「」[]【】()（）<>《》** | |
+|[删除异常字符](../../wiki/正则抽取与解析-说明文档#user-content-删除文本中的异常字符) |remove_exception_char|删除文本中异常字符，主要保留汉字、常用的标点，<br>单位计算符号，字母数字等 | |
 
 ### 4.文件读写工具
 
 | 功能   | 函数   |描述   |星级   |
 |--------|--------|-------|-------|
-|[**按行读取文件**](../../wiki/文件读写-说明文档#user-content-文件读取iter) |read_file_by_iter |以迭代器形式方便按行读取文件，节省内存，<br>支持指定**行数**，**跳过空行** |⭐⭐⭐|
-|[**按行读取文件**](../../wiki/文件读写-说明文档#user-content-文件读取list) |read_file_by_line |按行读取文件，支持指定**行数**，**跳过空行** |⭐⭐⭐ |
-|[将 list 中元素按行写入文件](../../wiki/文件读写-说明文档#user-content-文件写入) |write_file_by_line| 将 list 中元素按行写入文件 |⭐⭐⭐ |
-|[计时工具](../../wiki/文件读写-说明文档#user-content-计时器) |TimeIt| 统计某一代码段的耗时 |⭐⭐⭐|
+|[**按行读取文件**](../../wiki/文件读写-说明文档#user-content-文件读取iter) |read_file_by_iter |以迭代器形式方便按行读取文件，节省内存，<br>支持指定**行数**，**跳过空行** ||
+|[**按行读取文件**](../../wiki/文件读写-说明文档#user-content-文件读取list) |read_file_by_line |按行读取文件，支持指定**行数**，**跳过空行** |⭐ |
+|[将 list 中元素按行写入文件](../../wiki/文件读写-说明文档#user-content-文件写入) |write_file_by_line| 将 list 中元素按行写入文件 |⭐ |
+|[计时工具](../../wiki/文件读写-说明文档#user-content-计时器) |TimeIt| 统计某一代码段的耗时 | |
 
 ### 5.词典加载与使用
 
 | 功能 | 函数 | 描述 |星级  |
 |-----|-----|------|------|
-|[**成语**词典](../../wiki/词典加载-说明文档#user-content-加载成语词典) |chinese_idiom_loader|加载成语词典 |⭐⭐⭐|
-|[**歇后语**词典](../../wiki/词典加载-说明文档#user-content-加载歇后语词典) |xiehouyu_loader|加载歇后语词典 |⭐⭐⭐|
-|[**中国地名**词典](../../wiki/词典加载-说明文档#user-content-加载中国省市县地名词典) |china_location_loader|加载中国**省、市、县**三级词典 |⭐⭐⭐|
-|[**中国区划调整**词典](../../wiki/词典加载-说明文档#user-content-加载中国区划调整词典) |china_location_change_loader|加载 2018 年以来中国**县级**以上区划调整更名记录 |⭐⭐|
-|[**世界地名**词典](../../wiki/词典加载-说明文档#user-content-加载世界国家城市地名词典) |world_location_loader|加载世界**大洲、国家、城市**词典 |⭐|
-|[新华**字**典](../../wiki/词典加载-说明文档#user-content-加载新华字典) |chinese_char_dictionary_loader|加载新华字典 |⭐⭐⭐|
-|[新华**词**典](../../wiki/词典加载-说明文档#user-content-加载新华词典) |chinese_word_dictionary_loader|加载新华词典 |⭐|
+|[**成语**词典](../../wiki/词典加载-说明文档#user-content-加载成语词典) |chinese_idiom_loader|加载成语词典 |⭐|
+|[**歇后语**词典](../../wiki/词典加载-说明文档#user-content-加载歇后语词典) |xiehouyu_loader|加载歇后语词典 |⭐|
+|[**中国地名**词典](../../wiki/词典加载-说明文档#user-content-加载中国省市县地名词典) |china_location_loader|加载中国**省、市、县**三级词典 |⭐|
+|[**中国区划调整**词典](../../wiki/词典加载-说明文档#user-content-加载中国区划调整词典) |china_location_change_loader|加载 2018 年以来中国**县级**以上区划调整更名记录 |⭐|
+|[**世界地名**词典](../../wiki/词典加载-说明文档#user-content-加载世界国家城市地名词典) |world_location_loader|加载世界**大洲、国家、城市**词典 | |
+|[新华**字**典](../../wiki/词典加载-说明文档#user-content-加载新华字典) |chinese_char_dictionary_loader|加载新华字典 | |
+|[新华**词**典](../../wiki/词典加载-说明文档#user-content-加载新华词典) |chinese_word_dictionary_loader|加载新华词典 | |
 
 ### 6.实体识别(NER)算法辅助工具集
 
@@ -160,30 +160,30 @@ $ jio_help
 
 | 功能   | 函数   |描述   |星级   |
 |--------|--------|-------|-------|
-|[基于**词典NER**](../../wiki/NER-说明文档#user-content-基于词典-ner) |LexiconNER|依据指定的实体词典，前向最大匹配实体 |⭐⭐⭐ |
-|[**entity 转 tag**](../../wiki/NER-说明文档#user-content-entity-转-tag) |entity2tag|将 json 格式实体转换为模型处理的 tag 序列 |⭐⭐⭐ |
-|[**tag 转 entity**](../../wiki/NER-说明文档#user-content-tag-转-entity) |tag2entity|将模型处理的 tag 序列转换为 json 格式实体 |⭐⭐⭐ |
-|[**字** token 转**词** token](../../wiki/NER-说明文档#user-content-字-token-转词-token) |char2word|将字符级别 token 转换为词汇级别 token |⭐⭐⭐ |
-|[**词** token 转**字** token](../../wiki/NER-说明文档#user-content-词-token-转字-token) |word2char|将词汇级别 token 转换为字符级别 token |⭐⭐⭐ |
-|[比较标注与模型预测的**实体差异**](../../wiki/NER-说明文档#user-content-比较-ner-标注实体与模型预测实体之间的差异) |entity_compare|针对人工标注的实体，与模型预测出的实体结果<br>，做差异比对 |⭐⭐⭐ |
-|[NER模型**预测加速**](../../wiki/NER-说明文档#user-content-ner-模型预测加速) |TokenSplitSentence<br>TokenBreakLongSentence<br>TokenBatchBucket|对 NER 模型预测并行加速的方法  |⭐⭐⭐ |
-|[**分割数据集**](../../wiki/NER-说明文档#user-content-分割数据集) |analyse_dataset|对 NER 标注语料，分为训练集、验证集、测试集，并给出各个子集的实体类型分布统计 |⭐⭐⭐ |
-|[实体**收集**](../../wiki/NER-说明文档#user-content-实体收集) |collect_dataset_entities|将标注语料中的实体收集起来，形成词典 |⭐⭐⭐ |
+|[基于**词典NER**](../../wiki/NER-说明文档#user-content-基于词典-ner) |LexiconNER|依据指定的实体词典，前向最大匹配实体 |⭐ |
+|[**entity 转 tag**](../../wiki/NER-说明文档#user-content-entity-转-tag) |entity2tag|将 json 格式实体转换为模型处理的 tag 序列 | |
+|[**tag 转 entity**](../../wiki/NER-说明文档#user-content-tag-转-entity) |tag2entity|将模型处理的 tag 序列转换为 json 格式实体 | |
+|[**字** token 转**词** token](../../wiki/NER-说明文档#user-content-字-token-转词-token) |char2word|将字符级别 token 转换为词汇级别 token | |
+|[**词** token 转**字** token](../../wiki/NER-说明文档#user-content-词-token-转字-token) |word2char|将词汇级别 token 转换为字符级别 token | |
+|[比较标注与模型预测的**实体差异**](../../wiki/NER-说明文档#user-content-比较-ner-标注实体与模型预测实体之间的差异) |entity_compare|针对人工标注的实体，与模型预测出的实体结果<br>，做差异比对 |⭐ |
+|[NER模型**预测加速**](../../wiki/NER-说明文档#user-content-ner-模型预测加速) |TokenSplitSentence<br>TokenBreakLongSentence<br>TokenBatchBucket|对 NER 模型预测并行加速的方法  |⭐ |
+|[**分割数据集**](../../wiki/NER-说明文档#user-content-分割数据集) |analyse_dataset|对 NER 标注语料，分为训练集、验证集、测试集，并给出各个子集的实体类型分布统计 |⭐ |
+|[实体**收集**](../../wiki/NER-说明文档#user-content-实体收集) |collect_dataset_entities|将标注语料中的实体收集起来，形成词典 | |
 
 
 ### 7.文本分类
 
 | 功能   | 函数   |描述   |星级   |
 |--------|--------|-------|------|
-|[朴素贝叶斯**分析类别词汇**](../../wiki/文本分类-说明文档#user-content-朴素贝叶斯分析类别词汇) |analyse_freq_words|对文本分类的标注语料，做朴素贝叶斯词频分析，返回各类<br>文本的高条件概率词汇 |⭐⭐⭐ |
-|[**分割数据集**](../../wiki/文本分类-说明文档#user-content-分割数据集) |analyse_dataset|对文本分类的标注语料，切分为训练集、验证集、测试集，<br>并给出各个子集的分类分布统计 |⭐⭐⭐ |
+|[朴素贝叶斯**分析类别词汇**](../../wiki/文本分类-说明文档#user-content-朴素贝叶斯分析类别词汇) |analyse_freq_words|对文本分类的标注语料，做朴素贝叶斯词频分析，返回各类<br>文本的高条件概率词汇 |⭐ |
+|[**分割数据集**](../../wiki/文本分类-说明文档#user-content-分割数据集) |analyse_dataset|对文本分类的标注语料，切分为训练集、验证集、测试集，<br>并给出各个子集的分类分布统计 |⭐ |
 
 
 ### 8.情感分析
 
 | 功能   | 函数   |描述   |星级   |
 |--------|--------|-------|-------|
-|[基于**词典情感分析**](../../wiki/情感分析-说明文档#user-content-基于词典的情感分析) |LexiconSentiment|依据人工构建的情感词典，计算文本的情感值，介于0~1之间 |⭐⭐ |
+|[基于**词典情感分析**](../../wiki/情感分析-说明文档#user-content-基于词典的情感分析) |LexiconSentiment|依据人工构建的情感词典，计算文本的情感值，介于0~1之间 | |
 
 
 ### 初衷

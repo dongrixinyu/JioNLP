@@ -233,6 +233,8 @@ class LocationParser(object):
 
         # step 6: 获取详细地址部分
         detail_part = location_text[detail_idx:]
+        if detail_part[0] in '县':
+            detail_part = detail_part[1:]
 
         # step 7: 将地址中的 省直辖、市直辖，去掉
         if final_city is not None and '直辖' in final_city:
