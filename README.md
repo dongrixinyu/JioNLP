@@ -7,11 +7,11 @@
     <a alt="License">
         <img src="https://img.shields.io/github/license/dongrixinyu/JioNLP?color=crimson" /></a>
     <a alt="Size">
-        <img src="https://img.shields.io/badge/size-18.3m-orange" /></a>
+        <img src="https://img.shields.io/badge/size-18.5m-orange" /></a>
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-4k-yellow" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.20-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.21-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -28,22 +28,25 @@
 #### 功能主要包括：文本清洗，删除HTML标签、删除异常字符、删除冗余字符，转换全角字母、数字、空格为半角，抽取及删除E-mail及域名、抽取及删除（手机号、座机号）电话号码、抽取及删除QQ号、抽取及删除括号内容、抽取及删除身份证号、抽取及删除IP地址、抽取及删除URL超链接、抽取及删除货币金额与单位，金额数字转大写汉字，解析身份证号信息、解析手机号码归属地、解析座机区号归属地、解析手机号码运营商，按行快速读写文件，（多功能）停用词过滤，（优化的）分句，地址解析，新闻地域识别，繁简体转换，汉字转拼音，汉字偏旁、字形、四角编码、五笔编码拆解，基于词典的情感分析，色情数据过滤，反动数据过滤，关键短语抽取，抽取式文本摘要，成语接龙，成语词典、歇后语词典、新华字典、新华词典、停用词典、中国地名词典、中国县级地名变更词典、世界地名词典，基于词典的NER，NER的字、词级别转换，NER的entity和tag格式转换，NER模型的预测阶段加速并行工具集，NER标注和模型预测的结果差异对比，NER标注数据集分割与统计，NER实体收集、文本分类标注数据集的分割与统计、回译数据增强、相邻近汉字换位数据增强、同音词替换数据增强、随机增删字符数据增强、实体替换数据增强、公历转农历日期、农历转公历日期
 
 
-#### Update 2021-04-21
-## 新增 [公历农历日期互转](../../wiki/Gadget-说明文档#user-content-公历农历日期互转)
+#### Update 2021-06-23
+## 新增 [时间解析](../../wiki/时间解析-说明文档#user-content-时间解析)
 
-#### jio.lunar2solar、jio.solar2lunar 给定公（农）历日期，获取其相对应的农（公）历日期。
+#### jio.parse_time 给定时间字符串，解析其为时间戳、时长等。
 
 ``` python
->>> import datetime
+>>> import time
 >>> import jionlp as jio
->>> res = jio.solar2lunar(datetime.datetime(1989, 10, 22))
->>> print('1989-10-22 ==> ', res)
->>> res = jio.lunar2solar(1989, 9, 23, False)
->>> print('1989-9-23 非闰月 ==> ', res)
+>>> res = jio.parse_time('今年9月', time_base={'year': 2021})
+>>> print(res)
+>>> res = jio.parse_time('零三年元宵节', time_base=time.time())
+>>> print(res)
 
-# 1989-10-22 ==> (1989, 9, 23, False)
-# 1989-9-23 非闰月 ==> 1989-10-22 00:00:00
+# {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-09-01 00:00:00', '2021-09-30 23:59:59']}
+# {'type': 'time_point', 'definition': 'accurate', 'time': ['2003-02-15 00:00:00', '2003-02-15 23:59:59']}
 ```
+
+- 目前支持年月日、星期、季节、季度、节日、农历等解析
+- TODO: 周期性时间、时分秒、时间段。敬请期待
 
 
 ## 安装 Installation
@@ -79,6 +82,7 @@ $ jio_help
 | 功能   | 函数   |描述   |星级   |
 |--------|-------|-------|-------|
 |[**查找帮助**](../../wiki/Gadget-说明文档#user-content-查找帮助) |help|若不知道 JioNLP 有哪些功能，可根据命令行提示键入若干关键词做搜索 | |
+|[**时间解析**](../../wiki/时间解析-说明文档#user-content-时间解析) |parse_time|给定时间文本，解析其对应的时间戳、时长等 |⭐|
 |[**关键短语抽取**](../../wiki/Gadget-说明文档#user-content-关键短语抽取) |extract_keyphrase|给定一篇文本，抽取其对应关键短语 |⭐|
 |[抽取式**文本摘要**](../../wiki/Gadget-说明文档#user-content-抽取式文本摘要) |extract_summary|给定一篇文本，抽取其对应文摘 | |
 |[**停用词过滤**](../../wiki/Gadget-说明文档#user-content-去除停用词) |remove_stopwords|给定一个文本被分词后的词 list，去除其中的停用词 |⭐|

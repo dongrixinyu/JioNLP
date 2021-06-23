@@ -25,9 +25,6 @@ TODO:
 
 """
 
-import os
-import pdb
-
 from jionlp.dictionary.dictionary_loader import traditional_simplified_loader
 from .trie_tree import TrieTree
 

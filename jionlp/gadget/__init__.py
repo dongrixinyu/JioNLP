@@ -14,6 +14,7 @@ from .id_card_parser import IDCardParser
 from .location_parser import LocationParser
 from .location_recognizer import LocationRecognizer
 from .lunar_solar_date import LunarSolarDate
+from .time_parser import TimeParser
 from .remove_stopwords import RemoveStopwords
 from .ts_conversion import TSConversion
 from .pinyin import Pinyin
@@ -42,7 +43,7 @@ landline_phone_location = phone_location.landline_phone_location
 lunar_solar_date = LunarSolarDate()
 lunar2solar = lunar_solar_date.to_solar_date
 solar2lunar = lunar_solar_date.to_lunar_date
-
+parse_time = TimeParser()
 
 # rule = FastLoader('rule', globals(), 'jionlp.rule')
 del tra_sim_conversion
