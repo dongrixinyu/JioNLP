@@ -72,7 +72,7 @@ CENTURY_YEAR_PATTERN = re.compile(
     r'(\d0|[一二三四五六七八九]十)年代([初中末](期)?|前期|后期)?')
 
 # `农历年、月、日`：二〇一七年农历正月十九
-# 强制农历 日 必须为汉字，不可为阿拉伯数字，容易引起混淆
+# 强制农历 `日` 必须为汉字，不可为阿拉伯数字，容易引起混淆
 LUNAR_YEAR_MONTH_DAY_PATTERN = re.compile(
     # 基本农历判定正则（已废弃）
     # '(农历)?(([一二三四五六七八九零〇]{2}|[一二三四五六七八九零〇]{4}|[12]\d{3}|\d{2})年)?'
@@ -93,6 +93,25 @@ LUNAR_YEAR_MONTH_DAY_PATTERN = re.compile(
     r'(农历)((闰)?([正一二三四五六七八九十冬腊]|十[一二]|[1-9]|1[012])月)'
     r'((初|(二)?十|廿)[一二三四五六七八九]|[二三]?十)|'  # 农历九月初十
     r'(农历)((初|(二)?十|廿)[一二三四五六七八九]|[二三]?十)')  # 农历初十
+
+LUNAR_LIMIT_YEAR_MONTH_DAY_PATTERN = re.compile(
+    # 非强制也可，根据 `日` 得知为农历日期
+    r'(农历)?((前|今|明|去|同|当|后|大前|本|次)年)'
+    r'(农历)?((闰)?([正一二三四五六七八九十冬腊]|十[一二]|[1-9]|1[012])月)?'
+    r'([初廿][一二三四五六七八九十])|'  # 2012年9月初十/9月初十/初十
+    
+    # 非强制也可，根据 `月` 得知为农历日期
+    r'((前|今|明|去|同|当|后|大前|本|次)年)'
+    r'(农历)?(((闰)?[正冬腊]|闰([一二三四五六七八九十]|十[一二]|[1-9]|1[012]))月)'
+    r'((初|(二)?十|廿)[一二三四五六七八九]|[初二三]十)?|'  # 2012年冬月/2012年冬月初十/冬月初十/冬月
+    
+    # 强制标明农历，原因在于农历和公历的混淆，非常复杂
+    r'(农历)((前|今|明|去|同|当|后|大前|本|次)年)|'  # 农历二〇一二年
+    r'(农历)((前|今|明|去|同|当|后|大前|本|次)年)'
+    r'((闰)?([正一二三四五六七八九十冬腊]|十[一二]|[1-9]|1[012])月)|'  # 农历二零一二年九月
+    r'((前|今|明|去|同|当|后|大前|本|次)年)'
+    r'(农历)((闰)?([正一二三四五六七八九十冬腊]|十[一二]|[1-9]|1[012])月)')  # 二零一二年农历九月
+
 
 # 年、（农历）季节
 YEAR_LUNAR_SEASON_PATTERN = re.compile(
@@ -450,6 +469,7 @@ class TimeParser(object):
                      self.parse_year_fixed_solar_festival,
                      self.parse_year_fixed_lunar_festival,
                      self.parse_year_regular_solar_festival,
+                     self.parse_lunar_limit_year_month_day,
                      self.parse_limit_year_month_day,
                      self.parse_blur_year,
                      self.parse_lunar_year_month_day,  # 汉字优先按农历解析
@@ -1300,6 +1320,88 @@ class TimeParser(object):
         leap_month = False
         if lunar_month:
             # '([正一二三四五六七八九十冬腊]|十[一二]|[1-9]|1(0|1|2))(?=月)'
+            lunar_month_string = lunar_month.group(1)
+            if '闰' in lunar_month_string:
+                leap_month = True
+            lunar_month_string = lunar_month_string\
+                .replace('正', '一').replace('冬', '十一').replace('腊', '十二').replace('闰', '')
+            lunar_month_string = self._char_num2num(lunar_month_string)
+
+            lunar_time_point.month = lunar_month_string
+
+        if lunar_day:
+            # (初|(二)?十|廿)[一二三四五六七八九]|(二|三)?十)?
+            lunar_day_string = lunar_day.group(0)
+            lunar_day_string = lunar_day_string\
+                .replace('初', '').replace('廿', '二十')
+            lunar_day_string = self._char_num2num(lunar_day_string)
+
+            lunar_time_point.day = lunar_day_string
+
+        lunar_time_handler = lunar_time_point.handler()
+
+        # 对农历日期的补全
+        lunar_time_handler = TimeParser.time_completion(lunar_time_handler, self.time_base_handler)
+
+        first_time_handler, second_time_handler = self._convert_lunar2solar(
+            lunar_time_handler, leap_month=leap_month)
+
+        return first_time_handler, second_time_handler, 'time_point', 'accurate'
+
+    def parse_lunar_limit_year_month_day(self, time_string):
+        """按照 `农历限定年、月、日`进行解析，与 normalize_lunar_limit_year_month_day 配套使用
+
+        :param time_string:
+        :return:
+        """
+        searched_res = LUNAR_LIMIT_YEAR_MONTH_DAY_PATTERN.search(time_string)
+        if searched_res:
+            logging.info(''.join(['matched: ', searched_res.group(),
+                                  '\torig: ', time_string]))
+            first_time_handler, second_time_handler, time_type, blur_time = \
+                self.normalize_lunar_limit_year_month_day(time_string)
+
+            return first_time_handler, second_time_handler, time_type, blur_time
+        else:
+            return None
+
+    def normalize_lunar_limit_year_month_day(self, time_string):
+        """ 解析 农历限定年、月、日 时间
+
+        :return:
+        """
+        lunar_year_pattern = YEAR_PATTERNS[4]
+        lunar_month_pattern = MONTH_PATTERNS[4]
+        lunar_day_pattern = DAY_PATTERNS[1]
+
+        lunar_year = lunar_year_pattern.search(time_string)
+        lunar_month = lunar_month_pattern.search(time_string)
+        lunar_day = lunar_day_pattern.search(time_string)
+
+        lunar_time_point = TimePoint()
+
+        if lunar_year:
+            lunar_year_string = lunar_year.group(1)
+            if '大前' in lunar_year_string:
+                lunar_time_point.year = self.time_base_handler[0] - 3
+            elif '前' in lunar_year_string:
+                lunar_time_point.year = self.time_base_handler[0] - 2
+            elif '去' in lunar_year_string:
+                lunar_time_point.year = self.time_base_handler[0] - 1
+            elif '今' in lunar_year_string or '同' in lunar_year_string or '当' in lunar_year_string or '本' in lunar_year_string:
+                lunar_time_point.year = self.time_base_handler[0]
+            elif '明' in lunar_year_string or '次' in lunar_year_string:
+                lunar_time_point.year = self.time_base_handler[0] + 1
+            elif '后' in lunar_year_string:
+                lunar_time_point.year = self.time_base_handler[0] + 2
+            else:
+                raise ValueError('The given time string `{}` is illegal.'.format(time_string))
+
+        else:
+            raise ValueError('There is a bug for `{}`.'.format(time_string))
+
+        leap_month = False
+        if lunar_month:
             lunar_month_string = lunar_month.group(1)
             if '闰' in lunar_month_string:
                 leap_month = True

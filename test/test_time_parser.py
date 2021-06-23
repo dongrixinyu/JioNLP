@@ -115,6 +115,9 @@ class TestTimeParser(unittest.TestCase):
             ['闰4月', {'year': 2020}, {'type': 'time_point', 'definition': 'accurate', 'time': ['2020-05-23 00:00:00', '2020-06-20 23:59:59']}],
             ['廿一', {'year': 2021, 'month': 5}, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-30 00:00:00', '2021-06-30 23:59:59']}],
             ['正月', {'year': 2021, 'month': 5}, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-02-12 00:00:00', '2021-03-12 23:59:59']}],
+            ['去年五月初五', {'year': 2021}, {'type': 'time_point', 'definition': 'accurate', 'time': ['2020-06-25 00:00:00', '2020-06-25 23:59:59']}],
+            ['后年九月廿二', {'year': 2021}, {'type': 'time_point', 'definition': 'accurate', 'time': ['2023-11-05 00:00:00', '2023-11-05 23:59:59']}],
+            ['明年腊月', {'year': 2021}, {'type': 'time_point', 'definition': 'accurate', 'time': ['2022-12-23 00:00:00', '2023-01-21 23:59:59']}],
 
             # 年、节气
             ['2017年大寒', time.time(), {'type': 'time_point', 'definition': 'accurate', 'time': ['2018-01-20 00:00:00', '2018-01-20 23:59:59']}],
