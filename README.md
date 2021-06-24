@@ -1,6 +1,6 @@
 <p align="center">
     <a alt="jionlp logo">
-        <img src="./jionlp_logo.jpg" / style="width:90px;height:90px">
+        <img src="../../blob/master/image/jionlp_logo.jpg" / style="width:90px;height:90px">
     </a>
 </p>
 <p align="center">
@@ -200,6 +200,6 @@ $ jio_help
 
 ### 做 NLP不易，欢迎加入自然语言处理 Wechat 交流群
 
-![image](./qr_code_for_collection.png)
+![image](../../blob/master/image/qr_code_for_collection.png)
 
 
