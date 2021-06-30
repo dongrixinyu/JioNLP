@@ -38,12 +38,17 @@ YEAR_SOLAR_SEASON_PATTERN = re.compile(
 
 # `年、范围月`：`2018年前三个月`
 YEAR_SPAN_MONTH_PATTERN = re.compile(
-    r'(([12]?\d{2,3}|[一二三四五六七八九零〇]{2,4})年)?(([第前后头]([一二两三四五六七八九十]|十[一二]|[1-9]|1[012])|首)(个)?月(份)?)')
+    r'(([12]?\d{2,3}|[一二三四五六七八九零〇]{2,4})年)?'
+    r'(([第前后头]([一二两三四五六七八九十]|十[一二]|[1-9]|1[012])|首)(个)?月(份)?)')
 
 # `年、模糊月 时间段`：`1988年末`、`07年暑假`
 YEAR_BLUR_MONTH_PATTERN = re.compile(
     r'(([12]?\d{2,3}|[一二三四五六七八九零〇]{2,4})年)(年)?(初|[一]开年|伊始|末|尾|终|底)|'
     r'(([12]?\d{2,3}|[一二三四五六七八九零〇]{2,4})年)?([上|下]半年|暑假|寒假)')
+
+# `限定月、日`： `下个月9号`
+BLUR_MONTH_DAY_PATTERN = re.compile(
+    r'([下上](个)?|同)月((([012]?\d|3[01])|([一二]?十)?[一二三四五六七八九]|(三十)?[一]|[二三]?十)[日|号])?')
 
 # `模糊年、模糊月 时间段`：`1988年末`、`07年暑假`
 LIMIT_YEAR_BLUR_MONTH_PATTERN = re.compile(
@@ -195,11 +200,13 @@ MONTH_PATTERN = re.compile('([0]?[1-9]|1[012]|[一二三四五六七八九十]|�
 MONTH_NUM_PATTERN = re.compile('[一二两三四五六七八九十0-9]{1,2}')
 SPAN_MONTH_PATTERN = re.compile('([第前后头]([一二两三四五六七八九十]|十[一二]|[1-9]|1[012])|首)(个)?月(份)?')
 SOLAR_SEASON_PATTERN = re.compile('(([第前后头]?[一二三四1-4两]|首)(个)?季度)')
-BLUR_MONTH_PATTERN = re.compile('(初|[一]开年|伊始|末|尾|终|底|暑假|寒假|[上下]半年)')
+BLUR_MONTH_1_PATTERN = re.compile('(初|[一]开年|伊始|末|尾|终|底|暑假|寒假|[上下]半年)')
+BLUR_MONTH_2_PATTERN = re.compile('([下上](个)?|同)月')
 LUNAR_MONTH_PATTERN = re.compile('((闰)?([正一二三四五六七八九十冬腊]|十[一二]|[1-9]|1[012]))(?=月)')
 
-MONTH_PATTERNS = [MONTH_PATTERN, SOLAR_SEASON_PATTERN, BLUR_MONTH_PATTERN,
-                  SPAN_MONTH_PATTERN, LUNAR_MONTH_PATTERN]
+MONTH_PATTERNS = [MONTH_PATTERN, SOLAR_SEASON_PATTERN, BLUR_MONTH_1_PATTERN,
+                  SPAN_MONTH_PATTERN, LUNAR_MONTH_PATTERN,
+                  BLUR_MONTH_2_PATTERN]
 
 
 # **** 日|星期 ****
@@ -463,6 +470,7 @@ class TimeParser(object):
                      self.parse_standard_week_day,
                      self.parse_blur_week,
                      self.parse_limit_year_blur_month,
+                     self.parse_blur_month_day,
                      self.parse_year_blur_month,
                      self.parse_century_year,
                      self.parse_year_span_month,
@@ -898,6 +906,75 @@ class TimeParser(object):
         second_time_handler = second_time_point.handler()
 
         return first_time_handler, second_time_handler, 'time_span', 'blur'
+
+    def parse_blur_month_day(self, time_string):
+        """按照`模糊月、日时间表达`进行解析，与 normalize_blur_month_day 配套使用
+
+        :param time_string:
+        :return:
+        """
+        searched_res = BLUR_MONTH_DAY_PATTERN.search(time_string)
+        if searched_res:
+            logging.info(''.join(['matched: ', searched_res.group(),
+                                  '\torig: ', time_string]))
+            first_time_handler, second_time_handler, time_type, blur_time = \
+                self.normalize_blur_month_day(time_string)
+
+            return first_time_handler, second_time_handler, time_type, blur_time
+        else:
+            return None
+
+    def normalize_blur_month_day(self, time_string):
+        """ 解析 限制年/模糊月份 时间
+
+        :return:
+        """
+        month = MONTH_PATTERNS[5].search(time_string)
+        day = DAY_PATTERNS[0].search(time_string)
+
+        first_time_point = TimePoint()
+        second_time_point = TimePoint()
+
+        # 此处无年份，按照 time_base 获取
+        first_time_point.year = self.time_base_handler[0]
+        second_time_point.year = self.time_base_handler[0]
+
+        if month is not None:
+            month_string = month.group()
+            if '上' in month_string:
+                if self.time_base_handler[1] == 1:
+                    first_time_point.year -= 1
+                    second_time_point.year -= 1
+                    first_time_point.month = 12
+                    second_time_point.month = 12
+                else:
+                    first_time_point.month = self.time_base_handler[1] - 1
+                    second_time_point.month = self.time_base_handler[1] - 1
+            elif '下' in month_string:
+                if self.time_base_handler[1] == 12:
+                    first_time_point.year += 1
+                    second_time_point.year += 1
+                    first_time_point.month = 1
+                    second_time_point.month = 1
+                else:
+                    first_time_point.month = self.time_base_handler[1] + 1
+                    second_time_point.month = self.time_base_handler[1] + 1
+            elif '同' in month_string:
+                first_time_point.year = self.time_base_handler[1]
+                second_time_point.year = self.time_base_handler[1]
+            else:
+                raise ValueError('The given time string `{}` is illegal.'.format(time_string))
+
+        if day:
+            day_string = day.group(1)
+            first_time_point.day = self._char_num2num(day_string)
+            second_time_point.day = self._char_num2num(day_string)
+
+        first_time_handler = first_time_point.handler()
+        second_time_handler = second_time_point.handler()
+
+        return first_time_handler, second_time_handler, 'time_span',\
+            'blur' if first_time_handler[2] < 0 else 'accurate'
 
     def parse_century_year(self, time_string):
         """按照`世纪、年代`进行解析，与 normalize_century_year 配套使用
