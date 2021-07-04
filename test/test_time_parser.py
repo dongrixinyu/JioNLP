@@ -184,7 +184,6 @@ class TestTimeParser(unittest.TestCase):
             ['12月9日零时至12月16日24时', {'year': 2021}, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-12-09 00:00:00', '2021-12-16 23:59:59']}],
             ['13:20~次日05:40', 1623604000, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 13:20:00', '2021-06-15 05:40:59']}],
 
-
             # 时分秒 标准格式按 `:` 区隔
             ['上月30号12:37', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-05-30 12:37:00', '2021-05-30 12:37:59']}],
             ['35:37', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-14 01:35:37', '2021-06-14 01:35:37']}],

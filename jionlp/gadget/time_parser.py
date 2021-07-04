@@ -11,7 +11,11 @@
 TODO:
     1、仍未支持对周期性时间的解析
     2、仍未支持对时间段的解析
-    3、仍未支持对时、分、秒的解析
+    3、时分秒解析中的问题：
+        1、9点到半夜1点，其中1点已经属于第二天，需要对其 day 做调整
+        2、8点到中午12点，一般来讲，12点指12:00，而非 12:59，与年月日的默认规则有区别
+        3、9号半夜2点，一般指第二天的半夜2点，即10号的 02:00
+        4、昨晚2点半，究竟指今天2点半，还是昨天的2点半
     4、时间类型的定义、时间表达模糊程度的定义存在误差
 
 """
@@ -169,7 +173,7 @@ YEAR_FIXED_SOLAR_FESTIVAL_PATTERN = re.compile(
     r'((前|今|明|去|同|当|后|大前|本|次)年))?'
     r'((元旦|十一)|(三八|五一|六一|七一|八一|国庆|圣诞)(节)?|'
     r'((三八)?妇女|女神|植树|(五一)?劳动|(五四)?青年|(六一)?儿童|(七一)?建党|(八一)?建军|教师|情人|愚人|万圣|护士)节|'
-    r'地球日)')
+    r'地球日|三[\.·]?一五)')
 
 # 农历固定节日
 YEAR_FIXED_LUNAR_FESTIVAL_PATTERN = re.compile(
@@ -328,7 +332,8 @@ FIXED_SOLAR_HOLIDAY_DICT = {
     '情人节': [2, 14], '愚人节': [4, 1], '万圣节': [10, 31], '圣诞': [12, 25],
 
     # 特定日
-    '地球日': [4, 22], '护士节': [5, 12],
+    '地球日': [4, 22], '护士节': [5, 12], '三一五': [3, 15],
+    '三.一五': [3, 15], '三·一五': [3, 15],
 }
 
 # 农历固定节日
@@ -578,7 +583,7 @@ class TimeParser(object):
                     cur_ymd_func = ymd_func
                     cur_hms_string = hms_string
                     cur_ymd_string = ymd_string
-                    print('##', ymd_string, hms_string, ' orig: ', time_string)
+                    logging.info('##', ymd_string, hms_string, ' orig: ', time_string)
 
                 if ''.join([cur_ymd_string, cur_hms_string]) == time_string:
                     break_flag = True
@@ -593,13 +598,13 @@ class TimeParser(object):
         if cur_ymd_string != '' and cur_hms_string == '':
             first_time_handler, second_time_handler, time_type, blur_time = \
                 cur_ymd_func(cur_ymd_string)
-            print(first_time_handler, second_time_handler, time_type, blur_time)
+            # print(first_time_handler, second_time_handler, time_type, blur_time)
         elif cur_ymd_string != '' and cur_hms_string != '':
             # 1、若年月日 字符串存在但是 两 handler 不相等，说明 时分秒 字符串无法确定是哪一天，报错。
             # 2、若年月日 字符串存在但是 handler 中 day 不确定，说明 时分秒 字符串无法确定是哪一天，报错。
             ymd_first_time_handler, ymd_second_time_handler, ymd_time_type, ymd_blur_time = \
                 cur_ymd_func(cur_ymd_string)
-            print(ymd_first_time_handler, ymd_second_time_handler, ymd_time_type, ymd_blur_time)
+            # print(ymd_first_time_handler, ymd_second_time_handler, ymd_time_type, ymd_blur_time)
 
             if (ymd_first_time_handler != ymd_second_time_handler)\
                     or ymd_first_time_handler[2] == -1:
@@ -608,7 +613,7 @@ class TimeParser(object):
 
             hms_first_time_handler, hms_second_time_handler, hms_time_type, hms_blur_time = \
                 cur_hms_func(cur_hms_string)
-            print(hms_first_time_handler, hms_second_time_handler, hms_time_type, hms_blur_time)
+            # print(hms_first_time_handler, hms_second_time_handler, hms_time_type, hms_blur_time)
 
             first_time_handler = [max(i, j) for (i, j) in zip(ymd_first_time_handler, hms_first_time_handler)]
             second_time_handler = [max(i, j) for (i, j) in zip(ymd_first_time_handler, hms_second_time_handler)]
@@ -618,7 +623,7 @@ class TimeParser(object):
         elif cur_ymd_string == '' and cur_hms_string != '':
             first_time_handler, second_time_handler, time_type, blur_time = \
                 cur_hms_func(cur_hms_string)
-            print(first_time_handler, second_time_handler, time_type, blur_time)
+            # print(first_time_handler, second_time_handler, time_type, blur_time)
         else:
             raise ValueError('can not parse the string `{}`.'.format(time_string))
 
@@ -2626,10 +2631,4 @@ class TimeParser(object):
                 flag_day += special[1]
                 break
         return (solar_terms[solar_term][1]), str(flag_day)
-
-
-if __name__ == '__main__':
-    tn = TimeParser()
-    res = tn.parse('明年6月之前', time_base=1623604000)
-    print(res)
 
