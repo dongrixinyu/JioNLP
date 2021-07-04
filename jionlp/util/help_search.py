@@ -39,6 +39,7 @@ class HelpSearch(object):
             'PhoneLocation', 'Pinyin', 'RemoveStopwords', 'SplitSentence',
             'TSConversion', 'MoneyStandardization', 'LocationRecognizer',
             'HomophoneSubstitution', 'RandomAddDelete', 'SwapCharPosition',
+            'TimeNormalizer',
             # 文件说明
             'ts_conversion', 'location_recognizer',
             # 多层函数的误例
@@ -53,6 +54,7 @@ class HelpSearch(object):
 
     def _prepare(self):
         import jionlp as jio
+
         self.function_dict = dict()
         for function_name in dir(jio):
             if function_name == function_name.upper():
@@ -82,10 +84,11 @@ class HelpSearch(object):
                     continue
 
                 self.function_dict.update({full_function_name: res})
-    
-    def command_parser(self, input_string):
+
+    @staticmethod
+    def command_parser(input_string):
         """ 解析输入的查询命令 """
-        search_word_list = input_string.split('\n')
+        search_word_list = input_string.split(' ')
         return search_word_list
 
     def search(self, search_word_list):

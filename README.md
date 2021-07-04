@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-4k-yellow" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.21-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.22-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -28,7 +28,7 @@
 #### 功能主要包括：文本清洗，删除HTML标签、删除异常字符、删除冗余字符，转换全角字母、数字、空格为半角，抽取及删除E-mail及域名、抽取及删除（手机号、座机号）电话号码、抽取及删除QQ号、抽取及删除括号内容、抽取及删除身份证号、抽取及删除IP地址、抽取及删除URL超链接、抽取及删除货币金额与单位，金额数字转大写汉字，解析身份证号信息、解析手机号码归属地、解析座机区号归属地、解析手机号码运营商，按行快速读写文件，（多功能）停用词过滤，（优化的）分句，地址解析，新闻地域识别，繁简体转换，汉字转拼音，汉字偏旁、字形、四角编码、五笔编码拆解，基于词典的情感分析，色情数据过滤，反动数据过滤，关键短语抽取，抽取式文本摘要，成语接龙，成语词典、歇后语词典、新华字典、新华词典、停用词典、中国地名词典、中国县级地名变更词典、世界地名词典，基于词典的NER，NER的字、词级别转换，NER的entity和tag格式转换，NER模型的预测阶段加速并行工具集，NER标注和模型预测的结果差异对比，NER标注数据集分割与统计，NER实体收集、文本分类标注数据集的分割与统计、回译数据增强、相邻近汉字换位数据增强、同音词替换数据增强、随机增删字符数据增强、实体替换数据增强、公历转农历日期、农历转公历日期
 
 
-#### Update 2021-06-23
+#### Update 2021-07-04
 ## 新增 [时间解析](../../wiki/时间解析-说明文档#user-content-时间解析)
 
 #### jio.parse_time 给定时间字符串，解析其为时间戳、时长等。
@@ -38,15 +38,15 @@
 >>> import jionlp as jio
 >>> res = jio.parse_time('今年9月', time_base={'year': 2021})
 >>> print(res)
->>> res = jio.parse_time('零三年元宵节', time_base=time.time())
+>>> res = jio.parse_time('零三年元宵节晚上8点半', time_base=time.time())
 >>> print(res)
 
 # {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-09-01 00:00:00', '2021-09-30 23:59:59']}
-# {'type': 'time_point', 'definition': 'accurate', 'time': ['2003-02-15 00:00:00', '2003-02-15 23:59:59']}
+# {'type': 'time_point', 'definition': 'accurate', 'time': ['2003-02-15 20:30:00', '2003-02-15 20:30:59']}
 ```
 
-- 目前支持年、月、日、星期、季节、季度、节日、农历、时间范围、模糊时间代词等解析
-- TODO: 周期性时间、时分秒、时间段。敬请期待
+- 目前支持年、月、日、时、分、秒、星期、季节、季度、节日、农历、时间范围、模糊时间代词等解析
+- TODO: 周期性时间、时间段。敬请期待
 - [关于**时间解析**](../../wiki/时间解析-说明文档)
 - 目前支持的所有测试用例参考：[测试用例](../../blob/master/test/test_time_parser.py)
 
