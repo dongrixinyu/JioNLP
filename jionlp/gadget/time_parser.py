@@ -583,7 +583,7 @@ class TimeParser(object):
                     cur_ymd_func = ymd_func
                     cur_hms_string = hms_string
                     cur_ymd_string = ymd_string
-                    logging.info('##', ymd_string, hms_string, ' orig: ', time_string)
+                    # print('##', ymd_string, hms_string, ' orig: ', time_string)
 
                 if ''.join([cur_ymd_string, cur_hms_string]) == time_string:
                     break_flag = True
@@ -2545,18 +2545,17 @@ class TimeParser(object):
                 time_base.extend([-1 for _ in range(6 - len(time_base))])
             time_base_handler = time_base
         elif type(time_base) is dict:
-            time_base_handler = list()
-            time_base_handler.append(time_base.get('year', -1))
-            time_base_handler.append(time_base.get('month', -1))
-            time_base_handler.append(time_base.get('day', -1))
-            time_base_handler.append(time_base.get('hour', -1))
-            time_base_handler.append(time_base.get('minute', -1))
-            time_base_handler.append(time_base.get('second', -1))
+            time_base_handler = [
+                time_base.get('year', -1), time_base.get('month', -1),
+                time_base.get('day', -1), time_base.get('hour', -1),
+                time_base.get('minute', -1), time_base.get('second', -1)]
         elif type(time_base) is str:
             time_array = time.strptime(time_base, "%Y-%m-%d %H:%M:%S")
             time_base_handler = [
                 time_array.tm_year, time_array.tm_mon, time_array.tm_mday,
                 time_array.tm_hour, time_array.tm_min, time_array.tm_sec]
+        else:
+            raise ValueError('the given time_base is illegal.')
 
         return time_base_handler
 
