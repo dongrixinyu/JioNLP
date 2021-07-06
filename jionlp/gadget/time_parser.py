@@ -17,6 +17,11 @@ TODO:
         3、9号半夜2点，一般指第二天的半夜2点，即10号的 02:00
         4、昨晚2点半，究竟指今天2点半，还是昨天的2点半
     4、时间类型的定义、时间表达模糊程度的定义存在误差
+    5、时间范围存在的模糊与歧义
+        1、下周二起，仅表明起始时间，未表明结束时间，而 time_base 为此时此刻，
+        2、两三年后，七八个小时前，模糊性较强
+        3、两年前，究竟指，（两年前为时间范围的结束，而起始未知），还是（两年前的那一整年）
+        4、
 
 """
 
@@ -43,23 +48,38 @@ YEAR_MONTH_DAY_PATTERN = re.compile(
 YEAR_SOLAR_SEASON_PATTERN = re.compile(
     r'(([12]?\d{2,3}|[一二三四五六七八九零〇]{2,4})年)?(([第前后头]?[一二三四1-4两]|首)(个)?季度)')
 
+# `限定年、季度`：`2018年前三季度`
+LIMIT_YEAR_SOLAR_SEASON_PATTERN = re.compile(
+    r'((前|今|明|去|同|当|后|大前|本|次)年)'
+    r'(([第前后头]?[一二三四1-4两]|首)(个)?季度)')
+
 # `年、范围月`：`2018年前三个月`
 YEAR_SPAN_MONTH_PATTERN = re.compile(
     r'(([12]?\d{2,3}|[一二三四五六七八九零〇]{2,4})年)?'
     r'(([第前后头]([一二两三四五六七八九十]|十[一二]|[1-9]|1[012])|首)(个)?月(份)?)')
 
+# `年、范围月`：`2018年前三个月`
+LIMIT_YEAR_SPAN_MONTH_PATTERN = re.compile(
+    r'((前|今|明|去|同|当|后|大前|本|次)年)'
+    r'(([第前后头]([一二两三四五六七八九十]|十[一二]|[1-9]|1[012])|首)(个)?月(份)?)')
+
 # `年、模糊月 时间段`：`1988年末`、`07年暑假`
 YEAR_BLUR_MONTH_PATTERN = re.compile(
     r'(([12]?\d{2,3}|[一二三四五六七八九零〇]{2,4})年)(年)?(初|[一]开年|伊始|末|尾|终|底)|'
-    r'(([12]?\d{2,3}|[一二三四五六七八九零〇]{2,4})年)?([上|下]半年|暑假|寒假)')
+    r'(([12]?\d{2,3}|[一二三四五六七八九零〇]{2,4})年)?([上|下]半年|[暑寒][假期]|[前中后]期)')
 
 # `限定月、日`： `下个月9号`
-BLUR_MONTH_DAY_PATTERN = re.compile(
-    r'([下上](个)?|同)月((([012]?\d|3[01])|([一二]?十)?[一二三四五六七八九]|(三十)?[一]|[二三]?十)[日|号])?')
+LIMIT_MONTH_DAY_PATTERN = re.compile(
+    r'([下上](个)?|同|本)月((([012]?\d|3[01])|([一二]?十)?[一二三四五六七八九]|(三十)?[一]|[二三]?十)[日|号])?')
+
+# `限定月、模糊日`： `下个月末`
+LIMIT_MONTH_BLUR_DAY_PATTERN = re.compile(
+    r'([下上](个)?|同|本)月([上中下]旬|初|中|底|末)')
+
 
 # `模糊年、模糊月 时间段`：`1988年末`、`07年暑假`
 LIMIT_YEAR_BLUR_MONTH_PATTERN = re.compile(
-    '((前|今|明|去|同|当|后|大前|本|次)年)(年)?(初|[一]开年|伊始|末|尾|终|底|[上|下]半年|暑假|寒假)')
+    '((前|今|明|去|同|当|后|大前|本|次)年)(年)?(初|[一]开年|伊始|末|尾|终|底|[上|下]半年|[暑寒][假期])')
 
 # `指代年、月、日`：`今年9月`、`前年9月2日`
 LIMIT_YEAR_MONTH_DAY_PATTERN = re.compile(
@@ -134,12 +154,17 @@ LUNAR_LIMIT_YEAR_MONTH_DAY_PATTERN = re.compile(
     r'((前|今|明|去|同|当|后|大前|本|次)年)'
     r'(农历)((闰)?([正一二三四五六七八九十冬腊]|十[一二]|[1-9]|1[012])月)')  # 二零一二年农历九月
 
-
 # 年、（农历）季节
 YEAR_LUNAR_SEASON_PATTERN = re.compile(
     r'(([一二三四五六七八九零〇]{2}|[一二三四五六七八九零〇]{4}|[12]\d{3}|\d{2})年)?'
     r'[春夏秋冬][季天]|'
     r'(([一二三四五六七八九零〇]{2}|[一二三四五六七八九零〇]{4}|[12]\d{3}|\d{2})年)[春夏秋冬]')
+
+# 限定年、（农历）季节
+LIMIT_YEAR_LUNAR_SEASON_PATTERN = re.compile(
+    r'((前|今|明|去|同|当|后|大前|本|次)年)'
+    r'[春夏秋冬][季天]|'
+    r'((前|今|明|去|同|当|后|大前|本|次)年)[春夏秋冬]')
 
 # 年、节气
 YEAR_24ST_PATTERN = re.compile(
@@ -148,9 +173,16 @@ YEAR_24ST_PATTERN = re.compile(
     r'寒露|霜降|立冬|小雪|大雪|冬至|小寒|大寒)')
 
 # 年、月、模糊日（旬）
-YEAR_MONTH_XUN_PATTERN = re.compile(
+YEAR_MONTH_BLUR_DAY_PATTERN = re.compile(
     r'(([一二三四五六七八九零〇]{2}|[一二三四五六七八九零〇]{4}|[12]\d{3}|\d{2})年)?'
-    r'((([0]?[1-9]|1[012])|[一二三四五六七八九十]|十[一二])月(份)?)[上中下]旬')
+    r'((([0]?[1-9]|1[012])|[一二三四五六七八九十]|十[一二])月(份)?)'
+    r'([上中下]旬|初|中|底|末)')
+
+# 限定年、月、模糊日（旬）
+LIMIT_YEAR_MONTH_BLUR_DAY_PATTERN = re.compile(
+    r'((前|今|明|去|同|当|后|大前|本|次)年)'
+    r'((([0]?[1-9]|1[012])|[一二三四五六七八九十]|十[一二])月(份)?)'
+    r'([上中下]旬|初|中|底|末)')
 
 # 星期 （一般不与年月相关联）
 STANDARD_WEEK_DAY_PATTERN = re.compile(
@@ -195,7 +227,7 @@ LIMIT_DAY_PATTERN = re.compile(r'(前|今|明|同一|当|后|大前|大后|昨|�
 # 时分秒 文字
 HOUR_MINUTE_SECOND_PATTERN = re.compile(
     r'(凌晨|清[晨|早]|早[晨上]?|[上中下]午|(傍)?晚[间上]?|[深|半]夜)?'
-    r'(((十)?[一二三四五六七八九]|[零〇十]|二十[一二三四]?|[01]?\d|2[01234])[时点])'
+    r'(((十)?[一两二三四五六七八九]|[零〇十]|二十[一二三四]?|[01]?\d|2[01234])[时点])'
     r'(((零|〇|[一二三四五]?十)[一二三四五六七八九]|[二三四五]?十|[012345]?\d)分?)?'
     r'(((零|〇|[一二三四五]?十)[一二三四五六七八九]|[二三四五]?十|[012345]?\d)秒)?|'
     
@@ -206,8 +238,8 @@ HOUR_MINUTE_SECOND_PATTERN = re.compile(
 # 标准格式`:`分隔时分秒
 NUM_HOUR_MINUTE_SECOND_PATTERN = re.compile(
     r'(凌晨|清[晨|早]|早[晨上]?|[上中下]午|(傍)?晚[间上]?|[深|半]夜)?'
-    r'([01]\d|2[01234]|\d)\:([012345]\d)(\:([012345]\d))?|'
-    r'([012345]\d)\:([012345]\d)')
+    r'([01]\d|2[01234]|\d)[\:：]([012345]\d)([\:：]([012345]\d))?|'
+    r'([012345]\d)[\:：]([012345]\d)')
 
 # 模糊性 `时` 段
 BLUR_HOUR_PATTERN = re.compile(
@@ -216,7 +248,7 @@ BLUR_HOUR_PATTERN = re.compile(
 # 限定性 `分`
 HOUR_LIMIT_MINUTE_PATTERN = re.compile(
     r'(凌晨|清[晨|早]|早[晨上]?|[上中下]午|(傍)?晚[间上]?|[深|半]夜)?'
-    r'(((十)?[一二三四五六七八九]|[零〇十]|二十[一二三四]?|[01]?\d|2[01234])[时点])'
+    r'(((十)?[一两二三四五六七八九]|[零〇十]|二十[一二三四]?|[01]?\d|2[01234])[时点])'
     r'([123一二三]刻|半)')
 
 
@@ -247,13 +279,13 @@ MONTH_PATTERN = re.compile('([0]?[1-9]|1[012]|[一二三四五六七八九十]|�
 MONTH_NUM_PATTERN = re.compile('[一二两三四五六七八九十0-9]{1,2}')
 SPAN_MONTH_PATTERN = re.compile('([第前后头]([一二两三四五六七八九十]|十[一二]|[1-9]|1[012])|首)(个)?月(份)?')
 SOLAR_SEASON_PATTERN = re.compile('(([第前后头]?[一二三四1-4两]|首)(个)?季度)')
-BLUR_MONTH_1_PATTERN = re.compile('(初|[一]开年|伊始|末|尾|终|底|暑假|寒假|[上下]半年)')
-BLUR_MONTH_2_PATTERN = re.compile('([下上](个)?|同)月')
+BLUR_MONTH_PATTERN = re.compile('(初|[一]开年|伊始|末|尾|终|底|[暑寒][假期]|[上下]半年|[前中后]期)')
+LIMIT_MONTH_PATTERN = re.compile('([下上](个)?|同|本)月')
 LUNAR_MONTH_PATTERN = re.compile('((闰)?([正一二三四五六七八九十冬腊]|十[一二]|[1-9]|1[012]))(?=月)')
 
-MONTH_PATTERNS = [MONTH_PATTERN, SOLAR_SEASON_PATTERN, BLUR_MONTH_1_PATTERN,
+MONTH_PATTERNS = [MONTH_PATTERN, SOLAR_SEASON_PATTERN, BLUR_MONTH_PATTERN,
                   SPAN_MONTH_PATTERN, LUNAR_MONTH_PATTERN,
-                  BLUR_MONTH_2_PATTERN]
+                  LIMIT_MONTH_PATTERN]
 
 
 # **** 日|星期 ****
@@ -264,7 +296,7 @@ LUNAR_24ST_PATTERN = re.compile(
     '(立春|雨水|惊蛰|春分|清明|谷雨|立夏|小满|芒种|夏至|小暑|大暑|'
     '立秋|处暑|白露|秋分|寒露|霜降|立冬|小雪|大雪|冬至|小寒|大寒)')
 LUNAR_SEASON_PATTERN = re.compile('([春夏秋冬][季天]?)')
-XUN_PATTERN = re.compile('[上中下]旬')
+DAY_3_PATTERN = re.compile('([上中下]旬|初|中|底|末)')
 WEEK_1_PATTERN = re.compile('[前后][一二两三四五六七八九1-9](个)?(周|星期)')
 WEEK_2_PATTERN = re.compile('[一两三四五六七八九1-9](个)?(周|星期)(之)?[前后]')
 WEEK_3_PATTERN = re.compile('(上上|上|下下|下|本|这)(个)?(周|星期)')
@@ -273,14 +305,14 @@ WEEK_5_PATTERN = re.compile('第[1-5一二三四五](个)?(周|星期)')
 
 
 DAY_PATTERNS = [DAY_1_PATTERN, LUNAR_DAY_PATTERN, LUNAR_24ST_PATTERN,
-                LUNAR_SEASON_PATTERN, XUN_PATTERN, WEEK_1_PATTERN,
+                LUNAR_SEASON_PATTERN, DAY_3_PATTERN, WEEK_1_PATTERN,
                 WEEK_2_PATTERN, WEEK_3_PATTERN, WEEK_4_PATTERN,
                 WEEK_5_PATTERN, DAY_2_PATTERN]
 
 
 # **** 时 ****
 HOUR_1_PATTERN = re.compile(
-    r'((十)?[一二三四五六七八九]|[零〇十]|二十[一二三四]?|[01]?\d|2[01234])(?=[时|点])')
+    r'((十)?[一两二三四五六七八九]|[零〇十]|二十[一二三四]?|[01]?\d|2[01234])(?=[时|点])')
 HOUR_LIMITATION_PATTERN = re.compile(
     r'(凌晨|清[晨|早]|一(大)?早|早[晨上]?|[上中下]午|(傍)?晚[间上]?|[深|半]夜)')
 HOUR_2_PATTERN = re.compile(r'')
@@ -300,20 +332,23 @@ MINUTE_PATTERNS = [MINUTE_PATTERN, LIMIT_MINUTE_PATTERN]
 # **** 秒 ****
 SECOND_PATTERN = re.compile(
     r'(?<=分)((零|〇|[一二三四五]?十)[一二三四五六七八九]|[二三四五]?十|[012345]?\d)(?=秒)?')
-
+HMS_SEGS = re.compile('[\:：]')
 SECOND_PATTERNS = [SECOND_PATTERN, ]
 
 
 # for TIME_SPAN pattern
 FIRST_1_SPAN_PATTERN = re.compile(
-    '(?<=(从))(.+)(?=(到|至|以来|起|开始|——|\-|\~))|'
-    '(?<=(从))(.+)')
-FIRST_2_SPAN_PATTERN = re.compile('(.+)(?=(到|至|以来|起|开始|——|\-|\~))')
+    r'(?<=(从))(.+)(?=(到|至|以来|起|开始|——|—|\-|\~))|'
+    r'(?<=(从))(.+)')
+FIRST_2_SPAN_PATTERN = re.compile(r'(.+)(?=(——|\-\-|\~\~))')
+FIRST_3_SPAN_PATTERN = re.compile(r'(.+)(?=(到|至|以来|起|开始|—|\-|\~))')
 
+SECOND_0_SPAN_PATTERN = re.compile(
+    r'(?<=(以来|开始|——|\-\-|\~\~))(.+)')
 SECOND_1_SPAN_PATTERN = re.compile(
-    r'(?<=[到至起\-\~])(.+)|(?<=(以来|开始|——))(.+)')
+    r'(?<=[到至起\-—\~])(.+)')
 SECOND_2_SPAN_PATTERN = re.compile(
-    r'(?<=[到至起\-\~])(.+)(?=([之以]?前))')
+    r'(?<=[到至起\-—\~])(.+)(?=([之以]?前))')
 SECOND_3_SPAN_PATTERN = re.compile(
     r'^((\d{1,2}|[一二两三四五六七八九十百千]+)[几多]?年(半)?(多)?|半年(多)?|几[十百千](多)?年)'
     r'(?=([之以]?前))')  # 此种匹配容易和 `三年以前` 相互矛盾，因此设置正则
@@ -326,7 +361,7 @@ FIXED_SOLAR_HOLIDAY_DICT = {
     '植树节': [3, 12], '五一': [5, 1], '劳动节': [5, 1], '青年节': [5, 4],
     '六一': [6, 1], '儿童节': [6, 1], '七一': [7, 1], '建党节': [7, 1],
     '八一': [8, 1], '建军节': [8, 1], '教师节': [9, 10], '国庆节': [10, 1],
-    '十一': [10, 1],
+    '十一': [10, 1], '国庆': [10, 1],
 
     # 西方
     '情人节': [2, 14], '愚人节': [4, 1], '万圣节': [10, 31], '圣诞': [12, 25],
@@ -357,6 +392,12 @@ REGULAR_SOLAR_HOLIDAY_DICT = {
 # 周期性日期
 PERIOD_TIME_PATTERN = re.compile(
     '每(隔)?([一二两三四五六七八九十0-9]+)?(年|(个)?月|日|天|周|(小)?时|分(钟)?|秒(钟)?)')
+
+# 由于time_span 格式造成的时间单位缺失的检测
+# 如：`去年9~12月`、 `2016年8——10月`
+TIME_SPAN_COMPENSATION = re.compile(
+    r'[\d一二三四五六七八九十零](到|至|——|\-\-|\~\~|—|\-|\~)'
+    r'([\d一二三四五六七八九十零]{1,2}[月日号点时]|[\d一二三四五六七八九十零]{2,4}年)')
 
 
 class TimePoint(object):
@@ -438,6 +479,22 @@ class TimeParser(object):
         self.lunar2solar = lunar_solar_date.to_solar_date
         self.solar2lunar = lunar_solar_date.to_lunar_date
 
+    @staticmethod
+    def _compensate_first_string(time_string, first_time_string):
+        time_compensation = TIME_SPAN_COMPENSATION.search(time_string)
+        if time_compensation:
+            time_compensation = time_compensation.group()
+            if '年' in time_compensation:
+                return ''.join([first_time_string, '年'])
+            elif '月' in time_compensation:
+                return ''.join([first_time_string, '月'])
+            elif '日' in time_compensation or '号' in time_compensation:
+                return ''.join([first_time_string, '日'])
+            elif '点' in time_compensation or '时' in time_compensation:
+                return ''.join([first_time_string, '时'])
+        else:
+            return first_time_string
+
     def __call__(self, time_string, time_base=time.time()):
         """解析时间字符串。
 
@@ -458,12 +515,18 @@ class TimeParser(object):
         if first_time_string is not None or second_time_string is not None:
             time_type = 'time_span'
             if first_time_string is not None and second_time_string is None:
+
                 # 默认此时 second handler 为 `至今`
                 first_full_time_handler, _, _, blur_time = self.parse_time_point(
                     first_time_string, self.time_base_handler)
                 # 默认此时 time_base 大于 first_full_time_handler
                 second_full_time_handler = self.time_base_handler
             elif first_time_string is not None and second_time_string is not None:
+
+                print(first_time_string)
+                first_time_string = TimeParser._compensate_first_string(
+                    time_string, first_time_string)
+                print(first_time_string)
 
                 first_full_time_handler, _, _, blur_time = self.parse_time_point(
                     first_time_string, self.time_base_handler)
@@ -503,11 +566,15 @@ class TimeParser(object):
             first_res = FIRST_1_SPAN_PATTERN.search(time_string)
         elif FIRST_2_SPAN_PATTERN.search(time_string):
             first_res = FIRST_2_SPAN_PATTERN.search(time_string)
+        elif FIRST_3_SPAN_PATTERN.search(time_string):
+            first_res = FIRST_3_SPAN_PATTERN.search(time_string)
         else:
             first_res = None
 
         second_string = None
-        if SECOND_1_SPAN_PATTERN.search(time_string):
+        if SECOND_0_SPAN_PATTERN.search(time_string):
+            second_res = SECOND_0_SPAN_PATTERN.search(time_string)
+        elif SECOND_1_SPAN_PATTERN.search(time_string):
             second_res = SECOND_1_SPAN_PATTERN.search(time_string)
         elif SECOND_2_SPAN_PATTERN.search(time_string):
             second_res = SECOND_2_SPAN_PATTERN.search(time_string)
@@ -539,16 +606,21 @@ class TimeParser(object):
         # time_point pattern & norm_func
         ymd_pattern_norm_funcs = [
             [YEAR_24ST_PATTERN, self.normalize_year_24st],
+            [LIMIT_YEAR_LUNAR_SEASON_PATTERN, self.normalize_limit_year_lunar_season],
             [YEAR_LUNAR_SEASON_PATTERN, self.normalize_year_lunar_season],
-            [YEAR_MONTH_XUN_PATTERN, self.normalize_year_month_xun],
+            [LIMIT_YEAR_MONTH_BLUR_DAY_PATTERN, self.normalize_limit_year_month_blur_day],
+            [YEAR_MONTH_BLUR_DAY_PATTERN, self.normalize_year_month_blur_day],
+            [LIMIT_YEAR_SOLAR_SEASON_PATTERN, self.normalize_limit_year_solar_season],
             [YEAR_SOLAR_SEASON_PATTERN, self.normalize_year_solar_season],
             [LIMIT_WEEK_PATTERN, self.normalize_limit_week],
             [STANDARD_WEEK_DAY_PATTERN, self.normalize_standard_week_day],
             [BLUR_WEEK_PATTERN, self.normalize_blur_week],
             [LIMIT_YEAR_BLUR_MONTH_PATTERN, self.normalize_limit_year_blur_month],
-            [BLUR_MONTH_DAY_PATTERN, self.normalize_blur_month_day],
+            [LIMIT_MONTH_BLUR_DAY_PATTERN, self.normalize_limit_month_blur_day],
+            [LIMIT_MONTH_DAY_PATTERN, self.normalize_limit_month_day],
             [YEAR_BLUR_MONTH_PATTERN, self.normalize_year_blur_month],
             [CENTURY_YEAR_PATTERN, self.normalize_century_year],
+            [LIMIT_YEAR_SPAN_MONTH_PATTERN, self.normalize_limit_year_span_month],
             [YEAR_SPAN_MONTH_PATTERN, self.normalize_year_span_month],
             [YEAR_FIXED_SOLAR_FESTIVAL_PATTERN, self.normalize_year_fixed_solar_festival],
             [YEAR_FIXED_LUNAR_FESTIVAL_PATTERN, self.normalize_year_fixed_lunar_festival],
@@ -593,6 +665,11 @@ class TimeParser(object):
 
             if break_flag:
                 break
+
+        if len(''.join([cur_ymd_string, cur_hms_string])) < len(time_string):
+            # print(cur_ymd_string, cur_hms_string, time_string)
+            #raise ValueError('## exception string `{}`.'.format(time_string))
+            pass
 
         # 年月日、时分秒相互对应完整
         if cur_ymd_string != '' and cur_hms_string == '':
@@ -671,7 +748,7 @@ class TimeParser(object):
             year_string = self._char_year2num(year_string)
 
             # 针对 13年8月，08年6月 这类日期，补全其年份
-            if month is not None:
+            if month is not None or len(year_string) == 2:
                 if len(year_string) == 2:
                     year_string = TimeParser._year_completion(
                         year_string, self.time_base_handler)
@@ -689,6 +766,103 @@ class TimeParser(object):
         time_handler = time_point.handler()
 
         return time_handler, time_handler, 'time_point', 'accurate'
+
+    def normalize_limit_year_solar_season(self, time_string):
+        """ 解析 限定年/季度(公历) 时间
+
+        :return:
+        """
+        year = YEAR_PATTERNS[4].search(time_string)
+        month = MONTH_PATTERNS[1].search(time_string)
+
+        first_time_point = TimePoint()
+        second_time_point = TimePoint()
+
+        if year is not None:
+            year_string = year.group(1)
+            if '大前' in year_string:
+                first_time_point.year = self.time_base_handler[0] - 3
+                second_time_point.year = self.time_base_handler[0] - 3
+            elif '前' in year_string:
+                first_time_point.year = self.time_base_handler[0] - 2
+                second_time_point.year = self.time_base_handler[0] - 2
+            elif '去' in year_string:
+                first_time_point.year = self.time_base_handler[0] - 1
+                second_time_point.year = self.time_base_handler[0] - 1
+            elif '今' in year_string or '同' in time_string or '当' in time_string or '本' in time_string:
+                first_time_point.year = self.time_base_handler[0]
+                second_time_point.year = self.time_base_handler[0]
+            elif '明' in year_string or '次' in year_string:
+                first_time_point.year = self.time_base_handler[0] + 1
+                second_time_point.year = self.time_base_handler[0] + 1
+            elif '后' in year_string:
+                first_time_point.year = self.time_base_handler[0] + 2
+                second_time_point.year = self.time_base_handler[0] + 2
+            else:
+                raise ValueError('The given time string `{}` is illegal.'.format(time_string))
+
+
+        if month is not None:
+            solar_season = month.group()
+            if '1' in solar_season or '一' in solar_season or '首' in solar_season:
+                if '第' in solar_season:
+                    first_month = 1
+                    second_month = 3
+                elif '前' in solar_season or '头' in solar_season:
+                    first_month = 1
+                    second_month = 3
+                elif '后' in solar_season:
+                    first_month = 10
+                    second_month = 12
+                else:
+                    first_month = 1
+                    second_month = 3
+            elif '2' in solar_season or '二' in solar_season:
+                if '第' in solar_season:
+                    first_month = 4
+                    second_month = 6
+                elif '前' in solar_season or '头' in solar_season:
+                    first_month = 1
+                    second_month = 6
+                elif '后' in solar_season:
+                    first_month = 7
+                    second_month = 12
+                else:
+                    first_month = 4
+                    second_month = 6
+            elif '3' in solar_season or '三' in solar_season:
+                if '第' in solar_season:
+                    first_month = 7
+                    second_month = 9
+                elif '前' in solar_season or '头' in solar_season:
+                    first_month = 1
+                    second_month = 9
+                elif '后' in solar_season:
+                    first_month = 4
+                    second_month = 12
+                else:
+                    first_month = 7
+                    second_month = 9
+            elif '4' in solar_season or '四' in solar_season:
+                # 4季度、第四季度
+                first_month = 10
+                second_month = 12
+            elif '前两' in solar_season or '头两' in solar_season:
+                first_month = 1
+                second_month = 6
+            elif '后两' in solar_season:
+                first_month = 7
+                second_month = 12
+            else:
+                raise ValueError('The given time string `{}` is illegal.'.format(time_string))
+
+            first_time_point.month = first_month
+            second_time_point.month = second_month
+
+        first_time_handler = first_time_point.handler()
+        second_time_handler = second_time_point.handler()
+
+        return first_time_handler, second_time_handler, 'time_span', 'accurate'
 
     def normalize_year_solar_season(self, time_string):
         """ 解析 年/季度(公历) 时间
@@ -768,6 +942,69 @@ class TimeParser(object):
             elif '后两' in solar_season:
                 first_month = 7
                 second_month = 12
+            else:
+                raise ValueError('The given time string `{}` is illegal.'.format(time_string))
+
+            first_time_point.month = first_month
+            second_time_point.month = second_month
+
+        first_time_handler = first_time_point.handler()
+        second_time_handler = second_time_point.handler()
+
+        return first_time_handler, second_time_handler, 'time_span', 'accurate'
+
+    def normalize_limit_year_span_month(self, time_string):
+        """ 解析 限定年/前n个月 时间
+
+        :return:
+        """
+        year = YEAR_PATTERNS[4].search(time_string)
+        month = MONTH_PATTERNS[3].search(time_string)
+
+        first_time_point = TimePoint()
+        second_time_point = TimePoint()
+
+        if year is not None:
+            year_string = year.group(1)
+            if '大前' in year_string:
+                first_time_point.year = self.time_base_handler[0] - 3
+                second_time_point.year = self.time_base_handler[0] - 3
+            elif '前' in year_string:
+                first_time_point.year = self.time_base_handler[0] - 2
+                second_time_point.year = self.time_base_handler[0] - 2
+            elif '去' in year_string:
+                first_time_point.year = self.time_base_handler[0] - 1
+                second_time_point.year = self.time_base_handler[0] - 1
+            elif '今' in year_string or '同' in time_string or '当' in time_string or '本' in time_string:
+                first_time_point.year = self.time_base_handler[0]
+                second_time_point.year = self.time_base_handler[0]
+            elif '明' in year_string or '次' in year_string:
+                first_time_point.year = self.time_base_handler[0] + 1
+                second_time_point.year = self.time_base_handler[0] + 1
+            elif '后' in year_string:
+                first_time_point.year = self.time_base_handler[0] + 2
+                second_time_point.year = self.time_base_handler[0] + 2
+            else:
+                raise ValueError('The given time string `{}` is illegal.'.format(time_string))
+
+        if month is not None:
+            span_month = month.group()
+            if '首' not in span_month:
+                month_num = MONTH_NUM_PATTERN.search(span_month)
+                month_num = self._char_num2num(month_num.group())
+
+            if '前' in span_month or '头' in span_month:
+                first_month = 1
+                second_month = month_num
+            elif '后' in span_month:
+                first_month = 13 - month_num
+                second_month = 12
+            elif '第' in span_month:
+                first_month = month_num
+                second_month = month_num
+            elif '首' in span_month:
+                first_month = 1
+                second_month = 1
             else:
                 raise ValueError('The given time string `{}` is illegal.'.format(time_string))
 
@@ -867,7 +1104,7 @@ class TimeParser(object):
 
         if month is not None:
             blur_month = month.group()
-            # '初|[一]开年|末|尾|终|底|暑假|寒假|[上|下]半年|'
+            # '初|[一]开年|末|尾|终|底|暑假|寒假|[上|下]半年|[前中后]期'
             if '初' in blur_month:
                 first_month = 1
                 second_month = 2
@@ -883,12 +1120,21 @@ class TimeParser(object):
             elif '下半年' in blur_month:
                 first_month = 7
                 second_month = 12
-            elif '暑假' in blur_month:  # 暑假一般在 7，8月，非准确时间
+            elif '暑' in blur_month:  # 暑假一般在 7，8月，非准确时间
                 first_month = 7
                 second_month = 8
-            elif '寒假' in blur_month:  # 寒假一般在 2月，非准确时间
+            elif '寒' in blur_month:  # 寒假一般在 2月，非准确时间
                 first_month = 2
                 second_month = 2
+            elif '前期' in blur_month:
+                first_month = 1
+                second_month = 3
+            elif '中期' in blur_month:
+                first_month = 4
+                second_month = 9
+            elif '后期' in blur_month:
+                first_month = 10
+                second_month = 12
             else:
                 raise ValueError('The given time string `{}` is illegal.'.format(time_string))
 
@@ -905,11 +1151,8 @@ class TimeParser(object):
 
         :return:
         """
-        year_pattern = YEAR_PATTERNS[4]
-        month_pattern = MONTH_PATTERNS[2]
-
-        year = year_pattern.search(time_string)
-        month = month_pattern.search(time_string)
+        year = YEAR_PATTERNS[4].search(time_string)
+        month = MONTH_PATTERNS[2].search(time_string)
 
         first_time_point = TimePoint()
         second_time_point = TimePoint()
@@ -955,10 +1198,10 @@ class TimeParser(object):
             elif '下半年' in blur_month:
                 first_month = 7
                 second_month = 12
-            elif '暑假' in blur_month:  # 暑假一般在 7，8月，非准确时间
+            elif '暑' in blur_month:  # 暑假一般在 7，8月，非准确时间
                 first_month = 7
                 second_month = 8
-            elif '寒假' in blur_month:  # 寒假一般在 2月，非准确时间
+            elif '寒' in blur_month:  # 寒假一般在 2月，非准确时间
                 first_month = 2
                 second_month = 2
             else:
@@ -972,8 +1215,8 @@ class TimeParser(object):
 
         return first_time_handler, second_time_handler, 'time_span', 'blur'
 
-    def normalize_blur_month_day(self, time_string):
-        """ 解析 限制年/模糊月份 时间
+    def normalize_limit_month_day(self, time_string):
+        """ 解析 限制月份、日 时间
 
         :return:
         """
@@ -1007,9 +1250,9 @@ class TimeParser(object):
                 else:
                     first_time_point.month = self.time_base_handler[1] + 1
                     second_time_point.month = self.time_base_handler[1] + 1
-            elif '同' in month_string:
-                first_time_point.year = self.time_base_handler[1]
-                second_time_point.year = self.time_base_handler[1]
+            elif '同' in month_string or '本' in month_string:
+                first_time_point.month = self.time_base_handler[1]
+                second_time_point.month = self.time_base_handler[1]
             else:
                 raise ValueError('The given time string `{}` is illegal.'.format(time_string))
 
@@ -1021,7 +1264,79 @@ class TimeParser(object):
         first_time_handler = first_time_point.handler()
         second_time_handler = second_time_point.handler()
 
-        return first_time_handler, second_time_handler, 'time_span',\
+        return first_time_handler, second_time_handler, 'time_point',\
+            'blur' if first_time_handler[2] < 0 else 'accurate'
+
+    def normalize_limit_month_blur_day(self, time_string):
+        """ 解析 限制月份、模糊日 时间
+
+        :return:
+        """
+        month = MONTH_PATTERNS[5].search(time_string)
+        blur_day = DAY_PATTERNS[4].search(time_string)
+
+        first_time_point = TimePoint()
+        second_time_point = TimePoint()
+
+        # 此处无年份，按照 time_base 获取
+        first_time_point.year = self.time_base_handler[0]
+        second_time_point.year = self.time_base_handler[0]
+
+        if month is not None:
+            month_string = month.group()
+            if '上' in month_string:
+                if self.time_base_handler[1] == 1:
+                    first_time_point.year -= 1
+                    second_time_point.year -= 1
+                    first_time_point.month = 12
+                    second_time_point.month = 12
+                else:
+                    first_time_point.month = self.time_base_handler[1] - 1
+                    second_time_point.month = self.time_base_handler[1] - 1
+            elif '下' in month_string:
+                if self.time_base_handler[1] == 12:
+                    first_time_point.year += 1
+                    second_time_point.year += 1
+                    first_time_point.month = 1
+                    second_time_point.month = 1
+                else:
+                    first_time_point.month = self.time_base_handler[1] + 1
+                    second_time_point.month = self.time_base_handler[1] + 1
+            elif '同' in month_string or '本' in month_string:
+                first_time_point.month = self.time_base_handler[1]
+                second_time_point.month = self.time_base_handler[1]
+            else:
+                raise ValueError('The given time string `{}` is illegal.'.format(time_string))
+
+        if blur_day:
+            blur_day_string = blur_day.group()
+            if '上旬' in blur_day_string:
+                first_day = 1
+                second_day = 10
+            elif '中旬' in blur_day_string:
+                first_day = 11
+                second_day = 20
+            elif '下旬' in blur_day_string:
+                first_day = 11
+                second_day = -1
+            elif '初' in blur_day_string:
+                first_day = 1
+                second_day = 5  #([上中下]旬|初|中|底|末)
+            elif '中' in blur_day_string:
+                first_day = 10
+                second_day = 20
+            elif '底' in blur_day_string or '末' in blur_day_string:
+                first_day = 25
+                second_day = -1
+            else:
+                raise ValueError('can not parse `{}`.'.format(time_string))
+            first_time_point.day = int(first_day)
+            second_time_point.day = int(second_day)
+
+        first_time_handler = first_time_point.handler()
+        second_time_handler = second_time_point.handler()
+
+        return first_time_handler, second_time_handler, 'time_point',\
             'blur' if first_time_handler[2] < 0 else 'accurate'
 
     def normalize_century_year(self, time_string):
@@ -1567,18 +1882,76 @@ class TimeParser(object):
 
         return first_time_handler, second_time_handler, 'time_span', 'accurate'
 
-    def normalize_year_month_xun(self, time_string):
-        """ 解析 `年、月、旬` 时间
+    def normalize_limit_year_lunar_season(self, time_string):
+        """ 解析 限定年/季节(农历) 时间
 
         :return:
         """
-        year_pattern = YEAR_PATTERNS[8]
-        month_pattern = MONTH_PATTERNS[0]
-        xun_pattern = DAY_PATTERNS[4]
+        year = YEAR_PATTERNS[4].search(time_string)
+        season = DAY_PATTERNS[3].search(time_string)
 
-        year = year_pattern.search(time_string)
-        month = month_pattern.search(time_string)
-        xun = xun_pattern.search(time_string)
+        first_time_point = TimePoint()
+        second_time_point = TimePoint()
+
+        if year is not None:
+            year_string = year.group(1)
+            if '大前' in year_string:
+                first_time_point.year = self.time_base_handler[0] - 3
+                second_time_point.year = self.time_base_handler[0] - 3
+            elif '前' in year_string:
+                first_time_point.year = self.time_base_handler[0] - 2
+                second_time_point.year = self.time_base_handler[0] - 2
+            elif '去' in year_string:
+                first_time_point.year = self.time_base_handler[0] - 1
+                second_time_point.year = self.time_base_handler[0] - 1
+            elif '今' in year_string or '同' in time_string or '当' in time_string or '本' in time_string:
+                first_time_point.year = self.time_base_handler[0]
+                second_time_point.year = self.time_base_handler[0]
+            elif '明' in year_string or '次' in year_string:
+                first_time_point.year = self.time_base_handler[0] + 1
+                second_time_point.year = self.time_base_handler[0] + 1
+            elif '后' in year_string:
+                first_time_point.year = self.time_base_handler[0] + 2
+                second_time_point.year = self.time_base_handler[0] + 2
+            else:
+                raise ValueError('The given time string `{}` is illegal.'.format(time_string))
+
+        if season is not None:
+            solar_season = season.group()
+            if '春' in solar_season:
+                first_month, first_day = self._parse_solar_terms(first_time_point.year, '立春')
+                second_month, second_day = self._parse_solar_terms(first_time_point.year, '立夏')
+            elif '夏' in solar_season:
+                first_month, first_day = self._parse_solar_terms(first_time_point.year, '立夏')
+                second_month, second_day = self._parse_solar_terms(first_time_point.year, '立秋')
+            elif '秋' in solar_season:
+                first_month, first_day = self._parse_solar_terms(first_time_point.year, '立秋')
+                second_month, second_day = self._parse_solar_terms(first_time_point.year, '立冬')
+            elif '冬' in solar_season:
+                first_month, first_day = self._parse_solar_terms(first_time_point.year, '立冬')
+                second_month, second_day = self._parse_solar_terms(first_time_point.year, '立春')
+                second_time_point.year += 1
+            else:
+                raise ValueError('the season string {} is illegal.'.format(time_string))
+
+            first_time_point.month = int(first_month)
+            second_time_point.month = int(second_month)
+            first_time_point.day = int(first_day)
+            second_time_point.day = int(second_day) - 1
+
+        first_time_handler = first_time_point.handler()
+        second_time_handler = second_time_point.handler()
+
+        return first_time_handler, second_time_handler, 'time_span', 'accurate'
+
+    def normalize_year_month_blur_day(self, time_string):
+        """ 解析 `年、月、模糊 日` 时间
+
+        :return:
+        """
+        year = YEAR_PATTERNS[8].search(time_string)
+        month = MONTH_PATTERNS[0].search(time_string)
+        blur_day = DAY_PATTERNS[4].search(time_string)
 
         first_time_point = TimePoint()
         second_time_point = TimePoint()
@@ -1603,26 +1976,106 @@ class TimeParser(object):
             first_time_point.month = month_string
             second_time_point.month = month_string
 
-        if xun:
-            xun_string = xun.group()
-            if '上旬' in xun_string:
+        if blur_day:
+            blur_day_string = blur_day.group()
+            if '上旬' in blur_day_string:
                 first_day = 1
                 second_day = 10
-            elif '中旬' in xun_string:
+            elif '中旬' in blur_day_string:
                 first_day = 11
                 second_day = 20
-            elif '下旬' in xun_string:
+            elif '下旬' in blur_day_string:
                 first_day = 11
                 second_day = -1
+            elif '初' in blur_day_string:
+                first_day = 1
+                second_day = 5  #([上中下]旬|初|中|底|末)
+            elif '中' in blur_day_string:
+                first_day = 10
+                second_day = 20
+            elif '底' in blur_day_string or '末' in blur_day_string:
+                first_day = 25
+                second_day = -1
             else:
-                raise ValueError()
+                raise ValueError('can not parse `{}`.'.format(time_string))
             first_time_point.day = int(first_day)
             second_time_point.day = int(second_day)
 
         first_time_handler = first_time_point.handler()
         second_time_handler = second_time_point.handler()
 
-        return first_time_handler, second_time_handler, 'time_span', 'accurate'
+        return first_time_handler, second_time_handler, 'time_span', 'blur'
+
+    def normalize_limit_year_month_blur_day(self, time_string):
+        """ 解析 `年、月、模糊 日` 时间
+
+        :return:
+        """
+        year = YEAR_PATTERNS[4].search(time_string)
+        month = MONTH_PATTERNS[0].search(time_string)
+        blur_day = DAY_PATTERNS[4].search(time_string)
+
+        first_time_point = TimePoint()
+        second_time_point = TimePoint()
+
+        if year is not None:
+            year_string = year.group(1)
+            if '大前' in year_string:
+                first_time_point.year = self.time_base_handler[0] - 3
+                second_time_point.year = self.time_base_handler[0] - 3
+            elif '前' in year_string:
+                first_time_point.year = self.time_base_handler[0] - 2
+                second_time_point.year = self.time_base_handler[0] - 2
+            elif '去' in year_string:
+                first_time_point.year = self.time_base_handler[0] - 1
+                second_time_point.year = self.time_base_handler[0] - 1
+            elif '今' in year_string or '同' in time_string or '当' in time_string or '本' in time_string:
+                first_time_point.year = self.time_base_handler[0]
+                second_time_point.year = self.time_base_handler[0]
+            elif '明' in year_string or '次' in year_string:
+                first_time_point.year = self.time_base_handler[0] + 1
+                second_time_point.year = self.time_base_handler[0] + 1
+            elif '后' in year_string:
+                first_time_point.year = self.time_base_handler[0] + 2
+                second_time_point.year = self.time_base_handler[0] + 2
+            else:
+                raise ValueError('The given time string `{}` is illegal.'.format(time_string))
+
+        if month:
+            month_string = month.group(1)
+            month_string = self._char_num2num(month_string)
+            first_time_point.month = month_string
+            second_time_point.month = month_string
+
+        if blur_day:
+            blur_day_string = blur_day.group()
+            if '上旬' in blur_day_string:
+                first_day = 1
+                second_day = 10
+            elif '中旬' in blur_day_string:
+                first_day = 11
+                second_day = 20
+            elif '下旬' in blur_day_string:
+                first_day = 11
+                second_day = -1
+            elif '初' in blur_day_string:
+                first_day = 1
+                second_day = 5  #([上中下]旬|初|中|底|末)
+            elif '中' in blur_day_string:
+                first_day = 10
+                second_day = 20
+            elif '底' in blur_day_string or '末' in blur_day_string:
+                first_day = 25
+                second_day = -1
+            else:
+                raise ValueError('can not parse `{}`.'.format(time_string))
+            first_time_point.day = int(first_day)
+            second_time_point.day = int(second_day)
+
+        first_time_handler = first_time_point.handler()
+        second_time_handler = second_time_point.handler()
+
+        return first_time_handler, second_time_handler, 'time_span', 'blur'
 
     def normalize_standard_week_day(self, time_string):
         """ 解析 `标准星期 N` 时间
@@ -2212,14 +2665,14 @@ class TimeParser(object):
                 h += 12
             return h
 
-        colon_num = time_string.count(':')
+        colon_num = len(HMS_SEGS.findall(time_string))
         if colon_num == 2:
-            hour, minute, second = time_string.split(':')
+            hour, minute, second = HMS_SEGS.split(time_string)
             if hour_limitation:
                 hour = convert_hour(hour, hour_limit_string)
 
         elif colon_num == 1:
-            first_int, second_int = time_string.split(':')
+            first_int, second_int = HMS_SEGS.split(time_string)
             if int(first_int) == 24 and int(second_int) == 0:
                 hour = 24
                 minute = 0
@@ -2336,8 +2789,11 @@ class TimeParser(object):
             elif hour_string == '傍晚':
                 first_time_point.hour = 13
                 second_time_point.hour = 17
+            elif hour_string == '晚':
+                first_time_point.hour = 18
+                second_time_point.hour = 23
             elif hour_string == '晚上':
-                first_time_point.hour = 17
+                first_time_point.hour = 18
                 second_time_point.hour = 23
             elif hour_string == '晚间':
                 first_time_point.hour = 20
@@ -2598,14 +3054,6 @@ class TimeParser(object):
                 lunar_time_handler[2], leap_month)
             return string2handler(solar_time_handler),\
                    string2handler(solar_time_handler)
-
-    @staticmethod
-    def _convert_solar2lunar(solar_time_handler):
-        """
-
-        :param solar_time_handler:
-        :return:
-        """
 
     def _parse_solar_terms(self, year, solar_term):
         """解析24节气
