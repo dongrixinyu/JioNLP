@@ -226,14 +226,23 @@ class TestTimeParser(unittest.TestCase):
             ['夜间至次日上午', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-06-14 20:00:00', '2021-06-15 11:59:59']}],
             ['当日午夜', 1623604000, {'type': 'time_point', 'definition': 'blur', 'time': ['2021-06-14 00:00:00', '2021-06-14 00:59:59']}],
 
+            # 时间段
+            ['四个星期', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'year': 0, 'month': 0, 'day': 28.0, 'hour': 0, 'minute': 0, 'second': 0}}],
+            ['四个多星期', None, {'type': 'time_delta', 'definition': 'blur', 'time': {'year': 0, 'month': 0, 'day': 28.0, 'hour': 0, 'minute': 0, 'second': 0}}],
+            ['两年半', None, {'type': 'time_delta', 'definition': 'blur', 'time': {'year': 2.5, 'month': 0, 'day': 0, 'hour': 0, 'minute': 0, 'second': 0}}],
+            ['17个多月', None, {'type': 'time_delta', 'definition': 'blur', 'time': {'year': 0, 'month': 17.0, 'day': 0, 'hour': 0, 'minute': 0, 'second': 0}}],
+            ['四年六个月', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'year': 4.0, 'month': 6.0, 'day': 0, 'hour': 0, 'minute': 0, 'second': 0}}],
+            ['70多分钟', None, {'type': 'time_delta', 'definition': 'blur', 'time': {'year': 0, 'month': 0, 'day': 0, 'hour': 0, 'minute': 70.0, 'second': 0}}],
+            ['270天', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'year': 0, 'month': 0, 'day': 270.0, 'hour': 0, 'minute': 0, 'second': 0}}],
+            ['27分钟7秒', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'year': 0, 'month': 0, 'day': 0, 'hour': 0, 'minute': 27.0, 'second': 7.0}}],
+            ['2621.2小时', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'year': 0, 'month': 0, 'day': 0, 'hour': 2621.2, 'minute': 0, 'second': 0}}],
+
         ]
 
         for item in time_string_list:
             time_res = jio.parse_time(item[0], time_base=item[1])
             print(item[0])
             self.assertEqual(time_res, item[2])
-            # if time_res != item[2]:
-            #     print('test: ', item[0], time_res)
 
 
 if __name__ == '__main__':

@@ -260,9 +260,11 @@ HOUR_LIMIT_MINUTE_PATTERN = re.compile(
 # 其中，年、日、秒 容易引起歧义，如 `21年`，指`二十一年` 还是 `2021年`。
 # `18日`，指`18号`，还是`18天`。这里严格规定，日指时间点，天指时间段。
 # `58秒`，指`五十八秒`的时间，还是`58秒`时刻。
+DELTA_NUM_STRING = r'(([一两二三四五六七八九十百千万零]+点)?[一两二三四五六七八九十百千万零]+|(\d+\.)?\d+)'
+DELTA_NUM_PATTERN = re.compile(DELTA_NUM_STRING)
 DELTA_PATTERN_STRING = ''.join([
-    r'((([一两二三四五六七八九十百千万零]+点)?[一两二三四五六七八九十百千万零]+|(\d+\.)?\d+)',
-    r'[多余]?(年|个(多)?月|(个(多)?)?星期|周|天|(个(多)?)?(小时|钟头)|分钟|秒)|',
+    r'(', DELTA_NUM_STRING,
+    r'[多余]?(年|个(多)?月|(个(多)?)?星期|周|天|(个(多)?)?(小时|钟头)|分钟|秒(钟)?)|',
     r'半(年|个(多)?月|天|(个(多)?)?(小时|钟头)|分钟)|',  # 半年、半个月、半天、半个小时、半分钟
     r'[一两二三四五六七八九\d]年半|',  # 4年半
     r'[一两二三四五六七八九\d]个半月|',  # 一个半月
@@ -270,7 +272,15 @@ DELTA_PATTERN_STRING = ''.join([
     r'[一两二三四五六七八九\d]个半(小时|钟头)?)+'])  # 2个半钟头
 DELTA_PATTERN = re.compile('^' + DELTA_PATTERN_STRING + '$')
 # 将时间进行转换
-DELTA_CONVERSION_PATTERN = re.compile(DELTA_PATTERN_STRING + r'([之以]?[内前后])?')
+DELTA_POINT_CONVERSION_PATTERN = re.compile(DELTA_PATTERN_STRING + r'([之以]?[内前后])?')
+
+YEAR_DELTA_PATTERN = re.compile(DELTA_NUM_STRING + r'[多余]?年|半年|[一两二三四五六七八九\d]年半')
+MONTH_DELTA_PATTERN = re.compile(DELTA_NUM_STRING + r'(多)?个(多)?月|半个(多)?月|[一两二三四五六七八九\d]个半月')
+DAY_DELTA_PATTERN = re.compile(DELTA_NUM_STRING + r'[多余]?天|半天|[一两二三四五六七八九\d]天半')
+WEEK_DELTA_PATTERN = re.compile(DELTA_NUM_STRING + r'[多余]?((个(多)?)?星期|周)')
+HOUR_DELTA_PATTERN = re.compile(DELTA_NUM_STRING + r'[多余]?(个(多)?)?(小时|钟头)|半(个(多)?)?(小时|钟头)|[一两二三四五六七八九\d]个半(小时|钟头)?')
+MINUTE_DELTA_PATTERN = re.compile(DELTA_NUM_STRING + r'[多余]?分钟|半分钟')
+SECOND_DELTA_PATTERN = re.compile(DELTA_NUM_STRING + r'[多余]?秒(钟)?')
 
 
 # **** 年 ****
@@ -436,6 +446,20 @@ class TimePoint(object):
                 self.hour, self.minute, self.second]
 
 
+class TimeDelta(object):
+    def __init__(self):
+        self.year = 0
+        self.month = 0
+        self.day = 0
+        self.hour = 0
+        self.minute = 0
+        self.second = 0
+
+    def delta(self):
+        return [self.year, self.month, self.day,
+                self.hour, self.minute, self.second]
+
+
 class TimeParser(object):
     """将时间表达式转换为标准的时间，
     分为 time_stamp, time_span, time_period, time_delta，
@@ -536,9 +560,14 @@ class TimeParser(object):
         :return:
         """
         # 解析 time_delta，报错后，按 time_point 与 time_span 解析
-        # legal = self.parse_time_delta(time_string, time_type=time_type)
-
-
+        delta_res = self.parse_time_delta(time_string, time_type=time_type)
+        if delta_res is False:
+            pass
+        else:
+            time_delta, time_type, blur_time = delta_res
+            return {'type': time_type,
+                    'definition': blur_time,
+                    'time': time_delta.__dict__}
 
         # 解析 time_base 为 handler
         self.time_base_handler = TimeParser._convert_time_base2handler(time_base)
@@ -633,20 +662,220 @@ class TimeParser(object):
 
         return first_string, second_string
 
-    @staticmethod
-    def parse_time_delta(time_string, time_type=None):
-        """解析时间段，若可以解析，返回解析后的结果，若不可解析，则返回 None，跳转到其它类型解析 """
+    def parse_time_delta(self, time_string, time_type=None):
+        """判断字符串是否为时间段。
+        解析时间段，若可以解析，返回解析后的结果，若不可解析，则返回 None，跳转到其它类型解析 """
 
         searched_res = DELTA_PATTERN.search(time_string)
         if searched_res:
-            None
+            time_delta_handler, time_type, blur_time = \
+                self.normalize_time_delta(time_string, time_type=time_type)
 
+            return time_delta_handler, time_type, blur_time
+        else:
+            return False
 
     def normalize_time_delta(self, time_string, time_type=None):
         """解析时间段，并根据 time_type 处理模糊情况 """
+        time_delta = TimeDelta()
 
+        time_definition = 'accurate'
 
+        time_delta_second, _time_definition = self.normalize_delta_second(time_string)
+        if time_delta_second > 0:
+            time_definition = _time_definition
 
+        time_delta_minute, _time_definition = self.normalize_delta_minute(time_string)
+        if time_delta_minute > 0:
+            time_definition = _time_definition
+
+        time_delta_hour, _time_definition = self.normalize_delta_hour(time_string)
+        if time_delta_hour > 0:
+            time_definition = _time_definition
+
+        # 处理日
+        time_delta_day, _time_definition = self.normalize_delta_day(time_string)
+        if time_delta_day > 0:
+            time_definition = _time_definition
+
+        # 处理周
+        _time_delta_day, _time_definition = self.normalize_delta_week(time_string)
+        if _time_delta_day > 0:
+            time_definition = _time_definition
+        time_delta_day += _time_delta_day
+
+        # 月
+        time_delta_month, _time_definition = self.normalize_delta_month(time_string)
+        if time_delta_month > 0:
+            time_definition = _time_definition
+        # 年
+        time_delta_year, _time_definition = self.normalize_delta_year(time_string)
+        if time_delta_year > 0:
+            time_definition = _time_definition
+
+        time_delta.year = time_delta_year
+        time_delta.month = time_delta_month
+        time_delta.day = time_delta_day
+        time_delta.hour = time_delta_hour
+        time_delta.minute = time_delta_minute
+        time_delta.second = time_delta_second
+
+        return time_delta, 'time_delta', time_definition
+
+    def normalize_delta_year(self, time_string):
+        """ 将 time_delta 的年归一化 """
+        year_delta = YEAR_DELTA_PATTERN.search(time_string)
+        time_delta_year = 0
+        time_definition = 'accurate'
+        if year_delta:
+            year_delta_string = year_delta.group()
+            year_delta_num = DELTA_NUM_PATTERN.search(year_delta_string)
+            if year_delta_num:
+                year_delta_num_string = year_delta_num.group()
+                time_delta_year = float(self._char_num2num(year_delta_num_string))
+            if '半' in time_string:
+                if time_delta_year > 0:
+                    time_delta_year += 0.5
+                else:
+                    time_delta_year = 0.5
+                time_definition = 'blur'
+
+            if '多' in time_string or '余' in time_string:
+                time_definition = 'blur'
+        return time_delta_year, time_definition
+
+    def normalize_delta_month(self, time_string):
+        """ 将 time_delta 的月归一化 """
+        month_delta = MONTH_DELTA_PATTERN.search(time_string)
+        time_delta_month = 0
+        time_definition = 'accurate'
+        if month_delta:
+            month_delta_string = month_delta.group()
+            month_delta_num = DELTA_NUM_PATTERN.search(month_delta_string)
+            if month_delta_num:
+                month_delta_num_string = month_delta_num.group()
+                time_delta_month = float(self._char_num2num(month_delta_num_string))
+            if '半' in time_string:
+                if time_delta_month > 0:
+                    time_delta_month += 0.5
+                else:
+                    time_delta_month = 0.5
+                time_definition = 'blur'
+
+            if '多' in time_string or '余' in time_string:
+                time_definition = 'blur'
+        return time_delta_month, time_definition
+
+    def normalize_delta_week(self, time_string):
+        """ 将 time_delta 的星期归一化 """
+        week_delta = WEEK_DELTA_PATTERN.search(time_string)
+        time_delta_day = 0
+        time_definition = 'accurate'
+        if week_delta:
+            week_delta_string = week_delta.group()
+            week_delta_num = DELTA_NUM_PATTERN.search(week_delta_string)
+            if week_delta_num:
+                week_delta_num_string = week_delta_num.group()
+                time_delta_week = float(self._char_num2num(week_delta_num_string))
+                time_delta_day = time_delta_week * 7
+            if '半' in time_string:
+                if time_delta_day > 0:
+                    time_delta_day += 3.5
+                else:
+                    time_delta_day = 3.5
+                time_definition = 'blur'
+
+            if '多' in time_string or '余' in time_string:
+                time_definition = 'blur'
+        return time_delta_day, time_definition
+
+    def normalize_delta_day(self, time_string):
+        """ 将 time_delta 的日归一化 """
+        day_delta = DAY_DELTA_PATTERN.search(time_string)
+        time_delta_day = 0
+        time_definition = 'accurate'
+        if day_delta:
+            day_delta_string = day_delta.group()
+            day_delta_num = DELTA_NUM_PATTERN.search(day_delta_string)
+            if day_delta_num:
+                day_delta_num_string = day_delta_num.group()
+                time_delta_day = float(self._char_num2num(day_delta_num_string))
+            if '半' in time_string:
+                if time_delta_day > 0:
+                    time_delta_day += 0.5
+                else:
+                    time_delta_day = 0.5
+                time_definition = 'blur'
+
+            if '多' in time_string or '余' in time_string:
+                time_definition = 'blur'
+        return time_delta_day, time_definition
+
+    def normalize_delta_hour(self, time_string):
+        """ 将 time_delta 的小时归一化 """
+        hour_delta = HOUR_DELTA_PATTERN.search(time_string)
+        time_delta_hour = 0
+        time_definition = 'accurate'
+        if hour_delta:
+            hour_delta_string = hour_delta.group()
+            hour_delta_num = DELTA_NUM_PATTERN.search(hour_delta_string)
+            if hour_delta_num:
+                hour_delta_num_string = hour_delta_num.group()
+                time_delta_hour = float(self._char_num2num(hour_delta_num_string))
+            if '半' in time_string:
+                if time_delta_hour > 0:
+                    time_delta_hour += 0.5
+                else:
+                    time_delta_hour = 0.5
+                time_definition = 'blur'
+
+            if '多' in time_string or '余' in time_string:
+                time_definition = 'blur'
+        return time_delta_hour, time_definition
+
+    def normalize_delta_minute(self, time_string):
+        """ 将 time_delta 的分钟归一化 """
+        minute_delta = MINUTE_DELTA_PATTERN.search(time_string)
+        time_delta_minute = 0
+        time_definition = 'accurate'
+        if minute_delta:
+            minute_delta_string = minute_delta.group()
+            minute_delta_num = DELTA_NUM_PATTERN.search(minute_delta_string)
+            if minute_delta_num:
+                minute_delta_num_string = minute_delta_num.group()
+                time_delta_minute = float(self._char_num2num(minute_delta_num_string))
+            if '半' in time_string:
+                if time_delta_minute > 0:
+                    time_delta_minute += 0.5
+                else:
+                    time_delta_minute = 0.5
+                time_definition = 'blur'
+
+            if '多' in time_string or '余' in time_string:
+                time_definition = 'blur'
+        return time_delta_minute, time_definition
+
+    def normalize_delta_second(self, time_string):
+        """ 将 time_delta 的分钟归一化 """
+        second_delta = SECOND_DELTA_PATTERN.search(time_string)
+        time_delta_second = 0
+        time_definition = 'accurate'
+        if second_delta:
+            second_delta_string = second_delta.group()
+            second_delta_num = DELTA_NUM_PATTERN.search(second_delta_string)
+            if second_delta_num:
+                second_delta_num_string = second_delta_num.group()
+                time_delta_second = float(self._char_num2num(second_delta_num_string))
+            if '半' in time_string:
+                if time_delta_second > 0:
+                    time_delta_second += 0.5
+                else:
+                    time_delta_second = 0.5
+                time_definition = 'blur'
+
+            if '多' in time_string or '余' in time_string:
+                time_definition = 'blur'
+        return time_delta_second, time_definition
 
     def parse_time_point(self, time_string, time_base_handler):
         """解析时间点字符串，
@@ -811,11 +1040,11 @@ class TimeParser(object):
 
         if month is not None:
             month_string = month.group(1)
-            time_point.month = self._char_num2num(month_string)
+            time_point.month = int(self._char_num2num(month_string))
 
         if day is not None:
             day_string = day.group(1)
-            time_point.day = self._char_num2num(day_string)
+            time_point.day = int(self._char_num2num(day_string))
 
         time_handler = time_point.handler()
 
@@ -1045,7 +1274,7 @@ class TimeParser(object):
             span_month = month.group()
             if '首' not in span_month:
                 month_num = MONTH_NUM_PATTERN.search(span_month)
-                month_num = self._char_num2num(month_num.group())
+                month_num = int(self._char_num2num(month_num.group()))
 
             if '前' in span_month or '头' in span_month:
                 first_month = 1
@@ -1103,7 +1332,7 @@ class TimeParser(object):
             span_month = month.group()
             if '首' not in span_month:
                 month_num = MONTH_NUM_PATTERN.search(span_month)
-                month_num = self._char_num2num(month_num.group())
+                month_num = int(self._char_num2num(month_num.group()))
 
             if '前' in span_month or '头' in span_month:
                 first_month = 1
@@ -1316,8 +1545,8 @@ class TimeParser(object):
 
         if day:
             day_string = day.group(1)
-            first_time_point.day = self._char_num2num(day_string)
-            second_time_point.day = self._char_num2num(day_string)
+            first_time_point.day = int(self._char_num2num(day_string))
+            second_time_point.day = int(self._char_num2num(day_string))
 
         first_time_handler = first_time_point.handler()
         second_time_handler = second_time_point.handler()
@@ -1464,11 +1693,11 @@ class TimeParser(object):
             if '上世纪' in time_string:
                 century = 20
             else:
-                century = self._char_num2num(century.group())
+                century = int(self._char_num2num(century.group()))
             # print(century)
 
         if decade is not None:
-            decade = self._char_num2num(decade.group())
+            decade = int(self._char_num2num(decade.group()))
             # print(decade)
 
         # century 与 decade 不可能同时为空，否则该条不会被匹配
@@ -1569,11 +1798,11 @@ class TimeParser(object):
 
         if month is not None:
             month_string = month.group(1)
-            time_point.month = self._char_num2num(month_string)
+            time_point.month = int(self._char_num2num(month_string))
 
         if day is not None:
             day_string = day.group(1)
-            time_point.day = self._char_num2num(day_string)
+            time_point.day = int(self._char_num2num(day_string))
 
         time_handler = time_point.handler()
 
@@ -1601,7 +1830,7 @@ class TimeParser(object):
 
         if blur_year_1 is not None:
             year_num = YEAR_NUM_PATTERN.search(time_string)
-            year_num = self._char_num2num(year_num.group())
+            year_num = int(self._char_num2num(year_num.group()))
 
             if '几' in time_string or ('多' in time_string and (time_string.index('多') < time_string.index('年'))):
                 # `十多年前` 与 `一年多以前` 中，多和 年的位置变化
@@ -1800,7 +2029,7 @@ class TimeParser(object):
                 leap_month = True
             lunar_month_string = lunar_month_string\
                 .replace('正', '一').replace('冬', '十一').replace('腊', '十二').replace('闰', '')
-            lunar_month_string = self._char_num2num(lunar_month_string)
+            lunar_month_string = int(self._char_num2num(lunar_month_string))
 
             lunar_time_point.month = lunar_month_string
 
@@ -1809,7 +2038,7 @@ class TimeParser(object):
             lunar_day_string = lunar_day.group(0)
             lunar_day_string = lunar_day_string\
                 .replace('初', '').replace('廿', '二十')
-            lunar_day_string = self._char_num2num(lunar_day_string)
+            lunar_day_string = int(self._char_num2num(lunar_day_string))
 
             lunar_time_point.day = lunar_day_string
 
@@ -1865,7 +2094,7 @@ class TimeParser(object):
                 leap_month = True
             lunar_month_string = lunar_month_string\
                 .replace('正', '一').replace('冬', '十一').replace('腊', '十二').replace('闰', '')
-            lunar_month_string = self._char_num2num(lunar_month_string)
+            lunar_month_string = int(self._char_num2num(lunar_month_string))
 
             lunar_time_point.month = lunar_month_string
 
@@ -1874,7 +2103,7 @@ class TimeParser(object):
             lunar_day_string = lunar_day.group(0)
             lunar_day_string = lunar_day_string\
                 .replace('初', '').replace('廿', '二十')
-            lunar_day_string = self._char_num2num(lunar_day_string)
+            lunar_day_string = int(self._char_num2num(lunar_day_string))
 
             lunar_time_point.day = lunar_day_string
 
@@ -2075,7 +2304,7 @@ class TimeParser(object):
 
         if month:
             month_string = month.group(1)
-            month_string = self._char_num2num(month_string)
+            month_string = int(self._char_num2num(month_string))
             first_time_point.month = month_string
             second_time_point.month = month_string
 
@@ -2146,7 +2375,7 @@ class TimeParser(object):
 
         if month:
             month_string = month.group(1)
-            month_string = self._char_num2num(month_string)
+            month_string = int(self._char_num2num(month_string))
             first_time_point.month = month_string
             second_time_point.month = month_string
 
@@ -2293,7 +2522,7 @@ class TimeParser(object):
             week_string = week_1.group()
             week_num = MONTH_NUM_PATTERN.search(week_string)
             if week_num:
-                week_num = self._char_num2num(week_num.group())
+                week_num = int(self._char_num2num(week_num.group()))
             else:
                 week_num = 0
 
@@ -2323,7 +2552,7 @@ class TimeParser(object):
             week_string = week_2.group()
             week_num = MONTH_NUM_PATTERN.search(week_string)
             if week_num:
-                week_num = self._char_num2num(week_num.group())
+                week_num = int(self._char_num2num(week_num.group()))
             else:
                 week_num = 0
 
@@ -2399,7 +2628,7 @@ class TimeParser(object):
             month_string = month.group()
             month_num = MONTH_NUM_PATTERN.search(month_string)
             if month_num:
-                month_num = self._char_num2num(month_num.group())
+                month_num = int(self._char_num2num(month_num.group()))
                 time_point.month = month_num
             else:
                 raise ValueError('month string is not in `{}`.'.format(time_string))
@@ -2409,7 +2638,7 @@ class TimeParser(object):
         if week_res and week_day:
             week_res = week_res.group()
             week_order_num = MONTH_NUM_PATTERN.search(week_res)
-            week_order_num = self._char_num2num(week_order_num.group())
+            week_order_num = int(self._char_num2num(week_order_num.group()))
             week_day_string = week_day.group()
 
             one_week = datetime.timedelta(days=7)
@@ -2720,7 +2949,7 @@ class TimeParser(object):
 
         if hour:
             hour_string = hour.group(1)
-            hour = self._char_num2num(hour_string)
+            hour = int(self._char_num2num(hour_string))
             # (凌晨|清[晨|早]|早[晨上]?|[上中下]午|(傍)?晚[间上]?|[深|半]夜)
             hour_limitation = HOUR_PATTERNS[1].search(time_string)
             if hour_limitation:
@@ -2738,11 +2967,11 @@ class TimeParser(object):
 
         if minute:
             minute_string = minute.group(1)
-            time_point.minute = self._char_num2num(minute_string)
+            time_point.minute = int(self._char_num2num(minute_string))
 
         if second:
             second_string = second.group(1)
-            time_point.second = self._char_num2num(second_string)
+            time_point.second = int(self._char_num2num(second_string))
 
         time_handler = time_point.handler()
 
@@ -2825,7 +3054,7 @@ class TimeParser(object):
 
         if hour:
             hour_string = hour.group(1)
-            hour = self._char_num2num(hour_string)
+            hour = int(self._char_num2num(hour_string))
             if hour_limitation:
                 hour_limit_string = hour_limitation.group()
                 hour = convert_hour(hour, hour_limit_string)
@@ -2838,7 +3067,7 @@ class TimeParser(object):
             elif '刻' in limit_minute_string:
                 num = MONTH_NUM_PATTERN.search(limit_minute_string)
                 if num:
-                    num = self._char_num2num(num.group())
+                    num = int(self._char_num2num(num.group()))
                     if num == 1:
                         time_point.minute = 15
                     elif num == 2:
@@ -2931,7 +3160,7 @@ class TimeParser(object):
         if res_num == 'null':
             return 0
         else:
-            return int(float(res_num[:-1]))
+            return float(res_num[:-1])
 
     def _char_year2num(self, char_year):
         """ 将 二零一九 年份转化为 2019

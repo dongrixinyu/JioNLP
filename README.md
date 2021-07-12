@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-4k-yellow" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.22-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.23-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -34,15 +34,19 @@
 #### jio.parse_time 给定时间字符串，解析其为时间戳、时长等。
 
 ``` python
->>> import time
->>> import jionlp as jio
->>> res = jio.parse_time('今年9月', time_base={'year': 2021})
->>> print(res)
->>> res = jio.parse_time('零三年元宵节晚上8点半', time_base=time.time())
->>> print(res)
+import time
+import jionlp as jio
+res = jio.parse_time('今年9月', time_base={'year': 2021})
+print(res)
+res = jio.parse_time('零三年元宵节晚上8点半', time_base=time.time())
+print(res)
+res = jio.parse_time('一万个小时')
+print(res)
 
 # {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-09-01 00:00:00', '2021-09-30 23:59:59']}
 # {'type': 'time_point', 'definition': 'accurate', 'time': ['2003-02-15 20:30:00', '2003-02-15 20:30:59']}
+# {'type': 'time_delta', 'definition': 'accurate', 
+#  'time': {'year': 0, 'month': 0, 'day': 0, 'hour': 10000.0, 'minute': 0, 'second': 0}}
 ```
 
 - 目前支持年、月、日、时、分、秒、星期、季节、季度、节日、农历、时间范围、模糊时间代词等解析
@@ -84,7 +88,7 @@ $ jio_help
 | 功能   | 函数   |描述   |星级   |
 |--------|-------|-------|-------|
 |[**查找帮助**](../../wiki/Gadget-说明文档#user-content-查找帮助) |help|若不知道 JioNLP 有哪些功能，可根据命令行提示键入若干关键词做搜索 | |
-|[**时间语义解析**](../../wiki/时间语义解析-说明文档#user-content-时间语义解析) |parse_time|给定时间文本，解析其对应的时间戳、时长等 |⭐|
+|[**时间语义解析**](../../wiki/时间语义解析-说明文档#user-content-时间语义解析) |parse_time|给定时间文本，解析其时间语义（时间戳、时长）等 |⭐|
 |[**关键短语抽取**](../../wiki/Gadget-说明文档#user-content-关键短语抽取) |extract_keyphrase|给定一篇文本，抽取其对应关键短语 |⭐|
 |[抽取式**文本摘要**](../../wiki/Gadget-说明文档#user-content-抽取式文本摘要) |extract_summary|给定一篇文本，抽取其对应文摘 | |
 |[**停用词过滤**](../../wiki/Gadget-说明文档#user-content-去除停用词) |remove_stopwords|给定一个文本被分词后的词 list，去除其中的停用词 |⭐|

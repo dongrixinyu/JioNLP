@@ -189,6 +189,8 @@ class BackTranslation(object):
             # 规则很多，暂按最简单操作
             orig_len = len(orig_text)
             tran_len = len(trans_line)
+            if tran_len == 0:
+                return False
             if (orig_len / tran_len) < 1 / 3 or (orig_len / tran_len) > 3:
                 return False
             else:
