@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-4k-yellow" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.23-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.24-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -25,10 +25,10 @@
 - 做 NLP 任务，需要给模型添加偏旁、拼音、词典、繁体转换信息？用 JioNLP
 #### 总之，JioNLP 提供 NLP 任务预处理功能，准确、高效、零使用门槛，并提供一步到位的查阅入口。
 
-#### 功能主要包括：文本清洗，删除HTML标签、删除异常字符、删除冗余字符，转换全角字母、数字、空格为半角，抽取及删除E-mail及域名、抽取及删除（手机号、座机号）电话号码、抽取及删除QQ号、抽取及删除括号内容、抽取及删除身份证号、抽取及删除IP地址、抽取及删除URL超链接、抽取及删除货币金额与单位，金额数字转大写汉字，解析身份证号信息、解析手机号码归属地、解析座机区号归属地、解析手机号码运营商，按行快速读写文件，（多功能）停用词过滤，（优化的）分句，地址解析，新闻地域识别，繁简体转换，汉字转拼音，汉字偏旁、字形、四角编码、五笔编码拆解，基于词典的情感分析，色情数据过滤，反动数据过滤，关键短语抽取，抽取式文本摘要，成语接龙，成语词典、歇后语词典、新华字典、新华词典、停用词典、中国地名词典、中国县级地名变更词典、世界地名词典，基于词典的NER，NER的字、词级别转换，NER的entity和tag格式转换，NER模型的预测阶段加速并行工具集，NER标注和模型预测的结果差异对比，NER标注数据集分割与统计，NER实体收集、文本分类标注数据集的分割与统计、回译数据增强、相邻近汉字换位数据增强、同音词替换数据增强、随机增删字符数据增强、实体替换数据增强、公历转农历日期、农历转公历日期
+#### 功能主要包括：文本清洗，删除HTML标签、删除异常字符、删除冗余字符，转换全角字母、数字、空格为半角，抽取及删除E-mail及域名、抽取及删除（手机号、座机号）电话号码、抽取及删除QQ号、抽取及删除括号内容、抽取及删除身份证号、抽取及删除IP地址、抽取及删除URL超链接、抽取及删除货币金额与单位，金额数字转大写汉字，时间语义解析，解析身份证号信息、解析手机号码归属地、解析座机区号归属地、解析手机号码运营商，按行快速读写文件，（多功能）停用词过滤，（优化的）分句，地址解析，新闻地域识别，繁简体转换，汉字转拼音，汉字偏旁、字形、四角编码、五笔编码拆解，基于词典的情感分析，色情数据过滤，反动数据过滤，关键短语抽取，抽取式文本摘要，成语接龙，成语词典、歇后语词典、新华字典、新华词典、停用词典、中国地名词典、中国县级地名变更词典、世界地名词典，基于词典的NER，NER的字、词级别转换，NER的entity和tag格式转换，NER模型的预测阶段加速并行工具集，NER标注和模型预测的结果差异对比，NER标注数据集分割与统计，NER实体收集、文本分类标注数据集的分割与统计、回译数据增强、相邻近汉字换位数据增强、同音词替换数据增强、随机增删字符数据增强、实体替换数据增强、公历转农历日期、农历转公历日期
 
 
-#### Update 2021-07-04
+#### Update 2021-07-18
 ## 新增 [时间语义解析](../../wiki/时间语义解析-说明文档#user-content-时间语义解析)
 
 #### jio.parse_time 给定时间字符串，解析其为时间戳、时长等。
@@ -42,18 +42,46 @@ res = jio.parse_time('零三年元宵节晚上8点半', time_base=time.time())
 print(res)
 res = jio.parse_time('一万个小时')
 print(res)
+res = jio.parse_time('100天之后', time.time())
+print(res)
+res = jio.parse_time('每周五下午4点', time.time())
+print(res)
 
 # {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-09-01 00:00:00', '2021-09-30 23:59:59']}
 # {'type': 'time_point', 'definition': 'accurate', 'time': ['2003-02-15 20:30:00', '2003-02-15 20:30:59']}
-# {'type': 'time_delta', 'definition': 'accurate', 
-#  'time': {'year': 0, 'month': 0, 'day': 0, 'hour': 10000.0, 'minute': 0, 'second': 0}}
+# {'type': 'time_delta', 'definition': 'accurate', 'time': {'hour': 10000.0}}
+# {'type': 'time_span', 'definition': 'blur', 'time': ['2021-10-22 00:00:00', 'inf']}
+# {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'day': 7}, 
+#  'point': {'time': ['2021-07-16 16:00:00', '2021-07-16 16:59:59'], 'string': '周五下午4点'}}}
 ```
 
-- 目前支持年、月、日、时、分、秒、星期、季节、季度、节日、农历、时间范围、模糊时间代词等解析
-- TODO: 周期性时间、时间段。敬请期待
+- 目前支持年月日、时分秒、星期、季节、季度、节日、农历、时间范围、时间段、时间周期、模糊时间代词等解析。
+- TODO: 细节与参数仍有待完善。
 - [关于**时间语义解析**](../../wiki/时间语义解析-说明文档)
-- 目前支持的所有测试用例参考：[测试用例](../../blob/master/test/test_time_parser.py)
+- 目前支持的所有 [测试用例](../../blob/master/test/test_time_parser.py)
 
+#### 完整示例
+![image](../../blob/master/image/time_entity.png)
+- 一般首先对文本进行时间类型的实体识别，得到如下图的时间实体。然后选定其中的 time_base(选定新闻发布时间2020-07-15 09:03:47)，即可采用本工具处理，得到结果如下：
+```
+7月15日         {'type': 'time_point', 'definition': 'accurate', 'time': ['2020-07-15 00:00:00', '2020-07-15 23:59:59']}
+今年上半年       {'type': 'time_span', 'definition': 'blur', 'time': ['2020-01-01 00:00:00', '2020-06-30 23:59:59']}
+两年            {'type': 'time_delta', 'definition': 'accurate', 'time': {'year': 2.0}}
+一季度          {'type': 'time_span', 'definition': 'accurate', 'time': ['2020-01-01 00:00:00', '2020-03-31 23:59:59']}
+二季度          {'type': 'time_span', 'definition': 'accurate', 'time': ['2020-04-01 00:00:00', '2020-06-30 23:59:59']}
+6月份           {'type': 'time_point', 'definition': 'accurate', 'time': ['2020-06-01 00:00:00', '2020-06-30 23:59:59']}
+两年            {'type': 'time_delta', 'definition': 'accurate', 'time': {'year': 2.0}}
+上半年          {'type': 'time_span', 'definition': 'blur', 'time': ['2020-01-01 00:00:00', '2020-06-30 23:59:59']}
+春节            {'type': 'time_point', 'definition': 'accurate', 'time': ['2020-01-25 00:00:00', '2020-01-25 23:59:59']}
+劳动节          {'type': 'time_point', 'definition': 'accurate', 'time': ['2020-05-01 00:00:00', '2020-05-01 23:59:59']}
+端午节          {'type': 'time_point', 'definition': 'accurate', 'time': ['2020-06-25 00:00:00', '2020-06-25 23:59:59']}
+16个月          {'type': 'time_delta', 'definition': 'accurate', 'time': {'month': 16.0}}
+从2018年至今     {'type': 'time_span', 'definition': 'accurate', 'time': ['2018-01-01 00:00:00', '2020-07-15 09:03:47']}
+1-5月份         {'type': 'time_span', 'definition': 'accurate', 'time': ['2020-01-01 00:00:00', '2020-05-31 23:59:59']}
+2020年1-5月份    {'type': 'time_span', 'definition': 'accurate', 'time': ['2020-01-01 00:00:00', '2020-05-31 23:59:59']}
+2020-07-15 09:03:47  {'type': 'time_point', 'definition': 'accurate', 'time': ['2020-07-15 09:03:47', '2020-07-15 09:03:47']}
+
+```
 
 ## 安装 Installation
 

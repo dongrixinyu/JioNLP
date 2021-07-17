@@ -8,7 +8,7 @@
 # description: Preprocessing tool for Chinese NLP
 """
 
-__version__ = '1.3.23'
+__version__ = '1.3.24'
 
 import os
 
@@ -71,7 +71,7 @@ guide = """
 │   | 2021-04-21 | add solar lunar date conversion                     |   │
 │   | 2021-06-23 | add time parser                                     |   │
 │   | 2021-07-04 | update time parser                                  |   │
-│   | 2021-07-12 | update time parser                                  |   │
+│   | 2021-07-18 | update time parser                                  |   │
 │                                                                          │
 ╰──────────────────────────────────────────────────────────────────────────╯
 """

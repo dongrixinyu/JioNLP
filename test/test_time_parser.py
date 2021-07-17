@@ -17,6 +17,17 @@ class TestTimeParser(unittest.TestCase):
               time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(1623604000)))
 
         time_string_list = [
+            # 标准数字 年、月、日、时、分、秒
+            ['2018-11-29 18:59', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2018-11-29 18:59:00', '2018-11-29 18:59:59']}],
+            ['2019-05-27 09:36:46', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2019-05-27 09:36:46', '2019-05-27 09:36:46']}],
+            ['2018-12-1209:03', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2018-12-12 09:03:00', '2018-12-12 09:03:59']}],
+            ['2019.9.6', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2019-09-06 00:00:00', '2019-09-06 23:59:59']}],
+            ['1994.01-19', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['1994-01-19 00:00:00', '1994-01-19 23:59:59']}],
+            ['1999.08-2002.02', 1623604000, {'type': 'time_span', 'definition': 'accurate', 'time': ['1999-08-01 00:00:00', '2002-02-28 23:59:59']}],
+            ['2008.03-2009', 1623604000, {'type': 'time_span', 'definition': 'accurate', 'time': ['2008-03-01 00:00:00', '2009-12-31 23:59:59']}],
+            ['2019.05.29 15:20-2020.01.12 12:10', 1623604000, {'type': 'time_span', 'definition': 'accurate', 'time': ['2019-05-29 15:20:00', '2020-01-12 12:10:59']}],
+            ['6·30', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-30 00:00:00', '2021-06-30 23:59:59']}],
+
             # 年、月、日（标准）
             ['2015年8月12日', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2015-08-12 00:00:00', '2015-08-12 23:59:59']}],
             ['15年3月2日', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2015-03-02 00:00:00', '2015-03-02 23:59:59']}],
@@ -29,6 +40,8 @@ class TestTimeParser(unittest.TestCase):
             ['十二月20号', 109329124., {'type': 'time_point', 'definition': 'accurate', 'time': ['1973-12-20 00:00:00', '1973-12-20 23:59:59']}],
             ['二零零三年十二月', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2003-12-01 00:00:00', '2003-12-31 23:59:59']}],
             ['二〇〇六年十二月', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2006-12-01 00:00:00', '2006-12-31 23:59:59']}],
+            ['2023年', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2023-01-01 00:00:00', '2023-12-31 23:59:59']}],
+            ['三三年', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2033-01-01 00:00:00', '2033-12-31 23:59:59']}],
 
             # （限定）年、季度（公历）
             ['07年第三季度', [2008, 3, 2, 0], {'type': 'time_span', 'definition': 'accurate', 'time': ['2007-07-01 00:00:00', '2007-09-30 23:59:59']}],
@@ -83,16 +96,17 @@ class TestTimeParser(unittest.TestCase):
             ['去年3月3号', {'year': 1966}, {'type': 'time_span', 'definition': 'accurate', 'time': ['1965-03-03 00:00:00', '1965-03-03 23:59:59']}],
             ['今年六月', {'year': 1966}, {'type': 'time_span', 'definition': 'accurate', 'time': ['1966-06-01 00:00:00', '1966-06-30 23:59:59']}],
             ['明年3月份', 1623604000, {'type': 'time_span', 'definition': 'accurate', 'time': ['2022-03-01 00:00:00', '2022-03-31 23:59:59']}],
+            ['上一年', 1623604000, {'type': 'time_span', 'definition': 'accurate', 'time': ['2020-01-01 00:00:00', '2020-12-31 23:59:59']}],
 
             # 年（模糊限定）
             ['3年后', {'year': 2021}, {'type': 'time_span', 'definition': 'blur', 'time': ['2024-01-01 00:00:00', '2024-12-31 23:59:59']}],
             ['两年前', {'year': 2021}, {'type': 'time_span', 'definition': 'blur', 'time': ['2019-01-01 00:00:00', '2019-12-31 23:59:59']}],
-            ['一年半以前', {'year': 2021}, {'type': 'time_span', 'definition': 'blur', 'time': ['2020-01-01 00:00:00', '2020-12-31 23:59:59']}],
-            ['一年半以前', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2019-09-01 00:00:00', '2020-03-31 23:59:59']}],
-            ['半年之后', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-09-01 00:00:00', '2022-03-31 23:59:59']}],
-            ['40多年前', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['1971-01-01 00:00:00', '1981-12-31 23:59:59']}],
+            ['一年半以前', {'year': 2021}, {'type': 'time_span', 'definition': 'blur', 'time': ['-inf', '2019-07-31 23:59:59']}],
+            ['一年半以前', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['-inf', '2019-12-31 23:59:59']}],
+            ['半年之后', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-12-01 00:00:00', 'inf']}],
+            # ['40多年前', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['1971-01-01 00:00:00', '1981-12-31 23:59:59']}],
             ['二十几年前', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['1991-01-01 00:00:00', '2001-12-31 23:59:59']}],
-            ['1000多年之后', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['3021-01-01 00:00:00', '4021-12-31 23:59:59']}],
+            ['1000多年之后', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['3020-01-01 00:00:00', 'inf']}],
             ['几十年之后', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2041-01-01 00:00:00', '2121-12-31 23:59:59']}],
 
             # time span 式 `从……至……` 年、月、日、时、分、秒
@@ -113,6 +127,8 @@ class TestTimeParser(unittest.TestCase):
             ['2019年4月12-19日', {'year': 2020}, {'type': 'time_span', 'definition': 'accurate', 'time': ['2019-04-12 00:00:00', '2019-04-19 23:59:59']}],
             ['9~12点半', 1623604000, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 09:00:00', '2021-06-14 12:30:59']}],
             ['2019年1-五月', {'year': 2020}, {'type': 'time_span', 'definition': 'accurate', 'time': ['2019-01-01 00:00:00', '2019-05-31 23:59:59']}],
+            ['2018年1－9月份', {'year': 2020}, {'type': 'time_span', 'definition': 'accurate', 'time': ['2018-01-01 00:00:00', '2018-09-30 23:59:59']}],
+            ['2020至2025年前', time.time(), {'type': 'time_span', 'definition': 'accurate', 'time': ['2020-01-01 00:00:00', '2025-12-31 23:59:59']}],
 
 
             # ['2018年2——4月'], 未决
@@ -188,6 +204,7 @@ class TestTimeParser(unittest.TestCase):
             ['明年母亲节', {'year': 2020}, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-05-09 00:00:00', '2021-05-09 23:59:59']}],
             ['2019年感恩节', {'year': 2020}, {'type': 'time_point', 'definition': 'accurate', 'time': ['2019-11-28 00:00:00', '2019-11-28 23:59:59']}],
             ['国庆', {'year': 2020}, {'type': 'time_point', 'definition': 'accurate', 'time': ['2020-10-01 00:00:00', '2020-10-01 23:59:59']}],
+            ['农历元宵', {'year': 2021}, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-02-26 00:00:00', '2021-02-26 23:59:59']}],
 
             # 年月日 时分秒
             ['7月4日晚上7点09分18秒', {'year': 2021}, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-07-04 19:09:18', '2021-07-04 19:09:18']}],
@@ -207,6 +224,7 @@ class TestTimeParser(unittest.TestCase):
             ['12月9日零时至12月16日24时', {'year': 2021}, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-12-09 00:00:00', '2021-12-16 23:59:59']}],
             ['13:20~次日05:40', 1623604000, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 13:20:00', '2021-06-15 05:40:59']}],
             ['夜里12点', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-14 23:00:00', '2021-06-14 23:59:59']}],
+            ['下午5点多钟', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-14 17:00:00', '2021-06-14 17:59:59']}],
 
             # 时分秒 标准格式按 `:` 区隔
             ['上月30号12:37', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-05-30 12:37:00', '2021-05-30 12:37:59']}],
@@ -225,17 +243,99 @@ class TestTimeParser(unittest.TestCase):
             # 模糊时
             ['夜间至次日上午', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-06-14 20:00:00', '2021-06-15 11:59:59']}],
             ['当日午夜', 1623604000, {'type': 'time_point', 'definition': 'blur', 'time': ['2021-06-14 00:00:00', '2021-06-14 00:59:59']}],
+            ['白天', 1623604000, {'type': 'time_point', 'definition': 'blur', 'time': ['2021-06-14 06:00:00', '2021-06-14 18:59:59']}],
 
             # 时间段
-            ['四个星期', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'year': 0, 'month': 0, 'day': 28.0, 'hour': 0, 'minute': 0, 'second': 0}}],
-            ['四个多星期', None, {'type': 'time_delta', 'definition': 'blur', 'time': {'year': 0, 'month': 0, 'day': 28.0, 'hour': 0, 'minute': 0, 'second': 0}}],
-            ['两年半', None, {'type': 'time_delta', 'definition': 'blur', 'time': {'year': 2.5, 'month': 0, 'day': 0, 'hour': 0, 'minute': 0, 'second': 0}}],
-            ['17个多月', None, {'type': 'time_delta', 'definition': 'blur', 'time': {'year': 0, 'month': 17.0, 'day': 0, 'hour': 0, 'minute': 0, 'second': 0}}],
-            ['四年六个月', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'year': 4.0, 'month': 6.0, 'day': 0, 'hour': 0, 'minute': 0, 'second': 0}}],
-            ['70多分钟', None, {'type': 'time_delta', 'definition': 'blur', 'time': {'year': 0, 'month': 0, 'day': 0, 'hour': 0, 'minute': 70.0, 'second': 0}}],
-            ['270天', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'year': 0, 'month': 0, 'day': 270.0, 'hour': 0, 'minute': 0, 'second': 0}}],
-            ['27分钟7秒', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'year': 0, 'month': 0, 'day': 0, 'hour': 0, 'minute': 27.0, 'second': 7.0}}],
-            ['2621.2小时', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'year': 0, 'month': 0, 'day': 0, 'hour': 2621.2, 'minute': 0, 'second': 0}}],
+            ['4周', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'day': 28.0}}],
+            ['4周年', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'year': 4.0}}],
+            ['四个星期', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'day': 28.0}}],
+            ['四个多星期', None, {'type': 'time_delta', 'definition': 'blur', 'time': {'day': 28.0}}],
+            ['两年半', None, {'type': 'time_delta', 'definition': 'blur', 'time': {'year': 2.5}}],
+            ['17个多月', None, {'type': 'time_delta', 'definition': 'blur', 'time': {'month': 17.0}}],
+            ['四年六个月', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'year': 4.0, 'month': 6.0}}],
+            ['70多分钟', None, {'type': 'time_delta', 'definition': 'blur', 'time': {'minute': 70.0}}],
+            ['270天', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'day': 270.0}}],
+            ['27分钟7秒', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'minute': 27.0, 'second': 7.0}}],
+            ['2621.2小时', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'hour': 2621.2}}],
+            ['五个季度', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'month': 15.0}}],
+            ['2000万小时', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'hour': 20000000.0}}],
+            ['三十三年', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'year': 33.0}}],
+
+            # 时间段转时间点
+            ['20天以后', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-07-04 00:00:00', 'inf']}],
+            ['20天后', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-07-04 00:00:00', '2021-07-04 23:59:59']}],
+            ['两天之前', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['-inf', '2021-06-12 23:59:59']}],
+            ['三个多月以来', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-03-01 00:00:00', '2021-06-14 01:06:40']}],
+            ['20多个月之后', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2023-02-01 00:00:00', 'inf']}],
+            ['七年半后', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2028-12-01 00:00:00', '2028-12-31 23:59:59']}],
+            ['七年后', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2028-01-01 00:00:00', '2028-12-31 23:59:59']}],
+            ['半钟头后', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-14 01:36:40', '2021-06-14 02:06:59']}],
+
+            # 若指定的 time_base 无法具体到 `日`，则指定的推算日期存在模糊和偏差
+            ['半年后', [2019, 6], {'type': 'time_span', 'definition': 'blur', 'time': ['2019-11-01 00:00:00', '2019-11-30 23:59:59']}],
+            ['一年半后', [2019], {'type': 'time_span', 'definition': 'blur', 'time': ['2020-07-01 00:00:00', '2020-07-31 23:59:59']}],
+            ['3年以前', [2019], {'type': 'time_span', 'definition': 'blur', 'time': ['-inf', '2016-12-31 23:59:59']}],
+            ['3年半前', [2019, 5], {'type': 'time_span', 'definition': 'blur', 'time': ['2015-10-01 00:00:00', '2015-10-31 23:59:59']}],
+            ['3年半以前', [2019], {'type': 'time_span', 'definition': 'blur', 'time': ['-inf', '2015-07-31 23:59:59']}],
+            ['3年半以后', [2019], {'type': 'time_span', 'definition': 'blur', 'time': ['2022-07-01 00:00:00', 'inf']}],
+            ['3年半以内', [2019], {'type': 'time_span', 'definition': 'blur', 'time': ['2019-01-01 00:00:00', '2022-07-31 23:59:59']}],
+            ['3年半以内', [2019, 9], {'type': 'time_span', 'definition': 'blur', 'time': ['2019-09-01 00:00:00', '2023-03-31 23:59:59']}],
+            ['3年半以来', [2019, 9], {'type': 'time_span', 'definition': 'blur', 'time': ['2016-03-01 00:00:00', '2019-09-30 23:59:59']}],
+            ['3年半以来', [2019, 8, 22], {'type': 'time_span', 'definition': 'blur', 'time': ['2016-02-01 00:00:00', '2019-08-22 23:59:59']}],
+            ['3年多以来', [2019, 8, 22], {'type': 'time_span', 'definition': 'blur', 'time': ['2016-01-01 00:00:00', '2019-08-22 23:59:59']}],
+            ['3个多月以来', [2019, 8, 22], {'type': 'time_span', 'definition': 'blur', 'time': ['2019-05-01 00:00:00', '2019-08-22 23:59:59']}],
+            ['两个半月以内', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-06-14 01:06:40', '2021-08-29 23:59:59']}],
+            ['两个半月前', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-02-27 00:00:00', '2021-03-30 23:59:59']}],
+            ['两个半月以前', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['-inf', '2021-03-30 23:59:59']}],
+            ['半月以后', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-06-29 00:00:00', 'inf']}],
+            ['十个多月后', [2019, 9], {'type': 'time_span', 'definition': 'blur', 'time': ['2020-07-01 00:00:00', '2020-07-31 23:59:59']}],
+            ['十个半月后', [2019, 9], {'type': 'time_span', 'definition': 'blur', 'time': ['2020-07-16 00:00:00', '2020-08-15 23:59:59']}],
+            ['17天后', [2019, 2, 18], {'type': 'time_point', 'definition': 'accurate', 'time': ['2019-03-07 00:00:00', '2019-03-07 23:59:59']}],
+            ['17天内', [2019, 2, 18], {'type': 'time_span', 'definition': 'accurate', 'time': ['2019-02-18 00:00:00', '2019-03-07 23:59:59']}],
+            ['7天半以来', [2019, 2, 18], {'type': 'time_span', 'definition': 'accurate', 'time': ['2019-02-10 12:00:00', '2019-02-18 23:59:59']}],
+            ['一天半以来', [2019, 2, 18, 7], {'type': 'time_span', 'definition': 'accurate', 'time': ['2019-02-16 19:00:00', '2019-02-18 07:59:59']}],
+            ['30天后', [2019, 2, 18, 7], {'type': 'time_point', 'definition': 'accurate', 'time': ['2019-03-20 00:00:00', '2019-03-20 23:59:59']}],
+            ['6个小时前', [2019, 2, 18, 7], {'type': 'time_point', 'definition': 'accurate', 'time': ['2019-02-18 00:00:00', '2019-02-18 01:00:00']}],
+            ['60小时前', [2019, 2, 18, 7], {'type': 'time_point', 'definition': 'accurate', 'time': ['2019-02-15 18:00:00', '2019-02-15 19:00:00']}],
+            ['半小时前', [2019, 2, 18, 7], {'type': 'time_point', 'definition': 'accurate', 'time': ['2019-02-18 06:00:00', '2019-02-18 06:30:00']}],
+            ['半小时以后', [2019, 2, 18, 7], {'type': 'time_span', 'definition': 'blur', 'time': ['2019-02-18 07:30:00', 'inf']}],
+            ['一个半小时后', [2019, 2, 18, 7, 18], {'type': 'time_point', 'definition': 'accurate', 'time': ['2019-02-18 08:48:00', '2019-02-18 09:48:59']}],
+            ['半小时内', [2019, 2, 18, 7, 18], {'type': 'time_span', 'definition': 'accurate', 'time': ['2019-02-18 07:18:00', '2019-02-18 07:48:59']}],
+            ['17钟头后', [2019, 2, 18, 7, 18], {'type': 'time_point', 'definition': 'accurate', 'time': ['2019-02-19 00:18:00', '2019-02-19 01:18:59']}],
+            ['17分钟后', [2019, 2, 18, 7, 18], {'type': 'time_point', 'definition': 'accurate', 'time': ['2019-02-18 07:35:00', '2019-02-18 07:36:00']}],
+            ['90分钟以内', [2019, 2, 18, 7, 18], {'type': 'time_span', 'definition': 'accurate', 'time': ['2019-02-18 07:18:00', '2019-02-18 08:48:00']}],
+            ['92分钟以前', [2019, 2, 18, 7, 18], {'type': 'time_span', 'definition': 'blur', 'time': ['-inf', '2019-02-18 05:46:00']}],
+            ['一分钟半以前', [2019, 2, 18, 7, 18], {'type': 'time_span', 'definition': 'blur', 'time': ['-inf', '2019-02-18 07:16:30']}],
+            ['一分半钟前', [2019, 2, 18, 7, 18, 40], {'type': 'time_point', 'definition': 'accurate', 'time': ['2019-02-18 07:16:10', '2019-02-18 07:17:10']}],
+            ['十三分半以内', [2019, 2, 18, 7, 18, 40], {'type': 'time_span', 'definition': 'accurate', 'time': ['2019-02-18 07:18:40', '2019-02-18 07:32:10']}],
+            ['十三秒后', [2019, 2, 18, 7, 18, 23], {'type': 'time_point', 'definition': 'accurate', 'time': ['2019-02-18 07:18:36', '2019-02-18 07:18:37']}],
+            ['十三秒钟以后', [2019, 2, 18, 7, 18, 23], {'type': 'time_span', 'definition': 'blur', 'time': ['2019-02-18 07:18:36', 'inf']}],
+            ['三个季度后', [2019, 2, 18, 7], {'type': 'time_span', 'definition': 'blur', 'time': ['2019-11-01 00:00:00', '2019-11-30 23:59:59']}],
+            ['4周后', 1623604000, {'type': 'time_point', 'definition': 'blur', 'time': ['2021-07-12 00:00:00', '2021-07-18 23:59:59']}],
+            # []
+
+
+            # 特殊时间段
+            # ['6天5晚'],
+            # ['三天三夜'],
+
+            # 范围时间段
+            # ['3~6个月'],
+            # ['100到200个小时'],
+
+            # 时间周期
+            ['每年', 1623604000, {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'year': 1}, 'point': None}}],
+            ['每年9月', 1623604000, {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'year': 1}, 'point': {'time': ['2021-09-01 00:00:00', '2021-09-30 23:59:59'], 'string': '9月'}}}],
+            ['每月4号', 1623604000, {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'month': 1}, 'point': {'time': ['2021-06-04 00:00:00', '2021-06-04 23:59:59'], 'string': '4号'}}}],
+            ['每半年', 1623604000, {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'year': 0.5}, 'point': None}}],
+            ['每周三', 1623604000, {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'day': 7}, 'point': {'time': ['2021-06-16 00:00:00', '2021-06-16 23:59:59'], 'string': '周三'}}}],
+            ['每半个钟头', 1623604000, {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'hour': 0.5}, 'point': None}}],
+            ['每隔3天', 1623604000, {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'day': 3.0}, 'point': None}}],
+            ['每年母亲节', 1623604000, {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'year': 1}, 'point': {'time': ['2021-05-09 00:00:00', '2021-05-09 23:59:59'], 'string': '母亲节'}}}],
+            ['每天晚上8点', 1623604000, {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'day': 1}, 'point': {'time': ['2021-06-14 20:00:00', '2021-06-14 20:59:59'], 'string': '晚上8点'}}}],
+            ['每个星期天早上9点一刻', 1623604000, {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'day': 7}, 'point': {'time': ['2021-06-20 09:15:00', '2021-06-20 09:15:59'], 'string': '周天早上9点一刻'}}}],
+            ['每隔200秒', 1623604000, {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'second': 200.0}, 'point': None}}],
+            ['每年秋天', 1623604000, {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'year': 1}, 'point': {'time': ['2021-08-07 00:00:00', '2021-11-06 23:59:59'], 'string': '秋天'}}}],
 
         ]
 

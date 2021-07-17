@@ -4,6 +4,7 @@
 
 
 ## 请输入报错的文本，以及代码 please input the text and code
+## （*** 一定要写清楚是具体哪一条文本数据造成了报错！！！ ***）
 
 ```
 # 复制粘贴此处 copy and paste here
