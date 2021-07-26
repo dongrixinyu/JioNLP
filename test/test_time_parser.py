@@ -355,6 +355,7 @@ class TestTimeParser(unittest.TestCase):
             # ['未来一周'] time_span
             # ['过去一个月'] time_span
             # ['过十分钟'] time_span
+            # ['再过十小时'] time_span
 
             # 特殊时间段
             # ['6天5晚'],
