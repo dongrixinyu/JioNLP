@@ -147,7 +147,7 @@ class TimeParser(object):
         # --------- TIME POINT & TIME SPAN ---------
         # `标准数字 年、月、日`：`2016-05-22`、`1987.12-3`
         self.standard_year_month_day_pattern = re.compile(
-            r'((17|18|19|20|21)\d{2})[\-.](1[012]|[0]?\d)([\-.](30|31|[012]?\d))?[ \u3000]?|'
+            r'((17|18|19|20|21)\d{2})[\-./](1[012]|[0]?\d)([\-./](30|31|[012]?\d))?[ \u3000]?|'
             r'(1[012]|[0]?\d)·(30|31|[012]?\d)')
 
         # `标准数字 年`：`2018`
@@ -274,18 +274,18 @@ class TimeParser(object):
 
         # 星期 （一般不与年月相关联）
         self.standard_week_day_pattern = re.compile(
-            '(上上|上|下下|下|本|这)?(个)?(周)?(周|星期)[一二三四五六日末天]')
+            '(上上|上|下下|下|本|这)?(个)?(周)?' + WEEK_STRING + '[一二三四五六日末天]')
 
         # 星期前后推算
         self.blur_week_pattern = re.compile(
-            '[前后]' + WEEK_NUM_STRING + '(个)?(周|星期)|' +
-            WEEK_NUM_STRING + '(个)?(周|星期)(之)?[前后]|'
-                              '(上上|上|下下|下|本|这)?(个)?(周|星期)')
+            '[前后]' + WEEK_NUM_STRING + '(个)?' + WEEK_STRING + I +
+            WEEK_NUM_STRING + '(个)?' + WEEK_STRING + '(之)?[前后]' + I +
+            '(上上|上|下下|下|本|这)?(个)?' + WEEK_STRING)
 
         # 月、第n个星期k
         self.limit_week_pattern = re.compile(
-            ''.join([bracket(MONTH_STRING), '(的)?'
-                                            '第[1-5一二三四五](个)?(周|星期)[一二三四五六日末天]']))
+            ''.join([bracket(MONTH_STRING), '(的)?',
+                     '第[1-5一二三四五](个)?' + WEEK_STRING + '[一二三四五六日末天]']))
 
         # 公历固定节日
         self.year_fixed_solar_festival_pattern = re.compile(
@@ -420,12 +420,12 @@ class TimeParser(object):
         self.lunar_24st_pattern = re.compile(SOLAR_TERM_STRING)
         self.lunar_season_pattern = re.compile('([春夏秋冬][季天]?)')
 
-        self.week_1_pattern = re.compile('[前后][一二两三四五六七八九1-9](个)?(周|星期)')
-        self.week_2_pattern = re.compile('[一两三四五六七八九1-9](个)?(周|星期)(之)?[前后]')
-        self.week_3_pattern = re.compile('(上上|上|下下|下|本|这)(个)?(周|星期)')
-        self.week_4_pattern = re.compile('(周|星期)[一二三四五六日末天]')
-        self.week_5_pattern = re.compile('第[1-5一二三四五](个)?(周|星期)')
-        self.ymd_segs = re.compile(r'[\-\.·]')
+        self.week_1_pattern = re.compile('[前后][一二两三四五六七八九1-9](个)?' + WEEK_STRING)
+        self.week_2_pattern = re.compile('[一两三四五六七八九1-9](个)?' + WEEK_STRING + '(之)?[前后]')
+        self.week_3_pattern = re.compile('(上上|上|下下|下|本|这)(个)?' + WEEK_STRING)
+        self.week_4_pattern = re.compile(WEEK_STRING + '[一二三四五六日末天]')
+        self.week_5_pattern = re.compile('第[1-5一二三四五](个)?' + WEEK_STRING)
+        self.ymd_segs = re.compile(r'[\-.·/]')
         self.week_num_pattern = re.compile(WEEK_NUM_STRING)
 
         self.day_patterns = [self.day_1_pattern, self.lunar_day_pattern, self.lunar_24st_pattern,
@@ -508,7 +508,7 @@ class TimeParser(object):
         # 周期性日期
         self.period_time_pattern = re.compile(
             r'每((间)?隔)?([一二两三四五六七八九十0-9]+|半)?'
-            r'(年|(个)?季度|(个)?月|(个)?星期|周|日|天|(个)?(小时|钟头)|分(钟)?|秒(钟)?)')
+            r'(年|(个)?季度|(个)?月|(个)?(星期|礼拜)|周|日|天|(个)?(小时|钟头)|分(钟)?|秒(钟)?)')
 
         # 由于 time_span 格式造成的时间单位缺失的检测
         # 如：`去年9~12月`、 `2016年8——10月`
@@ -521,7 +521,7 @@ class TimeParser(object):
         # 如：`9~12个月`、 `8——10个星期`
         self.time_span_delta_compensation = re.compile(
             r'[\d一二三四五六七八九十百千万零]{1,10}(到|至|——|－－|--|~~|—|－|-|~)'
-            r'([\d一二三四五六七八九十百千万零]{1,10}(年|个月|周|(个)?星期|日|天|(个)?(小时|钟头)|分钟|秒))')
+            r'([\d一二三四五六七八九十百千万零]{1,10}(年|个月|周|(个)?(星期|礼拜)|日|天|(个)?(小时|钟头)|分钟|秒))')
         self.time_delta_exception_pattern = re.compile(
             r'(' + bracket(YEAR_STRING) + I + bracket(DAY_STRING) + r')')
 
@@ -564,7 +564,7 @@ class TimeParser(object):
                 first_time_string = ''.join([first_time_string, '年'])
             elif '个月' in time_compensation:
                 first_time_string = ''.join([first_time_string, '个月'])
-            elif '星期' in time_compensation or '周' in time_compensation:
+            elif '星期' in time_compensation or '周' in time_compensation or '礼拜' in time_compensation:
                 first_time_string = ''.join([first_time_string, '个星期'])
             elif '日' in time_compensation or '天' in time_compensation:
                 first_time_string = ''.join([first_time_string, '天'])
@@ -682,11 +682,10 @@ class TimeParser(object):
 
                     first_full_time_handler, _, _, blur_time = self.parse_time_point(
                         first_time_string, self.time_base_handler)
-                    if second_time_string in ['今', '至今', '现在']:
+                    if second_time_string in ['今', '至今', '现在', '今天']:
                         # 默认此时 time_base 大于 first_full_time_handler
                         second_full_time_handler = self.time_base_handler
                     else:
-                        # self.time_base_handler 依然被 parse... 等函数使用
                         self.time_base_handler = first_full_time_handler
                         _, second_full_time_handler, _, blur_time = self.parse_time_point(
                             second_time_string, first_full_time_handler)
@@ -842,7 +841,7 @@ class TimeParser(object):
                 # 但是某些时间周期难以表示，如 `每周周一` 中的 周一。此时用 time_point 中的绝对时间进行表示，并附以时间文本
                 time_point_string = time_string.replace(period_time, '')
                 # 补充 time_point_string
-                if (period_time.endswith('周') or period_time.endswith('星期'))\
+                if (period_time.endswith('礼拜') or period_time.endswith('周') or period_time.endswith('星期'))\
                         and (not time_point_string.startswith('周')):
                     time_point_string = '周' + time_point_string
                 try:
@@ -883,7 +882,7 @@ class TimeParser(object):
             time_delta.month = num * 3
         elif '月' in time_string:
             time_delta.month = num
-        elif '星期' in time_string or '周' in time_string:
+        elif '星期' in time_string or '周' in time_string or '礼拜' in time_string:
             time_delta.day = num * 7
         elif '日' in time_string or '天' in time_string:
             time_delta.day = num

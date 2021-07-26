@@ -18,6 +18,7 @@ class TestTimeParser(unittest.TestCase):
 
         time_string_list = [
             # 标准数字 年、月、日、时、分、秒
+            ['2019/04/19', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2019-04-19 00:00:00', '2019-04-19 23:59:59']}],
             ['2018-11-29 18:59', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2018-11-29 18:59:00', '2018-11-29 18:59:59']}],
             ['2019-05-27 09:36:46', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2019-05-27 09:36:46', '2019-05-27 09:36:46']}],
             ['2018-12-1209:03', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2018-12-12 09:03:00', '2018-12-12 09:03:59']}],
@@ -130,8 +131,9 @@ class TestTimeParser(unittest.TestCase):
             ['2019年1-五月', {'year': 2020}, {'type': 'time_span', 'definition': 'accurate', 'time': ['2019-01-01 00:00:00', '2019-05-31 23:59:59']}],
             ['2018年1－9月份', {'year': 2020}, {'type': 'time_span', 'definition': 'accurate', 'time': ['2018-01-01 00:00:00', '2018-09-30 23:59:59']}],
             ['2020至2025年前', time.time(), {'type': 'time_span', 'definition': 'accurate', 'time': ['2020-01-01 00:00:00', '2025-12-31 23:59:59']}],
+            ['从上个月到今天', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-05-01 00:00:00', '2021-06-14 01:06:40']}],
 
-            # ['2018年2——4月'], 未决
+            ['2018年2——4月', 1623604000, {'type': 'time_span', 'definition': 'accurate', 'time': ['2018-02-01 00:00:00', '2018-04-30 23:59:59']}],
             ['明年底前', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-06-14 01:06:40', '2022-12-31 23:59:59']}],
             ['明年初之前', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-06-14 01:06:40', '2022-02-28 23:59:59']}],
             ['2025年前', 1623604000, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 01:06:40', '2025-12-31 23:59:59']}],
@@ -177,8 +179,9 @@ class TestTimeParser(unittest.TestCase):
             ['下个星期一', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-21 00:00:00', '2021-06-21 23:59:59']}],
             ['6月第3个星期日', {'year': 2021}, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-20 00:00:00', '2021-06-20 23:59:59']}],
             ['八月份的第一个周二', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-08-03 00:00:00', '2021-08-03 23:59:59']}],
-            # 周一早上
-            # 6月1日周六早上10点钟
+            ['周二早上', 1623604000, {'type': 'time_point', 'definition': 'blur', 'time': ['2021-06-15 06:00:00', '2021-06-15 09:59:59']}],
+            ['6月1日周六早上10点钟', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-01 10:00:00', '2021-06-01 10:59:59']}],
+            ['上个礼拜天', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-13 00:00:00', '2021-06-13 23:59:59']}],
 
             # 年、月、模糊日
             ['6月上旬', {'year': 2021}, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-06-01 00:00:00', '2021-06-10 23:59:59']}],
@@ -278,6 +281,7 @@ class TestTimeParser(unittest.TestCase):
             # ['几十个小时', None, ],
             # ['无数个小时', None, ],
 
+
             # 经过歧义处理的时间段
             ['90日', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'day': 90.0}}],
             ['30日', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-30 00:00:00', '2021-06-30 23:59:59']}],
@@ -344,6 +348,13 @@ class TestTimeParser(unittest.TestCase):
             ['第三天上午', 1623604000, {'type': 'time_point', 'definition': 'blur', 'time': ['2021-06-16 07:00:00', '2021-06-16 11:59:59']}],
             ['第三天起', 1623604000, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-16 00:00:00', 'inf']}],
             ['第七年', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2027-01-01 00:00:00', '2027-12-31 23:59:59']}],
+
+            # 另一种类型的 time_delta 转 time_span
+            # ['近三年']
+            # ['前三年']
+            # ['未来一周'] time_span
+            # ['过去一个月'] time_span
+            # ['过十分钟'] time_span
 
             # 特殊时间段
             # ['6天5晚'],
