@@ -27,6 +27,7 @@ class TestTimeParser(unittest.TestCase):
             ['2008.03-2009', 1623604000, {'type': 'time_span', 'definition': 'accurate', 'time': ['2008-03-01 00:00:00', '2009-12-31 23:59:59']}],
             ['2019.05.29 15:20-2020.01.12 12:10', 1623604000, {'type': 'time_span', 'definition': 'accurate', 'time': ['2019-05-29 15:20:00', '2020-01-12 12:10:59']}],
             ['6·30', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-30 00:00:00', '2021-06-30 23:59:59']}],
+            ['2018', 1623604000, {'type': 'time_span', 'definition': 'accurate', 'time': ['2018-01-01 00:00:00', '2018-12-31 23:59:59']}],
 
             # 年、月、日（标准）
             ['2015年8月12日', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2015-08-12 00:00:00', '2015-08-12 23:59:59']}],
@@ -130,7 +131,6 @@ class TestTimeParser(unittest.TestCase):
             ['2018年1－9月份', {'year': 2020}, {'type': 'time_span', 'definition': 'accurate', 'time': ['2018-01-01 00:00:00', '2018-09-30 23:59:59']}],
             ['2020至2025年前', time.time(), {'type': 'time_span', 'definition': 'accurate', 'time': ['2020-01-01 00:00:00', '2025-12-31 23:59:59']}],
 
-
             # ['2018年2——4月'], 未决
             ['明年底前', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-06-14 01:06:40', '2022-12-31 23:59:59']}],
             ['明年初之前', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-06-14 01:06:40', '2022-02-28 23:59:59']}],
@@ -153,6 +153,7 @@ class TestTimeParser(unittest.TestCase):
             ['去年五月初五', {'year': 2021}, {'type': 'time_point', 'definition': 'accurate', 'time': ['2020-06-25 00:00:00', '2020-06-25 23:59:59']}],
             ['后年九月廿二', {'year': 2021}, {'type': 'time_point', 'definition': 'accurate', 'time': ['2023-11-05 00:00:00', '2023-11-05 23:59:59']}],
             ['明年腊月', {'year': 2021}, {'type': 'time_point', 'definition': 'accurate', 'time': ['2022-12-23 00:00:00', '2023-01-21 23:59:59']}],
+            ['2012年正月初8', time.time(), {'type': 'time_point', 'definition': 'accurate', 'time': ['2012-01-30 00:00:00', '2012-01-30 23:59:59']}],
 
             # 年、节气
             ['2017年大寒', time.time(), {'type': 'time_point', 'definition': 'accurate', 'time': ['2018-01-20 00:00:00', '2018-01-20 23:59:59']}],
@@ -244,6 +245,7 @@ class TestTimeParser(unittest.TestCase):
             ['夜间至次日上午', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-06-14 20:00:00', '2021-06-15 11:59:59']}],
             ['当日午夜', 1623604000, {'type': 'time_point', 'definition': 'blur', 'time': ['2021-06-14 00:00:00', '2021-06-14 00:59:59']}],
             ['白天', 1623604000, {'type': 'time_point', 'definition': 'blur', 'time': ['2021-06-14 06:00:00', '2021-06-14 18:59:59']}],
+            ['午后', 1623604000, {'type': 'time_point', 'definition': 'blur', 'time': ['2021-06-14 13:00:00', '2021-06-14 14:59:59']}],
 
             # 时间段
             ['4周', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'day': 28.0}}],
@@ -260,6 +262,27 @@ class TestTimeParser(unittest.TestCase):
             ['五个季度', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'month': 15.0}}],
             ['2000万小时', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'hour': 20000000.0}}],
             ['三十三年', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'year': 33.0}}],
+            ['35,000个钟头', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'hour': 35000.0}}],
+            ['15个交易日', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'workday': 15.0}}],
+            ['五个工作日', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'workday': 5.0}}],
+            ['两日', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'day': 2.0}}],
+
+            # 法律时间
+            ['3年以上7年以下', None, {'type': 'time_delta', 'definition': 'blur', 'time': [{'year': 3.0}, {'year': 7.0}]}],
+            ['十五年以上,30年以下', None, {'type': 'time_delta', 'definition': 'blur', 'time': [{'year': 15.0}, {'year': 30.0}]}],
+            ['六个月以下', None, {'type': 'time_delta', 'definition': 'blur', 'time': [{'zero': True}, {'month': 6.0}]}],
+            ['三十年以上', None, {'type': 'time_delta', 'definition': 'blur', 'time': [{'year': 30.0}, {'infinite': True}]}],
+
+            # 模糊时间段
+            # ['二十来天', None, ],
+            # ['几十个小时', None, ],
+            # ['无数个小时', None, ],
+
+            # 经过歧义处理的时间段
+            ['90日', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'day': 90.0}}],
+            ['30日', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-30 00:00:00', '2021-06-30 23:59:59']}],
+            ['24年', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2024-01-01 00:00:00', '2024-12-31 23:59:59']}],
+            ['30~90日', None, {'type': 'time_delta', 'definition': 'blur', 'time': [{'day': 30.0}, {'day': 90.0}]}],
 
             # 时间段转时间点
             ['20天以后', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-07-04 00:00:00', 'inf']}],
@@ -270,6 +293,10 @@ class TestTimeParser(unittest.TestCase):
             ['七年半后', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2028-12-01 00:00:00', '2028-12-31 23:59:59']}],
             ['七年后', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2028-01-01 00:00:00', '2028-12-31 23:59:59']}],
             ['半钟头后', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-14 01:36:40', '2021-06-14 02:06:59']}],
+            # '25-35天内' 有两种解析方法， time_span 与 time_delta
+            ['5个交易日之后', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-06-21 00:00:00', 'inf']}],
+            ['15个工作日内', 1623604000, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 01:06:40', '2021-07-05 23:59:59']}],
+            ['60日内', 1623604000, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 01:06:40', '2021-08-13 23:59:59']}],
 
             # 若指定的 time_base 无法具体到 `日`，则指定的推算日期存在模糊和偏差
             ['半年后', [2019, 6], {'type': 'time_span', 'definition': 'blur', 'time': ['2019-11-01 00:00:00', '2019-11-30 23:59:59']}],
@@ -312,16 +339,23 @@ class TestTimeParser(unittest.TestCase):
             ['十三秒钟以后', [2019, 2, 18, 7, 18, 23], {'type': 'time_span', 'definition': 'blur', 'time': ['2019-02-18 07:18:36', 'inf']}],
             ['三个季度后', [2019, 2, 18, 7], {'type': 'time_span', 'definition': 'blur', 'time': ['2019-11-01 00:00:00', '2019-11-30 23:59:59']}],
             ['4周后', 1623604000, {'type': 'time_point', 'definition': 'blur', 'time': ['2021-07-12 00:00:00', '2021-07-18 23:59:59']}],
-            # []
 
+            # 序数 time_delta 转 time_point
+            ['第三天上午', 1623604000, {'type': 'time_point', 'definition': 'blur', 'time': ['2021-06-16 07:00:00', '2021-06-16 11:59:59']}],
+            ['第三天起', 1623604000, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-16 00:00:00', 'inf']}],
+            ['第七年', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2027-01-01 00:00:00', '2027-12-31 23:59:59']}],
 
             # 特殊时间段
             # ['6天5晚'],
             # ['三天三夜'],
 
             # 范围时间段
-            # ['3~6个月'],
-            # ['100到200个小时'],
+            ['3天——8天', None, {'type': 'time_delta', 'definition': 'blur', 'time': [{'day': 3.0}, {'day': 8.0}]}],
+            ['13天—8周', None, {'type': 'time_delta', 'definition': 'blur', 'time': [{'day': 13.0}, {'day': 56.0}]}],
+            ['13—18天', None, {'type': 'time_delta', 'definition': 'blur', 'time': [{'day': 13.0}, {'day': 18.0}]}],
+            ['两万四千到3万秒', None, {'type': 'time_delta', 'definition': 'blur', 'time': [{'second': 24000.0}, {'second': 30000.0}]}],
+            ['3~6个月', None, {'type': 'time_delta', 'definition': 'blur', 'time': [{'month': 3.0}, {'month': 6.0}]}],
+            ['100到200个小时', None, {'type': 'time_delta', 'definition': 'blur', 'time': [{'hour': 100.0}, {'hour': 200.0}]}],
 
             # 时间周期
             ['每年', 1623604000, {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'year': 1}, 'point': None}}],
@@ -336,6 +370,11 @@ class TestTimeParser(unittest.TestCase):
             ['每个星期天早上9点一刻', 1623604000, {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'day': 7}, 'point': {'time': ['2021-06-20 09:15:00', '2021-06-20 09:15:59'], 'string': '周天早上9点一刻'}}}],
             ['每隔200秒', 1623604000, {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'second': 200.0}, 'point': None}}],
             ['每年秋天', 1623604000, {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'year': 1}, 'point': {'time': ['2021-08-07 00:00:00', '2021-11-06 23:59:59'], 'string': '秋天'}}}],
+
+            # 时间周期与span
+            ['每年9月到11月', 1623604000, {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'year': 1}, 'point': {'time': ['2021-09-01 00:00:00', '2021-11-30 23:59:59'], 'string': '9月到11月'}}}],
+            ['每周六上午9点到11点', 1623604000, {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'day': 7}, 'point': {'time': ['2021-06-19 09:00:00', '2021-06-19 11:59:59'], 'string': '周六上午9点到11点'}}}],
+            ['每天晚上8点——9点', 1623604000, {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'day': 1}, 'point': {'time': ['2021-06-14 20:00:00', '2021-06-14 21:59:59'], 'string': '晚上8点——9点'}}}],
 
         ]
 

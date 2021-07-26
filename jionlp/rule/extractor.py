@@ -36,7 +36,7 @@ class Extractor(object):
         self.remove_parentheses_pattern = None
         self.parentheses_pattern = PARENTHESES_PATTERN
         self.parentheses_dict = None
-        self.redundent_pattern = None
+        self.redundant_pattern = None
         self.exception_pattern = None
         self.full_angle_pattern = None
         self.chinese_char_pattern = None
@@ -69,27 +69,26 @@ class Extractor(object):
         return results
 
     def remove_redundant_char(self, text):
-        """生成 redundant
+        """去除冗余字符
 
         Args:
-            # redundant_char: 冗余字符集
             text: 待处理文本
 
         Returns:
             正则pattern
 
         """
-        if self.redundent_pattern is None:
+        if self.redundant_pattern is None:
             pattern_list = list()
-            for char in REDUNDENT_PATTERN:
+            for char in REDUNDANT_PATTERN:
                 pattern_tmp = '(?<={char}){char}+'.format(
                     char=re.escape(char))
                 pattern_list.append(pattern_tmp)
             
-            redundent_pattern = '|'.join(pattern_list)
-            self.redundent_pattern = re.compile(redundent_pattern)
+            redundant_pattern = '|'.join(pattern_list)
+            self.redundant_pattern = re.compile(redundant_pattern)
             
-        return self.redundent_pattern.sub('', text)
+        return self.redundant_pattern.sub('', text)
 
     def clean_text(self, text, remove_html_tag=True,
                    convert_full2half=True,

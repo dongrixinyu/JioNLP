@@ -7,11 +7,11 @@
     <a alt="License">
         <img src="https://img.shields.io/github/license/dongrixinyu/JioNLP?color=crimson" /></a>
     <a alt="Size">
-        <img src="https://img.shields.io/badge/size-18.5m-orange" /></a>
+        <img src="https://img.shields.io/badge/size-18.6m-orange" /></a>
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-4k-yellow" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.24-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.25-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -62,25 +62,24 @@ print(res)
 
 #### 完整示例
 ![image](../../blob/master/image/time_entity.png)
-- 一般首先对文本进行时间类型的实体识别，得到如下图的时间实体。然后选定其中的 time_base(选定新闻发布时间2020-07-15 09:03:47)，即可采用本工具处理，得到结果如下：
+- 一般首先对文本进行时间类型的实体识别，得到如上图的时间实体。然后选定其中的 time_base(选定新闻发布时间2021-07-15 09:03:47)，即可采用本工具处理，得到结果如下：
 ```
-7月15日         {'type': 'time_point', 'definition': 'accurate', 'time': ['2020-07-15 00:00:00', '2020-07-15 23:59:59']}
-今年上半年       {'type': 'time_span', 'definition': 'blur', 'time': ['2020-01-01 00:00:00', '2020-06-30 23:59:59']}
-两年            {'type': 'time_delta', 'definition': 'accurate', 'time': {'year': 2.0}}
-一季度          {'type': 'time_span', 'definition': 'accurate', 'time': ['2020-01-01 00:00:00', '2020-03-31 23:59:59']}
-二季度          {'type': 'time_span', 'definition': 'accurate', 'time': ['2020-04-01 00:00:00', '2020-06-30 23:59:59']}
-6月份           {'type': 'time_point', 'definition': 'accurate', 'time': ['2020-06-01 00:00:00', '2020-06-30 23:59:59']}
-两年            {'type': 'time_delta', 'definition': 'accurate', 'time': {'year': 2.0}}
-上半年          {'type': 'time_span', 'definition': 'blur', 'time': ['2020-01-01 00:00:00', '2020-06-30 23:59:59']}
-春节            {'type': 'time_point', 'definition': 'accurate', 'time': ['2020-01-25 00:00:00', '2020-01-25 23:59:59']}
-劳动节          {'type': 'time_point', 'definition': 'accurate', 'time': ['2020-05-01 00:00:00', '2020-05-01 23:59:59']}
-端午节          {'type': 'time_point', 'definition': 'accurate', 'time': ['2020-06-25 00:00:00', '2020-06-25 23:59:59']}
-16个月          {'type': 'time_delta', 'definition': 'accurate', 'time': {'month': 16.0}}
-从2018年至今     {'type': 'time_span', 'definition': 'accurate', 'time': ['2018-01-01 00:00:00', '2020-07-15 09:03:47']}
-1-5月份         {'type': 'time_span', 'definition': 'accurate', 'time': ['2020-01-01 00:00:00', '2020-05-31 23:59:59']}
-2020年1-5月份    {'type': 'time_span', 'definition': 'accurate', 'time': ['2020-01-01 00:00:00', '2020-05-31 23:59:59']}
-2020-07-15 09:03:47  {'type': 'time_point', 'definition': 'accurate', 'time': ['2020-07-15 09:03:47', '2020-07-15 09:03:47']}
-
+7月15日               time_point  ['2021-07-15 00:00:00', '2021-07-15 23:59:59']
+今年上半年             time_span   ['2021-01-01 00:00:00', '2021-06-30 23:59:59']
+两年                  time_delta  {'year': 2.0}
+一季度                time_span   ['2021-01-01 00:00:00', '2021-03-31 23:59:59']
+二季度                time_span   ['2021-04-01 00:00:00', '2021-06-30 23:59:59']
+上半年                time_span   ['2021-01-01 00:00:00', '2021-06-30 23:59:59']
+春节                  time_point  ['2021-02-12 00:00:00', '2021-02-12 23:59:59']
+五一                  time_point  ['2021-05-01 00:00:00', '2021-05-01 23:59:59']
+端午                  time_point  ['2021-06-14 00:00:00', '2021-06-14 23:59:59']
+6月份                 time_point  ['2021-06-01 00:00:00', '2021-06-30 23:59:59']
+16个月                time_delta  {'month': 16.0}
+从2018年至今           time_span   ['2018-01-01 00:00:00', '2021-07-15 09:03:47']
+每年                  time_period {'delta': {'year': 1}, 'point': None}
+1-5月份               time_span   ['2021-01-01 00:00:00', '2021-05-31 23:59:59']
+2020年1-5月份         time_span   ['2020-01-01 00:00:00', '2020-05-31 23:59:59']
+2021-07-15 09:03:47  time_point  ['2021-07-15 09:03:47', '2021-07-15 09:03:47']
 ```
 
 ## 安装 Installation

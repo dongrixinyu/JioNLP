@@ -1,17 +1,21 @@
-## 请输入您的问题描述，或您预期的功能 please describe the bug or the function you expect
+**提 issue 请务必将以下信息写清楚，否则无法解答！！！**
+**描述(Description)**
 
-- 函数名 function name：
+> 描述你遇到了什么问题(Please description your issue here)
 
-
-## 请输入报错的文本，以及代码 please input the text and code
-## （*** 一定要写清楚是具体哪一条文本数据造成了报错！！！ ***）
-
+1. jionlp版本(Version): `xxxxxx` 通过 `jionlp.__version__` 可查
+1. 调用报错日志如下(Log):
 ```
-# 复制粘贴此处 copy and paste here
-
+xxxxxxxxxxxx
+```
+1. jionlp的调用代码与输入文本(Code & Text):
+```
+xxxxxxxxxxxx
 ```
 
-## 请输入报错信息与日志追踪 please input the bug info and traceback
+**期望行为(Expect)**
+
+> 描述你期望发生的事情(Please describe your expectation)
 
 
 
