@@ -52,6 +52,7 @@ class TestTimeParser(unittest.TestCase):
             ['九七年一季度', [1999, 9, 2], {'type': 'time_span', 'definition': 'accurate', 'time': ['1997-01-01 00:00:00', '1997-03-31 23:59:59']}],
             ['一季度', 1623604000, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-01-01 00:00:00', '2021-03-31 23:59:59']}],
             ['今年前三季度', 1623604000, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-01-01 00:00:00', '2021-09-30 23:59:59']}],
+            ['上个季度', 1623604000, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-01-01 00:00:00', '2021-03-31 23:59:59']}],
 
             # 年、模糊月份指示信息
             ['19年底', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2019-11-01 00:00:00', '2019-12-31 23:59:59']}],
@@ -350,6 +351,7 @@ class TestTimeParser(unittest.TestCase):
             ['第七年', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2027-01-01 00:00:00', '2027-12-31 23:59:59']}],
 
             # 另一种类型的 time_delta 转 time_span
+            # “过半个小时”、“三十年前”、“两个月以后”、“前俩月”、“未来三天”、“第三周周日”、“90分钟以内”、“五年以来”
             # ['近三年']
             # ['前三年']
             # ['未来一周'] time_span

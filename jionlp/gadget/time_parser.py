@@ -166,6 +166,9 @@ class TimeParser(object):
         self.limit_year_solar_season_pattern = re.compile(
             ''.join([bracket(LIMIT_YEAR_STRING), r'(([第前后头]?[一二三四1-4两]|首)(个)?季度)']))
 
+        # `限定季度`：`上季度`
+        self.limit_solar_season_pattern = re.compile(r'([上下](个)?)季度')
+
         # `年、范围月`：`2018年前三个月`
         self.year_span_month_pattern = re.compile(
             ''.join([bracket_absence(YEAR_STRING),
@@ -1054,6 +1057,7 @@ class TimeParser(object):
             [self.limit_year_month_blur_day_pattern, self.normalize_limit_year_month_blur_day],
             [self.year_month_blur_day_pattern, self.normalize_year_month_blur_day],
             [self.limit_year_solar_season_pattern, self.normalize_limit_year_solar_season],
+            [self.limit_solar_season_pattern, self.normalize_limit_solar_season],
             [self.year_solar_season_pattern, self.normalize_year_solar_season],
             [self.limit_week_pattern, self.normalize_limit_week],
             [self.standard_week_day_pattern, self.normalize_standard_week_day],
@@ -1282,6 +1286,54 @@ class TimeParser(object):
         time_handler = time_point.handler()
 
         return time_handler, time_handler, 'time_point', 'accurate'
+
+    def normalize_limit_solar_season(self, time_string):
+        """ 解析限定 季度 """
+        first_time_point = TimePoint()
+        second_time_point = TimePoint()
+
+        if self.time_base_handler[1] == -1 or self.time_base_handler[1] > 12:
+            raise ValueError('the `month` of time_base `{}` is undefined.'.format(
+                self.time_base_handler))
+
+        if '上' in time_string:
+            if self.time_base_handler[1] in [1, 2, 3]:
+                first_time_point.year = self.time_base_handler[0] - 1
+                second_time_point.year = self.time_base_handler[0] - 1
+                first_time_point.month = 10
+                second_time_point.month = 12
+            elif self.time_base_handler[1] in [4, 5, 6]:
+                first_time_point.month = 1
+                second_time_point.month = 3
+            elif self.time_base_handler[1] in [7, 8, 9]:
+                first_time_point.month = 4
+                second_time_point.month = 6
+            elif self.time_base_handler[1] in [10, 11, 12]:
+                first_time_point.month = 7
+                second_time_point.month = 9
+
+        elif '下' in time_string:
+            if self.time_base_handler[1] in [1, 2, 3]:
+                first_time_point.month = 4
+                second_time_point.month = 6
+            elif self.time_base_handler[1] in [4, 5, 6]:
+                first_time_point.month = 7
+                second_time_point.month = 9
+            elif self.time_base_handler[1] in [7, 8, 9]:
+                first_time_point.month = 10
+                second_time_point.month = 12
+            elif self.time_base_handler[1] in [10, 11, 12]:
+                first_time_point.year = self.time_base_handler[0] + 1
+                second_time_point.year = self.time_base_handler[0] + 1
+                first_time_point.month = 1
+                second_time_point.month = 3
+        else:
+            raise ValueError('the given `{}` is illegal.'.format(time_string))
+
+        first_time_handler = first_time_point.handler()
+        second_time_handler = second_time_point.handler()
+
+        return first_time_handler, second_time_handler, 'time_span', 'accurate'
 
     def normalize_limit_year_solar_season(self, time_string):
         """ 解析 限定年/季度(公历) 时间
