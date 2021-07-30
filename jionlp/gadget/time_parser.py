@@ -1300,6 +1300,10 @@ class TimeParser(object):
             elif '天' in time_string:
                 first_time_point.day = self.time_base_handler[2]
                 second_time_point.day = self.time_base_handler[2]
+            else:
+                raise ValueError('the given `{}` is illegal.'.format(time_string))
+        else:
+            raise ValueError('the given `{}` is illegal.'.format(time_string))
 
         first_time_handler = first_time_point.handler()
         second_time_handler = second_time_point.handler()
