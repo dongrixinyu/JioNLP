@@ -335,6 +335,7 @@ class TimeParser(object):
         self.hour_limit_minute_pattern = re.compile(
             ''.join([absence(BLUR_HOUR_STRING), bracket(HOUR_STRING), r'([123一二三]刻|半)']))
 
+        self.single_num_pattern = re.compile(SINGLE_NUM_STRING)
         # ----- TIME DELTA -----
         # 对时间段的描述
         # 其中，年、日、秒 容易引起歧义，如 `21年`，指`二十一年` 还是 `2021年`。
@@ -368,6 +369,26 @@ class TimeParser(object):
                      bracket(HOUR_DELTA_STRING), I,
                      bracket(MINUTE_DELTA_STRING), I,
                      bracket(SECOND_DELTA_STRING), ')+$']))
+
+        standard_delta_string = ''.join(
+            ['(', bracket(YEAR_DELTA_STRING), I,
+             bracket(SOLAR_SEASON_DELTA_STRING), I,
+             bracket(MONTH_DELTA_STRING), I,
+             bracket(WORKDAY_DELTA_STRING), I,
+             bracket(DAY_DELTA_STRING), I,
+             bracket(WEEK_DELTA_STRING), I,
+             bracket(HOUR_DELTA_STRING), I,
+             bracket(MINUTE_DELTA_STRING), I,
+             bracket(SECOND_DELTA_STRING), ')+'])
+
+        self.weilai_delta2span_pattern = re.compile(
+            ''.join(['(未来|今后)(的)?', standard_delta_string, '[里内]?']))
+
+        self.guoqu_delta2span_pattern = re.compile(
+            ''.join(['((过去)(的)?|近)', standard_delta_string, '[里内]?']))
+
+        self.guo_delta2span_pattern = re.compile(
+            ''.join(['(再)?(过)', standard_delta_string]))
 
         self.law_delta_pattern = re.compile(
             ''.join([DELTA_NUM_STRING, '(年|个月|日|天)(以[上下])',
@@ -529,8 +550,11 @@ class TimeParser(object):
             r'(' + bracket(YEAR_STRING) + I + bracket(DAY_STRING) + r')')
 
         # 特殊时间表述
-        self.special_time_delta_pattern = re.compile(r'(\d天\d夜|\d+个春秋|一年四季|大半[天年个月])')
-        self.special_time_span_pattern = re.compile(r'(今明两[天年]|全[天月年])')
+        self.special_time_delta_pattern = re.compile(
+            r'(' + SINGLE_NUM_STRING + r'天' + SINGLE_NUM_STRING + '[夜晚]|' + \
+            SINGLE_NUM_STRING + '+[个载度]春秋|一年四季|大半(天|年|(个)?(月|小时|钟头)))')
+        self.special_time_span_pattern = re.compile(
+            r'(今明两[天年]|全[天月年])')
 
     def _compensate_string(self, time_string, first_time_string, second_time_string):
         time_compensation = self.time_span_point_compensation.search(time_string)
@@ -908,7 +932,7 @@ class TimeParser(object):
         delta_pattern_norm_funcs = [
             [self.standard_delta_pattern, self.normalize_standard_time_delta],
             [self.law_delta_pattern, self.normalize_law_delta],
-            # [self.special_time_delta_pattern, self.normalize_special_time_delta],
+            [self.special_time_delta_pattern, self.normalize_special_time_delta],
 
         ]
 
@@ -978,6 +1002,9 @@ class TimeParser(object):
 
     def _normalize_delta_unit(self, time_string, pattern):
         """ 将 time_delta 的年归一化 """
+        # 处理字符串的问题
+        time_string = time_string.replace('俩', '两个')
+
         delta = pattern.search(time_string)
         time_delta = 0
         time_definition = 'accurate'
@@ -998,6 +1025,50 @@ class TimeParser(object):
                 time_definition = 'blur'
 
         return time_delta, time_definition
+
+    def normalize_special_time_delta(self, time_string, time_type=None):
+        """ 解析特殊的时间字符串 """
+        # (r'(\d天\d夜|\d+个春秋|一年四季|大半[天年个月])')
+        if '天' in time_string and ('夜' in time_string or '晚' in time_string):
+            searched_num = self.single_num_pattern.search(time_string)
+            if searched_num:
+                time_delta = TimeDelta()
+                time_delta.day = self._char_num2num(searched_num.group())
+                return time_delta, 'time_delta', 'accurate'
+
+        elif '春秋' in time_string:
+            searched_num = self.single_num_pattern.search(time_string)
+            if searched_num:
+                time_delta = TimeDelta()
+                time_delta.year = self._char_num2num(searched_num.group())
+                return time_delta, 'time_delta', 'blur'
+
+        elif '一年四季' in time_string:
+            time_delta = TimeDelta()
+            time_delta.year = 1
+            return time_delta, 'time_delta', 'blur'
+
+        elif '大半' in time_string:
+            first_delta = TimeDelta()
+            second_delta = TimeDelta()
+            if '年' in time_string:
+                first_delta.year = 0.5
+                second_delta.year = 0.9
+            elif '月' in time_string:
+                first_delta.month = 0.5
+                second_delta.month = 0.9
+            elif '天' in time_string:
+                first_delta.day = 0.5
+                second_delta.day = 0.9
+            elif '小时' in time_string or '钟头' in time_string:
+                first_delta.hour = 0.5
+                second_delta.hour = 0.9
+            else:
+                raise ValueError('the given `{}` is illegal.'.format(time_string))
+            return [first_delta, second_delta], 'time_delta', 'blur'
+
+        else:
+            raise ValueError('the given `{}` is illegal.'.format(time_string))
 
     def normalize_law_delta(self, time_string, time_type=None):
         # 3年以上，7年以下
@@ -1074,6 +1145,11 @@ class TimeParser(object):
             [self.year_order_delta_point_pattern, self.normalize_year_order_delta_point],
             [self.day_order_delta_point_pattern, self.normalize_day_order_delta_point],
 
+            # time delta 2 span group
+            [self.weilai_delta2span_pattern, self.normalize_weilai_delta2span],
+            [self.guoqu_delta2span_pattern, self.normalize_guoqu_delta2span],
+            [self.guo_delta2span_pattern, self.normalize_guo_delta2span],
+
             # time delta 2 point group
             [self.workday_delta_point_pattern, self.normalize_workday_delta_point],
             [self.day_delta_point_pattern, self.normalize_day_delta_point],
@@ -1097,6 +1173,9 @@ class TimeParser(object):
             [self.lunar_year_month_day_pattern, self.normalize_lunar_year_month_day],
             [self.year_month_day_pattern, self.normalize_year_month_day],
             [self.standard_year_pattern, self.normalize_standard_year],
+
+            # special patterns
+            [self.special_time_span_pattern, self.normalize_special_time_span],
         ]
 
         hms_pattern_norm_funcs = [
@@ -1107,7 +1186,6 @@ class TimeParser(object):
             [self.num_hour_minute_second_pattern, self.normalize_num_hour_minute_second],
             [self.hour_limit_minute_pattern, self.normalize_hour_limit_minute],
             [self.blur_hour_pattern, self.normalize_blur_hour],
-            # [],
 
         ]
 
@@ -1124,7 +1202,6 @@ class TimeParser(object):
                     cur_ymd_func = ymd_func
                     cur_hms_string = hms_string
                     cur_ymd_string = ymd_string
-                    # print('##', ymd_string, hms_string, ' orig: ', time_string)
 
                 if ''.join([cur_ymd_string, cur_hms_string]) == time_string:
                     break_flag = True
@@ -1195,6 +1272,39 @@ class TimeParser(object):
             return searched_res.group()
         else:
             return ''
+
+    def normalize_special_time_span(self, time_string):
+        """ 解决特殊时间解析 """
+        # r'(今明两[天年]|全[天月年])'
+        first_time_point = TimePoint()
+        second_time_point = TimePoint()
+        if '今明' in time_string:
+            if '年' in time_string:
+                first_time_point.year = self.time_base_handler[0]
+                second_time_point.year = self.time_base_handler[0] + 1
+            elif '天' in time_string:
+                if self.time_base_handler[2] == -1:
+                    raise ValueError('the given time_base `{}` is illegal.'.format(time_string))
+                first_time_point.day = self.time_base_handler[2]
+                second_time_point.day = self.time_base_handler[2] + 1
+            else:
+                raise ValueError('the given `{}` is illegal.'.format(time_string))
+
+        elif '全' in time_string:
+            if '年' in time_string:
+                first_time_point.year = self.time_base_handler[0]
+                second_time_point.year = self.time_base_handler[0]
+            elif '月' in time_string:
+                first_time_point.month = self.time_base_handler[1]
+                second_time_point.month = self.time_base_handler[1]
+            elif '天' in time_string:
+                first_time_point.day = self.time_base_handler[2]
+                second_time_point.day = self.time_base_handler[2]
+
+        first_time_handler = first_time_point.handler()
+        second_time_handler = second_time_point.handler()
+
+        return first_time_handler, second_time_handler, 'time_span', 'accurate'
 
     def normalize_standard_year_month_day(self, time_string):
         """ 解析 标准数字 年月日（标准） 时间
@@ -1553,6 +1663,124 @@ class TimeParser(object):
         second_time_handler = second_time_point.handler()
 
         return first_time_handler, second_time_handler, 'time_span', 'accurate'
+
+    @staticmethod
+    def _check_delta_base_conflict(time_delta_dict, time_base_handler):
+        # 检测 time_delta 的 dict 与 time_base_handler 的冲突，会导致无法解析
+        flag = True
+        if time_delta_dict.get('year', 0) > 0 and time_base_handler[0] == -1:
+            flag = False
+        if time_delta_dict.get('month', 0) > 0 and time_base_handler[1] == -1:
+            flag = False
+        if time_delta_dict.get('day', 0) > 0 and time_base_handler[2] == -1:
+            flag = False
+        if time_delta_dict.get('hour', 0) > 0 and time_base_handler[3] == -1:
+            flag = False
+        if time_delta_dict.get('minute', 0) > 0 and time_base_handler[4] == -1:
+            flag = False
+        if time_delta_dict.get('second', 0) > 0 and time_base_handler[5] == -1:
+            flag = False
+
+        if not flag:
+            raise ValueError('the given time_base `{}` is illegal'.format(time_base_handler))
+
+        return flag
+
+    def normalize_weilai_delta2span(self, time_string):
+        """ 解析 未来（三天、48小时等）
+        当 time_delta 位于 年、月、天等以上时，会将结果扩展到一日结束，即 time_delta 并不精准
+        当 time_delta 位于 时、分、秒等以下时，不会将结果扩展到一小时结束，而是继承 time_base_handler，做到精准的 time_delta
+        """
+        time_delta, _, blur_time = self.normalize_standard_time_delta(time_string, time_type='time_delta')
+        time_delta_dict = TimeParser._cut_zero_key(time_delta.__dict__)
+
+        TimeParser._check_delta_base_conflict(time_delta_dict, self.time_base_handler)
+
+        first_time_handler = self.time_base_handler
+
+        time_base_datetime = TimeParser._convert_handler2datetime(self.time_base_handler)
+
+        time_base_datetime += datetime.timedelta(days=365 * time_delta_dict.get('year', 0))
+        time_base_datetime += datetime.timedelta(days=30.417 * time_delta_dict.get('month', 0))
+        time_base_datetime += datetime.timedelta(days=time_delta_dict.get('day', 0))
+        time_base_datetime += datetime.timedelta(hours=time_delta_dict.get('hour', 0))
+        time_base_datetime += datetime.timedelta(minutes=time_delta_dict.get('minute', 0))
+        time_base_datetime += datetime.timedelta(seconds=time_delta_dict.get('second', 0))
+        second_time_handler = TimeParser._convert_time_base2handler(time_base_datetime)
+        delta_set = set(time_delta_dict.keys())
+        if 'hour' in delta_set or 'minute' in delta_set or 'second' in delta_set:
+            definition = 'accurate'
+            second_time_handler = [s if b > -1 else -1 for (b, s) in zip(self.time_base_handler, second_time_handler)]
+        else:
+            definition = 'blur'
+            second_time_handler = [s if (b > -1 and idx <= 2) else -1
+                                   for idx, (b, s) in enumerate(zip(self.time_base_handler, second_time_handler))]
+
+        return first_time_handler, second_time_handler, 'time_span', definition
+
+    def normalize_guoqu_delta2span(self, time_string):
+        """ 解析 过去（三天、48小时等）
+        当 time_delta 位于 年、月、天等以上时，会将结果扩展到一日结束，即 time_delta 并不精准
+        当 time_delta 位于 时、分、秒等以下时，不会将结果扩展到一小时结束，而是继承 time_base_handler，做到精准的 time_delta
+        """
+        time_delta, _, blur_time = self.normalize_standard_time_delta(time_string, time_type='time_delta')
+        time_delta_dict = TimeParser._cut_zero_key(time_delta.__dict__)
+
+        TimeParser._check_delta_base_conflict(time_delta_dict, self.time_base_handler)
+
+        second_time_handler = self.time_base_handler
+
+        time_base_datetime = TimeParser._convert_handler2datetime(self.time_base_handler)
+
+        time_base_datetime += datetime.timedelta(days=-365 * time_delta_dict.get('year', 0))
+        time_base_datetime += datetime.timedelta(days=-30.417 * time_delta_dict.get('month', 0))
+        time_base_datetime += datetime.timedelta(days=-time_delta_dict.get('day', 0))
+        time_base_datetime += datetime.timedelta(hours=-time_delta_dict.get('hour', 0))
+        time_base_datetime += datetime.timedelta(minutes=-time_delta_dict.get('minute', 0))
+        time_base_datetime += datetime.timedelta(seconds=-time_delta_dict.get('second', 0))
+        first_time_handler = TimeParser._convert_time_base2handler(time_base_datetime)
+        delta_set = set(time_delta_dict.keys())
+        if 'hour' in delta_set or 'minute' in delta_set or 'second' in delta_set:
+            definition = 'accurate'
+            first_time_handler = [s if b > -1 else -1 for (b, s) in zip(self.time_base_handler, first_time_handler)]
+        else:
+            definition = 'blur'
+            first_time_handler = [s if (b > -1 and idx <= 2) else -1
+                                  for idx, (b, s) in enumerate(zip(self.time_base_handler, first_time_handler))]
+
+        return first_time_handler, second_time_handler, 'time_span', definition
+
+    def normalize_guo_delta2span(self, time_string):
+        """ 解析 过（三天、48小时等）
+        当 time_delta 位于 年、月、天等以上时，会将结果扩展到一日结束，即 time_delta 并不精准
+        当 time_delta 位于 时、分、秒等以下时，不会将结果扩展到一小时结束，而是继承 time_base_handler，做到精准的 time_delta
+        """
+        time_delta, _, blur_time = self.normalize_standard_time_delta(time_string, time_type='time_delta')
+        time_delta_dict = TimeParser._cut_zero_key(time_delta.__dict__)
+
+        TimeParser._check_delta_base_conflict(time_delta_dict, self.time_base_handler)
+
+        second_time_handler = self.future_time
+
+        time_base_datetime = TimeParser._convert_handler2datetime(self.time_base_handler)
+
+        time_base_datetime += datetime.timedelta(days=365 * time_delta_dict.get('year', 0))
+        time_base_datetime += datetime.timedelta(days=30.417 * time_delta_dict.get('month', 0))
+        time_base_datetime += datetime.timedelta(days=time_delta_dict.get('day', 0))
+        time_base_datetime += datetime.timedelta(hours=time_delta_dict.get('hour', 0))
+        time_base_datetime += datetime.timedelta(minutes=time_delta_dict.get('minute', 0))
+        time_base_datetime += datetime.timedelta(seconds=time_delta_dict.get('second', 0))
+        first_time_handler = TimeParser._convert_time_base2handler(time_base_datetime)
+        delta_set = set(time_delta_dict.keys())
+        if 'hour' in delta_set or 'minute' in delta_set or 'second' in delta_set:
+            definition = 'accurate'
+            first_time_handler = [s if b > -1 else -1 for (b, s) in zip(self.time_base_handler, first_time_handler)]
+        else:
+            definition = 'blur'
+            first_time_handler = [s if (b > -1 and idx <= 2) else -1
+                                  for idx, (b, s) in enumerate(zip(self.time_base_handler, first_time_handler))]
+
+        return first_time_handler, second_time_handler, 'time_span', definition
 
     def normalize_second_delta_point(self, time_string):
         """ 解析 time delta 秒的 point 时间

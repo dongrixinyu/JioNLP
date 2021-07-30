@@ -322,12 +322,12 @@ SINGLE_NUM_STRING = r'[一两二三四五六七八九十\d]'
 # time_delta 正则
 YEAR_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'[多余]?(周)?年(多)?', I, '半年', I, SINGLE_NUM_STRING, '年半'])
 SOLAR_SEASON_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'个(多)?季度'])
-MONTH_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'(多)?个(多)?月', I, '半(个(多)?)?月', I, SINGLE_NUM_STRING, '个半月'])
+MONTH_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'(多)?个(多)?月', I, '俩月', I, '半(个(多)?)?月', I, SINGLE_NUM_STRING, '个半月'])
 WORKDAY_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'[多余]?(个)?(工作|交易)日'])
 DAY_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'[多余]?[天日]', I, '半天', I, SINGLE_NUM_STRING, '天半'])
-WEEK_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'[多余]?((个(多)?)?星期|周(?!年))'])
+WEEK_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'[多余]?((个(多)?)?(星期|礼拜)|周(?!年))', I, r'俩(星期|礼拜)'])
 HOUR_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'[多余]?(个(多)?)?(小时|钟头)', I,
-                             '半(个(多)?)?(小时|钟头)', I, SINGLE_NUM_STRING, '个半(小时|钟头)'])
+                             '半(个(多)?)?(小时|钟头)', I, '俩(小时|钟头)', I, SINGLE_NUM_STRING, '个半(小时|钟头)'])
 MINUTE_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'[多余]?分钟(半)?', I, '半分钟', I, SINGLE_NUM_STRING, '+分半(钟)?'])
 SECOND_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'[多余]?秒(钟)?'])
 

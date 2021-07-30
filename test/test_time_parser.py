@@ -178,6 +178,8 @@ class TestTimeParser(unittest.TestCase):
             ['4个星期之后', 1623604000, {'type': 'time_point', 'definition': 'blur', 'time': ['2021-07-12 00:00:00', '2021-07-18 23:59:59']}],
             ['星期天', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-20 00:00:00', '2021-06-20 23:59:59']}],
             ['下个星期一', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-21 00:00:00', '2021-06-21 23:59:59']}],
+            # `第三周周日` 这样的字符串几乎不会出现，因，在虚拟时间表述时，一般缺乏`周`的概念，而在具体时间表述时，会定义清楚周所处的月份。
+            # 因此，单独针对`第三周周日`的解析，会默认所处年月为 time_base 的年月。
             ['6月第3个星期日', {'year': 2021}, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-20 00:00:00', '2021-06-20 23:59:59']}],
             ['八月份的第一个周二', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-08-03 00:00:00', '2021-08-03 23:59:59']}],
             ['周二早上', 1623604000, {'type': 'time_point', 'definition': 'blur', 'time': ['2021-06-15 06:00:00', '2021-06-15 09:59:59']}],
@@ -270,6 +272,7 @@ class TestTimeParser(unittest.TestCase):
             ['15个交易日', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'workday': 15.0}}],
             ['五个工作日', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'workday': 5.0}}],
             ['两日', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'day': 2.0}}],
+            ['俩礼拜', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'day': 14.0}}],
 
             # 法律时间
             ['3年以上7年以下', None, {'type': 'time_delta', 'definition': 'blur', 'time': [{'year': 3.0}, {'year': 7.0}]}],
@@ -281,7 +284,6 @@ class TestTimeParser(unittest.TestCase):
             # ['二十来天', None, ],
             # ['几十个小时', None, ],
             # ['无数个小时', None, ],
-
 
             # 经过歧义处理的时间段
             ['90日', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'day': 90.0}}],
@@ -299,6 +301,9 @@ class TestTimeParser(unittest.TestCase):
             ['七年后', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2028-01-01 00:00:00', '2028-12-31 23:59:59']}],
             ['半钟头后', 1623604000, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-14 01:36:40', '2021-06-14 02:06:59']}],
             # '25-35天内' 有两种解析方法， time_span 与 time_delta
+            # `60日内` 有两种解析方法， time_span 与 time_delta，
+            # `请在 60日内 完成`，指在 time_base + 60 天之前的范围内完成。
+            # `25-35天内是我们做这项工作的合理时间安排`，指需要耗费的 time_delta。
             ['5个交易日之后', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-06-21 00:00:00', 'inf']}],
             ['15个工作日内', 1623604000, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 01:06:40', '2021-07-05 23:59:59']}],
             ['60日内', 1623604000, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 01:06:40', '2021-08-13 23:59:59']}],
@@ -351,17 +356,45 @@ class TestTimeParser(unittest.TestCase):
             ['第七年', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2027-01-01 00:00:00', '2027-12-31 23:59:59']}],
 
             # 另一种类型的 time_delta 转 time_span
-            # “过半个小时”、“三十年前”、“两个月以后”、“前俩月”、“未来三天”、“第三周周日”、“90分钟以内”、“五年以来”
-            # ['近三年']
-            # ['前三年']
-            # ['未来一周'] time_span
-            # ['过去一个月'] time_span
-            # ['过十分钟'] time_span
-            # ['再过十小时'] time_span
+            # 未来/今后
+            ['未来2个月', {'year': 2021, 'month': 7}, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-07-01 00:00:00', '2021-08-31 23:59:59']}],
+            ['未来两个月', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-06-14 01:06:40', '2021-08-13 23:59:59']}],
+            ['未来5年内', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-06-14 01:06:40', '2026-06-13 23:59:59']}],
+            ['未来7天', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-06-14 01:06:40', '2021-06-21 23:59:59']}],
+            ['未来48小时', 1623604000, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 01:06:40', '2021-06-16 01:06:40']}],
+            ['未来七十二小时内', {'year': 2021, 'month': 7, 'day': 3, 'hour': 14, 'minute': 32}, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-07-03 14:32:00', '2021-07-06 14:32:59']}],
+            ['今后10年', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-06-14 01:06:40', '2031-06-12 23:59:59']}],
+
+            # 过去
+            ['过去的一周', {'year': 2021, 'month': 7, 'day': 31, 'hour': 14, 'minute': 32}, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-07-24 00:00:00', '2021-07-31 14:32:59']}],
+            ['过去的一年', {'year': 2021, 'month': 7, 'day': 31, 'hour': 14, 'minute': 32}, {'type': 'time_span', 'definition': 'blur', 'time': ['2020-07-31 00:00:00', '2021-07-31 14:32:59']}],
+            # 过去5分钟，也可能是表示 度过5分钟，此时，并非静态时间，应当按 5分钟解析。故不支持该表述。
+            ['过去5分钟', {'year': 2021, 'month': 7, 'day': 31, 'hour': 14, 'minute': 32}, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-07-31 14:27:00', '2021-07-31 14:32:59']}],
+            ['过去的50分钟里', 1623604000, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 00:16:40', '2021-06-14 01:06:40']}],
+
+            # 过
+            ['再过半个小时', 1623604000, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 01:36:40', 'inf']}],
+            ['过两天', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-06-16 00:00:00', 'inf']}],
+            ['过十周', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-08-23 00:00:00', 'inf']}],
+
+            # 前/头
+            # “前俩月”、“头三天”: 指给定一个大的 time_span，指定其中的 前 time_delta 时间，返回应当为 time_span，但无具体时间范围。
+            # 暂不支持，还有待分析考虑。
+
+            # 近
+            # ”近三年“、“近几天”：有 time_span 和 time_delta 两种解析方式。，默认为按 time_span 解析
+            ['近30天', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-05-15 00:00:00', '2021-06-14 01:06:40']}],
+            ['近三个月', 1623604000, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-03-14 00:00:00', '2021-06-14 01:06:40']}],
+
+            # 特殊时间范围
+            ['全天', 1623604000, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 00:00:00', '2021-06-14 23:59:59']}],
+            ['今明两年', 1623604000, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-01-01 00:00:00', '2022-12-31 23:59:59']}],
 
             # 特殊时间段
-            # ['6天5晚'],
-            # ['三天三夜'],
+            ['大半天', None, {'type': 'time_delta', 'definition': 'blur', 'time': [{'day': 0.5}, {'day': 0.9}]}],
+            ['6天5晚', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'day': 6.0}}],
+            ['三天三夜', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'day': 3.0}}],
+            ['七载春秋', None, {'type': 'time_delta', 'definition': 'blur', 'time': {'year': 7.0}}],
 
             # 范围时间段
             ['3天——8天', None, {'type': 'time_delta', 'definition': 'blur', 'time': [{'day': 3.0}, {'day': 8.0}]}],
