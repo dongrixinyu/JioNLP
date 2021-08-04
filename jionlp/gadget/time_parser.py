@@ -569,7 +569,8 @@ class TimeParser(object):
             elif '日' in time_compensation or '号' in time_compensation:
                 first_time_string = ''.join([first_time_string, '日'])
             elif '点' in time_compensation or '时' in time_compensation:
-                first_time_string = ''.join([first_time_string, '时'])
+                if first_time_string[-1] not in '点时':
+                    first_time_string = ''.join([first_time_string, '时'])
 
             # compensate the second
             hour_limitation = self.hour_patterns[1].search(time_string)
@@ -716,6 +717,13 @@ class TimeParser(object):
                         self.time_base_handler = first_full_time_handler
                         _, second_full_time_handler, _, blur_time = self.parse_time_point(
                             second_time_string, first_full_time_handler)
+
+                        # 对于 time_span 且 second_full_time_handler 的 时分秒，分别为 [..., 10, -1, -1]，
+                        # 须将其补全为 [..., 10, 0, 0]。
+                        if second_full_time_handler[3] > -1 and second_full_time_handler[4:] == [-1, -1]:
+                            if time_string[-1] in '点时':  # 即必须满足正则 [数字]时 pattern
+                                second_full_time_handler[4:] = [0, 0]
+
                 elif first_time_string is None and second_time_string is not None:
                     _, second_full_time_handler, _, blur_time = self.parse_time_point(
                         second_time_string, self.time_base_handler)
@@ -1220,6 +1228,7 @@ class TimeParser(object):
                 # 若未搜索到中文，则 `-` 等符号很可能只是间隔符，如`2018-08-09`而非 span 分隔符，此时要求字符串干净
                 raise ValueError('## exception string `{}`.'.format(time_string))
 
+        day_bias = [0, '弱']  # 用于调整根据 时分秒判断的 日
         # 年月日、时分秒相互对应完整
         if cur_ymd_string != '' and cur_hms_string == '':
             first_time_handler, second_time_handler, time_type, blur_time = \
@@ -1236,7 +1245,7 @@ class TimeParser(object):
                 raise ValueError('the string `{}` is illegal, because the hour-min-sec string'
                                  'can NOT be designated to a specific day.'.format(time_string))
 
-            hms_first_time_handler, hms_second_time_handler, hms_time_type, hms_blur_time = \
+            hms_first_time_handler, hms_second_time_handler, hms_time_type, hms_blur_time, day_bias = \
                 cur_hms_func(cur_hms_string)
 
             first_time_handler = [max(i, j) for (i, j) in zip(ymd_first_time_handler, hms_first_time_handler)]
@@ -1245,7 +1254,7 @@ class TimeParser(object):
             blur_time = hms_blur_time
 
         elif cur_ymd_string == '' and cur_hms_string != '':
-            first_time_handler, second_time_handler, time_type, blur_time = \
+            first_time_handler, second_time_handler, time_type, blur_time, day_bias = \
                 cur_hms_func(cur_hms_string)
 
         else:
@@ -1259,6 +1268,20 @@ class TimeParser(object):
             first_time_handler, time_base_handler)
         second_full_time_handler = TimeParser.time_completion(
             second_time_handler, time_base_handler)
+
+        # 根据 时分秒信息对 日 做偏移校准
+        if day_bias[1] == '强':
+            first_full_timebase = TimeParser._convert_handler2datetime(first_full_time_handler)
+            first_full_timebase += datetime.timedelta(days=day_bias[0])
+            _first_full_time_handler = TimeParser._convert_time_base2handler(first_full_timebase)
+            first_full_time_handler = [i if i == -1 else j for i, j in
+                                       zip(first_full_time_handler, _first_full_time_handler)]
+
+            second_full_timebase = TimeParser._convert_handler2datetime(second_full_time_handler)
+            second_full_timebase += datetime.timedelta(days=day_bias[0])
+            _second_full_time_handler = TimeParser._convert_time_base2handler(second_full_timebase)
+            second_full_time_handler = [i if i == -1 else j for i, j in
+                                        zip(second_full_time_handler, _second_full_time_handler)]
 
         return first_full_time_handler, second_full_time_handler, time_type, blur_time
 
@@ -1793,6 +1816,7 @@ class TimeParser(object):
         3、若 time_base 中未指定秒，则以 time_base 信息不充分报错。
         :return:
         """
+        day_bias = [0, '弱']
         if self.time_base_handler[-1] == -1:
             raise ValueError(
                 'the time_base `{}` is lack of second, '
@@ -1869,7 +1893,7 @@ class TimeParser(object):
         else:
             raise ValueError('the given string `{}` is illegal.'.format(time_string))
 
-        return first_time_handler, second_time_handler, time_type, definition
+        return first_time_handler, second_time_handler, time_type, definition, day_bias
 
     def normalize_minute_delta_point(self, time_string):
         """ 解析 time delta 日的 point 时间
@@ -1879,6 +1903,7 @@ class TimeParser(object):
         4、若是半分 + 0.5，超过 1 分钟 + 1
         :return:
         """
+        day_bias = [0, '弱']
         if self.time_base_handler[4] == -1:
             raise ValueError(
                 'the time_base `{}` is lack of minute, '
@@ -1955,7 +1980,7 @@ class TimeParser(object):
         else:
             raise ValueError('the given string `{}` is illegal.'.format(time_string))
 
-        return first_time_handler, second_time_handler, time_type, definition
+        return first_time_handler, second_time_handler, time_type, definition, day_bias
 
     def normalize_hour_delta_point(self, time_string):
         """ 解析 time delta 日的 point 时间
@@ -1965,6 +1990,7 @@ class TimeParser(object):
         4、若是半小时 + 0.5， 超过1小时 + 1
         :return:
         """
+        day_bias = [0, '弱']
         if self.time_base_handler[3] == -1:
             raise ValueError(
                 'the time_base `{}` is lack of hour, '
@@ -2055,7 +2081,7 @@ class TimeParser(object):
         else:
             raise ValueError('the given string `{}` is illegal.'.format(time_string))
 
-        return first_time_handler, second_time_handler, time_type, definition
+        return first_time_handler, second_time_handler, time_type, definition, day_bias
 
     def normalize_workday_delta_point(self, time_string):
         """ 解析 time delta 工作日的 point 时间
@@ -3975,6 +4001,8 @@ class TimeParser(object):
 
         :return:
         """
+        day_bias = [0, '弱']
+
         hour = self.hour_patterns[0].search(time_string)
         minute = self.minute_patterns[0].search(time_string)
         second = self.second_patterns[0].search(time_string)
@@ -3994,7 +4022,8 @@ class TimeParser(object):
                 if '下午' in hour_limit_string and (1 <= hour <= 6):
                     hour += 12
             if hour == 24:
-                hour = 23  # 24 会在 datetime 中报错，即第二天的 0 时，与 day 日期连用的方式还没做
+                hour = 0  # 24 会在 datetime 中报错，即第二天的 0 时
+                day_bias = [1, '强']
 
             time_point.hour = hour
 
@@ -4008,13 +4037,14 @@ class TimeParser(object):
 
         time_handler = time_point.handler()
 
-        return time_handler, time_handler, 'time_point', 'accurate'
+        return time_handler, time_handler, 'time_point', 'accurate', day_bias
 
     def normalize_num_hour_minute_second(self, time_string):
         """ 解析 `（标准格式）时分秒` 时间
 
         :return:
         """
+        day_bias = [0, '弱']
         hour_limitation = self.hour_patterns[1].search(time_string)
         if hour_limitation:
             hour_limit_string = hour_limitation.group()
@@ -4062,13 +4092,14 @@ class TimeParser(object):
 
         time_handler = time_point.handler()
 
-        return time_handler, time_handler, 'time_point', 'accurate'
+        return time_handler, time_handler, 'time_point', 'accurate', day_bias
 
     def normalize_hour_limit_minute(self, time_string):
         """ 解析 `时（限定性）分` 时间
 
         :return:
         """
+        day_bias = [0, '弱']
         hour = self.hour_patterns[0].search(time_string)
         hour_limitation = self.hour_patterns[1].search(time_string)
         limit_minute = self.minute_patterns[1].search(time_string)
@@ -4115,13 +4146,14 @@ class TimeParser(object):
 
         time_handler = time_point.handler()
 
-        return time_handler, time_handler, 'time_point', 'accurate'
+        return time_handler, time_handler, 'time_point', 'accurate', day_bias
 
     def normalize_blur_hour(self, time_string):
         """ 解析 `模糊 时段` 时间
 
         :return:
         """
+        day_bias = [0, '弱']
         hour = self.hour_patterns[1].search(time_string)
 
         first_time_point = TimePoint()
@@ -4184,7 +4216,7 @@ class TimeParser(object):
         first_time_handler = first_time_point.handler()
         second_time_handler = second_time_point.handler()
 
-        return first_time_handler, second_time_handler, 'time_point', 'blur'
+        return first_time_handler, second_time_handler, 'time_point', 'blur', day_bias
 
     def _char_num2num(self, char_num):
         """ 将 三十一 转换为 31，用于月、日、时、分、秒的汉字转换
