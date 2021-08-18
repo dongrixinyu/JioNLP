@@ -50,7 +50,7 @@ __license__ = "Apache License 2.0"
 __maintainer__ = "dongrixinyu"
 __email__ = "dongrixinyu.89@163.com"
 __url__ = 'https://github.com/dongrixinyu/JioNLP'
-__description__ = 'Preprocessing tool for Chinese NLP'
+__description__ = 'Chinese NLPreprocessing & Parsing'
 
 
 with open(os.path.join(DIR_PATH, 'requirements.txt'), 

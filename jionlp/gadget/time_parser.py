@@ -4473,14 +4473,14 @@ class TimeParser(object):
                     29, leap_month)  # 当农历月无30 天时，按 29天计算
 
             return string2handler(first_solar_time_handler),\
-                   string2handler(second_solar_time_handler)
+                string2handler(second_solar_time_handler)
 
         else:
             solar_time_handler = self.lunar2solar(
                 lunar_time_handler[0], lunar_time_handler[1],
                 lunar_time_handler[2], leap_month)
             return string2handler(solar_time_handler),\
-                   string2handler(solar_time_handler)
+                string2handler(solar_time_handler)
 
     def _parse_solar_terms(self, year, solar_term):
         """解析24节气

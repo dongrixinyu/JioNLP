@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-4k-yellow" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.27-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.28-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -94,6 +94,7 @@ $ pip install .
 ```
 $ pip install jionlp
 ```
+
 
 ## 使用 Features
 
@@ -230,7 +231,7 @@ $ jio_help
 - 如感兴趣合作完善本工具包，请参考 **TODO.txt** 文件进行功能添加。
 
 ### 做 NLP不易，欢迎加入自然语言处理 Wechat 交流群
-### 请先添加vx：dongrixinyu89
+### 如以下码失效，请先添加vx：dongrixinyu89
 ![image](../../blob/master/image/qr_code_for_collection.png)
 
 
