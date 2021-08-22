@@ -4015,7 +4015,7 @@ class TimeParser(object):
             hour_limitation = self.hour_patterns[1].search(time_string)
             if hour_limitation:
                 hour_limit_string = hour_limitation.group()
-                if (7 <= hour <= 12) and ('晚' in hour_limit_string or '夜' in hour_limit_string):
+                if (6 <= hour <= 12) and ('晚' in hour_limit_string or '夜' in hour_limit_string):
                     hour += 12
                 if '中午' in hour_limit_string and hour not in [11, 12]:
                     hour += 12
@@ -4051,7 +4051,7 @@ class TimeParser(object):
             time_string = time_string.replace(hour_limit_string, '')
 
         def convert_hour(h, h_string):
-            if (7 <= h <= 12) and ('晚' in h_string or '夜' in h_string):
+            if (6 <= h <= 12) and ('晚' in h_string or '夜' in h_string):
                 h += 12
             if '中午' in h_string and h not in [11, 12]:
                 h += 12
@@ -4105,7 +4105,7 @@ class TimeParser(object):
         limit_minute = self.minute_patterns[1].search(time_string)
 
         def convert_hour(h, h_string):
-            if (7 <= h <= 12) and ('晚' in h_string or '夜' in h_string):
+            if (6 <= h <= 12) and ('晚' in h_string or '夜' in h_string):
                 h += 12
             if '中午' in h_string and h not in [11, 12]:
                 h += 12
