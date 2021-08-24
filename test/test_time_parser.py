@@ -242,6 +242,7 @@ class TestTimeParser(unittest.TestCase):
             ['2019年6月28日9:30~11:30', _ts, {'type': 'time_span', 'definition': 'accurate', 'time': ['2019-06-28 09:30:00', '2019-06-28 11:30:59']}],
             ['中午12：00—14:00', _ts, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 12:00:00', '2021-06-14 14:00:59']}],
             ['大前天晚上9~11点', _ts, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-11 21:00:00', '2021-06-11 23:00:00']}],
+            ['晚上6点', _ts, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-14 18:00:00', '2021-06-14 18:59:59']}],
 
             # 时、限定性 分
             ['4月26日20时1刻', _ts, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-04-26 20:15:00', '2021-04-26 20:15:59']}],
