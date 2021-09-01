@@ -3969,23 +3969,27 @@ class TimeParser(object):
 
         if limit_day:
             limit_day_string = limit_day.group()
+            time_base_datetime = TimeParser._convert_handler2datetime(self.time_base_handler)
             if '大前' in limit_day_string:
-                time_point.day = self.time_base_handler[2] - 3
+                time_base_datetime -= datetime.timedelta(days=3)
             elif '前' in limit_day_string:
-                time_point.day = self.time_base_handler[2] - 2
+                time_base_datetime -= datetime.timedelta(days=2)
             elif '昨' in limit_day_string:
-                time_point.day = self.time_base_handler[2] - 1
+                time_base_datetime -= datetime.timedelta(days=1)
             elif '今' in limit_day_string or '同一' in limit_day_string or '当' in limit_day_string:
-                time_point.day = self.time_base_handler[2]
+                pass
             elif '明' in limit_day_string or '次' in limit_day_string:
-                time_point.day = self.time_base_handler[2] + 1
-            elif '大后' in limit_day_string:
-                time_point.day = self.time_base_handler[2] + 3
+                time_base_datetime += datetime.timedelta(days=1)
             elif '后' in limit_day_string:
-                time_point.day = self.time_base_handler[2] + 2
+                time_base_datetime += datetime.timedelta(days=2)
+            elif '大后' in limit_day_string:
+                time_base_datetime += datetime.timedelta(days=3)
             else:
                 raise ValueError('The given time string `{}` is illegal.'.format(time_string))
 
+            time_point.day = time_base_datetime.day
+            time_point.month = time_base_datetime.month
+            time_point.year = time_base_datetime.year
         else:
             time_point.day = self.time_base_handler[2]
 

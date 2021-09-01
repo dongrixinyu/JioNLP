@@ -8,7 +8,7 @@
 # description: Preprocessing tool for Chinese NLP
 """
 
-__version__ = '1.3.29'
+__version__ = '1.3.30'
 
 import os
 
@@ -72,6 +72,7 @@ guide = """
 │   | 2021-06-23 | add time parser                                     |   │
 │   | 2021-07-04 | update time parser                                  |   │
 │   | 2021-07-18 | update time parser                                  |   │
+│   | 2021-09-01 | add jionlp online                                   |   │
 │                                                                          │
 ╰──────────────────────────────────────────────────────────────────────────╯
 """

@@ -235,12 +235,9 @@ class ChineseKeyPhrasesExtractor(object):
                     sen_segs_weights.append(weight)
                 sentences_segs_weights_list.append(sen_segs_weights)
 
-
-            # pdb.set_trace()
             # step4: 通过一定规则，找到候选短语集合，以及其权重
             candidate_phrases_dict = dict()
-            for sen_segs, sen_segs_weights in zip(
-                sentences_segs_list, sentences_segs_weights_list):
+            for sen_segs, sen_segs_weights in zip(sentences_segs_list, sentences_segs_weights_list):
                 sen_length = len(sen_segs)
 
                 for n in range(1, sen_length + 1):  # n-grams

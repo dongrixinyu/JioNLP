@@ -7,11 +7,11 @@
     <a alt="License">
         <img src="https://img.shields.io/github/license/dongrixinyu/JioNLP?color=crimson" /></a>
     <a alt="Size">
-        <img src="https://img.shields.io/badge/size-18.6m-orange" /></a>
+        <img src="https://img.shields.io/badge/size-18.9m-orange" /></a>
     <a alt="Downloads">
-        <img src="https://img.shields.io/badge/downloads-4k-yellow" /></a>
+        <img src="https://img.shields.io/badge/downloads-5k-yellow" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.29-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.30-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -236,7 +236,8 @@ $ jio_help
 - 如感兴趣合作完善本工具包，请参考 **TODO.txt** 文件进行功能添加。
 
 ### 做 NLP不易，欢迎加入自然语言处理 Wechat 交流群
-### 如以下码失效，请先添加vx：dongrixinyu89
+### 如以下码失效，请先添加 vx：dongrixinyu89
 ![image](../../blob/master/image/qr_code_for_collection.png)
-
+### 如您感觉本工具对您有帮助，可以请作者喝杯咖啡 (●'◡'●)
+![image](../../blob/master/image/payment_code.png)
 
