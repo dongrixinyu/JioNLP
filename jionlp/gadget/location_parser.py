@@ -233,7 +233,9 @@ class LocationParser(object):
 
         # step 6: 获取详细地址部分
         detail_part = location_text[detail_idx:]
-        if detail_part[0] in '县':
+        if len(detail_part) == 0:
+            pass
+        elif detail_part[0] in '县':
             detail_part = detail_part[1:]
 
         # step 7: 将地址中的 省直辖、市直辖，去掉
@@ -275,7 +277,7 @@ class LocationParser(object):
         town = None
         village = None
 
-        prov = result['province']
+        prov = result['province'] if result['province'] is not None else ''
         city = result['city'] if result['city'] is not None else '省直辖行政区划'
         county = result['county'] if result['county'] is not None else '市直辖行政区划'
         key_name = ''.join([prov, city, county])

@@ -438,8 +438,8 @@ class TestTimeParser(unittest.TestCase):
 if __name__ == '__main__':
 
     suite = unittest.TestSuite()
-    test_time_norm = [TestTimeParser('test_time_normalizer')]
-    suite.addTests(test_time_norm)
+    test_time_parser = [TestTimeParser('test_time_parser')]
+    suite.addTests(test_time_parser)
 
     runner = unittest.TextTestRunner(verbosity=1)
     runner.run(suite)

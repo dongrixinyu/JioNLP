@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-5k-yellow" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.30-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.31-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -238,6 +238,6 @@ $ jio_help
 ### 做 NLP不易，欢迎加入自然语言处理 Wechat 交流群
 ### 如以下码失效，请先添加 vx：dongrixinyu89
 ![image](../../blob/master/image/qr_code_for_collection.png)
-### 如您感觉本工具对您有帮助，可以请作者喝杯咖啡 (●'◡'●)
+### 如您感觉本工具对您有帮助，可以扫码请作者喝杯咖啡 (●'◡'●)
 ![image](../../blob/master/image/payment_code.png)
 
