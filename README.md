@@ -1,6 +1,6 @@
 <p align="center">
     <a alt="jionlp logo">
-        <img src="../../blob/master/image/jionlp_logo.jpg" / style="width:90px;height:90px">
+        <img src="../../blob/master/image/jionlp_logo.jpg" / style="width:300px;height:130px">
     </a>
 </p>
 <p align="center">
@@ -17,7 +17,8 @@
 </p>
 
 ### &emsp;&emsp; ——JioNLP：中文 NLP 预处理工具包 A Python Lib for Chinese NLP Preprocessing
-### &emsp;&emsp; ```pip install jionlp```
+### &emsp;&emsp; ——安装：```pip install jionlp```
+### &emsp;&emsp; ——[JioNLP在线版](http://182.92.160.94:16666/#/) 可快速试用部分功能（测试版，可能存在不稳定）
 
 - 做 NLP 任务，需要清洗、过滤语料？用 JioNLP
 - 做 NLP 任务，需要做信息抽取？用 JioNLP
