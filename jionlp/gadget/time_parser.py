@@ -23,6 +23,10 @@ TODO:
         3、两年前，究竟指，（两年前为时间范围的结束，而起始未知），还是（两年前的那一整年）
         4、
 
+TODO unresolved:
+    1、中秋节前后两个周末
+    2、几十天后
+
 """
 
 import re
@@ -140,6 +144,8 @@ class TimeParser(object):
 
         self._preprocess_regular_expression()
 
+        self.string_strict = False
+
     def _preprocess_regular_expression(self):
         # 中文字符判定
         self.chinese_char_pattern = re.compile(CHINESE_CHAR_PATTERN)
@@ -219,6 +225,11 @@ class TimeParser(object):
             r'(公元(前)?)?(\d{1,2}|((二)?十)?[一二三四五六七八九]|(二)?十|上)世纪'
             r'((\d0|[一二三四五六七八九]十)年代)?([初中末](期)?|前期|后期)?|'
             r'(\d0|[一二三四五六七八九]十)年代([初中末](期)?|前期|后期)?')
+
+        # `（年、月）、枚举日`：十月21号、22号、23号， 9月1日，2日，3日
+        self.enum_day_pattern = re.compile(
+            ''.join([bracket_absence(YEAR_STRING), bracket_absence(MONTH_STRING),
+                     bracket(DAY_STRING), bracket('[、，, ]' + bracket(DAY_STRING)), '+']))
 
         # `农历年、月、日`：二〇一七年农历正月十九
         self.lunar_year_month_day_pattern = re.compile(
@@ -563,11 +574,14 @@ class TimeParser(object):
 
             # compensate the first
             if '年' in time_compensation:
-                first_time_string = ''.join([first_time_string, '年'])
+                if first_time_string[-1] not in '点时日号月年':  # 若第一个时间以 日结尾，而第二个时间以年开头，则不补全
+                    first_time_string = ''.join([first_time_string, '年'])
             elif '月' in time_compensation:
-                first_time_string = ''.join([first_time_string, '月'])
+                if first_time_string[-1] not in '点时日号月':
+                    first_time_string = ''.join([first_time_string, '月'])
             elif '日' in time_compensation or '号' in time_compensation:
-                first_time_string = ''.join([first_time_string, '日'])
+                if first_time_string[-1] not in '点时日号':
+                    first_time_string = ''.join([first_time_string, '日'])
             elif '点' in time_compensation or '时' in time_compensation:
                 if first_time_string[-1] not in '点时':
                     first_time_string = ''.join([first_time_string, '时'])
@@ -634,22 +648,28 @@ class TimeParser(object):
 
     @staticmethod
     def _cleansing(time_string):
-        return time_string.strip()
+        return time_string.strip().replace(' ', '')
 
-    def __call__(self, time_string, time_base=time.time(), time_type=None, ret_type='str'):
-        """解析时间字符串。
+    def __call__(self, time_string, time_base=time.time(), time_type=None,
+                 ret_type='str', strict=False):
+        """ 解析时间字符串。
 
         :param time_string: 时间字符串，一般从正则或 NER 获取到。
         :param time_base: 时间基点，即，以此时间为基点进行时间解析
         :param time_type: 指定时间类型，默认为 None，即不指定时间类型，在某些时间字符串存在歧义时使用。
             如，`22年`，既指2022年，又指二十二年，此时，会根据 `time_type` 进行解析。
         :param ret_type: 指定返回值为标准时间字符串，或时间戳整形，取值限定为 `'str'|'int'`
+        :param strict: 用于辅助时间实体抽取，即是否要求被传入的字符串严格不含有杂串。
+            如，`就在昨天上午` 传入该方法，仍可成功识别，不会报错。但 `就在` 二字为杂串。
+            当你已经有了时间实体抽取工具后，则该参数推荐设为 False，反之设为 True。
 
         :return: dict(type|definition|time) 时间类型、精度、具体时间解析值
+
         """
         if self.future_time is None:
             self._preprocess()
 
+        self.string_strict = strict
         # 清洗字符串
         time_string = TimeParser._cleansing(time_string)
 
@@ -1129,6 +1149,10 @@ class TimeParser(object):
         """
         # time_point pattern & norm_func
         ymd_pattern_norm_funcs = [
+            # 枚举日期型
+            [self.enum_day_pattern, self.normalize_enum_day_pattern],
+
+            # 时间点型
             [self.standard_year_month_day_pattern, self.normalize_standard_year_month_day],
             [self.year_24st_pattern, self.normalize_year_24st],
             [self.limit_year_lunar_season_pattern, self.normalize_limit_year_lunar_season],
@@ -1223,7 +1247,10 @@ class TimeParser(object):
         if len(''.join([cur_ymd_string, cur_hms_string])) < len(time_string):
             if self.chinese_char_pattern.search(time_string):
                 # 若搜索到中文，则 `-` 等符号可用作 time_span 的分隔符，可以不用处理判断字符串未匹配的异常情况
-                pass
+                if self.string_strict:
+                    raise ValueError('## exception string `{}`.'.format(time_string))
+                else:
+                    pass
             else:
                 # 若未搜索到中文，则 `-` 等符号很可能只是间隔符，如`2018-08-09`而非 span 分隔符，此时要求字符串干净
                 raise ValueError('## exception string `{}`.'.format(time_string))
@@ -1397,6 +1424,40 @@ class TimeParser(object):
             return int(year_string)
         else:
             return None
+
+    def normalize_enum_day_pattern(self, time_string):
+        """ 解析 (年月)?枚举日 时间
+        如：`8月14日、15日、16日`。此种类型时间字符串，可以按照 `8月14日`、`15日`、`16日` 进行解析，
+        但须指定正确的 time_base 信息。即将 time_base 信息的指定交给调用者。但这会增加处理难度，因此，
+        针对这种枚举类型时间，设计单独类型做解析。
+
+        Returns:
+        """
+        month = self.month_patterns[0].search(time_string)
+        day_list = self.day_patterns[0].findall(time_string)
+
+        first_time_point = TimePoint()
+        second_time_point = TimePoint()
+
+        year = self._normalize_year(time_string, self.time_base_handler)
+        if year is not None:
+            first_time_point.year = year
+            second_time_point.year = year
+
+        if month is not None:
+            month_string = month.group(1)
+            first_time_point.month = int(self._char_num2num(month_string))
+            second_time_point.month = first_time_point.month
+
+        if len(day_list) != 0:
+            day_list = [int(item[0]) for item in day_list]
+            first_time_point.day = min(day_list)
+            second_time_point.day = max(day_list)
+
+        first_time_handler = first_time_point.handler()
+        second_time_handler = second_time_point.handler()
+
+        return first_time_handler, second_time_handler, 'time_span', 'accurate'
 
     def normalize_year_month_day(self, time_string):
         """ 解析 年月日（标准） 时间
@@ -4261,9 +4322,18 @@ class TimeParser(object):
         """
         if len(year_string) == 2:
             year_base = str(time_base_handler[0])
-
-            century = year_base[:2]
-            return century + year_string
+            if year_base[:2] in ['17', '18', '19']:
+                # 当 year_base 为 20 世纪，则所有时间均为 20 世纪
+                return year_base[:2] + year_string
+            elif year_base[:2] == '20':
+                # 当 year_base 为 21 世纪，而表达年份较大时，需要调整真实世纪
+                if int(year_string) > int(year_base[2:]) + 10:
+                    century = '19'
+                else:
+                    century = year_base[:2]
+                return century + year_string
+            else:
+                raise ValueError('maybe the `year` can not be parsed.')
         else:
             return year_string
 

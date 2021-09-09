@@ -54,7 +54,7 @@ class TrieTree(object):
             self.add_node(word, typing)
 
     def search(self, word):
-        """ 搜索给定word字符串中与词典匹配的 entity，
+        """ 搜索给定 word 字符串中与词典匹配的 entity，
         返回值 None 代表字符串中没有要找的实体，
         如果返回字符串，则该字符串就是所要找的词汇的类型
         """

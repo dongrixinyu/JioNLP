@@ -8,7 +8,7 @@
 # description: Preprocessing tool for Chinese NLP
 """
 
-__version__ = '1.3.31'
+__version__ = '1.3.32'
 
 import os
 

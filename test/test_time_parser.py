@@ -45,7 +45,8 @@ class TestTimeParser(unittest.TestCase):
             ['二零零三年十二月', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2003-12-01 00:00:00', '2003-12-31 23:59:59']}],
             ['二〇〇六年十二月', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2006-12-01 00:00:00', '2006-12-31 23:59:59']}],
             ['2023年', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2023-01-01 00:00:00', '2023-12-31 23:59:59']}],
-            ['三三年', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2033-01-01 00:00:00', '2033-12-31 23:59:59']}],
+            ['三三年', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['1933-01-01 00:00:00', '1933-12-31 23:59:59']}],
+            ['91年5月', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['1991-05-01 00:00:00', '1991-05-31 23:59:59']}],
 
             # （限定）年、季度（公历）
             ['07年第三季度', [2008, 3, 2, 0], {'type': 'time_span', 'definition': 'accurate', 'time': ['2007-07-01 00:00:00', '2007-09-30 23:59:59']}],
@@ -144,6 +145,9 @@ class TestTimeParser(unittest.TestCase):
             ['三年前', _ts_1, {'type': 'time_span', 'definition': 'blur', 'time': ['2018-01-01 00:00:00', '2018-12-31 23:59:59']}],
             ['二〇三五年前', _ts_1, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 01:06:40', '2035-12-31 23:59:59']}],
 
+            # time_span，枚举型
+            ['9月10号，11号，12号，13号', _ts_1, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-09-10 00:00:00', '2021-09-13 23:59:59']}],
+
             # 农历年、月、日
             ['二零一二年农历正月十五', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2012-02-06 00:00:00', '2012-02-06 23:59:59']}],
             ['农历二〇二一年六月', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-07-10 00:00:00', '2021-08-07 23:59:59']}],
@@ -185,7 +189,7 @@ class TestTimeParser(unittest.TestCase):
             ['6月第3个星期日', {'year': 2021}, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-20 00:00:00', '2021-06-20 23:59:59']}],
             ['八月份的第一个周二', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-08-03 00:00:00', '2021-08-03 23:59:59']}],
             ['周二早上', _ts_1, {'type': 'time_point', 'definition': 'blur', 'time': ['2021-06-15 06:00:00', '2021-06-15 09:59:59']}],
-            ['6月1日周六早上10点钟', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-01 10:00:00', '2021-06-01 10:59:59']}],
+            ['6月1日周六早上10点钟', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-01 10:00:00', '2021-06-01 10:59:59']}],  # 当设定 strict 时会报错
             ['上个礼拜天', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-13 00:00:00', '2021-06-13 23:59:59']}],
 
             # 年、月、模糊日
@@ -234,7 +238,7 @@ class TestTimeParser(unittest.TestCase):
             ['12月9日零时至12月16日24时', {'year': 2021}, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-12-09 00:00:00', '2021-12-17 00:00:00']}],
             ['13:20~次日05:40', _ts_1, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 13:20:00', '2021-06-15 05:40:59']}],
             ['夜里12点', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-15 00:00:00', '2021-06-15 00:59:59']}],
-            ['下午5点多钟', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-14 17:00:00', '2021-06-14 17:59:59']}],
+            ['下午5点多钟', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-14 17:00:00', '2021-06-14 17:59:59']}],  # 当设定 strict 参数时会报错
 
             # 时分秒 标准格式按 `:` 区隔
             ['上月30号12:37', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-05-30 12:37:00', '2021-05-30 12:37:59']}],
@@ -430,7 +434,7 @@ class TestTimeParser(unittest.TestCase):
         ]
 
         for item in time_string_list:
-            time_res = jio.parse_time(item[0], time_base=item[1])
+            time_res = jio.parse_time(item[0], time_base=item[1])  #, strict=True)
             print(item[0])
             self.assertEqual(time_res, item[2])
 
