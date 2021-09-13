@@ -88,9 +88,9 @@ class TimeExtractor(object):
                 else:
                     break
 
-        for item in time_entity_list:
-            assert item['text'] == text[item['offset'][0]: item['offset'][1]]
-            print(item)
+        # for item in time_entity_list:
+        #     assert item['text'] == text[item['offset'][0]: item['offset'][1]]
+        #     print(item)
         return time_entity_list
 
     def _filter(self, sub_string):

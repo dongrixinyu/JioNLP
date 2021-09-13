@@ -219,6 +219,7 @@ class TestTimeParser(unittest.TestCase):
             ['2019年感恩节', {'year': 2020}, {'type': 'time_point', 'definition': 'accurate', 'time': ['2019-11-28 00:00:00', '2019-11-28 23:59:59']}],
             ['国庆', {'year': 2020}, {'type': 'time_point', 'definition': 'accurate', 'time': ['2020-10-01 00:00:00', '2020-10-01 23:59:59']}],
             ['农历元宵', {'year': 2021}, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-02-26 00:00:00', '2021-02-26 23:59:59']}],
+            ['大年初十', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-02-21 00:00:00', '2021-02-21 23:59:59']}],
 
             # 年月日 时分秒
             ['7月4日晚上7点09分18秒', {'year': 2021}, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-07-04 19:09:18', '2021-07-04 19:09:18']}],
@@ -248,7 +249,7 @@ class TestTimeParser(unittest.TestCase):
             ['2019年6月28日9:30~11:30', _ts_1, {'type': 'time_span', 'definition': 'accurate', 'time': ['2019-06-28 09:30:00', '2019-06-28 11:30:59']}],
             ['中午12：00—14:00', _ts_1, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 12:00:00', '2021-06-14 14:00:59']}],
             ['大前天晚上9~11点', _ts_1, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-11 21:00:00', '2021-06-11 23:00:00']}],
-            ['晚上6点', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-14 18:00:00', '2021-06-14 18:59:59']}],
+            ['晚上5点', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-14 17:00:00', '2021-06-14 17:59:59']}],
 
             # 时、限定性 分
             ['4月26日20时1刻', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-04-26 20:15:00', '2021-04-26 20:15:59']}],
@@ -281,6 +282,7 @@ class TestTimeParser(unittest.TestCase):
             ['五个工作日', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'workday': 5.0}}],
             ['两日', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'day': 2.0}}],
             ['俩礼拜', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'day': 14.0}}],
+            ['36天5小时30分', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'day': 36.0, 'hour': 5.0, 'minute': 30.0}}],
 
             # 法律时间
             ['3年以上7年以下', None, {'type': 'time_delta', 'definition': 'blur', 'time': [{'year': 3.0}, {'year': 7.0}]}],

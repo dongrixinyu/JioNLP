@@ -298,6 +298,11 @@ I = '|'
 LU = r'(农历)'
 LU_A = absence(LU)
 
+# appendix
+TIME_POINT_SUFFIX = r'(左右|许)'
+TIME_SPAN_SUFFIX = r'((之)?间)'
+# TIME_DELTA_SUFFIX = r''
+
 # 节气
 SOLAR_TERM_STRING = r'(立春|雨水|惊蛰|春分|清明|谷雨|立夏|小满|芒种|夏至|小暑|大暑|'\
     r'立秋|处暑|白露|秋分|寒露|霜降|立冬|小雪|大雪|冬至|小寒|大寒)'
@@ -308,7 +313,8 @@ FIXED_SOLAR_FESTIVAL = r'((元旦|十一)|(三八|五一|六一|七一|八一|�
     r'地球日|三[\.•·・]?一五|双(十一|11)|(.{1,4})?消费者权益日)'
 # 固定农历节日
 FIXED_LUNAR_FESTIVAL = r'((春|填仓|上巳|寒食|清明|浴佛|姑姑|财神|下元|寒衣)节|'\
-    r'(龙抬头|除夕)|'\
+    r'(龙抬头|除夕)|' \
+    r'(大年初[一二三四五六七八九十])|'\
     r'(端午|端阳|七夕|元宵|中秋|重阳|腊八|中元)(节)?)'
 # 规律公历节日
 REGULAR_FOREIGN_FESTIVAL = r'(感恩|母亲|父亲)节'
@@ -328,7 +334,7 @@ DAY_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'[多余]?[天日]', I, '半天',
 WEEK_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'[多余]?((个(多)?)?(星期|礼拜)|周(?!年))', I, r'俩(星期|礼拜)'])
 HOUR_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'[多余]?(个(多)?)?(小时|钟头)', I,
                              '半(个(多)?)?(小时|钟头)', I, '俩(小时|钟头)', I, SINGLE_NUM_STRING, '个半(小时|钟头)'])
-MINUTE_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'[多余]?分钟(半)?', I, '半分钟', I, SINGLE_NUM_STRING, '+分半(钟)?'])
+MINUTE_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'[多余]?分(钟)?(半)?', I, '半分钟', I, SINGLE_NUM_STRING, '+分半(钟)?'])
 SECOND_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'[多余]?秒(钟)?'])
 
 

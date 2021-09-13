@@ -9,7 +9,7 @@
 
 """
 TODO:
-    1、仍未支持对周期性时间的解析
+    1、already fixed
     2、时间段的解析中的问题：
     3、时分秒解析中的问题：
         1、9点到半夜1点，其中1点已经属于第二天，需要对其 day 做调整
@@ -26,6 +26,12 @@ TODO:
 TODO unresolved:
     1、中秋节前后两个周末
     2、几十天后
+    3、9月15日上午10时许  => 许
+    4、下午四点左右  => 左右
+    5、2016财年  => 财年
+    6、两年间  => 间
+    7、36天5小时30分后  => 多单位 time_delta to time_span
+    8、晚上8点到上午10点之间
 
 """
 
@@ -76,10 +82,54 @@ class TimeDelta(object):
 
 class TimeParser(object):
     """将时间表达式转换为标准的时间，
-    分为 time_stamp, time_span, time_period, time_delta，
+    分为 time_point, time_span, time_period, time_delta, 后期还包括 time_query, time_virtual,
+    分别表示 询问时间，如 “多少个月”，虚拟时间，如 “第十天”。
+
     解析步骤：
         1、将时间做预处理，形成标准可解析字符串
         2、对标准可解析字符串做解析，形成标准的时间
+
+    注意事项：
+        1、该工具一般情况下需要保证时间字符串（又称时间实体）中不包含噪音，如 “就在今天上午9点半，” 中的 “就在” 和 “，”，易造成解析错误。
+            因此，若输入的文本是一篇文章，首先第一步需要从中抽取出时间字符串，此功能可以通过 实体识别模型 完成，或使用
+            jio.ner.extract_time 方法进行抽取。
+        2、时间语义 99% 可通过正则解决，但有一些复杂时间表达很难通过正则完成，例如 “今年中秋节前后两个双休日”，
+            本工具暂不支持超复杂时间字符串。后续考虑别的办法优化解决。
+        3、该工具持续更新，需要经过实践考验，如有解析错误非常正常，请提 issue 或拉 PR。
+
+    Args:
+        time_string(str): 时间字符串，该时间字符串尽量不要包含噪声，如 “就在今天上午9点半，” 中的 “就在” 和 “，”，易造成解析错误
+        time_base(float|int|str|list|dict|Datetime): 时间基，默认为当前调用时间 time.time()，此外还支持 时间戳 (float, int)，
+            datetime、标准时间 str（如：2021-08-15 10:48:00）、list、dict 等类型。
+            充分方便输入对接。
+        time_type(str|None): 时间类型，包括上述若干时间类型字符串，默认为 None。该参数用于指定模糊性字符串的处理类型，
+            如：“30日”，既可按 time_point 解析，也可按 time_delta 解析，此时 time_type 参数生效，否则按其中一个类型返回结果。
+        ret_typr(str): 包括 'str' 和 'int' 两种， 默认为 'str'，返回结果为标准时间字符串，若为 'int' 返回时间戳。
+        strict(bool): 该参数检查时间字符串是否包含噪声，若包含噪声，则直接报错。默认为 False，一般不建议设为 True。
+
+    Returns:
+        见 Examples
+
+    Examples:
+        >>> import time
+        >>> import jionlp as jio
+        >>> res = jio.parse_time('今年9月', time_base={'year': 2021})
+        >>> print(res)
+        >>> res = jio.parse_time('零三年元宵节晚上8点半', time_base=time.time())
+        >>> print(res)
+        >>> res = jio.parse_time('一万个小时')
+        >>> print(res)
+        >>> res = jio.parse_time('100天之后', time.time())
+        >>> print(res)
+        >>> res = jio.parse_time('每周五下午4点', time.time())
+        >>> print(res)
+
+        # {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-09-01 00:00:00', '2021-09-30 23:59:59']}
+        # {'type': 'time_point', 'definition': 'accurate', 'time': ['2003-02-15 20:30:00', '2003-02-15 20:30:59']}
+        # {'type': 'time_delta', 'definition': 'accurate', 'time': {'hour': 10000.0}}
+        # {'type': 'time_span', 'definition': 'blur', 'time': ['2021-10-22 00:00:00', 'inf']}
+        # {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'day': 7},
+        #  'point': {'time': ['2021-07-16 16:00:00', '2021-07-16 16:59:59'], 'string': '周五下午4点'}}}
 
     """
     def __init__(self):
@@ -525,7 +575,10 @@ class TimeParser(object):
 
         # 农历固定节日
         self.fixed_lunar_holiday_dict = {
-            '春节': [1, 1], '元宵': [1, 15], '填仓节': [1, 25], '龙抬头': [2, 2],
+            '春节': [1, 1], '大年初一': [1, 1], '大年初二': [1, 2], '大年初三': [1, 3],
+            '大年初四': [1, 4], '大年初五': [1, 5], '大年初六': [1, 6], '大年初七': [1, 7],
+            '大年初八': [1, 8], '大年初九': [1, 9], '大年初十': [1, 10],
+            '元宵': [1, 15], '填仓节': [1, 25], '龙抬头': [2, 2],
             '上巳节': [3, 3], '寒食节': [4, 3], '清明节': [4, 4],  # 清明节有误, 4~6 日
             '浴佛节': [4, 8], '端午': [5, 5], '端阳': [5, 5], '姑姑节': [6, 6],
             '七夕': [7, 7], '中元': [7, 15], '财神节': [7, 22], '中秋': [8, 15],
@@ -652,20 +705,7 @@ class TimeParser(object):
 
     def __call__(self, time_string, time_base=time.time(), time_type=None,
                  ret_type='str', strict=False):
-        """ 解析时间字符串。
-
-        :param time_string: 时间字符串，一般从正则或 NER 获取到。
-        :param time_base: 时间基点，即，以此时间为基点进行时间解析
-        :param time_type: 指定时间类型，默认为 None，即不指定时间类型，在某些时间字符串存在歧义时使用。
-            如，`22年`，既指2022年，又指二十二年，此时，会根据 `time_type` 进行解析。
-        :param ret_type: 指定返回值为标准时间字符串，或时间戳整形，取值限定为 `'str'|'int'`
-        :param strict: 用于辅助时间实体抽取，即是否要求被传入的字符串严格不含有杂串。
-            如，`就在昨天上午` 传入该方法，仍可成功识别，不会报错。但 `就在` 二字为杂串。
-            当你已经有了时间实体抽取工具后，则该参数推荐设为 False，反之设为 True。
-
-        :return: dict(type|definition|time) 时间类型、精度、具体时间解析值
-
-        """
+        """ 解析时间字符串。 """
         if self.future_time is None:
             self._preprocess()
 
@@ -878,13 +918,7 @@ class TimeParser(object):
         return first_string, second_string
 
     def parse_time_period(self, time_string):
-        """ 判断字符串是否为 time_period，若是则返回结果，若不是则返回 None，跳转到其它类型解析
-
-        Args:
-            time_string:
-
-        Returns:
-
+        """ 判断字符串是否为 time_period，若是则返回结果，若不是则返回 None，跳转到其它类型解析。
         """
         searched_res = self.period_time_pattern.search(time_string)
         if searched_res:
@@ -4080,7 +4114,7 @@ class TimeParser(object):
             hour_limitation = self.hour_patterns[1].search(time_string)
             if hour_limitation:
                 hour_limit_string = hour_limitation.group()
-                if (6 <= hour <= 12) and ('晚' in hour_limit_string or '夜' in hour_limit_string):
+                if (5 <= hour <= 12) and ('晚' in hour_limit_string or '夜' in hour_limit_string):
                     hour += 12
                 if '中午' in hour_limit_string and hour not in [11, 12]:
                     hour += 12
@@ -4116,7 +4150,7 @@ class TimeParser(object):
             time_string = time_string.replace(hour_limit_string, '')
 
         def convert_hour(h, h_string):
-            if (6 <= h <= 12) and ('晚' in h_string or '夜' in h_string):
+            if (5 <= h <= 12) and ('晚' in h_string or '夜' in h_string):
                 h += 12
             if '中午' in h_string and h not in [11, 12]:
                 h += 12
@@ -4170,7 +4204,7 @@ class TimeParser(object):
         limit_minute = self.minute_patterns[1].search(time_string)
 
         def convert_hour(h, h_string):
-            if (6 <= h <= 12) and ('晚' in h_string or '夜' in h_string):
+            if (5 <= h <= 12) and ('晚' in h_string or '夜' in h_string):
                 h += 12
             if '中午' in h_string and h not in [11, 12]:
                 h += 12
