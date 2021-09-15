@@ -1063,9 +1063,10 @@ class TimeParser(object):
         return time_delta, 'time_delta', time_definition
 
     def _normalize_delta_unit(self, time_string, pattern):
-        """ 将 time_delta 的年归一化 """
+        """ 将 time_delta 归一化 """
         # 处理字符串的问题
         time_string = time_string.replace('俩', '两个')
+        time_string = time_string.replace('一刻', '15分')  # 对一刻的转换
 
         delta = pattern.search(time_string)
         time_delta = 0
@@ -1998,6 +1999,7 @@ class TimeParser(object):
         4、若是半分 + 0.5，超过 1 分钟 + 1
         :return:
         """
+
         day_bias = [0, '弱']
         if self.time_base_handler[4] == -1:
             raise ValueError(

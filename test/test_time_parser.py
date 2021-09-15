@@ -114,6 +114,7 @@ class TestTimeParser(unittest.TestCase):
             ['二十几年前', _ts_1, {'type': 'time_span', 'definition': 'blur', 'time': ['1991-01-01 00:00:00', '2001-12-31 23:59:59']}],
             ['1000多年之后', _ts_1, {'type': 'time_span', 'definition': 'blur', 'time': ['3020-01-01 00:00:00', 'inf']}],
             ['几十年之后', _ts_1, {'type': 'time_span', 'definition': 'blur', 'time': ['2041-01-01 00:00:00', '2121-12-31 23:59:59']}],
+            ['一刻钟后', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-14 01:21:40', '2021-06-14 01:22:40']}],
 
             # time span 式 `从……至……` 年、月、日、时、分、秒
             ['2017年8月11日至8月22日', _ts_1, {'type': 'time_span', 'definition': 'accurate', 'time': ['2017-08-11 00:00:00', '2017-08-22 23:59:59']}],

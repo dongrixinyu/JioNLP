@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-5k-yellow" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.33-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.34-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -38,7 +38,7 @@
 import time
 import jionlp as jio
 text = '【新华社报2021-9-9】国家统计局今天发布了2021年8月份全国CPI（居民消费价格指数）和PPI（工业生产者出厂价格指数）数据。'
-res = jio.ner.extract_time('今年9月', time_base={'year': 2021})
+res = jio.ner.extract_time(text, time_base={'year': 2021})
 print(res)
 
 # [{'text': '2021-9-9', 'offset': [5, 13], 'type': 'time_point'},

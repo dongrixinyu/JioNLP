@@ -328,13 +328,15 @@ SINGLE_NUM_STRING = r'[一两二三四五六七八九十\d]'
 # time_delta 正则
 YEAR_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'[多余]?(周)?年(多)?', I, '半年', I, SINGLE_NUM_STRING, '年半'])
 SOLAR_SEASON_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'个(多)?季度'])
-MONTH_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'(多)?个(多)?月', I, '俩月', I, '半(个(多)?)?月', I, SINGLE_NUM_STRING, '个半月'])
+MONTH_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'(多)?个(多)?月', I, '俩月', I, '半(个(多)?)?月', I,
+                              SINGLE_NUM_STRING, '个半月'])
 WORKDAY_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'[多余]?(个)?(工作|交易)日'])
 DAY_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'[多余]?[天日]', I, '半天', I, SINGLE_NUM_STRING, '天半'])
 WEEK_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'[多余]?((个(多)?)?(星期|礼拜)|周(?!年))', I, r'俩(星期|礼拜)'])
 HOUR_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'[多余]?(个(多)?)?(小时|钟头)', I,
                              '半(个(多)?)?(小时|钟头)', I, '俩(小时|钟头)', I, SINGLE_NUM_STRING, '个半(小时|钟头)'])
-MINUTE_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'[多余]?分(钟)?(半)?', I, '半分钟', I, SINGLE_NUM_STRING, '+分半(钟)?'])
+MINUTE_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'[多余]?分(钟)?(半)?', I, '一刻钟', I, '半分钟', I,
+                               SINGLE_NUM_STRING, '+分半(钟)?'])
 SECOND_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'[多余]?秒(钟)?'])
 
 
@@ -347,7 +349,7 @@ DELTA_SUB = r'([之以]?[内前后上下来])'
 TIME_CHAR_STRING = ''.join(
     [r'[102年月日3589647时午至天上个分今下\:\-点晚前一小后周起内以底三晨钟来半两凌当十份季去早多第五中初\.度二从六期旬到间四节号：',
      r'代\~\—春明昨星末秋之同·世纪本七九秒每次八夏/夜零冬余工作元国清傍交易首 ()（）、万宵全暑头端庆旦开－际消费者权益大里农历双财',
-     r'运深, ”夕〇几汛儿童劳动假圣诞壹感恩无数白百]+'])
+     r'近运深, ”夕〇几汛儿童劳动假圣诞壹感恩无数白百]+'])
 FAKE_POSITIVE_START_STRING = r'[起到至以开－\—\-\~]'  # 此字符串不可作为时间串的开始， `以来|开始` 为取首字
 FAKE_POSITIVE_END_STRING = r'[到至－\—\-\~]'  # 此字符串不可作为时间串的结束
 
