@@ -65,6 +65,10 @@ class IdiomSolitaire(object):
         if self.idiom_list is None:
             self._prepare()
 
+        if cur_idiom == '' or type(cur_idiom) is not str:
+            logging.warning('please insert a Chinese idiom.')
+            return ''
+
         if restart:
             # 重新开始游戏，清空历史记录
             self.already_used_idioms = set()
@@ -102,7 +106,7 @@ class IdiomSolitaire(object):
             cur_last_char = cur_idiom[-1]
             backup_idioms = list()
             for idiom_obj in self.idiom_list:
-                if idiom_obj in self.already_used_idioms:
+                if idiom_obj['idiom'] in self.already_used_idioms:
                     continue
 
                 if cur_last_char == idiom_obj['idiom'][0]:

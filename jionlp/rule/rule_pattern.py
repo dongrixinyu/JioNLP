@@ -274,12 +274,11 @@ LIMIT_MONTH_STRING = r'([下上](个)?|同|本|当|次)月'
 SELF_EVI_LUNAR_MONTH_STRING = r'((闰)?[正冬腊]|闰([一二三四五六七八九十]|十[一二]|[1-9]|1[012]))月'
 
 # 周
-# 支持了 minute 中 `刻` 的计数 [123一二两三]
-WEEK_NUM_STRING = r'[一二两三四五六七八九1-9]'  # 1~9
+WEEK_NUM_STRING = r'[一二两三四五六七八九十0-9]{1,3}'  # 1~52
 WEEK_STRING = r'(周|星期|礼拜)'
 
 # 日
-DAY_NUM_STRING = r'(([0]?[1-9]|[12]\d|3[01])|([一二]?十)?[一二三四五六七八九]|(三十)?[一]|[二三]?十)'
+DAY_NUM_STRING = r'(([0]?[1-9]|[12]\d|3[01])|([一二]?十)?[一二三四五六七八九]|(三十)?[一]|[二三]?十)'  # 1~31
 DAY_STRING = DAY_NUM_STRING + r'[日号]'
 BLUR_DAY_STRING = r'([上中下]旬|初|中|底|末)'
 # 允许 `初8` 阿拉伯数字出现，但不允许 `廿2`、`23` 等作为农历`日`
@@ -321,6 +320,7 @@ REGULAR_FOREIGN_FESTIVAL = r'(感恩|母亲|父亲)节'
 
 # time_delta 数字正则
 DELTA_NUM_STRING = r'(([一两二三四五六七八九十百千万零]+点)?[一两二三四五六七八九十百千万零]+|([\d十百千万,]+\.)?[\d十百千万,]+)'
+QUARTER_NUM_STRING = r'[一两二三四1-4]'
 
 # 单个数字正则
 SINGLE_NUM_STRING = r'[一两二三四五六七八九十\d]'
@@ -335,7 +335,8 @@ DAY_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'[多余]?[天日]', I, '半天',
 WEEK_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'[多余]?((个(多)?)?(星期|礼拜)|周(?!年))', I, r'俩(星期|礼拜)'])
 HOUR_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'[多余]?(个(多)?)?(小时|钟头)', I,
                              '半(个(多)?)?(小时|钟头)', I, '俩(小时|钟头)', I, SINGLE_NUM_STRING, '个半(小时|钟头)'])
-MINUTE_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'[多余]?分(钟)?(半)?', I, '一刻钟', I, '半分钟', I,
+QUARTER_DELTA_STRING = ''.join([QUARTER_NUM_STRING, '刻钟'])
+MINUTE_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'[多余]?分(钟)?(半)?', I, '半分钟', I,
                                SINGLE_NUM_STRING, '+分半(钟)?'])
 SECOND_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'[多余]?秒(钟)?'])
 

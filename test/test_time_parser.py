@@ -13,8 +13,8 @@ class TestTimeParser(unittest.TestCase):
     def test_time_parser(self):
         """ test func time_parser """
 
-        _ts_1 = 1623604000
-        _ts_2 = 1630480532
+        _ts_1 = 1623604000  # 2021-06-14 01:06:40
+        _ts_2 = 1630480532  # 2021-09-01 15:15:32
         print('time stamp for test: ',
               time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(_ts_1)))
 
@@ -31,6 +31,7 @@ class TestTimeParser(unittest.TestCase):
             ['2019.05.29 15:20-2020.01.12 12:10', _ts_1, {'type': 'time_span', 'definition': 'accurate', 'time': ['2019-05-29 15:20:00', '2020-01-12 12:10:59']}],
             ['6·30', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-30 00:00:00', '2021-06-30 23:59:59']}],
             ['2018', _ts_1, {'type': 'time_span', 'definition': 'accurate', 'time': ['2018-01-01 00:00:00', '2018-12-31 23:59:59']}],
+            ['2021-09-0910:09', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-09-09 10:09:00', '2021-09-09 10:09:59']}],
 
             # 年、月、日（标准）
             ['2015年8月12日', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2015-08-12 00:00:00', '2015-08-12 23:59:59']}],
@@ -114,7 +115,7 @@ class TestTimeParser(unittest.TestCase):
             ['二十几年前', _ts_1, {'type': 'time_span', 'definition': 'blur', 'time': ['1991-01-01 00:00:00', '2001-12-31 23:59:59']}],
             ['1000多年之后', _ts_1, {'type': 'time_span', 'definition': 'blur', 'time': ['3020-01-01 00:00:00', 'inf']}],
             ['几十年之后', _ts_1, {'type': 'time_span', 'definition': 'blur', 'time': ['2041-01-01 00:00:00', '2121-12-31 23:59:59']}],
-            ['一刻钟后', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-14 01:21:40', '2021-06-14 01:22:40']}],
+            ['一刻钟后', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-14 01:21:40', '2021-06-14 01:36:40']}],
 
             # time span 式 `从……至……` 年、月、日、时、分、秒
             ['2017年8月11日至8月22日', _ts_1, {'type': 'time_span', 'definition': 'accurate', 'time': ['2017-08-11 00:00:00', '2017-08-22 23:59:59']}],
@@ -145,6 +146,12 @@ class TestTimeParser(unittest.TestCase):
             ['二零四九年十月一号以前', _ts_1, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 01:06:40', '2049-10-01 23:59:59']}],
             ['三年前', _ts_1, {'type': 'time_span', 'definition': 'blur', 'time': ['2018-01-01 00:00:00', '2018-12-31 23:59:59']}],
             ['二〇三五年前', _ts_1, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 01:06:40', '2035-12-31 23:59:59']}],
+
+            # time_span，limit 型
+            ['前天中午到明天晚上', _ts_1, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-06-12 12:00:00', '2021-06-15 23:59:59']}],
+            ['前年11月到去年3月', _ts_1, {'type': 'time_span', 'definition': 'accurate', 'time': ['2019-11-01 00:00:00', '2020-03-31 23:59:59']}],
+            ['2014年11月到去年3月', _ts_1, {'type': 'time_span', 'definition': 'accurate', 'time': ['2014-11-01 00:00:00', '2020-03-31 23:59:59']}],
+            ['2014年11月到下个月9号', _ts_1, {'type': 'time_span', 'definition': 'accurate', 'time': ['2014-11-01 00:00:00', '2021-07-09 23:59:59']}],
 
             # time_span，枚举型
             ['9月10号，11号，12号，13号', _ts_1, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-09-10 00:00:00', '2021-09-13 23:59:59']}],
@@ -193,6 +200,11 @@ class TestTimeParser(unittest.TestCase):
             ['6月1日周六早上10点钟', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-01 10:00:00', '2021-06-01 10:59:59']}],  # 当设定 strict 时会报错
             ['上个礼拜天', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-13 00:00:00', '2021-06-13 23:59:59']}],
 
+            # 年、周
+            ['20年第52周', _ts_1, {'type': 'time_span', 'definition': 'accurate', 'time': ['2020-12-28 00:00:00', '2021-01-03 23:59:59']}],
+            ['21年第一个礼拜', _ts_1, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-01-04 00:00:00', '2021-01-10 23:59:59']}],
+            ['今年第三十七个星期', _ts_1, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-09-13 00:00:00', '2021-09-19 23:59:59']}],
+
             # 年、月、模糊日
             ['6月上旬', {'year': 2021}, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-06-01 00:00:00', '2021-06-10 23:59:59']}],
             ['1999年7月下旬', time.time(), {'type': 'time_span', 'definition': 'blur', 'time': ['1999-07-11 00:00:00', '1999-07-31 23:59:59']}],
@@ -202,6 +214,12 @@ class TestTimeParser(unittest.TestCase):
 
             # 限定年、月、模糊日
             ['去年6月上旬', {'year': 2021}, {'type': 'time_span', 'definition': 'blur', 'time': ['2020-06-01 00:00:00', '2020-06-10 23:59:59']}],
+
+            # 超模糊 2 字
+            ['前两天', _ts_1, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-06-07 00:00:00', '2021-06-12 23:59:59']}],
+            ['前两年', _ts_1, {'type': 'time_span', 'definition': 'blur', 'time': ['2016-01-01 00:00:00', '2019-12-31 23:59:59']}],
+            ['前两个钟头', _ts_1, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-06-13 19:00:00', '2021-06-13 23:59:59']}],
+            ['前两分钟', _ts_1, {'type': 'time_span', 'definition': 'blur', 'time': ['2021-06-14 00:57:00', '2021-06-14 01:04:59']}],
 
             # 限定日
             ['前天', _ts_2, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-08-30 00:00:00', '2021-08-30 23:59:59']}],
@@ -284,6 +302,7 @@ class TestTimeParser(unittest.TestCase):
             ['两日', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'day': 2.0}}],
             ['俩礼拜', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'day': 14.0}}],
             ['36天5小时30分', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'day': 36.0, 'hour': 5.0, 'minute': 30.0}}],
+            ['1刻钟', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'minute': 15.0}}],
 
             # 法律时间
             ['3年以上7年以下', None, {'type': 'time_delta', 'definition': 'blur', 'time': [{'year': 3.0}, {'year': 7.0}]}],
@@ -438,6 +457,21 @@ class TestTimeParser(unittest.TestCase):
 
         for item in time_string_list:
             time_res = jio.parse_time(item[0], time_base=item[1])  #, strict=True)
+            print(item[0])
+            self.assertEqual(time_res, item[2])
+
+        time_string_list = [
+            # 未来时间扩展
+            ['8号晚上9点', _ts_2, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-09-08 21:00:00', '2021-09-08 21:59:59']}],
+            ['1号晚上9点', _ts_2, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-09-01 21:00:00', '2021-09-01 21:59:59']}],
+            ['3月8号', _ts_2, {'type': 'time_span', 'definition': 'accurate', 'time': ['2022-03-08 00:00:00', '2022-03-08 23:59:59']}],
+            ['10月8号', _ts_2, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-10-08 00:00:00', '2021-10-08 23:59:59']}],
+            ['周一', _ts_2, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-09-06 00:00:00', '2021-09-06 23:59:59']}],
+            ['妇女节', _ts_2, {'type': 'time_point', 'definition': 'accurate', 'time': ['2022-03-08 00:00:00', '2022-03-08 23:59:59']}],
+        ]
+
+        for item in time_string_list:
+            time_res = jio.parse_time(item[0], time_base=item[1], ret_future=True)  #, strict=True)
             print(item[0])
             self.assertEqual(time_res, item[2])
 
