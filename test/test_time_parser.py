@@ -32,6 +32,9 @@ class TestTimeParser(unittest.TestCase):
             ['6·30', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-30 00:00:00', '2021-06-30 23:59:59']}],
             ['2018', _ts_1, {'type': 'time_span', 'definition': 'accurate', 'time': ['2018-01-01 00:00:00', '2018-12-31 23:59:59']}],
             ['2021-09-0910:09', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-09-09 10:09:00', '2021-09-09 10:09:59']}],
+            ['09-01 20:01', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-09-01 20:01:00', '2021-09-01 20:01:59']}],
+            ['09-01 20:01 至 12-01 18:07', _ts_1, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-09-01 20:01:00', '2021-12-01 18:07:59']}],
+            ['09-01', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-09-01 00:00:00', '2021-09-01 23:59:59']}],
 
             # 年、月、日（标准）
             ['2015年8月12日', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2015-08-12 00:00:00', '2015-08-12 23:59:59']}],
@@ -104,6 +107,11 @@ class TestTimeParser(unittest.TestCase):
             ['今年六月', {'year': 1966}, {'type': 'time_span', 'definition': 'accurate', 'time': ['1966-06-01 00:00:00', '1966-06-30 23:59:59']}],
             ['明年3月份', _ts_1, {'type': 'time_span', 'definition': 'accurate', 'time': ['2022-03-01 00:00:00', '2022-03-31 23:59:59']}],
             ['上一年', _ts_1, {'type': 'time_span', 'definition': 'accurate', 'time': ['2020-01-01 00:00:00', '2020-12-31 23:59:59']}],
+
+            # 限定模糊词汇，‘左右、许’
+            ['前年9月2号左右', _ts_1, {'type': 'time_span', 'definition': 'blur', 'time': ['2019-09-02 00:00:00', '2019-09-02 23:59:59']}],
+            ['晚上8点许', _ts_1, {'type': 'time_point', 'definition': 'blur', 'time': ['2021-06-14 20:00:00', '2021-06-14 20:59:59']}],
+            ['八月二十八号早上8点11分许', _ts_1, {'type': 'time_point', 'definition': 'blur', 'time': ['2021-08-28 08:11:00', '2021-08-28 08:11:59']}],
 
             # 年（模糊限定）
             ['3年后', {'year': 2021}, {'type': 'time_span', 'definition': 'blur', 'time': ['2024-01-01 00:00:00', '2024-12-31 23:59:59']}],

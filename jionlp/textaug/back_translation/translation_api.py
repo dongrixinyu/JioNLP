@@ -12,7 +12,7 @@
 
 DESCRIPTION:
     1、包括百度、谷歌、有道、有道（免费版）、腾讯、讯飞
-    2、翻译质量最高的 api 是 Deepl
+    2、翻译质量最高的 api 是 Deepl，但是拿不到免费接口
 
 """
 
@@ -40,6 +40,12 @@ __all__ = ['BaiduApi', 'GoogleApi', 'YoudaoApi',
 def check_lang_name(func):
     """ 检查源语言和目标语言的缩写名是否正确 """
     def wrapper(self, *args, **kargs):
+        default_kargs = self.get_lang_params()
+        if 'from_lang' not in kargs:
+            kargs['from_lang'] = default_kargs['from_lang']
+        if 'to_lang' not in kargs:
+            kargs['to_lang'] = default_kargs['to_lang']
+
         from_lang = kargs['from_lang']
         to_lang = kargs['to_lang']
         exception_string = 'The API does not contain {} language'
@@ -155,7 +161,9 @@ class TranslationApi(object):
         appkey_obj = self.appkey_obj[self.appkey_index]
 
         return appkey_obj
-    
+
+    def get_lang_params(self):
+        raise NotImplementedError()
     
 class BaiduApi(TranslationApi):
     """ 百度翻译 api 的调用接口
@@ -219,6 +227,8 @@ class BaiduApi(TranslationApi):
                  '，错误信息：\n', response.text])
             raise Exception(exception_string)
 
+    def get_lang_params(self):
+        return {'from_lang': 'zh', 'to_lang': 'en'}
 
 class GoogleApi(TranslationApi):
     """ Google 翻译 api 的调用接口
@@ -276,8 +286,11 @@ class GoogleApi(TranslationApi):
                 ['Http请求失败，状态码：', str(response.status_code),
                  '，错误信息：\n', response.text])
             raise Exception(exception_string)
-        
-        
+
+    def get_lang_params(self):
+        return {'from_lang': 'zh', 'to_lang': 'en'}
+
+
 class YoudaoApi(TranslationApi):
     """ 有道 翻译 api 的调用接口
 
@@ -362,7 +375,10 @@ class YoudaoApi(TranslationApi):
                  '，错误信息：\n', response.text])
             raise Exception(exception_string)
     
-    
+    def get_lang_params(self):
+        return {'from_lang': 'zh-CHS', 'to_lang': 'en'}
+
+
 class YoudaoFreeApi(TranslationApi):
     """ 有道免费的翻译 api 的调用接口，该接口模型与非免费版结果不一致
 
@@ -410,6 +426,9 @@ class YoudaoFreeApi(TranslationApi):
                  '，错误信息：\n', response.text])
             raise Exception(exception_string)
 
+    def get_lang_params(self):
+        return {'from_lang': 'zh-CHS', 'to_lang': 'en'}
+
 
 class TencentApi(TranslationApi):
     """ 腾讯 翻译 api 的调用接口
@@ -454,7 +473,7 @@ class TencentApi(TranslationApi):
     @check_lang_name
     @gap_sleep
     @manage_appkey
-    def __call__(self, text, from_lang='zh-CHS', to_lang='en'):
+    def __call__(self, text, from_lang='zh', to_lang='en'):
         """ 对一段文本进行翻译 """
         data = dict()
         data['Action'] = 'TextTranslate'
@@ -521,7 +540,10 @@ class TencentApi(TranslationApi):
             temp_list.append(str(eve_key) + '=' + str(eve_value))
         return '&'.join(temp_list)
 
-    
+    def get_lang_params(self):
+        return {'from_lang': 'zh', 'to_lang': 'en'}
+
+
 class XunfeiApi(TranslationApi):
     """ 讯飞免费的翻译 api 的调用接口
 
@@ -677,6 +699,9 @@ class XunfeiApi(TranslationApi):
                  '，错误信息：\n', response.text])
             raise Exception(exception_string)
     
+    def get_lang_params(self):
+        return {'from_lang': 'cn', 'to_lang': 'en'}
+
 
 if __name__ == '__main__':
     '''

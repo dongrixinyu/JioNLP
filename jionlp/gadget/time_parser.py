@@ -225,11 +225,21 @@ class TimeParser(object):
         self.super_blur_two_ymd_pattern = re.compile('^前两(天|(个)?月|年)$')
         self.super_blur_two_hms_pattern = re.compile('^前两((个)?(小时|钟头)|分钟|秒(钟)?)$')
 
+        # -------------- TIME SPAN SEG -------------
+        # 1997.02-2020.12 此类须强制拆分
+        self.time_span_seg_standard_year_month_to_year_month = re.compile(
+            r'((17|18|19|20|21)\d{2})[./](1[012]|[0]?\d)[\-]((17|18|19|20|21)\d{2})([./](1[012]|[0]?\d))?')
+
+        self.time_span_no_seg_standard_year_month_day = re.compile(
+            r'((17|18|19|20|21)\d{2})\-(1[012]|[0]?\d)[\-./](30|31|[012]?\d)|'
+            r'((17|18|19|20|21)\d{2})[\-./](1[012]|[0]?\d)\-(30|31|[012]?\d)|'
+            r'(^\d)(1[012]|[0]?\d)\-(30|31|[012]?\d)(^\d)')
+
         # --------- TIME POINT & TIME SPAN ---------
         # `标准数字 年、月、日`：`2016-05-22`、`1987.12-3`
         self.standard_year_month_day_pattern = re.compile(
             r'((17|18|19|20|21)\d{2})[\-./](1[012]|[0]?\d)([\-./](30|31|[012]?\d))?[ \t\u3000]?|'
-            r'(1[012]|[0]?\d)·(30|31|[012]?\d)')
+            r'(1[012]|[0]?\d)[·\-](30|31|[012]?\d)')
 
         # `标准数字 年`：`2018`
         self.standard_year_pattern = re.compile(r'(17|18|19|20|21)\d{2}')
@@ -282,7 +292,7 @@ class TimeParser(object):
         # `指代年、月、日`：`今年9月`、`前年9月2日`
         self.limit_year_month_day_pattern = re.compile(
             ''.join([bracket(LIMIT_YEAR_STRING), bracket_absence(MONTH_STRING),
-                     bracket_absence(DAY_STRING)]))
+                     bracket_absence(DAY_STRING), absence(TIME_POINT_SUFFIX)]))
 
         # `指代限定年`：`两年后`、`20多年前`
         # 1、如若遇到 `4年前的中秋节`，`30多年前的夏天`，则须分为两个时间词汇进行解析。很容易因年份模糊被误识别
@@ -415,14 +425,17 @@ class TimeParser(object):
         # 时分秒 文字
         self.hour_minute_second_pattern = re.compile(
             ''.join([absence(BLUR_HOUR_STRING), bracket(HOUR_STRING),
-                     bracket_absence(MIN_SEC_STRING + '分?'), bracket_absence(MIN_SEC_STRING + '秒'), I,
-                     bracket(MIN_SEC_STRING + '分'), bracket_absence(MIN_SEC_STRING + '秒')]))
+                     bracket_absence(MIN_SEC_STRING + '分?'), bracket_absence(MIN_SEC_STRING + '秒'),
+                     absence(TIME_POINT_SUFFIX), I,
+                     bracket(MIN_SEC_STRING + '分'), bracket_absence(MIN_SEC_STRING + '秒'),
+                     absence(TIME_POINT_SUFFIX)]))
 
         # 标准格式`:`分隔时分秒
         self.num_hour_minute_second_pattern = re.compile(
-            absence(BLUR_HOUR_STRING) +
-            r'([01]\d|2[01234]|\d)[:：]([012345]\d)([:：]([012345]\d))?|'
-            r'([012345]\d)[:：]([012345]\d)')
+            ''.join([absence(BLUR_HOUR_STRING),
+                     r'([01]\d|2[01234]|\d)[:：]([012345]\d)([:：]([012345]\d))?',
+                     absence(TIME_POINT_SUFFIX), I,
+                     r'([012345]\d)[:：]([012345]\d)', absence(TIME_POINT_SUFFIX)]))
 
         # 模糊性 `时` 段
         self.blur_hour_pattern = re.compile(BLUR_HOUR_STRING)
@@ -1047,16 +1060,64 @@ class TimeParser(object):
 
         return first_string, second_string
 
-    def parse_span_2_2_point(self, time_string):
-        """检测时间字符串，并将其分解为两个 time_point
+    def _seg_or_not_first(self, time_string):
+        """ 针对待分解字符串，判定哪种情况须分解，哪种不应当分解
 
-        :return:
+        该种判断方法，将不希望被分割的 `-`替换成异常字符 `䶵`，然后使用分割方法进行分割
+        感觉存在潜在的问题。
         """
+
+        # time_span 的分割词也分层级，汉字`起至到` 的优先级高于 `-~`等，后者可用于`年月日`的分割
+        if time_string is None:
+            return None
+
         # 处理特殊的不可分割为两 time_point 的情况
         # 1、2018-04-02 这样的形式，不拆分，直接返回双 None
         #    例如：2018-04-02，2007.12-31，1999.5-20 12:20，
         #         2008.2.1-2019.5.9，
         #    但不包括 1989.02-1997.10
+
+        # 强制 seg pattern
+        seg_patterns = [self.time_span_seg_standard_year_month_to_year_month]
+        for pattern in seg_patterns:
+            matched_string = TimeParser.parse_pattern(time_string, pattern)
+            if matched_string is not None and matched_string != '':
+                # 匹配到后，无须进行替换，即须拆分
+                return time_string
+                break
+
+        # 强制不 seg pattern
+        no_seg_patterns = [self.time_span_no_seg_standard_year_month_day]
+        for pattern in no_seg_patterns:
+            matched_string = TimeParser.parse_pattern(time_string, pattern)
+            if matched_string is not None and matched_string != '':
+                # 匹配到后，须进行替换
+                time_string = time_string.replace('-', '䶵')
+                break
+
+        if '起' in time_string or '至' in time_string or '到' in time_string:
+            time_string = time_string.replace('-', '䶵')
+        return time_string
+
+    def _seg_or_not_second(self, time_string):
+        """ 针对待分解字符串，判定哪种情况须分解，哪种不应当分解 """
+        # 处理特殊的不可分割为两 time_point 的情况
+        # 1、2018-04-02 这样的形式，不拆分，直接返回双 None
+        #    例如：2018-04-02，2007.12-31，1999.5-20 12:20，
+        #         2008.2.1-2019.5.9，
+        #    但不包括 1989.02-1997.10
+
+        # time_span 的分割词也分层级，汉字`起至到` 的优先级高于 `-~`等，后者可用于`年月日`的分割
+        if time_string is None:
+            return None
+
+        time_string = time_string.replace('䶵', '-').strip()
+        return time_string
+
+    def parse_span_2_2_point(self, time_string):
+        """检测时间字符串，并将其分解为两个 time_point """
+        # 处理层级分割的 临时做法，后续还需优化
+        time_string = self._seg_or_not_first(time_string)
 
         # 找第一个字符串
         if self.first_1_span_pattern.search(time_string):
@@ -1067,6 +1128,8 @@ class TimeParser(object):
             first_res = self.first_3_span_pattern.search(time_string)
         else:
             first_res = None
+
+        first_string = None if first_res is None else first_res.group()
 
         # 找第一个字符串
         second_string = None
@@ -1086,9 +1149,11 @@ class TimeParser(object):
         else:
             second_res = None
 
-        first_string = None if first_res is None else first_res.group()
         if second_string is None:
             second_string = None if second_res is None else second_res.group()
+
+        first_string = self._seg_or_not_second(first_string)
+        second_string = self._seg_or_not_second(second_string)
 
         return first_string, second_string
 
@@ -1349,6 +1414,15 @@ class TimeParser(object):
         else:
             raise ValueError('the given `{}` is illegal.'.format(time_string))
 
+    def _check_blur(self, time_string, time_definition):
+        # 若字符串中存在 `左右` 或 `许` 等，说明是 blur，反之返回 None 表示不确定性
+        if '左右' in time_string[-2:]:
+            return 'blur'
+        if '许' in time_string[-1]:
+            return 'blur'
+
+        return time_definition
+
     def parse_time_point(self, time_string, time_base_handler):
         """解析时间点字符串，
         # 此处，时间点字符串不一定为 time point 类型，仅仅依据显式 `从……到……` 的正则匹配得到的字符串
@@ -1462,7 +1536,7 @@ class TimeParser(object):
             if break_flag:
                 break
 
-        if len(''.join([cur_ymd_string, cur_hms_string])) < len(time_string):
+        if len(''.join([cur_ymd_string, cur_hms_string])) < len(time_string.replace(' ', '')):
             if self.chinese_char_pattern.search(time_string):
                 # 若搜索到中文，则 `-` 等符号可用作 time_span 的分隔符，可以不用处理判断字符串未匹配的异常情况
                 if self.string_strict:
@@ -3438,7 +3512,9 @@ class TimeParser(object):
 
         time_handler = time_point.handler()
 
-        return time_handler, time_handler, 'time_span', 'accurate'
+        time_definition = self._check_blur(time_string, 'accurate')
+
+        return time_handler, time_handler, 'time_span', time_definition
 
     def normalize_blur_year(self, time_string):
         """ 解析 模糊年 时间 """
@@ -4473,7 +4549,9 @@ class TimeParser(object):
 
         time_handler = time_point.handler()
 
-        return time_handler, time_handler, 'time_point', 'accurate', day_bias
+        time_definition = self._check_blur(time_string, 'accurate')
+
+        return time_handler, time_handler, 'time_point', time_definition, day_bias
 
     def normalize_num_hour_minute_second(self, time_string):
         """ 解析 `数字（标准格式）时分秒` 时间 """
@@ -4525,7 +4603,9 @@ class TimeParser(object):
 
         time_handler = time_point.handler()
 
-        return time_handler, time_handler, 'time_point', 'accurate', day_bias
+        time_definition = self._check_blur(time_string, 'accurate')
+
+        return time_handler, time_handler, 'time_point', time_definition, day_bias
 
     def normalize_hour_limit_minute(self, time_string):
         """ 解析 `时（限定性）分` 时间 """
@@ -4576,7 +4656,8 @@ class TimeParser(object):
 
         time_handler = time_point.handler()
 
-        return time_handler, time_handler, 'time_point', 'accurate', day_bias
+        time_definition = self._check_blur(time_string, 'accurate')
+        return time_handler, time_handler, 'time_point', time_definition, day_bias
 
     def normalize_blur_hour(self, time_string):
         """ 解析 `模糊 时段` 时间 """
