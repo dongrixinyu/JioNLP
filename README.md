@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-5k-yellow" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.36-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.37-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -47,7 +47,7 @@ print(res)
 
 ```
 
-#### Update 2021-09-20
+#### Update 2021-10-11
 ## 新增 [时间语义解析](../../wiki/时间语义解析-说明文档#user-content-时间语义解析)
 
 #### jio.parse_time 给定时间字符串，解析其为时间戳、时长等。
@@ -80,26 +80,8 @@ print(res)
 - 目前支持的所有 [测试用例](../../blob/master/test/test_time_parser.py)
 
 #### 完整示例
-![image](../../blob/master/image/time_entity.png)
-- 一般首先对文本进行时间类型的实体识别，得到如上图的时间实体。然后选定其中的 time_base(选定新闻发布时间2021-07-15 09:03:47)，即可采用本工具处理，得到结果如下：
-```
-7月15日               time_point  ['2021-07-15 00:00:00', '2021-07-15 23:59:59']
-今年上半年             time_span   ['2021-01-01 00:00:00', '2021-06-30 23:59:59']
-两年                  time_delta  {'year': 2.0}
-一季度                time_span   ['2021-01-01 00:00:00', '2021-03-31 23:59:59']
-二季度                time_span   ['2021-04-01 00:00:00', '2021-06-30 23:59:59']
-上半年                time_span   ['2021-01-01 00:00:00', '2021-06-30 23:59:59']
-春节                  time_point  ['2021-02-12 00:00:00', '2021-02-12 23:59:59']
-五一                  time_point  ['2021-05-01 00:00:00', '2021-05-01 23:59:59']
-端午                  time_point  ['2021-06-14 00:00:00', '2021-06-14 23:59:59']
-6月份                 time_point  ['2021-06-01 00:00:00', '2021-06-30 23:59:59']
-16个月                time_delta  {'month': 16.0}
-从2018年至今           time_span   ['2018-01-01 00:00:00', '2021-07-15 09:03:47']
-每年                  time_period {'delta': {'year': 1}, 'point': None}
-1-5月份               time_span   ['2021-01-01 00:00:00', '2021-05-31 23:59:59']
-2020年1-5月份         time_span   ['2020-01-01 00:00:00', '2020-05-31 23:59:59']
-2021-07-15 09:03:47  time_point  ['2021-07-15 09:03:47', '2021-07-15 09:03:47']
-```
+[JioNLP在线版-时间抽取与解析](http://182.92.160.94:16666/#/extract_time)
+
 
 ## 安装 Installation
 
@@ -258,6 +240,6 @@ $ jio_help
 ### 做 NLP不易，欢迎加入自然语言处理 Wechat 交流群
 ### 如以下码失效，请先添加 vx：dongrixinyu89
 ![image](../../blob/master/image/qr_code_for_collection.png)
-### 如您感觉本工具对您有帮助，可以扫码请作者喝杯咖啡 (●'◡'●)
+### 如本工具对您有帮助，可以扫码请作者喝杯咖啡 (●'◡'●)
 ![image](../../blob/master/image/payment_code.png)
 

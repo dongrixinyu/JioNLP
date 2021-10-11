@@ -32,6 +32,7 @@ class TestTimeParser(unittest.TestCase):
             ['6·30', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-30 00:00:00', '2021-06-30 23:59:59']}],
             ['2018', _ts_1, {'type': 'time_span', 'definition': 'accurate', 'time': ['2018-01-01 00:00:00', '2018-12-31 23:59:59']}],
             ['2021-09-0910:09', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-09-09 10:09:00', '2021-09-09 10:09:59']}],
+            ['2021-09-12-11：23', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-09-12 11:23:00', '2021-09-12 11:23:59']}],
             ['09-01 20:01', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-09-01 20:01:00', '2021-09-01 20:01:59']}],
             ['09-01 20:01 至 12-01 18:07', _ts_1, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-09-01 20:01:00', '2021-12-01 18:07:59']}],
             ['09-01', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-09-01 00:00:00', '2021-09-01 23:59:59']}],
@@ -252,6 +253,7 @@ class TestTimeParser(unittest.TestCase):
             ['7月4日晚上7点09分18秒', {'year': 2021}, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-07-04 19:09:18', '2021-07-04 19:09:18']}],
             ['去年7月4日晚上7点09分', {'year': 2021}, {'type': 'time_point', 'definition': 'accurate', 'time': ['2020-07-04 19:09:00', '2020-07-04 19:09:59']}],
             ['早上7点', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-14 07:00:00', '2021-06-14 07:59:59']}],
+            ['9日上午', _ts_1, {'type': 'time_point', 'definition': 'blur', 'time': ['2021-06-09 07:00:00', '2021-06-09 11:59:59']}],
             ['下月15号下午6点', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-07-15 18:00:00', '2021-07-15 18:59:59']}],
             # 存在6点前，包不包含6点的问题，须设置参数判定
             ['下月15号下午6点前', _ts_1, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 01:06:40', '2021-07-15 18:59:59']}],

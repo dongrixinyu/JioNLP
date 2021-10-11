@@ -238,7 +238,7 @@ class TimeParser(object):
         # --------- TIME POINT & TIME SPAN ---------
         # `标准数字 年、月、日`：`2016-05-22`、`1987.12-3`
         self.standard_year_month_day_pattern = re.compile(
-            r'((17|18|19|20|21)\d{2})[\-./](1[012]|[0]?\d)([\-./](30|31|[012]?\d))?[ \t\u3000]?|'
+            r'((17|18|19|20|21)\d{2})[\-./](1[012]|[0]?\d)([\-./](30|31|[012]?\d))?[ \t\u3000\-./]?|'
             r'(1[012]|[0]?\d)[·\-](30|31|[012]?\d)')
 
         # `标准数字 年`：`2018`
@@ -754,7 +754,7 @@ class TimeParser(object):
 
     @staticmethod
     def _cleansing(time_string):
-        return time_string.strip()# .replace(' ', '')
+        return time_string.strip()  # .replace(' ', '')
 
     def __call__(self, time_string, time_base=time.time(), time_type=None,
                  ret_type='str', strict=False, virtual_time=False, ret_future=False):
@@ -916,7 +916,7 @@ class TimeParser(object):
                     time_string = '下' + time_string
                 else:
                     pass
-        print(time_string)
+
         return time_string
 
     def parse_time_span_point(self, time_string):
@@ -1089,8 +1089,13 @@ class TimeParser(object):
         # 强制不 seg pattern
         no_seg_patterns = [self.time_span_no_seg_standard_year_month_day]
         for pattern in no_seg_patterns:
-            matched_string = TimeParser.parse_pattern(time_string, pattern)
-            if matched_string is not None and matched_string != '':
+            # matched_string = TimeParser.parse_pattern(time_string, pattern)
+            searched_res = pattern.search(time_string)
+            if searched_res:
+                start_idx = searched_res.span()[0]
+                end_idx = searched_res.span()[1]
+                time_string = time_string[start_idx: end_idx].replace('-', '䶵')
+
                 # 匹配到后，须进行替换
                 time_string = time_string.replace('-', '䶵')
                 break
@@ -1654,6 +1659,23 @@ class TimeParser(object):
 
     def normalize_standard_year_month_day(self, time_string):
         """ 解析 标准数字 年月日（标准） 时间 """
+        # 清洗 time_string 的边缘杂字符串，如`2018-02-09-`，其原字符串可能为
+        # `2018-02-09-11:20`
+        def pattern_strip(ymd_segs, time_string):
+            head = ymd_segs.search(time_string[0])
+            tail = ymd_segs.search(time_string[-1])
+            while head or tail:
+                if head:
+                    time_string = time_string[1:]
+                if tail:
+                    time_string = time_string[:-1]
+                head = ymd_segs.search(time_string[0])
+                tail = ymd_segs.search(time_string[-1])
+
+            return time_string
+
+        time_string = pattern_strip(self.ymd_segs, time_string)
+
         colon_num = len(self.ymd_segs.findall(time_string))
         if colon_num == 2:
             year, month, day = self.ymd_segs.split(time_string)
