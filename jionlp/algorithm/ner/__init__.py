@@ -12,7 +12,8 @@ from .ner_accelerate import TokenSplitSentence, TokenBreakLongSentence, TokenBat
 from .ner_entity_compare import entity_compare
 from .analyse_dataset import analyse_dataset, collect_dataset_entities
 from .time_extractor import TimeExtractor
-
+from .money_extractor import MoneyExtractor
 
 extract_time = TimeExtractor()
+extract_money = MoneyExtractor()
 

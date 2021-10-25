@@ -14,6 +14,7 @@ extractor = Extractor()
 
 clean_text = extractor.clean_text
 
+extract_chinese = extractor.extract_chinese
 extract_email = extractor.extract_email
 extract_money = extractor.extract_money
 extract_url = extractor.extract_url

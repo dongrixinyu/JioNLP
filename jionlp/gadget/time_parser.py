@@ -9,7 +9,6 @@
 
 """
 TODO:
-    1、already fixed
     2、时间段的解析中的问题：
     3、时分秒解析中的问题：
         1、9点到半夜1点，其中1点已经属于第二天，需要对其 day 做调整
@@ -26,20 +25,24 @@ TODO:
 TODO unresolved:
     1、中秋节前后两个周末
     2、几十天后
-    3、9月15日上午10时许  => 许
-    4、下午四点左右  => 左右
     5、2016财年  => 财年
     6、两年间  => 间
     7、36天5小时30分后  => 多单位 time_delta to time_span
     8、晚上8点到上午10点之间
     本月第2周
-    前个礼拜
+    前个礼拜 => 上个，而非 上上个，与前天不同
     36天5小时30分后
     2021.2.1.24：00
     2021-09-09T09:09
     2020.01.2.24：00
     20.1.2十二点
     20.1.2八点十五分
+    公告之日起至2020年1月15日17时30分，未知时间“公告之日”
+    2008年内
+    一两天 => 1~2 day
+    一季度末
+    本周二和周三 => 不应当拆分为两个日期
+
 """
 
 import re
@@ -49,7 +52,7 @@ import traceback
 
 from jionlp import logging
 from jionlp.util.funcs import bracket, bracket_absence, absence
-from .money_standardization import MoneyStandardization
+from .money_parser import MoneyParser
 from .lunar_solar_date import LunarSolarDate
 from jionlp.rule.rule_pattern import *
 
@@ -195,7 +198,7 @@ class TimeParser(object):
         self._20_century_solar_terms = get_solar_terms(_20_century_solar_terms_key)
         self._21_century_solar_terms = get_solar_terms(_21_century_solar_terms_key)
 
-        self.money_standardization = MoneyStandardization()
+        self.money_parser = MoneyParser()
 
         self.year_char2num_map = {
             '零': '0', '〇': '0', '一': '1', '二': '2', '三': '3', '四': '4',
@@ -4754,8 +4757,8 @@ class TimeParser(object):
         :param char_num:
         :return:
         """
-        res_num = self.money_standardization(char_num)
-        if res_num == 'null':
+        res_num = self.money_parser(char_num, ret_format='str')
+        if res_num is None:
             return 0
         else:
             return float(res_num[:-1])

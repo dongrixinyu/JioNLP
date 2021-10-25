@@ -6,6 +6,16 @@
 # github: https://github.com/dongrixinyu/JioNLP
 # description: Preprocessing tool for Chinese NLP
 
+"""
+TODO:
+    - "2021年4月20日11:00时至2021年4月25日17:00时" 无法被正确抽取，原因在于 “时” 字与规则多余，
+        与 "string_strict" 相悖。
+    - ”据预测，到2025年，全球数据“ 无法将 到 识别出来
+    - ”机怎么了：9年间四个子品“ 中，”9年间“ 无法被抽取，会抽取得到 ”9年“
+
+"""
+
+
 import re
 import time
 
@@ -17,10 +27,18 @@ from jionlp.gadget.time_parser import TimeParser
 class TimeExtractor(object):
     """ 时间实体抽取器。不依赖模型，将文本中的时间实体进行抽取，并对其做时间语义解析。
 
+    - TODO: ”2000“ 此类时间表达容易与某些金额、数量单位造成混淆，如”2000万美金“，”2000多台发动机“，因此需要
+        首先考虑数量词表达，在2000非数量表达的情况下，再判定为 ”2000年“ 进行返回。
+        目前就简，按四位数后是否有 ”万、亿、多万、多亿“ 进行判断，单位抽取与解析完成后再修复完整版。
+    - 默认大概率非时间含义的时间表达默认不进行返回。
+    - 若文本中包含 ”的“ 字，则在 parse_time 之前，先将此字消除后再进行解析。
+
     Args:
-        text: 输入待抽取时间实体的文本
-        time_base: 若对文本中的时间实体进行语义解析，则须指定解析的时间基，默认为当前时间 time.time()
-        with_parsing: bool 类型，指示返回结果是否包含解析信息，默认为 True
+        text(str): 输入待抽取时间实体的文本
+        time_base(int|datetime|dict|list): 若对文本中的时间实体进行语义解析，则须指定解析的时间基，默认为当前时间 time.time()
+        with_parsing(bool): 指示返回结果是否包含解析信息，默认为 True
+        ret_all(bool): 某些时间表达，在大多数情况下并非表达时间，如 ”一点“ 之于 ”他一点也不友善“，默认按绝大概率处理，
+            即不返回此类伪时间表达，该参数默认为 False；若希望返回所有抽取到的时间表达，须将该参数置 True。
 
     Returns:
         list(dict): 包含时间实体的列表，其中包括 text、type、offset 三个字段，和工具包中 NER 标准处理格式一致。
@@ -56,7 +74,17 @@ class TimeExtractor(object):
         self.fake_positive_start_pattern = re.compile(FAKE_POSITIVE_START_STRING)
         self.fake_positive_end_pattern = re.compile(FAKE_POSITIVE_END_STRING)
 
-    def __call__(self, text, time_base=time.time(), with_parsing=True):
+        # 此类表达虽然可按时间解析，但是文本中很大概率并非表示时间，故以大概率进行排除，
+        # 并设参数 ret_all，即返回所有进行控制，默认为 False，即根据词典进行删除
+        self.non_time_string_list = ['一点', '0时']
+
+        self.four_num_year_pattern = re.compile(r'^[\d]{4}$')
+        self.unit_pattern = re.compile(r'(多)?[万亿元]')  # 四数字后接单位，说明非年份
+
+        self.single_char_time = ['春', '夏', '秋', '冬']
+
+    def __call__(self, text, time_base=time.time(), with_parsing=True,
+                 ret_all=False):
         if self.parse_time is None:
             self._prepare()
 
@@ -67,10 +95,26 @@ class TimeExtractor(object):
             offset = [0, 0]
             bias = 0
             while candidate['offset'][0] + offset[1] < candidate['offset'][1]:
+                # 此循环意在找出同一个 candidate 中包含的多个 time_entity
 
                 true_string, result, offset = self.grid_search(
                     candidate['time_candidate'][bias:])
+
                 if true_string is not None:
+
+                    # rule 1: 判断字符串是否为大概率非时间语义
+                    if (true_string in self.non_time_string_list) and (not ret_all):
+                        bias += offset[1]
+                        continue
+
+                    # rule 2: 判断四数字 ”2033“ 是否后接货币、非年份量词
+                    if self.four_num_year_pattern.search(true_string):
+                        back_start = candidate['offset'][0] + bias + offset[1]
+                        if self.unit_pattern.search(text[back_start: back_start + 2]):
+                            # 说明非真实年份，跳回
+                            bias += offset[1]
+                            continue
+
                     if with_parsing:
                         time_entity_list.append(
                             {'text': true_string,
@@ -108,6 +152,11 @@ class TimeExtractor(object):
 
         return True
 
+    def _grid_search_1(self, time_candidate):
+        """ 取消 parse_time 中 strict 限制，从长至短，先左后右依次缩短 time_candidate，
+        直到解析错误或解析结果出错
+        """
+
     def grid_search(self, time_candidate):
         """ 全面搜索候选时间字符串，从长至短，较优 """
         length = len(time_candidate)
@@ -122,7 +171,9 @@ class TimeExtractor(object):
                     if not self._filter(sub_string):
                         continue
 
-                    result = self.parse_time(sub_string, strict=True)
+                    # rule 3: 若子串中包含 ”的“ 字会对结果产生影响，则先将 ”的“ 字删除后再进行解析。
+                    sub_string_for_parse = sub_string.replace('的', '')
+                    result = self.parse_time(sub_string_for_parse, strict=True)
 
                     return sub_string, result, offset
                 except (ValueError, Exception):
@@ -130,7 +181,7 @@ class TimeExtractor(object):
 
         return None, None, None
 
-    def _grid_search(self, time_candidate):
+    def _grid_search_2(self, time_candidate):
         """ 全面搜索候选时间字符串，从前至后，从长至短 """
         print(time_candidate)
         length = len(time_candidate)
@@ -163,7 +214,12 @@ class TimeExtractor(object):
             # print(matched_res)
             if matched_res is not None:
                 if len(matched_res.group()) > 1:
-                    # 可能误打 “春”、“夏” 等单字符时间表达
+                    time_candidates_list.append(
+                        {'time_candidate': matched_res.group(),
+                         'offset': [idx_count + matched_res.span()[0],
+                                    idx_count + matched_res.span()[1]]})
+                elif matched_res.group() in self.single_char_time:
+                    # 可能误打 “春”、“夏” 等单字符时间表达，故在此加入
                     time_candidates_list.append(
                         {'time_candidate': matched_res.group(),
                          'offset': [idx_count + matched_res.span()[0],
@@ -176,7 +232,7 @@ class TimeExtractor(object):
 
 
 if __name__ == '__main__':
-    text = '''        【标题：中秋国庆双节都加班，可拿24天的日工资】
+    text = '''【标题：中秋国庆双节都加班，可拿24天的日工资】
         8月临近尾声，中秋、国庆两个假期已在眼前。2021年中秋节是9月21日，星期二。 有不少小伙伴翻看放假安排后，发现中秋节前后两个周末都要"补"假。
         记者注意到，根据放假安排，9月18日（星期六）上班，9月19日至21日放假调休，也就是从周日开始放假3天。由于中秋节后上班不到 10天，又将迎来一个黄金周—国庆长假，因此工作也就"安排"上了。
         双节来袭，仍有人要坚守岗位。加班费怎么算？记者为辛勤的小伙伴们算了一笔账。今年中秋加上国庆，两个假日加在一起共有10个加班日，如果全部加班，则可以拿到相当于24天的日工资。

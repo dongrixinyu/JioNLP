@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-5k-yellow" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.37-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.38-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -29,23 +29,50 @@
 #### 功能主要包括：文本清洗，删除HTML标签、删除异常字符、删除冗余字符，转换全角字母、数字、空格为半角，抽取及删除E-mail及域名、抽取及删除（手机号、座机号）电话号码、抽取及删除QQ号、抽取及删除括号内容、抽取及删除身份证号、抽取及删除IP地址、抽取及删除URL超链接、抽取及删除货币金额与单位，金额数字转大写汉字，时间语义解析，解析身份证号信息、解析手机号码归属地、解析座机区号归属地、解析手机号码运营商，按行快速读写文件，（多功能）停用词过滤，（优化的）分句，地址解析，新闻地域识别，繁简体转换，汉字转拼音，汉字偏旁、字形、四角编码、五笔编码拆解，基于词典的情感分析，色情数据过滤，反动数据过滤，关键短语抽取，抽取式文本摘要，成语接龙，成语词典、歇后语词典、新华字典、新华词典、停用词典、中国地名词典、中国县级地名变更词典、世界地名词典，时间实体抽取，基于词典的NER，NER的字、词级别转换，NER的entity和tag格式转换，NER模型的预测阶段加速并行工具集，NER标注和模型预测的结果差异对比，NER标注数据集分割与统计，NER实体收集、文本分类标注数据集的分割与统计、回译数据增强、相邻近汉字换位数据增强、同音词替换数据增强、随机增删字符数据增强、实体替换数据增强、公历转农历日期、农历转公历日期
 
 
-#### Update 2021-09-20
-## 新增 [时间实体抽取](../../wiki/NER-说明文档#user-content-时间实体抽取)
+#### Update 2021-10-25
+## 更新 [货币金额解析](../../wiki/NER-说明文档#user-content-货币金额实体抽取)
 
-#### jio.ner.extract_time 从文本中抽取时间实体（不依赖模型，纯规则）。
-
+#### jio.ner.extract_money 从文本中抽取货币金额实体（不依赖模型，纯规则）。
+#### 配合 jio.parse_time 使用（见下）
 ``` python
-import time
 import jionlp as jio
-text = '【新华社报2021-9-9】国家统计局今天发布了2021年8月份全国CPI（居民消费价格指数）和PPI（工业生产者出厂价格指数）数据。'
-res = jio.ner.extract_time(text, time_base={'year': 2021})
+text = '张三赔偿李大花人民币车费601,293.11元，工厂费一万二千三百四十五元,利息9佰日元，打印费十块钱。'
+res = jio.ner.extract_money(text, with_parsing=False)
 print(res)
 
-# [{'text': '2021-9-9', 'offset': [5, 13], 'type': 'time_point'},
-#  {'text': '今天', 'offset': [19, 21], 'type': 'time_point'},
-#  {'text': '2021年8月份', 'offset': [24, 32], 'type': 'time_point'}]
+# [{'text': '601,293.11元', 'offset': [12, 23], 'type': 'money'},
+#  {'text': '一万二千三百四十五元', 'offset': [27, 37], 'type': 'money'},
+#  {'text': '9佰日元', 'offset': [40, 44], 'type': 'money'},
+#  {'text': '十块钱', 'offset': [48, 51], 'type': 'money'}]
 
 ```
+
+#### Update 2021-10-25
+## 更新 [货币金额解析](../../wiki/时间语义解析-说明文档#user-content-时间语义解析)
+
+#### jio.parse_time 给定时间字符串，解析其为时间戳、时长等。
+
+解析货币金额字符串，并将其转换为标准数字格式。
+
+```python
+import jionlp as jio
+text_list = ['约4.287亿美元', '两个亿卢布', '六十四万零一百四十三元一角七分', '3000多欧元'] 
+moneys = [jio.parse_money(text) for text in text_list]
+
+# 约4.287亿美元: {'num': '428700000.00', 'case': '美元', 'definition': 'blur'}
+# 两个亿卢布: {'num': '200000000.00', 'case': '卢布', 'definition': 'accurate'}
+# 六十四万零一百四十三元一角七分: {'num': '640143.17', 'case': '元', 'definition': 'accurate'}
+# 3000多欧元: {'num': ['3000.00', '4000.00'], 'case': '欧元', 'definition': 'blur'}
+
+```
+
+- 支持纯数字格式，如：987273.3美元
+- 支持大写中文金额，如：柒仟六佰零弎萬肆仟叁佰贰拾壹元伍分
+- 支持混合格式，如：1.26万港元
+- 支持**修饰词**解析，如：将近6万块钱、至少1000块钱以上
+- 支持**模糊金额**解析，如：两万多元钱，6千多亿日元
+- 支持**口语化中文**格式，如：三十五块三毛；但对于“三十五块八”这样的字符串，在文本中存在**歧义**，如“三十五块八颗糖”等，因此，```jio.ner.extract_money``` 对于此字符串不予抽取，但```parse_money```可以将“三十五块八”看作完整的口语化金额，标准化为“35.80元”
+- 支持多种常见货币类型：人民币，港元，澳门元，美元，日元，澳元，韩元，卢布，英镑，马克，法郎，欧元，加元, 泰铢等。
 
 #### Update 2021-10-11
 ## 新增 [时间语义解析](../../wiki/时间语义解析-说明文档#user-content-时间语义解析)
@@ -160,7 +187,7 @@ $ jio_help
 |--------|--------|-------|-------|
 |[**清洗文本**](../../wiki/正则抽取与解析-说明文档#user-content-清洗文本) |clean_text|去除文本中的**异常字符、冗余字符、HTML标签、括号信息、**<br>**URL、E-mail、电话号码，全角字母数字转换为半角** |⭐ |
 |[抽取 **E-mail**](../../wiki/正则抽取与解析-说明文档#user-content-抽取-e-mail) |extract_email|抽取文本中的 E-mail，返回**位置**与**域名** | |
-|[抽取 **金额**](../../wiki/正则抽取与解析-说明文档#user-content-抽取金额字符串) |extract_money<br>money_standardization|抽取文本中的金额，并将其以**数字 + 单位**标准形式输出 |⭐ |
+|[解析 **货币金额**](../../wiki/正则抽取与解析-说明文档#user-content-货币金额解析) |extract_money|解析货币金额字符串 |⭐ |
 |[抽取**电话号码**](../../wiki/正则抽取与解析-说明文档#user-content-抽取电话号码) |extract_phone_number| 抽取电话号码(含**手机号**、**座机号**)，返回**域名**、**类型**与**位置** | |
 |[抽取中国**身份证** ID](../../wiki/正则抽取与解析-说明文档#user-content-抽取身份证号) |extract_id_card|抽取身份证 ID，配合 **jio.parse_id_card** 返回身份证的<br>详细信息(**省市县**、**出生日期**、**性别**、**校验码**)| |
 |[抽取 **QQ** 号](../../wiki/正则抽取与解析-说明文档#user-content-抽取-qq) |extract_qq|抽取 QQ 号，分为严格规则和宽松规则 | |
@@ -204,6 +231,7 @@ $ jio_help
 
 | 功能   | 函数   |描述   |星级   |
 |--------|--------|-------|-------|
+|[抽取**货币金额实体**](../../wiki/NER-说明文档#user-content-货币金额实体抽取) |extract_money |从文本中抽取出货币金额实体 |⭐ |
 |[抽取**时间实体**](../../wiki/NER-说明文档#user-content-时间实体抽取) |extract_time |从文本中抽取出时间实体 |⭐ |
 |[基于**词典NER**](../../wiki/NER-说明文档#user-content-基于词典-ner) |LexiconNER|依据指定的实体词典，前向最大匹配实体 |⭐ |
 |[**entity 转 tag**](../../wiki/NER-说明文档#user-content-entity-转-tag) |entity2tag|将 json 格式实体转换为模型处理的 tag 序列 | |

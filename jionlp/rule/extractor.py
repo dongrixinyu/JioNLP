@@ -40,6 +40,7 @@ class Extractor(object):
         self.exception_pattern = None
         self.full_angle_pattern = None
         self.chinese_char_pattern = None
+        self.chinese_chars_pattern = None
 
     @staticmethod
     def _extract_base(pattern, text, with_offset=False):
@@ -228,26 +229,37 @@ class Extractor(object):
         return self._extract_base(self.ip_address_pattern, text, 
                                   with_offset=detail)
     
-    def extract_money(self, text):
+    def extract_money(self, text, detail=False):
         """从文本中抽取出金额字符串，可以和 money_standardization 函数配合使用，
-        得到数字金额
+        得到数字金额。（TO BE DEPRECATED.）
 
         Args:
             text(str): 字符串文本
+            detail(bool): 返回字符串的详细信息 offset，默认为 False
 
         Returns:
             list: email列表
+
+        Examples:
+            >>> import jionlp as jio
+            >>> money_result = jio.extract_money(
+                    '张三赔偿李四人民币车费601,293.11元，工厂费一万二千三百四十五元,利息9佰日元，打印费十块钱。')
+            >>> print(money_result)
+
+            # ['601,293.11元', '一万二千三百四十五元', '9佰日元', '十块钱']
 
         """
         if self.money_pattern is None:
             self.money_pattern = re.compile(MONEY_PATTERN)
             
-        res = list()
+        money_result = list()
         for item in self.money_pattern.finditer(text):
-            # print(item.group())
-            res.append(item.group())
+            if detail:
+                money_result.append({'text': item.group(), 'offset': list(item.span())})
+            else:
+                money_result.append(item.group())
         
-        return res
+        return money_result
     
     def extract_phone_number(self, text, detail=False):
         """从文本中抽取出电话号码
@@ -584,27 +596,80 @@ class Extractor(object):
         text = ''.join(['￥', text, '￥'])
         return self.url_pattern.sub('', text)[1:-1]
 
-    def replace_chinese(self, text):
+    def replace_chinese(self, text, substitute=r' '):
         """ 删除文本中的所有中文字符串
 
-        将中文文字，替换为空格
+        Args:
+            text(str): 输入的文本
+            substitute(str): 将中文文字，替换为何种字符串，默认为一个空格
+
+        Return:
+            list(str): 中文文本列表，若两段中文之间有其它字符，则按序排列在列表中
+
+        Examples:
+            >>> import jionlp as jio
+            >>> print(jio.replace_chinese('【新华社消息】（北京时间）从昨天...'))
+
+            # '【     】（    ）   ...'
 
         """
         if text == '':
-            return []
+            return list()
+
         if self.chinese_char_pattern is None:
             self.chinese_char_pattern = re.compile(CHINESE_CHAR_PATTERN)
-        
-        text_without_chinese = self.chinese_char_pattern.sub(r' ', text)
+
+        if type(substitute) is not str:
+            raise TypeError('the `substitute` is not string.')
+
+        text_without_chinese = self.chinese_char_pattern.sub(substitute, text)
+
         return text_without_chinese
 
-        # {'phone': '18100065143', 'province': '上海', 'city': '上海',
-        # 'zip_code': '200000', 'area_code': '021', 'phone_type': '电信'}
+    def extract_chinese(self, text):
+        """ 抽取出文本中的所有中文字符串
+
+        Args:
+            text(str): 输入的文本
+
+        Return:
+            list(str): 中文文本列表，若两段中文之间有其它字符，则按序排列在列表中
+
+        Examples:
+            >>> import jionlp as jio
+            >>> print(jio.extract_chinese('【新华社消息】（北京时间）从昨天...'))
+
+            # ['新华社消息', '北京时间','从昨天']
+
+        """
+        if text == '':
+            return list()
+
+        if self.chinese_chars_pattern is None:
+            self.chinese_chars_pattern = re.compile(CHINESE_CHAR_PATTERN + '+')
+
+        chinese_text_list = self.chinese_chars_pattern.findall(text)
+
+        return chinese_text_list
 
     def check_chinese_char(self, text):
-        """ 检查文本中是否包含中文字符 """
+        """ 检查文本中是否包含中文字符
+
+        Args:
+            text(str): 输入的文本
+        Return:
+            bool: 文本中是否包含中文字符
+
+        Examples:
+            >>> import jionlp as jio
+            >>> print(jio.check_chinese_char('【新华社消息】（北京时间）从昨天...'))
+
+            # True
+
+        """
         if text == '':
             return False
+
         if self.chinese_char_pattern is None:
             self.chinese_char_pattern = re.compile(CHINESE_CHAR_PATTERN)
 

@@ -126,7 +126,7 @@ class LexiconSentiment(object):
         self.transition_words = re.compile('((，|\,)(但是|可是|但|不过))')
 
     def get_sentence_sentiment(self, sentence):
-        print(sentence)
+        # print(sentence)
         # rule1: 转折词汇，不考虑前面的情感词，仅考虑之后的情感词
         transition_item = self.transition_words.search(sentence)
         if transition_item:
@@ -178,7 +178,7 @@ class LexiconSentiment(object):
                     
                 elif bias == Bias.RIGHT:
                     sentence_weight = word_weight
-            print(word, word_val)
+            # print(word, word_val)
             
         sentence_value = 0
         for x in val_list:
