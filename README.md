@@ -30,29 +30,27 @@
 
 
 #### Update 2021-10-25
-## 更新 [货币金额解析](../../wiki/NER-说明文档#user-content-货币金额实体抽取)
+## 更新 [货币金额实体抽取](../../wiki/NER-说明文档#user-content-货币金额实体抽取)
 
 #### jio.ner.extract_money 从文本中抽取货币金额实体（不依赖模型，纯规则）。
-#### 配合 jio.parse_time 使用（见下）
+#### 配合 jio.parse_time 货币金额解析使用（见下）
 ``` python
 import jionlp as jio
-text = '张三赔偿李大花人民币车费601,293.11元，工厂费一万二千三百四十五元,利息9佰日元，打印费十块钱。'
+text = '张三赔偿李大花人民币车费601,293.11元，工厂费大约一万二千三百四十五元,利息9佰日元，打印费人民币十块钱。'
 res = jio.ner.extract_money(text, with_parsing=False)
 print(res)
 
 # [{'text': '601,293.11元', 'offset': [12, 23], 'type': 'money'},
-#  {'text': '一万二千三百四十五元', 'offset': [27, 37], 'type': 'money'},
-#  {'text': '9佰日元', 'offset': [40, 44], 'type': 'money'},
-#  {'text': '十块钱', 'offset': [48, 51], 'type': 'money'}]
+#  {'text': '大约一万二千三百四十五元', 'offset': [27, 39], 'type': 'money'},
+#  {'text': '9佰日元', 'offset': [42, 46], 'type': 'money'},
+#  {'text': '人民币十块钱', 'offset': [50, 56], 'type': 'money'}]
 
 ```
 
 #### Update 2021-10-25
-## 更新 [货币金额解析](../../wiki/时间语义解析-说明文档#user-content-时间语义解析)
+## 更新 [货币金额解析](../../wiki/正则抽取与解析-说明文档#user-content-货币金额解析)
 
-#### jio.parse_time 给定时间字符串，解析其为时间戳、时长等。
-
-解析货币金额字符串，并将其转换为标准数字格式。
+#### jio.parse_money 给定货币金额字符串，解析其标准金额、货币类型、精确度。
 
 ```python
 import jionlp as jio
