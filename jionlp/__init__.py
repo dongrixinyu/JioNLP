@@ -73,6 +73,7 @@ guide = """
 │   | 2021-07-04 | update time parser                                  |   │
 │   | 2021-07-18 | update time parser                                  |   │
 │   | 2021-09-01 | add jionlp online                                   |   │
+│   | 2021-10-25 | update extract money and parse money                |   │
 │                                                                          │
 ╰──────────────────────────────────────────────────────────────────────────╯
 """

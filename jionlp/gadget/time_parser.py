@@ -4764,11 +4764,7 @@ class TimeParser(object):
             return float(res_num[:-1])
 
     def _char_year2num(self, char_year):
-        """ 将 二零一九 年份转化为 2019
-
-        :param char_year:
-        :return:
-        """
+        """ 将 二零一九 年份转化为 2019 """
         year_list = list()
         for char in char_year:
             year_list.append(self.year_char2num_map.get(char, char))

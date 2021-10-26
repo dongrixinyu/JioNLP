@@ -18,7 +18,8 @@ TODO:
         - 从8500元到3万元不等
     - 金额模糊表达
         - 五六百美元
-
+    - 货币标识符
+        - ￥5600、$85、€¥£、85,000$
 """
 
 import re
@@ -45,14 +46,14 @@ class MoneyParser(object):
             'detail' 格式形如 “{'num': '64000.00', 'case': '韩元', 'definition': 'accurate'}”
 
     Returns:
-        转换后指定格式的带`unit`的金额。
+        标准解析格式的金额（见下例）。
 
     Examples:
         >>> import jionlp as jio
         >>> money = "六十四万零一百四十三元一角七分"
-        >>> print(jio.money_standardization(money))
+        >>> print(jio.parse_money(money))
 
-        # "640143.17元"
+        # {'num': '640143.17元', 'definition': 'accurate', 'case': '元'}
 
     """
     def __init__(self):
@@ -268,6 +269,8 @@ class MoneyParser(object):
                 unit = '日元'
             elif currency_unit in ['韩币', '元韩币']:
                 unit = '韩元'
+            elif currency_unit in ['台币', '元新台币', '元台币']:
+                unit = '新台币'
             elif currency_unit in ['澳大利亚元', '澳币', '元澳币']:
                 unit = '澳元'
             elif currency_unit in ['美刀', '美金']:
@@ -312,6 +315,7 @@ class MoneyParser(object):
 
         if len(modifiers) == 0:
             minus_res, plus_res, blur_res = None, None, None
+
         elif len(modifiers) == 1:
             # 仅一个前缀或后缀
             blur_res = self.money_blur_pattern.search(modifiers[0])
@@ -426,6 +430,7 @@ class MoneyParser(object):
             standard_money_num_list = [standard_money_num, second_money_num]
             definition = 'blur'
 
+        # 组织返回格式
         if ret_format == 'str':
             if len(standard_money_num_list) == 0:
                 ret_money = standard_money_num + unit
