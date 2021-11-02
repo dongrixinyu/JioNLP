@@ -107,7 +107,11 @@ class MoneyExtractor(object):
                 try:
                     offset = [j, length - i + j + 1]
                     sub_string = money_candidate[j: offset[1]]
-                    result = self.parse_money(sub_string)
+
+                    # 对字符串进行预处理，
+                    clean_sub_string = sub_string.replace(' ', '')
+
+                    result = self.parse_money(clean_sub_string)
 
                     return sub_string, result, offset
                 except (ValueError, Exception):

@@ -34,6 +34,7 @@ class TestMoneyParser(unittest.TestCase):
             # 数、汉字结合金额
             ['1.2万元', {'num': '12000.00', 'case': '元', 'definition': 'accurate'}],
             ['3千万亿日元', {'num': '3000000000000000.00', 'case': '日元', 'definition': 'accurate'}],
+            ['新台币 177.1 亿元', {'num': '17710000000.00', 'case': '新台币', 'definition': 'accurate'}],
 
             # 纯汉字金额
             ['六十四万零一百四十三元一角七分', {'num': '640143.17', 'case': '元', 'definition': 'accurate'}],
@@ -63,6 +64,7 @@ class TestMoneyParser(unittest.TestCase):
 
         for item in money_string_list:
             money_res = jio.parse_money(item[0])
+            print(item[0])
             self.assertEqual(money_res, item[1])
 
 

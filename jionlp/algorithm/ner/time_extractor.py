@@ -150,6 +150,10 @@ class TimeExtractor(object):
         if len(sub_string) != len(sub_string.strip()):
             return False
 
+        # 的 不可以在句首或句尾
+        if '的' in sub_string[0] or '的' in sub_string[-1]:
+            return False
+
         return True
 
     def _grid_search_1(self, time_candidate):

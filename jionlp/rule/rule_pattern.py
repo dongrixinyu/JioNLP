@@ -365,7 +365,7 @@ MONEY_MINUS_STRING = r'((将)?近|不(到|足|超过)?|以下)'
 MONEY_PLUS_STRING = r'(至少(要)?|逾|高于|上|(超)?过|超|以上)'
 
 MONEY_NUM_MIDDLE_STRING = r'[,，]'
-MONEY_NUM_STRING = r'[\.多数几百佰千仟万萬亿十拾兆〇O0-9零０-９一二两三四五六七八九壹贰俩叁弎仨肆伍陆柒捌玖]'
+MONEY_NUM_STRING = r'[ \.多数几百佰千仟万萬亿十拾兆〇O0-9零０-９一二两三四五六七八九壹贰俩叁弎仨肆伍陆柒捌玖]'
 
 MONEY_KUAI_MAO_JIAO_FEN_STRING = r'[分角毛块]'
 MONEY_PREFIX_CASE_STRING = r'(港币|人民币|(新)?台币)'

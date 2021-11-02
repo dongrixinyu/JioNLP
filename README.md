@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-5k-yellow" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.38-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.39-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -70,7 +70,7 @@ moneys = [jio.parse_money(text) for text in text_list]
 - 支持**修饰词**解析，如：将近6万块钱、至少1000块钱以上
 - 支持**模糊金额**解析，如：两万多元钱，6千多亿日元
 - 支持**口语化中文**格式，如：三十五块三毛；但对于“三十五块八”这样的字符串，在文本中存在**歧义**，如“三十五块八颗糖”等，因此，```jio.ner.extract_money``` 对于此字符串不予抽取，但```parse_money```可以将“三十五块八”看作完整的口语化金额，标准化为“35.80元”
-- 支持多种常见货币类型：人民币，港元，澳门元，美元，日元，澳元，韩元，卢布，英镑，马克，法郎，欧元，加元, 泰铢等。
+- 支持多种常见货币类型：人民币，港元，澳门元，美元，日元，澳元，韩元，卢布，英镑，马克，法郎，欧元，加元，泰铢，台币等。
 
 #### Update 2021-10-11
 ## 新增 [时间语义解析](../../wiki/时间语义解析-说明文档#user-content-时间语义解析)
@@ -81,13 +81,9 @@ moneys = [jio.parse_money(text) for text in text_list]
 import time
 import jionlp as jio
 res = jio.parse_time('今年9月', time_base={'year': 2021})
-print(res)
 res = jio.parse_time('零三年元宵节晚上8点半', time_base=time.time())
-print(res)
 res = jio.parse_time('一万个小时')
-print(res)
 res = jio.parse_time('100天之后', time.time())
-print(res)
 res = jio.parse_time('每周五下午4点', time.time())
 print(res)
 
