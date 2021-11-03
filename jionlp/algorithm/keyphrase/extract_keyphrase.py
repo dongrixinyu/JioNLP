@@ -25,6 +25,7 @@ import re
 import json
 import numpy as np
 import pkuseg
+import traceback
 
 from jionlp import logging
 from jionlp.rule import clean_text
@@ -56,19 +57,19 @@ class ChineseKeyPhrasesExtractor(object):
     LDA 模型，寻找突出主题的词汇，增加权重，组合成结果进行返回。
 
     Args:
-        text: utf-8 编码中文文本
+        text: 中文文本
         top_k: (int) 选取多少个关键短语返回，默认为 5，若为 -1 返回所有短语
         with_weight: 指定返回关键短语是否需要短语权重
         func_word_num: 允许短语中出现的虚词个数，strict_pos 为 True 时无效
         stop_word_num: 允许短语中出现的停用词个数，strict_pos 为 True 时无效
         max_phrase_len: 允许短语的最长长度，默认为 25 个字符
         topic_theta: 主题权重的权重调节因子，默认0.5，范围（0~无穷）
-        strict_pos: (bool) 为 True 时仅允许名词短语出现
-        allow_pos_weight: (bool) 考虑词性权重，即某些词性组合的短语首尾更倾向成为关键短语
-        allow_length_weight: (bool) 考虑词性权重，即 token 长度为 2~5 的短语倾向成为关键短语
-        allow_topic_weight: (bool) 考虑主题突出度，它有助于过滤与主题无关的短语（如日期等）
-        without_person_name: (bool) 决定是否剔除短语中的人名
-        without_location_name: (bool) 决定是否剔除短语中的地名
+        strict_pos: (bool) 为 True 时仅允许名词短语出现，默认为 True
+        allow_pos_weight: (bool) 考虑词性权重，即某些词性组合的短语首尾更倾向成为关键短语，默认为 True
+        allow_length_weight: (bool) 考虑词性权重，即 token 长度为 2~5 的短语倾向成为关键短语，默认为 True
+        allow_topic_weight: (bool) 考虑主题突出度，它有助于过滤与主题无关的短语（如日期等），默认为 True
+        without_person_name: (bool) 决定是否剔除短语中的人名，默认为 False
+        without_location_name: (bool) 决定是否剔除短语中的地名，默认为 False
         remove_phrases_list: (list) 将某些不想要的短语剔除，使其不出现在最终结果中
         remove_words_list: (list) 将某些不想要的词剔除，使包含该词的短语不出现在最终结果中
         specified_words: (dict) 行业名词:词频，若不为空，则仅返回包含该词的短语
@@ -174,7 +175,7 @@ class ChineseKeyPhrasesExtractor(object):
                 if 'ns' not in self.strict_pos_name:
                     self.strict_pos_name.append('ns')
                 if 'ns' not in self.pos_name:
-                    self.pos_name.append('ns')
+                    self.pos_name.add('ns')
 
             if without_person_name:
                 if 'nr' in self.strict_pos_name:
@@ -185,7 +186,7 @@ class ChineseKeyPhrasesExtractor(object):
                 if 'nr' not in self.strict_pos_name:
                     self.strict_pos_name.append('nr')
                 if 'nr' not in self.pos_name:
-                    self.pos_name.append('nr')
+                    self.pos_name.add('nr')
 
             # step0: 清洗文本，去除杂质
             text = clean_text(text)
@@ -243,8 +244,6 @@ class ChineseKeyPhrasesExtractor(object):
                 for n in range(1, sen_length + 1):  # n-grams
                     for i in range(0, sen_length - n + 1):
                         candidate_phrase = sen_segs[i: i + n]
-                        # print(candidate_phrase)
-                        # pdb.set_trace()
 
                         # 由于 pkuseg 的缺陷，日期被识别为 n 而非 t，故删除日期
                         res = self.extra_date_ptn.match(candidate_phrase[-1][0])
@@ -376,7 +375,7 @@ class ChineseKeyPhrasesExtractor(object):
             return final_res
 
         except Exception as e:
-            logging.error('the text is illegal. \n{}'.format(e))
+            logging.error('the text is illegal. \n{}'.format(traceback.format_exc()))
             return list()
 
     @staticmethod
