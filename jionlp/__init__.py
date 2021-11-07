@@ -8,7 +8,7 @@
 # description: Preprocessing tool for Chinese NLP
 """
 
-__version__ = '1.3.39'
+__version__ = '1.3.40'
 
 import os
 
@@ -25,7 +25,7 @@ for file_name in UNZIP_FILE_LIST:
         unzip_file()
 
 
-guide = """
+history = """
 ╭──────────────────────────────────────────────────────────────────────────╮
 │ • • • ░░░░░░░░░░░░░░░░░░░░░░  Important Message  ░░░░░░░░░░░░░░░░░░░░░░░ │
 ├──────────────────────────────────────────────────────────────────────────┤

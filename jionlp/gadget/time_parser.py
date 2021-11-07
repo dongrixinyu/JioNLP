@@ -29,6 +29,7 @@ TODO unresolved:
     6、两年间  => 间
     7、36天5小时30分后  => 多单位 time_delta to time_span
     8、晚上8点到上午10点之间
+    9、明天下午3点至8点  => 自动将 8点识别为晚上 8点
     本月第2周
     前个礼拜 => 上个，而非 上上个，与前天不同
     36天5小时30分后
@@ -40,8 +41,10 @@ TODO unresolved:
     公告之日起至2020年1月15日17时30分，未知时间“公告之日”
     2008年内
     一两天 => 1~2 day
-    一季度末
     本周二和周三 => 不应当拆分为两个日期
+    北京时间今天（10月11日）17时59分
+    08年04-03
+    2021年09月23
 
 """
 
@@ -133,13 +136,9 @@ class TimeParser(object):
         >>> import time
         >>> import jionlp as jio
         >>> res = jio.parse_time('今年9月', time_base={'year': 2021})
-        >>> print(res)
         >>> res = jio.parse_time('零三年元宵节晚上8点半', time_base=time.time())
-        >>> print(res)
         >>> res = jio.parse_time('一万个小时')
-        >>> print(res)
         >>> res = jio.parse_time('100天之后', time.time())
-        >>> print(res)
         >>> res = jio.parse_time('每周五下午4点', time.time())
         >>> print(res)
 
@@ -254,14 +253,14 @@ class TimeParser(object):
 
         # `年、季度`：`2018年前三季度`
         self.year_solar_season_pattern = re.compile(
-            ''.join([bracket_absence(YEAR_STRING), r'(([第前后头]?[一二三四1-4两]|首)(个)?季度)']))
+            ''.join([bracket_absence(YEAR_STRING), r'(([第前后头]?[一二三四1-4两]|首)(个)?季度[初中末]?)']))
 
         # `限定年、季度`：`2018年前三季度`
         self.limit_year_solar_season_pattern = re.compile(
-            ''.join([bracket(LIMIT_YEAR_STRING), r'(([第前后头]?[一二三四1-4两]|首)(个)?季度)']))
+            ''.join([bracket(LIMIT_YEAR_STRING), r'(([第前后头]?[一二三四1-4两]|首)(个)?季度[初中末]?)']))
 
         # `限定季度`：`上季度`
-        self.limit_solar_season_pattern = re.compile(r'([上下](个)?)季度')
+        self.limit_solar_season_pattern = re.compile(r'([上下](个)?)季度[初中末]?')
 
         # `年、范围月`：`2018年前三个月`
         self.year_span_month_pattern = re.compile(
@@ -437,8 +436,8 @@ class TimeParser(object):
         self.num_hour_minute_second_pattern = re.compile(
             ''.join([absence(BLUR_HOUR_STRING),
                      r'([01]\d|2[01234]|\d)[:：]([012345]\d)([:：]([012345]\d))?',
-                     absence(TIME_POINT_SUFFIX), I,
-                     r'([012345]\d)[:：]([012345]\d)', absence(TIME_POINT_SUFFIX)]))
+                     absence(TIME_POINT_SUFFIX), r'(时)?', I,
+                     r'([012345]\d)[:：]([012345]\d)', absence(TIME_POINT_SUFFIX), r'(时)?']))
 
         # 模糊性 `时` 段
         self.blur_hour_pattern = re.compile(BLUR_HOUR_STRING)
@@ -544,7 +543,7 @@ class TimeParser(object):
         self.month_num_pattern = re.compile(MONTH_NUM_STRING)  # 1~12
         self.span_month_pattern = re.compile('([第前后头]([一二两三四五六七八九十]|十[一二]|[1-9]|1[012])|首)(个)?月(份)?')
         self.solar_season_pattern = re.compile(
-            '((([第前后头][一二三四1-4两]|首)(个)?|[一二三四1-4两])季度)')
+            '((([第前后头][一二三四1-4两]|首)(个)?|[一二三四1-4两])季度[初中末]?)')
         self.blur_month_pattern = re.compile(BLUR_MONTH_STRING)
         self.lunar_month_pattern = re.compile(bracket(LUNAR_MONTH_STRING[:-1]) + '(?=月)')
 
@@ -593,17 +592,17 @@ class TimeParser(object):
 
         # for TIME_SPAN pattern
         self.first_1_span_pattern = re.compile(
-            r'(?<=(从))([^起到至\-—~]+)(?=(起|到|至|以来|开始|—|－|-|~))|'
-            r'(?<=(从))([^起到至\-—~]+)')
+            r'(?<=(从|自))([^起到至\-—~]+)(?=(起|到|至|以来|开始|—|－|-|~))|'
+            r'(?<=(从|自))([^起到至\-—~]+)')
         self.first_2_span_pattern = re.compile(r'(.+)(?=(——|--|~~|－－))')  # (之以)?后)$
         self.first_3_span_pattern = re.compile(r'([^起到至\-—~]+)(?=(起|到|至|以来|开始|－|—|-|~))')
 
         self.second_0_span_pattern = re.compile(r'(?<=(以来|开始|——|--|~~|－－))(.+)')
-        self.second_1_span_pattern = re.compile(r'(?<=[起到至\-—~－])(.+)(?=([之以]?前))')
-        self.second_2_span_pattern = re.compile(r'(?<=[起到至\-—~－])(.+)')
+        self.second_1_span_pattern = re.compile(r'(?<=[起到至\-—~－])([^起到至\-—~－]+)(?=([之以]?前|止))')
+        self.second_2_span_pattern = re.compile(r'(?<=[起到至\-—~－])([^起到至\-—~－]+)')
         self.second_3_span_pattern = re.compile(
             r'^((\d{1,2}|[一二两三四五六七八九十百千]+)[几多]?年(半)?(多)?|半年(多)?|几[十百千](多)?年)'
-            r'(?=([之以]?前))')  # 此种匹配容易和 `三年以前` 相互矛盾，因此设置正则
+            r'(?=([之以]?前|止))')  # 此种匹配容易和 `三年以前` 相互矛盾，因此设置正则
 
         # for delta span pattern
         self.first_delta_span_pattern = re.compile(r'([^到至\-—~]+)(?=(——|--|~~|－－|到|至|－|—|-|~))')
@@ -654,10 +653,10 @@ class TimeParser(object):
             r'(年|(个)?季度|(个)?月|(个)?(星期|礼拜)|周|日|天|(个)?(小时|钟头)|分(钟)?|秒(钟)?)')
 
         # 由于 time_span 格式造成的时间单位缺失的检测
-        # 如：`去年9~12月`、 `2016年8——10月`
+        # 如：`去年9~12月`、 `2016年8——10月`，但 `2017年9月10日11:00至2018年` 除外，因最后为时、分
         self.time_span_point_compensation = re.compile(
             absence(BLUR_HOUR_STRING) +
-            r'[\d一二三四五六七八九十零]{1,2}[月日号点时]?(到|至|——|－－|--|~~|—|－|-|~)'
+            r'(?!:)[\d一二三四五六七八九十零]{1,2}[月日号点时]?(到|至|——|－－|--|~~|—|－|-|~)'
             r'([\d一二三四五六七八九十零]{1,2}[月日号点时]|[\d一二三四五六七八九十零]{2,4}年)')
 
         # 由于 time_span 格式造成的时间单位缺失的检测
@@ -683,7 +682,7 @@ class TimeParser(object):
 
             # compensate the first
             if '年' in time_compensation:
-                if first_time_string[-1] not in '点时日号月年':  # 若第一个时间以 日结尾，而第二个时间以年开头，则不补全
+                if first_time_string[-1] not in '点时日号月年':  # 若第一个时间以 日月 等结尾，而第二个时间以年开头，则不补全
                     first_time_string = ''.join([first_time_string, '年'])
             elif '月' in time_compensation:
                 if first_time_string[-1] not in '点时日号月':
@@ -830,6 +829,9 @@ class TimeParser(object):
             [self.limit_month_pattern, self.normalize_limit_month],
             [self.limit_year_span_month_pattern, self.normalize_limit_year_span_month],
 
+            # week 较为特殊
+            [self.standard_week_day_pattern, self.normalize_standard_week_day],
+
             # festival group
             [self.limit_year_fixed_solar_festival_pattern, self.normalize_limit_year_fixed_solar_festival],
             [self.limit_year_fixed_lunar_festival_pattern, self.normalize_limit_year_fixed_lunar_festival],
@@ -838,6 +840,7 @@ class TimeParser(object):
             [self.lunar_limit_year_month_day_pattern, self.normalize_lunar_limit_year_month_day],
             [self.limit_year_month_day_pattern, self.normalize_limit_year_month_day],
             [self.limit_day_pattern, self.normalize_limit_day],
+            # []
         ]
 
         first_time_string_limit = False
@@ -1069,7 +1072,6 @@ class TimeParser(object):
         该种判断方法，将不希望被分割的 `-`替换成异常字符 `䶵`，然后使用分割方法进行分割
         感觉存在潜在的问题。
         """
-
         # time_span 的分割词也分层级，汉字`起至到` 的优先级高于 `-~`等，后者可用于`年月日`的分割
         if time_string is None:
             return None
@@ -1080,42 +1082,38 @@ class TimeParser(object):
         #         2008.2.1-2019.5.9，
         #    但不包括 1989.02-1997.10
 
-        # 强制 seg pattern
+        # 强制 seg pattern，指字符串中仅有的 `-` 字符要用于表达两个 时间点(time_point) 的分割，
+        # 因此，该字符串的 `-` 要用于强制分割，可直接返回字符串
         seg_patterns = [self.time_span_seg_standard_year_month_to_year_month]
         for pattern in seg_patterns:
             matched_string = TimeParser.parse_pattern(time_string, pattern)
             if matched_string is not None and matched_string != '':
                 # 匹配到后，无须进行替换，即须拆分
                 return time_string
-                break
 
-        # 强制不 seg pattern
+        # '''
+        # 强制不 seg pattern，即字符串中的所有 `-` 都不表达两个 时间点(time_point) 的分割，
+        # 因此，须考察 字符串中有几个这样的时间点，如果是
         no_seg_patterns = [self.time_span_no_seg_standard_year_month_day]
         for pattern in no_seg_patterns:
             # matched_string = TimeParser.parse_pattern(time_string, pattern)
             searched_res = pattern.search(time_string)
             if searched_res:
-                start_idx = searched_res.span()[0]
-                end_idx = searched_res.span()[1]
-                time_string = time_string[start_idx: end_idx].replace('-', '䶵')
+                # all_res = [item for item in pattern.finditer(time_string)]
+                # start_idx = searched_res.span()[0]
+                # end_idx = searched_res.span()[1]
+                # time_string = time_string[start_idx: end_idx].replace('-', '䶵')
 
                 # 匹配到后，须进行替换
                 time_string = time_string.replace('-', '䶵')
                 break
-
+        # '''
         if '起' in time_string or '至' in time_string or '到' in time_string:
             time_string = time_string.replace('-', '䶵')
         return time_string
 
     def _seg_or_not_second(self, time_string):
-        """ 针对待分解字符串，判定哪种情况须分解，哪种不应当分解 """
-        # 处理特殊的不可分割为两 time_point 的情况
-        # 1、2018-04-02 这样的形式，不拆分，直接返回双 None
-        #    例如：2018-04-02，2007.12-31，1999.5-20 12:20，
-        #         2008.2.1-2019.5.9，
-        #    但不包括 1989.02-1997.10
-
-        # time_span 的分割词也分层级，汉字`起至到` 的优先级高于 `-~`等，后者可用于`年月日`的分割
+        """ 将被替换的 '䶵' 字符还原成 '-' """
         if time_string is None:
             return None
 
@@ -1188,7 +1186,7 @@ class TimeParser(object):
                         first_full_time_handler, second_full_time_handler)
                 except Exception as e:
                     # 即无法解析的字符串，按照原字符串进行返回
-                    print(traceback.format_exc())
+                    logging.error(traceback.format_exc())
                     first_std_time_string, second_std_time_string = None, None
                     blur_time = 'blur'
 
@@ -1907,33 +1905,113 @@ class TimeParser(object):
             if self.time_base_handler[1] in [1, 2, 3]:
                 first_time_point.year = self.time_base_handler[0] - 1
                 second_time_point.year = self.time_base_handler[0] - 1
-                first_time_point.month = 10
-                second_time_point.month = 12
+                if '初' in time_string:
+                    first_time_point.month = 10
+                    second_time_point.month = 10
+                elif '中' in time_string:
+                    first_time_point.month = 11
+                    second_time_point.month = 11
+                elif '末' in time_string:
+                    first_time_point.month = 12
+                    second_time_point.month = 12
+                else:
+                    first_time_point.month = 10
+                    second_time_point.month = 12
             elif self.time_base_handler[1] in [4, 5, 6]:
-                first_time_point.month = 1
-                second_time_point.month = 3
+                if '初' in time_string:
+                    first_time_point.month = 1
+                    second_time_point.month = 1
+                elif '中' in time_string:
+                    first_time_point.month = 2
+                    second_time_point.month = 2
+                elif '末' in time_string:
+                    first_time_point.month = 3
+                    second_time_point.month = 3
+                else:
+                    first_time_point.month = 1
+                    second_time_point.month = 3
             elif self.time_base_handler[1] in [7, 8, 9]:
-                first_time_point.month = 4
-                second_time_point.month = 6
+                if '初' in time_string:
+                    first_time_point.month = 4
+                    second_time_point.month = 4
+                elif '中' in time_string:
+                    first_time_point.month = 5
+                    second_time_point.month = 5
+                elif '末' in time_string:
+                    first_time_point.month = 6
+                    second_time_point.month = 6
+                else:
+                    first_time_point.month = 4
+                    second_time_point.month = 6
             elif self.time_base_handler[1] in [10, 11, 12]:
-                first_time_point.month = 7
-                second_time_point.month = 9
+                if '初' in time_string:
+                    first_time_point.month = 7
+                    second_time_point.month = 7
+                elif '中' in time_string:
+                    first_time_point.month = 8
+                    second_time_point.month = 8
+                elif '末' in time_string:
+                    first_time_point.month = 9
+                    second_time_point.month = 9
+                else:
+                    first_time_point.month = 7
+                    second_time_point.month = 9
 
         elif '下' in time_string:
             if self.time_base_handler[1] in [1, 2, 3]:
-                first_time_point.month = 4
-                second_time_point.month = 6
+                if '初' in time_string:
+                    first_time_point.month = 4
+                    second_time_point.month = 4
+                elif '中' in time_string:
+                    first_time_point.month = 5
+                    second_time_point.month = 5
+                elif '末' in time_string:
+                    first_time_point.month = 6
+                    second_time_point.month = 6
+                else:
+                    first_time_point.month = 4
+                    second_time_point.month = 6
             elif self.time_base_handler[1] in [4, 5, 6]:
-                first_time_point.month = 7
-                second_time_point.month = 9
+                if '初' in time_string:
+                    first_time_point.month = 7
+                    second_time_point.month = 7
+                elif '中' in time_string:
+                    first_time_point.month = 8
+                    second_time_point.month = 8
+                elif '末' in time_string:
+                    first_time_point.month = 9
+                    second_time_point.month = 9
+                else:
+                    first_time_point.month = 7
+                    second_time_point.month = 9
             elif self.time_base_handler[1] in [7, 8, 9]:
-                first_time_point.month = 10
-                second_time_point.month = 12
+                if '初' in time_string:
+                    first_time_point.month = 10
+                    second_time_point.month = 10
+                elif '中' in time_string:
+                    first_time_point.month = 11
+                    second_time_point.month = 11
+                elif '末' in time_string:
+                    first_time_point.month = 12
+                    second_time_point.month = 12
+                else:
+                    first_time_point.month = 10
+                    second_time_point.month = 12
             elif self.time_base_handler[1] in [10, 11, 12]:
                 first_time_point.year = self.time_base_handler[0] + 1
                 second_time_point.year = self.time_base_handler[0] + 1
-                first_time_point.month = 1
-                second_time_point.month = 3
+                if '初' in time_string:
+                    first_time_point.month = 1
+                    second_time_point.month = 1
+                elif '中' in time_string:
+                    first_time_point.month = 2
+                    second_time_point.month = 2
+                elif '末' in time_string:
+                    first_time_point.month = 3
+                    second_time_point.month = 3
+                else:
+                    first_time_point.month = 1
+                    second_time_point.month = 3
         else:
             raise ValueError('the given `{}` is illegal.'.format(time_string))
 
@@ -1942,22 +2020,28 @@ class TimeParser(object):
 
         return first_time_handler, second_time_handler, 'time_span', 'accurate'
 
-    def normalize_limit_year_solar_season(self, time_string):
-        """ 解析 限定年/季度(公历) 时间 """
+    def _normalize_solar_season(self, time_string):
+        """ 解析 `(第)? 三 (个)?季度 (末)?` 等"""
+        first_month = -1
+        second_month = -1
         month = self.month_patterns[1].search(time_string)
-
-        first_time_point = TimePoint()
-        second_time_point = TimePoint()
-
-        first_time_point.year, second_time_point.year = self._normalize_limit_year(
-            time_string, self.time_base_handler)
-
         if month is not None:
             solar_season = month.group()
             if '1' in solar_season or '一' in solar_season or '首' in solar_season:
                 if '第' in solar_season:
-                    first_month = 1
-                    second_month = 3
+                    if '初' in solar_season:
+                        first_month = 1
+                        second_month = 1
+                    elif '中' in solar_season:
+                        first_month = 2
+                        second_month = 2
+                    elif '末' in solar_season:
+                        first_month = 3
+                        second_month = 3
+                    else:
+                        first_month = 1
+                        second_month = 3
+
                 elif '前' in solar_season or '头' in solar_season:
                     first_month = 1
                     second_month = 3
@@ -1965,12 +2049,32 @@ class TimeParser(object):
                     first_month = 10
                     second_month = 12
                 else:
-                    first_month = 1
-                    second_month = 3
+                    if '初' in solar_season:
+                        first_month = 1
+                        second_month = 1
+                    elif '中' in solar_season:
+                        first_month = 2
+                        second_month = 2
+                    elif '末' in solar_season:
+                        first_month = 3
+                        second_month = 3
+                    else:
+                        first_month = 1
+                        second_month = 3
             elif '2' in solar_season or '二' in solar_season:
                 if '第' in solar_season:
-                    first_month = 4
-                    second_month = 6
+                    if '初' in solar_season:
+                        first_month = 4
+                        second_month = 4
+                    elif '中' in solar_season:
+                        first_month = 5
+                        second_month = 5
+                    elif '末' in solar_season:
+                        first_month = 6
+                        second_month = 6
+                    else:
+                        first_month = 4
+                        second_month = 6
                 elif '前' in solar_season or '头' in solar_season:
                     first_month = 1
                     second_month = 6
@@ -1978,12 +2082,32 @@ class TimeParser(object):
                     first_month = 7
                     second_month = 12
                 else:
-                    first_month = 4
-                    second_month = 6
+                    if '初' in solar_season:
+                        first_month = 4
+                        second_month = 4
+                    elif '中' in solar_season:
+                        first_month = 5
+                        second_month = 5
+                    elif '末' in solar_season:
+                        first_month = 6
+                        second_month = 6
+                    else:
+                        first_month = 4
+                        second_month = 6
             elif '3' in solar_season or '三' in solar_season:
                 if '第' in solar_season:
-                    first_month = 7
-                    second_month = 9
+                    if '初' in solar_season:
+                        first_month = 7
+                        second_month = 7
+                    elif '中' in solar_season:
+                        first_month = 8
+                        second_month = 8
+                    elif '末' in solar_season:
+                        first_month = 9
+                        second_month = 9
+                    else:
+                        first_month = 7
+                        second_month = 9
                 elif '前' in solar_season or '头' in solar_season:
                     first_month = 1
                     second_month = 9
@@ -1991,12 +2115,32 @@ class TimeParser(object):
                     first_month = 4
                     second_month = 12
                 else:
-                    first_month = 7
-                    second_month = 9
+                    if '初' in solar_season:
+                        first_month = 7
+                        second_month = 7
+                    elif '中' in solar_season:
+                        first_month = 8
+                        second_month = 8
+                    elif '末' in solar_season:
+                        first_month = 9
+                        second_month = 9
+                    else:
+                        first_month = 7
+                        second_month = 9
             elif '4' in solar_season or '四' in solar_season:
                 # 4季度、第四季度
-                first_month = 10
-                second_month = 12
+                if '初' in solar_season:
+                    first_month = 10
+                    second_month = 10
+                elif '中' in solar_season:
+                    first_month = 11
+                    second_month = 11
+                elif '末' in solar_season:
+                    first_month = 12
+                    second_month = 12
+                else:
+                    first_month = 10
+                    second_month = 12
             elif '前两' in solar_season or '头两' in solar_season:
                 first_month = 1
                 second_month = 6
@@ -2006,8 +2150,17 @@ class TimeParser(object):
             else:
                 raise ValueError('The given time string `{}` is illegal.'.format(time_string))
 
-            first_time_point.month = first_month
-            second_time_point.month = second_month
+        return first_month, second_month
+
+    def normalize_limit_year_solar_season(self, time_string):
+        """ 解析 限定年/季度(公历) 时间 """
+        first_time_point = TimePoint()
+        second_time_point = TimePoint()
+
+        first_time_point.year, second_time_point.year = self._normalize_limit_year(
+            time_string, self.time_base_handler)
+
+        first_time_point.month, second_time_point.month = self._normalize_solar_season(time_string)
 
         first_time_handler = first_time_point.handler()
         second_time_handler = second_time_point.handler()
@@ -2016,7 +2169,6 @@ class TimeParser(object):
 
     def normalize_year_solar_season(self, time_string):
         """ 解析 年/季度(公历) 时间 """
-        month = self.month_patterns[1].search(time_string)
 
         first_time_point = TimePoint()
         second_time_point = TimePoint()
@@ -2026,62 +2178,7 @@ class TimeParser(object):
             first_time_point.year = year
             second_time_point.year = year
 
-        if month is not None:
-            solar_season = month.group()
-            if '1' in solar_season or '一' in solar_season or '首' in solar_season:
-                if '第' in solar_season:
-                    first_month = 1
-                    second_month = 3
-                elif '前' in solar_season or '头' in solar_season:
-                    first_month = 1
-                    second_month = 3
-                elif '后' in solar_season:
-                    first_month = 10
-                    second_month = 12
-                else:
-                    first_month = 1
-                    second_month = 3
-            elif '2' in solar_season or '二' in solar_season:
-                if '第' in solar_season:
-                    first_month = 4
-                    second_month = 6
-                elif '前' in solar_season or '头' in solar_season:
-                    first_month = 1
-                    second_month = 6
-                elif '后' in solar_season:
-                    first_month = 7
-                    second_month = 12
-                else:
-                    first_month = 4
-                    second_month = 6
-            elif '3' in solar_season or '三' in solar_season:
-                if '第' in solar_season:
-                    first_month = 7
-                    second_month = 9
-                elif '前' in solar_season or '头' in solar_season:
-                    first_month = 1
-                    second_month = 9
-                elif '后' in solar_season:
-                    first_month = 4
-                    second_month = 12
-                else:
-                    first_month = 7
-                    second_month = 9
-            elif '4' in solar_season or '四' in solar_season:
-                # 4季度、第四季度
-                first_month = 10
-                second_month = 12
-            elif '前两' in solar_season or '头两' in solar_season:
-                first_month = 1
-                second_month = 6
-            elif '后两' in solar_season:
-                first_month = 7
-                second_month = 12
-            else:
-                raise ValueError('The given time string `{}` is illegal.'.format(time_string))
-
-            first_time_point.month = first_month
-            second_time_point.month = second_month
+        first_time_point.month, second_time_point.month = self._normalize_solar_season(time_string)
 
         first_time_handler = first_time_point.handler()
         second_time_handler = second_time_point.handler()
@@ -3449,11 +3546,9 @@ class TimeParser(object):
                 century = 20
             else:
                 century = int(self._char_num2num(century.group()))
-            # print(century)
 
         if decade is not None:
             decade = int(self._char_num2num(decade.group()))
-            # print(decade)
 
         # century 与 decade 不可能同时为空，否则该条不会被匹配
         if century is None:
@@ -4145,7 +4240,7 @@ class TimeParser(object):
         return first_time_handler, second_time_handler, 'time_point', 'blur'
 
     def normalize_limit_week(self, time_string):
-        """ 解析 `前后 N 星期` 时间 """
+        """ 解析 `M月的第 N 个星期` 时间 """
         month = self.month_patterns[0].search(time_string)
         week_res = self.day_patterns[9].search(time_string)
         week_day = self.day_patterns[8].search(time_string)
@@ -4280,7 +4375,6 @@ class TimeParser(object):
 
     def normalize_limit_year_week(self, time_string):
         """ 解析 `限定年 第 N 个星期` 时间 """
-
         first_time_point = TimePoint()
         second_time_point = TimePoint()
 
@@ -4516,10 +4610,10 @@ class TimeParser(object):
                 pass
             elif '明' in limit_day_string or '次' in limit_day_string:
                 time_base_datetime += datetime.timedelta(days=1)
-            elif '后' in limit_day_string:
-                time_base_datetime += datetime.timedelta(days=2)
             elif '大后' in limit_day_string:
                 time_base_datetime += datetime.timedelta(days=3)
+            elif '后' in limit_day_string:
+                time_base_datetime += datetime.timedelta(days=2)
             else:
                 raise ValueError('The given time string `{}` is illegal.'.format(time_string))
 
@@ -4556,7 +4650,7 @@ class TimeParser(object):
                     hour += 12
                 if '中午' in hour_limit_string and hour not in [11, 12]:
                     hour += 12
-                if '下午' in hour_limit_string and (1 <= hour <= 6):
+                if '下午' in hour_limit_string and (1 <= hour <= 11):
                     hour += 12
             if hour == 24:
                 hour = 0  # 24 会在 datetime 中报错，即第二天的 0 时
@@ -4580,6 +4674,8 @@ class TimeParser(object):
 
     def normalize_num_hour_minute_second(self, time_string):
         """ 解析 `数字（标准格式）时分秒` 时间 """
+        time_string = time_string.replace('时', '')
+
         day_bias = [0, '弱']
         hour_limitation = self.hour_patterns[1].search(time_string)
         if hour_limitation:
@@ -4644,7 +4740,7 @@ class TimeParser(object):
                 h += 12
             if '中午' in h_string and h not in [11, 12]:
                 h += 12
-            if '下午' in h_string and (1 <= h <= 6):
+            if '下午' in h_string and (1 <= h <= 11):
                 h += 12
             return h
 

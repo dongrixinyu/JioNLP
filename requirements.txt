@@ -1,5 +1,5 @@
 numpy
-pkuseg
 jieba
 requests
 zipfile36
+pkuseg

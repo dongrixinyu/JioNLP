@@ -12,6 +12,7 @@ TODO:
         与 "string_strict" 相悖。
     - ”据预测，到2025年，全球数据“ 无法将 到 识别出来
     - ”机怎么了：9年间四个子品“ 中，”9年间“ 无法被抽取，会抽取得到 ”9年“
+    - ”根据财税2016 36号文，“ 中， “2016” 与 “6号” 会被抽取
 
 """
 
@@ -21,7 +22,9 @@ import time
 
 from jionlp.rule.rule_pattern import TIME_CHAR_STRING, \
     FAKE_POSITIVE_START_STRING, FAKE_POSITIVE_END_STRING
+from jionlp.rule import extract_parentheses, remove_parentheses
 from jionlp.gadget.time_parser import TimeParser
+
 
 
 class TimeExtractor(object):
@@ -78,6 +81,7 @@ class TimeExtractor(object):
         # 并设参数 ret_all，即返回所有进行控制，默认为 False，即根据词典进行删除
         self.non_time_string_list = ['一点', '0时']
 
+        self.num_pattern = re.compile(r'[０-９0-9]')
         self.four_num_year_pattern = re.compile(r'^[\d]{4}$')
         self.unit_pattern = re.compile(r'(多)?[万亿元]')  # 四数字后接单位，说明非年份
 
@@ -154,6 +158,10 @@ class TimeExtractor(object):
         if '的' in sub_string[0] or '的' in sub_string[-1]:
             return False
 
+        # 括号造成的边界错误
+        if sub_string[0] in ')）' or sub_string[-1] in '(（':
+            return False
+
         return True
 
     def _grid_search_1(self, time_candidate):
@@ -177,6 +185,27 @@ class TimeExtractor(object):
 
                     # rule 3: 若子串中包含 ”的“ 字会对结果产生影响，则先将 ”的“ 字删除后再进行解析。
                     sub_string_for_parse = sub_string.replace('的', '')
+
+                    # rule 4: 字符串中若包含空格，会对结果产生影响，则先将 “ ” 删除后解析。
+                    sub_string_for_parse = sub_string_for_parse.replace(' ', '')
+
+                    # rule 5: 对于一些特殊的补充性时间字符串，也需要特殊对待，将括号去除后再进行解析。
+                    # 一般为 周 对 日的补充，如“2021年11月1日（下周一晚）19:30-20:30”
+                    sub_parentheses = extract_parentheses(sub_string_for_parse, parentheses='()（）')
+                    if '周' in ''.join(sub_string_for_parse) or '星期' in ''.join(sub_string_for_parse):
+                        sub_string_for_parse = remove_parentheses(sub_string_for_parse, parentheses='()（）')
+
+                    # rule 6: 对于数字为起始或结尾的字符串，过滤之。
+                    # 如：342127197212178212 将 2017 和 1972 抽取为年份
+                    if self.num_pattern.search(sub_string_for_parse[0]):
+                        if j - 1 >= 0:
+                            if self.num_pattern.search(time_candidate[j - 1]):
+                                continue
+                    if self.num_pattern.search(sub_string_for_parse[-1]):
+                        if offset[1] <= length:
+                            if self.num_pattern.search(time_candidate[offset[1]]):
+                                continue
+
                     result = self.parse_time(sub_string_for_parse, strict=True)
 
                     return sub_string, result, offset

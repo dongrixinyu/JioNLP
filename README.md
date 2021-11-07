@@ -7,11 +7,11 @@
     <a alt="License">
         <img src="https://img.shields.io/github/license/dongrixinyu/JioNLP?color=crimson" /></a>
     <a alt="Size">
-        <img src="https://img.shields.io/badge/size-18.9m-orange" /></a>
+        <img src="https://img.shields.io/badge/size-19.9m-orange" /></a>
     <a alt="Downloads">
-        <img src="https://img.shields.io/badge/downloads-5k-yellow" /></a>
+        <img src="https://img.shields.io/badge/downloads-6k-yellow" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.39-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.40-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -72,7 +72,7 @@ moneys = [jio.parse_money(text) for text in text_list]
 - 支持**口语化中文**格式，如：三十五块三毛；但对于“三十五块八”这样的字符串，在文本中存在**歧义**，如“三十五块八颗糖”等，因此，```jio.ner.extract_money``` 对于此字符串不予抽取，但```parse_money```可以将“三十五块八”看作完整的口语化金额，标准化为“35.80元”
 - 支持多种常见货币类型：人民币，港元，澳门元，美元，日元，澳元，韩元，卢布，英镑，马克，法郎，欧元，加元，泰铢，台币等。
 
-#### Update 2021-10-11
+#### Update 2021-11-07
 ## 新增 [时间语义解析](../../wiki/时间语义解析-说明文档#user-content-时间语义解析)
 
 #### jio.parse_time 给定时间字符串，解析其为时间戳、时长等。
