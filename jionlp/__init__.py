@@ -8,7 +8,7 @@
 # description: Preprocessing tool for Chinese NLP
 """
 
-__version__ = '1.3.40'
+__version__ = '1.3.41'
 
 import os
 
@@ -16,7 +16,7 @@ from jionlp.util.logger import set_logger
 from jionlp.util.zip_file import unzip_file, UNZIP_FILE_LIST
 
 
-logging = set_logger('INFO')
+logging = set_logger(level='INFO', log_dir_name='.jionlp_logs')
 
 # unzip dictionary files
 DIR_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -72,8 +72,9 @@ history = """
 │   | 2021-06-23 | add time parser                                     |   │
 │   | 2021-07-04 | update time parser                                  |   │
 │   | 2021-07-18 | update time parser                                  |   │
-│   | 2021-09-01 | add jionlp online                                   |   │
+│   | 2021-09-01 | add jionlp online version                           |   │
 │   | 2021-10-25 | update extract money and parse money                |   │
+│   | 2021-11-10 | add logger tuner                                    |   │
 │                                                                          │
 ╰──────────────────────────────────────────────────────────────────────────╯
 """

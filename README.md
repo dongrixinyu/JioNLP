@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-6k-yellow" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.40-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.41-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -205,7 +205,8 @@ $ jio_help
 |[**按行读取文件**](../../wiki/文件读写-说明文档#user-content-文件读取iter) |read_file_by_iter |以迭代器形式方便按行读取文件，节省内存，<br>支持指定**行数**，**跳过空行** ||
 |[**按行读取文件**](../../wiki/文件读写-说明文档#user-content-文件读取list) |read_file_by_line |按行读取文件，支持指定**行数**，**跳过空行** |⭐ |
 |[将 list 中元素按行写入文件](../../wiki/文件读写-说明文档#user-content-文件写入) |write_file_by_line| 将 list 中元素按行写入文件 |⭐ |
-|[计时工具](../../wiki/文件读写-说明文档#user-content-计时器) |TimeIt| 统计某一代码段的耗时 | |
+|[计时工具](../../wiki/文件读写-说明文档#user-content-计时器) |TimeIt | 统计某一代码段的耗时 | |
+|[日志工具](../../wiki/文件读写-说明文档#user-content-日志处理设置函数) |set_logger |调整工具包日志输出形式 | |
 
 ### 5.词典加载与使用
 
