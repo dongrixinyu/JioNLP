@@ -191,8 +191,9 @@ class TimeExtractor(object):
 
                     # rule 5: 对于一些特殊的补充性时间字符串，也需要特殊对待，将括号去除后再进行解析。
                     # 一般为 周 对 日的补充，如“2021年11月1日（下周一晚）19:30-20:30”
+                    # 该规则依然简陋，稳定性不够好
                     sub_parentheses = extract_parentheses(sub_string_for_parse, parentheses='()（）')
-                    if '周' in ''.join(sub_string_for_parse) or '星期' in ''.join(sub_string_for_parse):
+                    if '周' in ''.join(sub_parentheses) or '星期' in ''.join(sub_parentheses):
                         sub_string_for_parse = remove_parentheses(sub_string_for_parse, parentheses='()（）')
 
                     # rule 6: 对于数字为起始或结尾的字符串，过滤之。
@@ -202,7 +203,7 @@ class TimeExtractor(object):
                             if self.num_pattern.search(time_candidate[j - 1]):
                                 continue
                     if self.num_pattern.search(sub_string_for_parse[-1]):
-                        if offset[1] <= length:
+                        if offset[1] < length:
                             if self.num_pattern.search(time_candidate[offset[1]]):
                                 continue
 

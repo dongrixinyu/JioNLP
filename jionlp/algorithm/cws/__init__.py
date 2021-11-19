@@ -7,10 +7,5 @@
 # description: Preprocessing tool for Chinese NLP
 
 
-from . import cws
-from . import ner
-from . import keyphrase
-from . import sentiment
-from . import summary
-from . import text_classification
+from .cws_data_converter import tag2word, word2tag
 

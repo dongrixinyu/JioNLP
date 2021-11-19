@@ -1043,14 +1043,7 @@ class TimeParser(object):
                 return None
 
     def parse_delta_span_2_2_delta(self, time_string):
-        """时间段存在范围型表示，如 `6到9天`，`3个月到3年` 等。
-
-        Args:
-            time_string:
-
-        Returns:
-
-        """
+        """时间段存在范围型表示，如 `6到9天`，`3个月到3年` 等。 """
 
         if self.first_delta_span_pattern.search(time_string):
             first_string = self.first_delta_span_pattern.search(time_string).group()
@@ -1187,6 +1180,11 @@ class TimeParser(object):
                 except Exception as e:
                     # 即无法解析的字符串，按照原字符串进行返回
                     logging.error(traceback.format_exc())
+
+                    if self.string_strict:
+                        # 但根据某些情况，此处加强字符串审核，直接报错。如 “每年6.” 等。其中 “6” 并非有意义时间字符串。
+                        raise ValueError('the given time string `{}` is illegal.'.format(time_string))
+
                     first_std_time_string, second_std_time_string = None, None
                     blur_time = 'blur'
 

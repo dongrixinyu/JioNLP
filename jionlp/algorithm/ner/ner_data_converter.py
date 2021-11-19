@@ -24,7 +24,7 @@ DESCRIPTION:
 
     2、默认采用的标注标准为 BIOES
         NER 有多套标注标准，如 BIO、BMOE、BMOES 等等，相差均不大，为了明确实体边
-        界考虑，默认选择 B(Begin)I(Inside)O(Others)E(End)S(Single) 标注标注。
+        界考虑，默认选择 B(Begin)I(Inside)O(Others)E(End)S(Single) 标签标注。
 
     3、NER 数据集常见的有两种 token 级别，字级别与词级别，两者的相互转换需要考虑分
         词器的错分、字词 offset 变化等情况。
@@ -32,9 +32,8 @@ DESCRIPTION:
 """
 
 
-import pdb
 import json
-from typing import Dict, Any, Tuple, Optional, List
+from typing import Dict, Any, List
 
 from jionlp import logging
 
@@ -42,15 +41,14 @@ from jionlp import logging
 __all__ = ['entity2tag', 'tag2entity', 'char2word', 'word2char']
 
 
-def entity2tag(token_list: List[str], entities: List[Dict[str, Any]], 
-               formater='BIOES'):
+def entity2tag(token_list: List[str], entities: List[Dict[str, Any]]):
     """ 将实体 entity 格式转为 tag 格式，若标注过程中有重叠标注，则会自动将靠后的
     实体忽略、删除。针对单条处理，不支持批量处理。
 
     Args:
         token_list(List[str]): token 化的文本的 list
         entities(List[str, Dict[str, Any]]): 文本相应的实体。
-        formater(str): 选择的标注标准
+
     return:
         List[List[str], List[str]]: tag 格式的数据
 
@@ -97,7 +95,7 @@ def entity2tag(token_list: List[str], entities: List[Dict[str, Any]],
 
 def tag2entity(token_list: List[str], tags: List[str], verbose=False):
     """ 将 tag 格式转为实体 entity 格式，若格式中有破损不满足 BIOES 标准，则不转
-    换为实体并支持报错。针对单条数据处理，不支持批量处理。
+    换为实体并支持报错。该函数针对单条数据处理，不支持批量处理。
 
     Args:
         token_list(List[str]): 输入的文本 token 序列

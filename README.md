@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-6k-yellow" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.42-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.43-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -33,7 +33,7 @@
 ## 更新 [货币金额实体抽取](../../wiki/NER-说明文档#user-content-货币金额实体抽取)
 
 #### jio.ner.extract_money 从文本中抽取货币金额实体（不依赖模型，纯规则）。
-#### 配合 jio.parse_time 货币金额解析使用（见下）
+#### 配合 jio.parse_time 货币金额解析使用（见下一个 Update）
 ``` python
 import jionlp as jio
 text = '张三赔偿李大花人民币车费601,293.11元，工厂费大约一万二千三百四十五元,利息9佰日元，打印费人民币十块钱。'
@@ -72,8 +72,8 @@ moneys = [jio.parse_money(text) for text in text_list]
 - 支持**口语化中文**格式，如：三十五块三毛；但对于“三十五块八”这样的字符串，在文本中存在**歧义**，如“三十五块八颗糖”等，因此，```jio.ner.extract_money``` 对于此字符串不予抽取，但```parse_money```可以将“三十五块八”看作完整的口语化金额，标准化为“35.80元”
 - 支持多种常见货币类型：人民币，港元，澳门元，美元，日元，澳元，韩元，卢布，英镑，马克，法郎，欧元，加元，泰铢，台币等。
 
-#### Update 2021-11-07
-## 新增 [时间语义解析](../../wiki/时间语义解析-说明文档#user-content-时间语义解析)
+#### Update 2021-11-19
+## 更新 [时间语义解析](../../wiki/时间语义解析-说明文档#user-content-时间语义解析)
 
 #### jio.parse_time 给定时间字符串，解析其为时间戳、时长等。
 
@@ -254,16 +254,21 @@ $ jio_help
 |--------|--------|-------|-------|
 |[基于**词典情感分析**](../../wiki/情感分析-说明文档#user-content-基于词典的情感分析) |LexiconSentiment|依据人工构建的情感词典，计算文本的情感值，介于0~1之间 | |
 
+### 9.分词
+| 功能   | 函数   |描述   |星级   |
+|--------|--------|-------|-------|
+|[**word 转 tag**](../../wiki/分词-说明文档#user-content-word-转-tag) |word2tag|将 json 格式分词序列转换为模型处理的 tag 序列 | |
+|[**tag 转 word**](../../wiki/分词-说明文档#user-content-tag-转-word) |tag2word|将模型处理的 tag 序列转换为 json 格式分词 | |
 
 ### 初衷
 
-- NLP 预处理至关重要，且非常耗时。本 lib 能快速辅助完成各种琐碎的预处理操作，加速开发进度，把有限的精力用在思考而非 code 上。
+- NLP 预处理与解析至关重要，且非常耗时。本 lib 能快速辅助完成各种琐碎的预处理、解析操作，加速开发进度，把有限的精力用在思考而非 code 上。
 - 如有功能建议、bug，可通过 issue 按模板提出。
 - 如感兴趣合作完善本工具包，请参考 **TODO.txt** 文件进行功能添加。
 
 ### 做 NLP不易，欢迎加入自然语言处理 Wechat 交流群
 ### 如以下码失效，请先添加 vx：dongrixinyu89
 ![image](../../blob/master/image/qr_code_for_collection.png)
-### 如本工具对您有帮助，可以扫码请作者喝杯咖啡 (●'◡'●)
+### 如本工具对您有帮助，可以点一下右上角 star ⭐。扫码请作者喝杯咖啡 (●'◡'●)
 ![image](../../blob/master/image/payment_code.png)
 
