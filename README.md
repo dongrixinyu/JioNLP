@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-6k-yellow" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.41-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.42-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -121,6 +121,7 @@ $ pip install jionlp
 # 如安装失败，遇到安装时提示的 pkuseg、Microsoft Visual C++、gcc、g++ 等信息，
 # 则说明是 pkuseg 安装失败，需要在相应系统中安装 C 和 C++ 编译器，重新安装。
 # pip install pkuseg
+# pkuseg 由于久未更新，对 python>=3.9 不兼容，若遇到调用报错，则须退回至 3.8 版本以下的解释器。
 ```
 
 ## 使用 Features

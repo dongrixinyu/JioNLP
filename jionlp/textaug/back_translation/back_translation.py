@@ -14,12 +14,7 @@ from multiprocessing import Pool, Manager, Lock, RLock
 import jionlp as jio
 from jionlp.util.time_it import TimeIt
 
-from .translation_api import BaiduApi
-from .translation_api import GoogleApi
-from .translation_api import YoudaoApi
-from .translation_api import YoudaoFreeApi
-from .translation_api import TencentApi
-from .translation_api import XunfeiApi
+from .translation_api import BaiduApi, GoogleApi, YoudaoApi, YoudaoFreeApi, TencentApi, XunfeiApi
 
 
 class BackTranslation(object):

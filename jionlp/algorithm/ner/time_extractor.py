@@ -102,7 +102,7 @@ class TimeExtractor(object):
                 # 此循环意在找出同一个 candidate 中包含的多个 time_entity
 
                 true_string, result, offset = self.grid_search(
-                    candidate['time_candidate'][bias:])
+                    candidate['time_candidate'][bias:], time_base=time_base)
 
                 if true_string is not None:
 
@@ -169,7 +169,7 @@ class TimeExtractor(object):
         直到解析错误或解析结果出错
         """
 
-    def grid_search(self, time_candidate):
+    def grid_search(self, time_candidate, time_base=time.time()):
         """ 全面搜索候选时间字符串，从长至短，较优 """
         length = len(time_candidate)
         for i in range(length):  # 控制总长，若想控制单字符的串也被返回考察，此时改为 length + 1
@@ -206,7 +206,8 @@ class TimeExtractor(object):
                             if self.num_pattern.search(time_candidate[offset[1]]):
                                 continue
 
-                    result = self.parse_time(sub_string_for_parse, strict=True)
+                    result = self.parse_time(
+                        sub_string_for_parse, time_base=time_base, strict=True)
 
                     return sub_string, result, offset
                 except (ValueError, Exception):

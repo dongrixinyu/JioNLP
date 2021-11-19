@@ -8,7 +8,7 @@
 # description: Preprocessing tool for Chinese NLP
 """
 
-__version__ = '1.3.41'
+__version__ = '1.3.42'
 
 import os
 
@@ -27,10 +27,10 @@ for file_name in UNZIP_FILE_LIST:
 
 history = """
 ╭──────────────────────────────────────────────────────────────────────────╮
-│ • • • ░░░░░░░░░░░░░░░░░░░░░░  Important Message  ░░░░░░░░░░░░░░░░░░░░░░░ │
+│ • • • ░░░░░░░░░░░░░░░░░░░░░  History Messages  ░░░░░░░░░░░░░░░░░░░░░░░░░ │
 ├──────────────────────────────────────────────────────────────────────────┤
 │                                                                          │
-│           JioNLP, a python tool for Chinese NLP preprocessing.           │
+│       JioNLP, a python tool for Chinese NLP preprocessing & parsing.     │
 │               URL: https://github.com/dongrixinyu/JioNLP                 │
 │                                                                          │
 │   | date       | updated funcs and info                              |   │

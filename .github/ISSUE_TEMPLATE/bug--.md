@@ -1,5 +1,12 @@
-### **提 issue 请务必将以下信息写清楚，否则信息不全，问题阐述不清，则无法解答！！！**
-### **请顺手 star 一下右上角的⭐** $\color{Red} {小星星}$
+---
+name: bug反馈
+about: 反馈jionlp代码本身的bug
+title: "[BUG]"
+labels: bug
+assignees: ''
+
+---
+
 **描述(Description)**
 
 > 描述你遇到了什么问题(Please description your issue here)
@@ -30,4 +37,5 @@ trackback: XXXXXX
 > 若返回结果不理想，描述你期望发生的事情(Please describe your expectation)
 
 
+**请顺手 star 一下右上角的⭐小星星**
 
