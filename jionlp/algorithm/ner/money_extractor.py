@@ -11,8 +11,10 @@ import re
 
 from jionlp.util.funcs import bracket, bracket_absence, absence
 from jionlp.rule.rule_pattern import MONEY_PREFIX_STRING, \
-    MONEY_SUFFIX_STRING, MONEY_NUM_MIDDLE_STRING, MONEY_NUM_STRING, \
-    MONEY_KUAI_MAO_JIAO_FEN_STRING, MONEY_PREFIX_CASE_STRING, MONEY_SUFFIX_CASE_STRING
+    MONEY_SUFFIX_STRING, MONEY_NUM_MIDDLE_STRING, \
+    MONEY_KUAI_MAO_JIAO_FEN_STRING, MONEY_PREFIX_CASE_STRING, \
+    MONEY_SUFFIX_CASE_STRING, MONEY_SPAN_GAP_MIDDLE, MONEY_SPAN_GAP_START, \
+    MONEY_CHAR_STRING, MONEY_NUM_STRING
 from jionlp.gadget.money_parser import MoneyParser
 
 
@@ -41,13 +43,18 @@ class MoneyExtractor(object):
 
     def _prepare(self):
         self.parse_money = MoneyParser()
-        self.money_string_pattern = re.compile(
-            ''.join([absence(MONEY_PREFIX_STRING),
-                     absence(MONEY_PREFIX_CASE_STRING), '(', MONEY_NUM_STRING, '+',
-                     bracket(MONEY_NUM_MIDDLE_STRING + MONEY_NUM_STRING + '+'), '*',
-                     MONEY_SUFFIX_CASE_STRING, ')+',
-                     bracket_absence(MONEY_NUM_STRING),
-                     absence(MONEY_SUFFIX_STRING)]))
+        # single_money_pattern = ''.join(
+        #     [absence(MONEY_PREFIX_STRING),
+        #      absence(MONEY_PREFIX_CASE_STRING), '(', MONEY_NUM_STRING, '+',
+        #      bracket(MONEY_NUM_MIDDLE_STRING + MONEY_NUM_STRING + '+'), '*',
+        #      MONEY_SUFFIX_CASE_STRING, ')+',
+        #      bracket_absence(MONEY_NUM_STRING),
+        #      absence(MONEY_SUFFIX_STRING)])
+
+        # self.money_string_pattern = re.compile(single_money_pattern)
+
+        self.money_num_string_pattern = re.compile(MONEY_NUM_STRING)
+        self.money_string_pattern = re.compile(MONEY_CHAR_STRING)
 
         # 此类表达虽然可按货币金额解析，但是文本中很大概率并非表示货币金额，故以大概率进行排除，
         # 并设参数 ret_all，即返回所有进行控制，默认为 False，即根据词典进行删除
@@ -99,6 +106,24 @@ class MoneyExtractor(object):
 
         return money_entity_list
 
+    def _filter(self, money_string):
+        # 对字符串进行过滤，某些不符合规则的字符串直接跳过
+        # rule 1: 清除边界的标点
+        if money_string[0] in '，,' or money_string[-1] in '，,':
+            return False
+
+        # 字符串为纯数值，则剔除，如 “12”
+        if self.money_num_string_pattern.search(money_string):
+            return False
+
+        return True
+
+    def _cleaning(self, money_string):
+        # 对字符串进行清洗
+        money_string = money_string.replace(' ', '')
+
+        return money_string
+
     def grid_search(self, money_candidate):
         """ 全面搜索候选货币金额字符串，从长至短，较优 """
         length = len(money_candidate)
@@ -108,8 +133,11 @@ class MoneyExtractor(object):
                     offset = [j, length - i + j + 1]
                     sub_string = money_candidate[j: offset[1]]
 
-                    # 对字符串进行预处理，
-                    clean_sub_string = sub_string.replace(' ', '')
+                    # 对字符串进行清洗和过滤
+                    if not self._filter(sub_string):
+                        continue
+
+                    clean_sub_string = self._cleaning(sub_string)
 
                     result = self.parse_money(clean_sub_string)
 

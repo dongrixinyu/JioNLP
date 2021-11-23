@@ -7,11 +7,11 @@
     <a alt="License">
         <img src="https://img.shields.io/github/license/dongrixinyu/JioNLP?color=crimson" /></a>
     <a alt="Size">
-        <img src="https://img.shields.io/badge/size-19.9m-orange" /></a>
+        <img src="https://img.shields.io/badge/size-20.1m-orange" /></a>
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-6k-yellow" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.43-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.44-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -269,6 +269,7 @@ $ jio_help
 ### 做 NLP不易，欢迎加入自然语言处理 Wechat 交流群
 ### 如以下码失效，请先添加 vx：dongrixinyu89
 ![image](../../blob/master/image/qr_code_for_collection.png)
-### 如本工具对您有帮助，可以点一下右上角 star ⭐。扫码请作者喝杯咖啡 (●'◡'●)
+### 如本工具对您有帮助，请点一下右上角 star ⭐
+### 或者扫码请作者喝杯咖啡 (●'◡'●)，谢谢啦 ~~
 ![image](../../blob/master/image/payment_code.png)
 

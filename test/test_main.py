@@ -6,6 +6,8 @@ from test_time_parser import TestTimeParser
 from test_location_parser import TestLocationParser
 from test_idiom_solitaire import TestIdiomSolitaire
 from test_money_parser import TestMoneyParser
+from test_time_extractor import TestTimeExtractor
+from test_money_extractor import TestMoneyExtractor
 
 
 if __name__ == '__main__':
@@ -17,7 +19,9 @@ if __name__ == '__main__':
         TestLocationParser('test_location_parser'),  # 测试 地址解析
         TestTextAug('test_ReplaceEntity'),  # 测试 实体替换增强
         TestIdiomSolitaire('test_idiom_solitaire'),  # 测试 成语接龙
-        TestMoneyParser('test_money_parser')  # 测试金额抽取与规范化
+        TestMoneyParser('test_money_parser'),  # 测试 金额抽取与规范化
+        TestTimeExtractor('test_time_extractor'),  # 测试 时间实体抽取
+        TestMoneyExtractor('test_money_extractor')  # 测试 货币金额实体抽取
     ]
     suite.addTests(tests)
 

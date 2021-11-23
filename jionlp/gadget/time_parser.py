@@ -21,6 +21,9 @@ TODO:
         2、两三年后，七八个小时前，模糊性较强
         3、两年前，究竟指，（两年前为时间范围的结束，而起始未知），还是（两年前的那一整年）
         4、
+    6、时间修饰词
+        “春天的时候”，其中，“的时候” 仅为时间修饰词，不具有任何含义，
+        此时，时间无意义修饰词应当被包含在时间实体当中，应当被抽取，但不被解析
 
 TODO unresolved:
     1、中秋节前后两个周末
@@ -45,6 +48,10 @@ TODO unresolved:
     北京时间今天（10月11日）17时59分
     08年04-03
     2021年09月23
+    年前
+    腊月18 => 农历日期存在小写
+    此时
+    2.15 => 既可解析为小数 二点一五，也可解析为 二月十五日
 
 """
 
@@ -321,19 +328,21 @@ class TimeParser(object):
         # `农历年、月、日`：二〇一七年农历正月十九
         self.lunar_year_month_day_pattern = re.compile(
             ''.join([
-                # 2012年9月初十/9月初十/初十
+                # 2012年9月初十/9月初十/初十， `日`自证农历
                 LU_A, bracket_absence(LUNAR_YEAR_STRING), LU_A, bracket_absence(LUNAR_MONTH_STRING),
                 SELF_EVI_LUNAR_DAY_STRING, I,
 
-                # 2012年冬月/2012年冬月初十/冬月初十/冬月
+                # 2012年冬月/2012年冬月初十/冬月初十/冬月， `月`自证农历
                 LU_A, bracket_absence(LUNAR_YEAR_STRING), LU_A,
-                bracket(SELF_EVI_LUNAR_MONTH_STRING), absence(LUNAR_DAY_STRING), I,
+                bracket(SELF_EVI_LUNAR_MONTH_STRING), absence(LUNAR_SOLAR_DAY_STRING), I,
 
                 # 强制标明农历，原因在于农历和公历的混淆，非常复杂
                 LU, bracket(LUNAR_YEAR_STRING), bracket(LUNAR_MONTH_STRING), I,  # 农历二零一二年九月
                 bracket(LUNAR_YEAR_STRING), LU, bracket(LUNAR_MONTH_STRING), I,  # 二零一二年农历九月
 
-                LU, bracket(LUNAR_MONTH_STRING), LUNAR_DAY_STRING, I,  # 农历九月初十
+                # 二月十五/2月十五/农历九月十二， `日`后无`日`字，自证农历
+                LU_A, bracket(LUNAR_MONTH_STRING), LUNAR_DAY_STRING, I,
+
                 LU, bracket(LUNAR_MONTH_STRING), I,  # 农历九月
                 LU, bracket(LUNAR_YEAR_STRING), I,  # 农历二〇一二年
                 LU, LUNAR_DAY_STRING]))  # 农历初十
@@ -341,12 +350,16 @@ class TimeParser(object):
         self.lunar_limit_year_month_day_pattern = re.compile(
             ''.join([
                 # 非强制`农历`，根据 `日` 得知为农历日期
-                LU_A, bracket(LIMIT_YEAR_STRING), LU_A, bracket_absence(LUNAR_MONTH_STRING),
-                SELF_EVI_LUNAR_DAY_STRING, I,  # 2012年9月初十/9月初十/初十
+                LU_A, bracket(LIMIT_YEAR_STRING), LU_A, bracket(LUNAR_MONTH_STRING),
+                SELF_EVI_LUNAR_DAY_STRING, I,  # 今年9月初十
 
                 # 非强制`农历`，根据 `月` 得知为农历日期
                 bracket(LIMIT_YEAR_STRING), LU_A, bracket(SELF_EVI_LUNAR_MONTH_STRING),
-                absence(LUNAR_DAY_STRING), I,  # 2012年冬月/2012年冬月初十/冬月初十/冬月
+                absence(LUNAR_SOLAR_DAY_STRING), I,  # 2012年冬月/2012年冬月初十/冬月初十/冬月
+
+                # 去年二月十五/去年2月十五/明年农历九月十二， `日`后无`日`字，自证农历
+                LU_A, bracket(LIMIT_YEAR_STRING), LU_A,
+                bracket(LUNAR_MONTH_STRING), LUNAR_DAY_STRING, I,
 
                 # 强制标明`农历`，原因在于农历和公历的混淆
                 LU, bracket(LIMIT_YEAR_STRING), I,  # 农历二〇一二年
@@ -1130,7 +1143,7 @@ class TimeParser(object):
 
         first_string = None if first_res is None else first_res.group()
 
-        # 找第一个字符串
+        # 找第二个字符串
         second_string = None
         if self.second_0_span_pattern.search(time_string):
             second_res = self.second_0_span_pattern.search(time_string)
@@ -4798,6 +4811,9 @@ class TimeParser(object):
             elif hour_string in ['早上', '早晨', '一早', '一大早']:
                 first_time_point.hour = 6
                 second_time_point.hour = 9
+            elif hour_string == '黎明':
+                first_time_point.hour = 4
+                second_time_point.hour = 6
             elif hour_string == '白天':
                 first_time_point.hour = 6
                 second_time_point.hour = 18
@@ -4828,6 +4844,12 @@ class TimeParser(object):
             elif hour_string == '深夜':
                 first_time_point.hour = 23
                 second_time_point.hour = 23
+            elif hour_string in ['上半夜', '前半夜']:
+                first_time_point.hour = 0
+                second_time_point.hour = 2
+            elif hour_string in ['下半夜', '后半夜']:
+                first_time_point.hour = 2
+                second_time_point.hour = 4
             elif hour_string == '半夜':
                 first_time_point.hour = 0
                 second_time_point.hour = 4

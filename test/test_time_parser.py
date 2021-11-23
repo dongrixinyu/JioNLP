@@ -190,6 +190,10 @@ class TestTimeParser(unittest.TestCase):
             ['后年九月廿二', {'year': 2021}, {'type': 'time_point', 'definition': 'accurate', 'time': ['2023-11-05 00:00:00', '2023-11-05 23:59:59']}],
             ['明年腊月', {'year': 2021}, {'type': 'time_point', 'definition': 'accurate', 'time': ['2022-12-23 00:00:00', '2023-01-21 23:59:59']}],
             ['2012年正月初8', time.time(), {'type': 'time_point', 'definition': 'accurate', 'time': ['2012-01-30 00:00:00', '2012-01-30 23:59:59']}],
+            ['二月十五', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-03-27 00:00:00', '2021-03-27 23:59:59']}],
+            ['8月十五晚上8点', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-09-21 20:00:00', '2021-09-21 20:59:59']}],
+            ['去年八月十五', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2020-10-01 00:00:00', '2020-10-01 23:59:59']}],
+            ['腊月18', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2022-01-03 00:00:00', '2022-01-31 23:59:59']}],
 
             # 年、节气
             ['2017年大寒', time.time(), {'type': 'time_point', 'definition': 'accurate', 'time': ['2018-01-20 00:00:00', '2018-01-20 23:59:59']}],
@@ -290,6 +294,7 @@ class TestTimeParser(unittest.TestCase):
             ['中午12：00—14:00', _ts_1, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 12:00:00', '2021-06-14 14:00:59']}],
             ['大前天晚上9~11点', _ts_1, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-11 21:00:00', '2021-06-11 23:00:00']}],
             ['晚上5点', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-14 17:00:00', '2021-06-14 17:59:59']}],
+            ['10：13', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-14 10:13:00', '2021-06-14 10:13:59']}],
 
             # 时、限定性 分
             ['4月26日20时1刻', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-04-26 20:15:00', '2021-04-26 20:15:59']}],
@@ -301,6 +306,8 @@ class TestTimeParser(unittest.TestCase):
             ['当日午夜', _ts_1, {'type': 'time_point', 'definition': 'blur', 'time': ['2021-06-14 00:00:00', '2021-06-14 00:59:59']}],
             ['白天', _ts_1, {'type': 'time_point', 'definition': 'blur', 'time': ['2021-06-14 06:00:00', '2021-06-14 18:59:59']}],
             ['午后', _ts_1, {'type': 'time_point', 'definition': 'blur', 'time': ['2021-06-14 13:00:00', '2021-06-14 14:59:59']}],
+            ['昨天黎明', _ts_1, {'type': 'time_point', 'definition': 'blur', 'time': ['2021-06-13 04:00:00', '2021-06-13 06:59:59']}],
+            ['前天后半夜', _ts_1, {'type': 'time_point', 'definition': 'blur', 'time': ['2021-06-12 02:00:00', '2021-06-12 04:59:59']}],
 
             # 时间段
             ['4周', None, {'type': 'time_delta', 'definition': 'accurate', 'time': {'day': 28.0}}],

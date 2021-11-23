@@ -8,11 +8,11 @@
 
 """
 TODO:
-    - "2021年4月20日11:00时至2021年4月25日17:00时" 无法被正确抽取，原因在于 “时” 字与规则多余，
-        与 "string_strict" 相悖。
     - ”据预测，到2025年，全球数据“ 无法将 到 识别出来
     - ”机怎么了：9年间四个子品“ 中，”9年间“ 无法被抽取，会抽取得到 ”9年“
-    - ”根据财税2016 36号文，“ 中， “2016” 与 “6号” 会被抽取
+    - “春天的时候”，其中，“的时候” 仅为时间修饰词，不具有任何含义，
+        此时，时间无意义修饰词应当被包含在时间实体当中
+        - “冬至那天”，其中的 “那天”、“这天” 等
 
 """
 
@@ -24,7 +24,6 @@ from jionlp.rule.rule_pattern import TIME_CHAR_STRING, \
     FAKE_POSITIVE_START_STRING, FAKE_POSITIVE_END_STRING
 from jionlp.rule import extract_parentheses, remove_parentheses
 from jionlp.gadget.time_parser import TimeParser
-
 
 
 class TimeExtractor(object):
@@ -79,7 +78,8 @@ class TimeExtractor(object):
 
         # 此类表达虽然可按时间解析，但是文本中很大概率并非表示时间，故以大概率进行排除，
         # 并设参数 ret_all，即返回所有进行控制，默认为 False，即根据词典进行删除
-        self.non_time_string_list = ['一点', '0时']
+        self.non_time_string_list = ['一点', '0时', '一日', '黎明']
+        # 一点也不大方、一日之计在于晨、黎明主演电影、
 
         self.num_pattern = re.compile(r'[０-９0-9]')
         self.four_num_year_pattern = re.compile(r'^[\d]{4}$')
@@ -87,8 +87,7 @@ class TimeExtractor(object):
 
         self.single_char_time = ['春', '夏', '秋', '冬']
 
-    def __call__(self, text, time_base=time.time(), with_parsing=True,
-                 ret_all=False):
+    def __call__(self, text, time_base=time.time(), with_parsing=True, ret_all=False):
         if self.parse_time is None:
             self._prepare()
 
