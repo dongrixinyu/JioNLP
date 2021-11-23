@@ -8,7 +8,6 @@
 
 """
 TODO:
-    - 个
     - 某些金额为 合计/共/共计、共合计、合计共、共约1000元 类型。
     - 某些金额为单价类型，
         - 100 元每节课
@@ -419,6 +418,81 @@ class MoneyParser(object):
 
         return first_string, second_string
 
+    def _compensate_first_money_string(
+            self, first_money_string, second_money_string):
+        """ 根据情况，对金额范围的第一个金额进行单位补全
+        例如： 3到5万港币，被拆分为 3，5万港币，须将 3 补全为 3万港币
+        思路：第二个字符串一般为完全字符串，不须补全，
+            且默认第二个字符串是 数字、汉字单位混合字符串，
+            此时考察第一个字符串，若其数值低于 第二个字符串的数字值，
+            则为其添加第二个字符串的汉字单位。
+        """
+        # 先分析第一个字符串的金额，确定其信息，是否需要补全
+        if self.money_pattern_1.search(first_money_string):
+            first_computed_money_num = float(first_money_string)
+
+        elif self.money_pattern_2.search(first_money_string):
+            # 前为数字，后为汉字的金额，如 “6000万”
+            # 若第一个字符串属于该种类型，且其 char_part 非空，说明可以直接返回
+            char_part = self.float_num_pattern.sub('', first_money_string)
+            if char_part in self.suffix_nums:
+                return first_money_string
+            else:
+                raise ValueError(self.type_error.format(first_money_string))
+
+        else:
+            first_computed_money_num = self.turn_money_std_fmt_util3(first_money_string)
+
+        # 前置操作，需要重复执行一次，因此较为耗时
+        second_money_string = self._cleansing(second_money_string)
+        second_money_string, definition = self._definition(second_money_string)
+        unit, second_money_string = self._get_currency_case(second_money_string)
+        second_money_string, definition = self._accuracy(second_money_string, definition)
+
+        if self.money_pattern_2.search(second_money_string):
+            char_part = self.float_num_pattern.sub('', second_money_string)
+            if char_part not in self.suffix_nums:
+                raise ValueError(self.type_error.format(second_money_string))
+
+            num_part = second_money_string.replace(char_part, '')
+            if self.money_pattern_1.search(num_part):
+                second_computed_money_num = float(num_part)
+            else:
+                raise ValueError(self.type_error.format(second_money_string))
+
+            if first_computed_money_num < second_computed_money_num:
+                # 此时需要添加单位
+                return first_money_string + char_part
+            else:
+                return first_money_string
+
+        else:
+            if self.yi_pattern.search(second_money_string):
+                seg_billion = self.yi_pattern.split(second_money_string)
+                if len(seg_billion) == 2:
+                    second_computed_money_num = self.turn_money_std_fmt_util2(seg_billion[0])
+                else:
+                    raise ValueError(self.type_error.format(second_money_string))
+
+                if first_computed_money_num < second_computed_money_num:
+                    return first_money_string + '亿'
+                else:
+                    return first_money_string
+
+            elif self.wan_pattern.search(second_money_string):
+                seg_wan = self.wan_pattern.split(second_money_string)
+                if len(seg_wan) == 2:
+                    second_computed_money_num = self.turn_money_std_fmt_util1(seg_wan[0])
+                else:
+                    raise ValueError(self.type_error.format(second_money_string))
+
+                if first_computed_money_num < second_computed_money_num:
+                    return first_money_string + '万'
+                else:
+                    return first_money_string
+
+            return first_money_string
+
     def __call__(self, money_string, default_unit='元', ret_format='detail'):
 
         if self.money_pattern_1 is None:
@@ -435,6 +509,9 @@ class MoneyParser(object):
                 money_string, default_unit=default_unit, ret_format=ret_format)
 
         else:
+            first_money_string = self._compensate_first_money_string(
+                first_money_string, second_money_string)
+
             first_money_res = self.parse_single_money(
                 first_money_string, default_unit=default_unit, ret_format=ret_format)
             second_money_res = self.parse_single_money(
@@ -495,6 +572,7 @@ class MoneyParser(object):
         if money_string == '':
             raise ValueError(self.type_error.format(money_string))
 
+        # 若货币的金额字符串部分有误，则报错返回。
         if self.money_num_string_pattern.search(money_string) is None:
             raise ValueError(self.type_error.format(money_string))
             # pass

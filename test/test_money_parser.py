@@ -58,6 +58,12 @@ class TestMoneyParser(unittest.TestCase):
             ['1万-5万元', {'num': ['10000.00', '50000.00'], 'case': '元', 'definition': 'blur'}],
             ['1万元--5万元', {'num': ['10000.00', '50000.00'], 'case': '元', 'definition': 'blur'}],
 
+            # 字段补全 金额范围
+            ['10~15k元', {'num': ['10000.00', '15000.00'], 'case': '元', 'definition': 'blur'}],
+            ['2——3万港币', {'num': ['20000.00', '30000.00'], 'case': '港元', 'definition': 'blur'}],
+            ['两到三万港元', {'num': ['20000.00', '30000.00'], 'case': '港元', 'definition': 'blur'}],
+            ['十八至三十万日元', {'num': ['180000.00', '300000.00'], 'case': '日元', 'definition': 'blur'}],
+
             # 修饰辅助信息
             ['50万元（含）以上', {'num': '500000.00', 'case': '元', 'definition': 'blur+'}],
             ['1万(含)-5万元', {'num': ['10000.00', '50000.00'], 'case': '元', 'definition': 'blur'}],
