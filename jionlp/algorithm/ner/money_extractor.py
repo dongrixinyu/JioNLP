@@ -9,11 +9,8 @@
 
 import re
 
-from jionlp.util.funcs import bracket, bracket_absence, absence
 from jionlp.rule.rule_pattern import MONEY_PREFIX_STRING, \
-    MONEY_SUFFIX_STRING, MONEY_NUM_MIDDLE_STRING, \
     MONEY_KUAI_MAO_JIAO_FEN_STRING, MONEY_PREFIX_CASE_STRING, \
-    MONEY_SUFFIX_CASE_STRING, MONEY_SPAN_GAP_MIDDLE, MONEY_SPAN_GAP_START, \
     MONEY_CHAR_STRING, MONEY_NUM_STRING
 from jionlp.gadget.money_parser import MoneyParser
 

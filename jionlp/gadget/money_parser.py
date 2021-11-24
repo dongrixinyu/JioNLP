@@ -17,8 +17,6 @@ TODO:
         - 五六百美元
     - 货币标识符
         - ￥5600、$85、€¥£、85,000$
-    - 特殊金额格式
-        - 工资在 10~15k
 
 """
 
@@ -28,9 +26,7 @@ from jionlp.util.funcs import start_end
 from jionlp.rule.rule_pattern import CURRENCY_CASE, \
     MONEY_PREFIX_STRING, MONEY_SUFFIX_STRING, MONEY_BLUR_STRING, \
     MONEY_MINUS_STRING, MONEY_PLUS_STRING, MONEY_NUM_STRING, \
-    MONEY_KUAI_MAO_JIAO_FEN_STRING
-# MONEY_SUFFIX_CASE_STRING, MONEY_KUAI_MAO_JIAO_FEN_STRING
-# MONEY_PREFIX_STRING,\
+    MONEY_KUAI_MAO_JIAO_FEN_STRING, MONEY_NUM_MIDDLE_STRING
 from jionlp.rule import extract_parentheses, remove_parentheses
 
 
@@ -64,8 +60,10 @@ class MoneyParser(object):
         
     def _prepare(self):
         self.float_num_pattern = re.compile('\d+(\.)?\d*')
-        self.punc_pattern = re.compile('[,， ]')
-        self.wan_pattern = re.compile('万|萬')
+        self.punc_pattern = re.compile(MONEY_NUM_MIDDLE_STRING)
+        self.bai_pattern = re.compile('百|佰')
+        self.qian_pattern = re.compile('千|仟|k')
+        self.wan_pattern = re.compile('万|萬|w')
         self.yi_pattern = re.compile('亿')
         self.chinese_yuan_currency_pattern = re.compile('(块钱|元|块)')
         self.chinese_jiao_currency_pattern = re.compile('(角|毛)')
@@ -73,7 +71,8 @@ class MoneyParser(object):
         # self.currency_case_pattern = re.compile(MONEY_SUFFIX_CASE_STRING)
         # self.chinese_kuai_jiao_mao_fen_pattern = re.compile(MONEY_KUAI_MAO_JIAO_FEN_STRING)
 
-        self.money_modifier_pattern = re.compile(MONEY_PREFIX_STRING[:-1] + '|' + MONEY_SUFFIX_STRING[1:])
+        self.money_modifier_pattern = re.compile(
+            MONEY_PREFIX_STRING[:-1] + '|' + MONEY_SUFFIX_STRING[1:])
 
         # 判断货币金额精确度
         self.money_blur_pattern = re.compile(start_end(MONEY_BLUR_STRING))
@@ -99,8 +98,7 @@ class MoneyParser(object):
         self.first_3_span_pattern = re.compile(r'([^起到至\-—~]+)(?=(起|(?<![达不])到|至(?!少)|－|—|-|~))')
 
         self.second_0_span_pattern = re.compile(r'(?<=(——|--|~~|－－))(.+)')
-        self.second_1_span_pattern = re.compile(
-            r'(?<=(起|(?<![达不])到|至(?!少)|\-|—|\~|－))([^起到至\-—~－]+)')
+        self.second_1_span_pattern = re.compile(r'(?<=(起|(?<![达不])到|至(?!少)|\-|—|\~|－))([^起到至\-—~－]+)')
 
         self.multi_nums = {
             '分': 0.01, '角': 0.1, '毛': 0.1, '十': 10, '拾': 10, 
@@ -121,6 +119,10 @@ class MoneyParser(object):
             '十亿': 1000000000, '拾亿': 1000000000, '百亿': 10000000000, '佰亿': 10000000000,
             '千亿': 100000000000, '仟亿': 100000000000, '万亿': 1000000000000, '萬亿': 1000000000000,
             '兆': 1000000000000}
+
+        self.sequential_char_num_pattern = re.compile(
+            r'(一二|二三|两三|三四|三五|四五|五六|六七|七八|八九|'
+            r'壹贰|贰叁|贰弎|贰仨|两叁|两弎|两仨|叁肆|弎肆|仨肆|叁伍|弎伍|仨伍|肆伍|伍陆|陆柒|柒捌|捌玖)')
 
         self.standard_format = '{:.2f}'
         self.type_error = 'the given money_string `{}` is illegal.'
@@ -392,6 +394,16 @@ class MoneyParser(object):
 
         return money_string, definition
 
+    def _expand_sequential_string(self, money_string):
+        """ 对某些字符串进行扩展，如 “五六百美元” 需要扩展为 “五到六百美元” """
+        if self.sequential_char_num_pattern.search(money_string):
+            sequential_string = self.sequential_char_num_pattern.search(money_string).group()
+            money_string_pattern = self.sequential_char_num_pattern.sub('{}', money_string)
+            sub_token = sequential_string[0] + '到' + sequential_string[1]
+            money_string = money_string_pattern.format(sub_token)
+
+        return money_string
+
     def _split_money_span(self, money_string):
         """检测字符串，并将其分解为两个 money """
         # 找第一个字符串
@@ -426,6 +438,15 @@ class MoneyParser(object):
             且默认第二个字符串是 数字、汉字单位混合字符串，
             此时考察第一个字符串，若其数值低于 第二个字符串的数字值，
             则为其添加第二个字符串的汉字单位。
+
+        TODO:该函数有较多错误和纰漏。
+
+            十八到三十万元
+            一百二十到一百五十万元
+            一千到两千万元
+            一千到两千亿元
+            三到五百
+            八到九千
         """
         # 先分析第一个字符串的金额，确定其信息，是否需要补全
         if self.money_pattern_1.search(first_money_string):
@@ -441,6 +462,15 @@ class MoneyParser(object):
                 raise ValueError(self.type_error.format(first_money_string))
 
         else:
+            # 若第一个字符串有单位，则直接返回结果
+            res_list = [item for item in self.currency_case_pattern.finditer(first_money_string)]
+
+            if len(res_list) != 0:
+                # 有货币单位
+                if res_list[-1].span()[1] == len(first_money_string):
+                    # 即第一个字符串末尾为单位，则直接跳过
+                    return first_money_string
+
             first_computed_money_num = self.turn_money_std_fmt_util3(first_money_string)
 
         # 前置操作，需要重复执行一次，因此较为耗时
@@ -449,6 +479,7 @@ class MoneyParser(object):
         unit, second_money_string = self._get_currency_case(second_money_string)
         second_money_string, definition = self._accuracy(second_money_string, definition)
 
+        # 分析第二个字符串的类型，并按类型对其进行判断，是否对第一个字符串添加信息
         if self.money_pattern_2.search(second_money_string):
             char_part = self.float_num_pattern.sub('', second_money_string)
             if char_part not in self.suffix_nums:
@@ -491,6 +522,29 @@ class MoneyParser(object):
                 else:
                     return first_money_string
 
+            elif self.qian_pattern.search(second_money_string):
+                seg_qian = self.qian_pattern.split(second_money_string)
+                if len(seg_qian) == 2:
+                    second_computed_money_num = self.turn_money_std_fmt_util1(seg_qian[0])
+                else:
+                    raise ValueError(self.type_error.format(second_money_string))
+
+                if first_computed_money_num < second_computed_money_num:
+                    return first_money_string + '千'
+                else:
+                    return first_money_string
+            elif self.bai_pattern.search(second_money_string):
+                seg_bai = self.bai_pattern.split(second_money_string)
+                if len(seg_bai) == 2:
+                    second_computed_money_num = self.turn_money_std_fmt_util1(seg_bai[0])
+                else:
+                    raise ValueError(self.type_error.format(second_money_string))
+
+                if first_computed_money_num < second_computed_money_num:
+                    return first_money_string + '百'
+                else:
+                    return first_money_string
+
             return first_money_string
 
     def __call__(self, money_string, default_unit='元', ret_format='detail'):
@@ -500,6 +554,9 @@ class MoneyParser(object):
 
         if not money_string:  # or len(money_string) == 1:
             raise ValueError(self.type_error.format(money_string))
+
+        # 若检测到需要扩展的类型，如 “五六百美元” 需要扩展为 “五到六百美元”
+        money_string = self._expand_sequential_string(money_string)
 
         first_money_string, second_money_string = self._split_money_span(money_string)
 
