@@ -9,12 +9,13 @@
 
 import traceback
 
-from multiprocessing import Pool, Manager, Lock, RLock
+from multiprocessing import Pool, Manager  # , Lock, RLock
 
-import jionlp as jio
+from jionlp import logging
 from jionlp.util.time_it import TimeIt
 
-from .translation_api import BaiduApi, GoogleApi, YoudaoApi, YoudaoFreeApi, TencentApi, XunfeiApi
+from .translation_api import BaiduApi, GoogleApi, YoudaoApi, \
+    YoudaoFreeApi, TencentApi, XunfeiApi
 
 
 class BackTranslation(object):
@@ -79,9 +80,8 @@ class BackTranslation(object):
         api_pool = Pool(processes=self.api_num, )
         # initializer=self.get_lock,#)
         # initargs=())
-        back_tran_result = list()
 
-        with TimeIt(name='total') as ti:
+        with TimeIt(name='total'):
             with Manager() as manager:
                 result_list = manager.list()
                 try:
@@ -101,10 +101,6 @@ class BackTranslation(object):
                 api_pool.join()
 
                 back_tran_result = [item for item in iter(result_list)]
-                # print(result_list, len(result_list))
-                # for i in back_tran_result:
-                #     print(i)
-                # pdb.set_trace()
 
         # 过滤回译结果
         back_tran_result = self.filter_results(text, back_tran_result)
@@ -114,10 +110,10 @@ class BackTranslation(object):
         try:
             with TimeIt(name=mt_api.__class__.__name__) as ti:
                 res = self.iter_api_by_language(text, mt_api)
-            # print(len(res), manager)
+
         except Exception as err:
             traceback.print_exc()
-            jio.logging.error(err)
+            logging.error(err)
         # with self.lock:
         # lock.acquire()
         manager.extend(res)
@@ -158,14 +154,9 @@ class BackTranslation(object):
         # 遍历所有的回译调用结果
         api_result_list = list()
         for foreign_lang in foreign_lang_list:
-            # print()
-            # print(foreign_lang)
-            # print('orig: ', text)
             try:
                 tmp = mt_api(text, from_lang=chinese_lang, to_lang=foreign_lang)
-                # print('tran: ', tmp)
                 result = mt_api(tmp, from_lang=foreign_lang, to_lang=chinese_lang)
-                # print('resl: ', result)
                 api_result_list.append(result)
             except Exception as err:
                 traceback.print_exc()
@@ -204,8 +195,8 @@ if __name__ == '__main__':
             "secret": "b21fdc62a7ed0e287f31cdc4bf4ab9a3"})
     tencent_api = TencentApi(
         {"project_id": "0",
-         "secret_id": "AKID5zGGuInJwmLehbyKyYXGS3NXOXYLE96o",
-         "secret_key": "buwiGXXifLt888rKQLwGH3asuhFbmeCX"})
+         "secret_id": "AKID5zGnJwmLehbyKyYXGS3NXOE96o",
+         "secret_key": "buwiGXt888rKQLwGH3asumeCX"})
     youdao_free_api = YoudaoFreeApi()
     youdao_api = YoudaoApi(
         appkey_obj={'appid': '39856bd56b482cfc',

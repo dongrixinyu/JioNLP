@@ -16,8 +16,6 @@ DESCRIPTION:
 
 """
 
-import os
-import pdb
 import hmac
 import json
 import time
@@ -101,7 +99,6 @@ def manage_appkey(func):
                     else:
                         logging.error(err)
                         raise Exception(err)
-                        break
 
         else:
             f = func(self, *args, **kargs)
@@ -120,8 +117,7 @@ class TranslationApi(object):
     4、检查语言缩写编号是否符合要求，装饰器实现
 
     """
-    def __init__(self, appkey_obj_list, gap_time,
-                 lang_pool=['zh', 'en']):
+    def __init__(self, appkey_obj_list, gap_time, lang_pool=None):
         """
         appkey_obj: 调用接口的用户密钥，各个接口各不一样
         gap_time: 两次调用的间隔睡眠时间
@@ -164,7 +160,8 @@ class TranslationApi(object):
 
     def get_lang_params(self):
         raise NotImplementedError()
-    
+
+
 class BaiduApi(TranslationApi):
     """ 百度翻译 api 的调用接口
 
@@ -229,6 +226,7 @@ class BaiduApi(TranslationApi):
 
     def get_lang_params(self):
         return {'from_lang': 'zh', 'to_lang': 'en'}
+
 
 class GoogleApi(TranslationApi):
     """ Google 翻译 api 的调用接口
@@ -704,8 +702,6 @@ class XunfeiApi(TranslationApi):
 
 
 if __name__ == '__main__':
-    '''
-    '''
     baidu_api = BaiduApi(
         {'appid': '20200618000498778', 
          'secretKey': 'raHalLakgYitNuzGOoBZ'},
@@ -719,14 +715,12 @@ if __name__ == '__main__':
     res = google_api(text, from_lang='zh', to_lang='en')
     print(res)
     
-    
     youdao_api = YoudaoApi(
         appkey_obj={'appid': '39856bd56b482cfc',
                     'app_secret': '87XpTE63nBVnrR0b6Hy0aTDWlkoq2l4A'})
     text = '她很好看。'
     res = youdao_api(text, from_lang='zh-CHS', to_lang='en')
     print(res)
-    
     
     youdao_api = YoudaoFreeApi()
     text = '她很好看。'
@@ -740,7 +734,6 @@ if __name__ == '__main__':
     text = '她很好看。'
     res = tencent_api(text, from_lang='zh', to_lang='en')
     print(res)
-    
     
     xunfei_api = XunfeiApi(
         appkey_obj={
