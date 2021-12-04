@@ -183,5 +183,7 @@ class F1(object):
             "MICRO", **{'p': precision, 'r': recall, 'f1': f1})
         average_f1 = f1
 
+        logging.info(message)
+
         return precision, recall, average_f1
 
