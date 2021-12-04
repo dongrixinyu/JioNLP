@@ -16,8 +16,6 @@ DESCRIPTION:
 """
 
 
-import os
-import pdb
 import random
 import collections
 
@@ -27,8 +25,7 @@ from jionlp import logging
 
 
 def _stat_class(dataset_y):
-    """ 统计标签集合的结果
-    """
+    """ 统计标签集合的结果 """
     
     convert_y = list()
     for item in dataset_y:
@@ -97,7 +94,7 @@ def collect_dataset_entities(dataset_y):
 def analyse_dataset(dataset_x, dataset_y, ratio=[0.8, 0.05, 0.15], shuffle=True):
     """ 将 NER 数据集按照训练、验证、测试进行划分，统计数据集中各个类别实体的数量和占比，
     计算训练、验证、测试集的相对熵，判断数据集分割是否合理。其中，dismatch 信息比例越低，
-    证明数据集划分的各类别比例越贴近数据全集的分布。
+    证明各个子数据集划分的各实体类别比例，越贴近数据全集的分布。
 
     Args:
         dataset_x: 数据集的输入数据部分

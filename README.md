@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-6k-yellow" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.44-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.45-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -263,8 +263,10 @@ $ jio_help
 ### 9.分词
 | 功能   | 函数   |描述   |星级   |
 |--------|--------|-------|-------|
-|[**word 转 tag**](../../wiki/分词-说明文档#user-content-word-转-tag) |word2tag|将 json 格式分词序列转换为模型处理的 tag 序列 | |
-|[**tag 转 word**](../../wiki/分词-说明文档#user-content-tag-转-word) |tag2word|将模型处理的 tag 序列转换为 json 格式分词 | |
+|[**word 转 tag**](../../wiki/分词-说明文档#user-content-word-转-tag) |cws.word2tag|将 json 格式分词序列转换为模型处理的 tag 序列 | |
+|[**tag 转 word**](../../wiki/分词-说明文档#user-content-tag-转-word) |cws.tag2word|将模型处理的 tag 序列转换为 json 格式分词 | |
+|[**统计F1值**](../../wiki/分词-说明文档#user-content-统计-f1-值) |cws.f1|比对分词标注标签于模型预测标签的F1值 | |
+
 
 ### 初衷
 

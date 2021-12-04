@@ -8,7 +8,7 @@
 # description: Preprocessing tool for Chinese NLP
 """
 
-__version__ = '1.3.44'
+__version__ = '1.3.45'
 
 import os
 
@@ -75,6 +75,7 @@ history = """
 │   | 2021-09-01 | add jionlp online version                           |   │
 │   | 2021-10-25 | update extract money and parse money                |   │
 │   | 2021-11-10 | add logger tuner                                    |   │
+│   | 2021-12-04 | add chinese word segmentor tools                    |   │
 │                                                                          │
 ╰──────────────────────────────────────────────────────────────────────────╯
 """
