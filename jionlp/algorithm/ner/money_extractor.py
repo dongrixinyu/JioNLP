@@ -59,7 +59,7 @@ class MoneyExtractor(object):
         # - 单纯包含 分、角、块，而无其它格式货币的
         # - 特殊词汇如 “多元” 等
         self.money_kuai_map_jiao_fen_pattern = re.compile(MONEY_KUAI_MAO_JIAO_FEN_STRING)
-        self.non_money_string_list = ['多元']
+        self.non_money_string_list = ['多元', '十分', '百分', '万分']
 
     def __call__(self, text, with_parsing=True, ret_all=False):
         if self.parse_money is None:

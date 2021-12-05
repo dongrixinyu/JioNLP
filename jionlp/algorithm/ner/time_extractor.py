@@ -78,7 +78,8 @@ class TimeExtractor(object):
 
         # 此类表达虽然可按时间解析，但是文本中很大概率并非表示时间，故以大概率进行排除，
         # 并设参数 ret_all，即返回所有进行控制，默认为 False，即根据词典进行删除
-        self.non_time_string_list = ['一点', '0时', '一日', '黎明']
+        self.non_time_string_list = [
+            '一点', '0时', '一日', '黎明', '十分', '百分', '万分']
         # 一点也不大方、一日之计在于晨、黎明主演电影、
 
         self.num_pattern = re.compile(r'[０-９0-9]')
