@@ -104,8 +104,7 @@ def tag2word(char_list: List[str], tags: List[str], verbose=False):
     start = None
 
     for idx, (tag, char) in enumerate(zip(tags, char_list)):
-        if idx == tag_length - 2:
-            print()
+
         if tag == 'I':
             if idx == 0:
                 _wrong_message(idx, tags)
