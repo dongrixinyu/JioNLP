@@ -64,7 +64,8 @@ EXCEPTION_PATTERN = ASCII_EXCEPTION_PATTERN[:-1] + UNICODE_EXCEPTION_PATTERN[2:]
 
 # ---------------------------------------------------------------------
 # 全角字母、数字、空格正则
-FULL_ANGLE_ALPHABET = '[０-９Ａ-Ｚａ-ｚ\u3000]'
+FULL_ANGLE_ALPHABET = 'ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ０１２３４５６７８９　'
+HALF_ANGLE_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 '
 
 # ---------------------------------------------------------------------
 # HTML 标签

@@ -138,29 +138,9 @@ class Extractor(object):
         其中分为空格字符和非空格字符
         """
         if self.full_angle_pattern is None:
-            self.full_angle_pattern = re.compile(FULL_ANGLE_ALPHABET)
-        
-        final_text_list = list()
-        cursor = 0
-        for item in self.full_angle_pattern.finditer(text):
-            # 补充前段字符串
-            if item.span()[0] == 0:
-                pass
-            else:
-                final_text_list.append(text[cursor: item.span()[0]])
-                
-            # 替换
-            for char in item.group():
-                if char == '\u3000':  # 全角空格直接替换
-                    final_text_list.append(' ')
-                else:
-                    final_text_list.append(chr(ord(char) - 65248))
-            cursor = item.span()[1]  
-            
-        if len(text) > cursor:  # 补充最后的字符串
-            final_text_list.append(text[cursor:])
-        
-        return ''.join(final_text_list)
+            self.full_angle_pattern = str.maketrans(FULL_ANGLE_ALPHABET, HALF_ANGLE_ALPHABET)
+
+        return text.translate(self.full_angle_pattern)
         
     def extract_email(self, text, detail=False):
         """ 提取文本中的 E-mail
