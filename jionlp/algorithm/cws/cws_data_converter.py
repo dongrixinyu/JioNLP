@@ -90,7 +90,8 @@ def tag2word(char_list: List[str], tags: List[str], verbose=False):
 
     """
     tag_length = len(tags)
-    assert len(char_list) == tag_length, 'the length of `char list` and `tag list` is not same.'
+    assert len(char_list) == tag_length, \
+        'the length of `char list` and `tag list` is not same.'
 
     def _wrong_message(_idx, ts):
         if verbose:
@@ -103,6 +104,8 @@ def tag2word(char_list: List[str], tags: List[str], verbose=False):
     start = None
 
     for idx, (tag, char) in enumerate(zip(tags, char_list)):
+        if idx == tag_length - 2:
+            print()
         if tag == 'I':
             if idx == 0:
                 _wrong_message(idx, tags)
@@ -117,7 +120,8 @@ def tag2word(char_list: List[str], tags: List[str], verbose=False):
                 start = idx
                 continue
             elif idx == tag_length - 1:
-                word = ''.join(char_list[start:])
+                word_list.append(''.join(char_list[start:idx]))
+                word = char_list[-1]
             else:
                 if start is None:
                     _wrong_message(idx, tags)

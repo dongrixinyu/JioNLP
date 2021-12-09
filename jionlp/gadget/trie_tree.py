@@ -22,11 +22,14 @@ class TrieTree(object):
         self.depth = 0
 
     def add_node(self, word, typing):
-        """
-        向 Trie 树添加节点
-        :param word: 字典中的词汇
-        :param typing: 词汇类型
-        :return: None
+        """向 Trie 树添加节点。
+
+        Args:
+            word(str): 词典中的词汇
+            typing(str): 词汇类型
+
+        Returns: None
+
         """
         word = word.strip()
         if word not in ['', '\t', ' ', '\r']:
