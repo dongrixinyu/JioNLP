@@ -9,7 +9,7 @@ assignees: ''
 
 **描述(Description)**
 
-> 描述你遇到了什么问题(Please description your issue here)
+> 描述你遇到了什么问题(Please describe your issue here)
 
 1. 版本(Version):
 - python 版本: (通过 `python` 可查)
