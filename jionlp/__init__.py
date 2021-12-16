@@ -10,6 +10,7 @@
 
 __version__ = '1.3.46'
 
+
 import os
 
 from jionlp.util.logger import set_logger
