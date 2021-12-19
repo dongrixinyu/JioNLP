@@ -279,5 +279,6 @@ $ jio_help
 ![image](../../blob/master/image/qr_code_for_collection.png)
 ### 如本工具对您有帮助，请点一下右上角 star ⭐
 ### 或者扫码请作者喝杯咖啡 (●'◡'●)，谢谢啦 ~~
+- 感谢名单中赞助的小伙伴们[致谢](../../wiki/致谢篇)
 ![image](../../blob/master/image/payment_code.png)
 
