@@ -177,7 +177,7 @@ class TestTimeParser(unittest.TestCase):
 
             # 农历年、月、日
             ['二零一二年农历正月十五', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2012-02-06 00:00:00', '2012-02-06 23:59:59']}],
-            ['农历二〇二一年六月', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-07-10 00:00:00', '2021-08-07 23:59:59']}],
+            ['阴历二〇二一年六月', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-07-10 00:00:00', '2021-08-07 23:59:59']}],
             ['五月廿二', {'year': 2022}, {'type': 'time_point', 'definition': 'accurate', 'time': ['2022-06-20 00:00:00', '2022-06-20 23:59:59']}],
             ['腊月初十', {'year': 2022}, {'type': 'time_point', 'definition': 'accurate', 'time': ['2023-01-01 00:00:00', '2023-01-01 23:59:59']}],
             ['农历十月', {'year': 2022}, {'type': 'time_point', 'definition': 'accurate', 'time': ['2022-10-25 00:00:00', '2022-11-23 23:59:59']}],
