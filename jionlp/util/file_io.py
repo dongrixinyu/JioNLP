@@ -197,8 +197,9 @@ def write_file_by_line(data_list, file_path, start_line_idx=None,
         start_line_idx = 0
     if end_line_idx is None:
         end_line_idx = len(data_list)
+
     with open(file_path, 'w', encoding='utf-8') as f:
-        for item in data_list[start_line_idx : end_line_idx]:
+        for item in data_list[start_line_idx: end_line_idx]:
             if type(item) in [list, dict]:
                 f.write(json.dumps(item, ensure_ascii=False) + '\n')
             elif type(item) is set:

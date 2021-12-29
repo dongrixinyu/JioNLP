@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-6k-yellow" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.46-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.47-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -279,6 +279,7 @@ $ jio_help
 ![image](../../blob/master/image/qr_code_for_collection.png)
 ### 如本工具对您有帮助，请点一下右上角 star ⭐
 ### 或者扫码请作者喝杯咖啡 (●'◡'●)，谢谢啦 ~~
-- 感谢名单中赞助的小伙伴们[致谢](../../wiki/致谢篇)
+- 感谢名单中赞助的小伙伴们[致谢](../../wiki/致谢篇)，你们的打赏让我更有动力
+
 ![image](../../blob/master/image/payment_code.png)
 

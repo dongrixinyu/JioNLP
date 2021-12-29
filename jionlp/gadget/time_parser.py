@@ -1755,9 +1755,17 @@ class TimeParser(object):
                 second_time_point.year = self.time_base_handler[0] - 2
             elif '月' in time_string:
                 time_base_datetime = TimeParser._convert_handler2datetime(self.time_base_handler)
-
-                first_time_base_datetime = time_base_datetime - datetime.timedelta(days=30.417 * 4)
-                second_time_base_datetime = time_base_datetime - datetime.timedelta(days=30.417 * 2)
+                # TODO:
+                # 前两个月：
+                # 具有三重语义，根据不同语境进行区分，
+                # 1、某年的前两个月(time_span)，如“2021年的前两个月” -> 2021年的1月和2月
+                # 2、大约两个月前的某个时间点(time_point)，如“他前两个月离职了。” -> 以 2021年12月10日为 base，
+                #     即2021年10月的某个时间点
+                # 3、从此刻之前的两个月的时间范围(time_span)，如“把前两个月的报表拿给我” ->
+                #     以 2021年12月10日为 base，即 2021年的 10月和11月
+                # 本工具暂时无法支持多重语义的解析，故根据估计的语义出现频次，按第三种语义进行解析。
+                first_time_base_datetime = time_base_datetime - datetime.timedelta(days=30.417 * 2)
+                second_time_base_datetime = time_base_datetime - datetime.timedelta(days=30.417 * 1)
 
                 first_time_point.month = first_time_base_datetime.month
                 first_time_point.year = first_time_base_datetime.year

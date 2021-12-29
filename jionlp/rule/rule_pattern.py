@@ -298,7 +298,7 @@ MIN_SEC_STRING = r'((零|〇|[一二三四五]?十)[一二三四五六七八九]
 
 # seg
 I = '|'
-LU = r'(农历)'
+LU = r'([农阴]历)'
 LU_A = absence(LU)
 
 # appendix

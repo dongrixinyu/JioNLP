@@ -31,6 +31,7 @@ LONG_DOC = '''
 
 '''
 __version__ = ''
+
 with open(os.path.join(DIR_PATH, 'README.md'),
           'r', encoding='utf-8') as f:
     readme_lines = f.readlines()
@@ -50,7 +51,7 @@ __license__ = "Apache License 2.0"
 __maintainer__ = "dongrixinyu"
 __email__ = "dongrixinyu.89@163.com"
 __url__ = 'https://github.com/dongrixinyu/JioNLP'
-__description__ = 'Chinese NLPreprocessing & Parsing'
+__description__ = 'Chinese NLP Preprocessing & Parsing'
 
 
 with open(os.path.join(DIR_PATH, 'requirements.txt'), 
