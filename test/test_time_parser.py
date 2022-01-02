@@ -251,6 +251,7 @@ class TestTimeParser(unittest.TestCase):
             ['今天', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-14 00:00:00', '2021-06-14 23:59:59']}],
             ['昨晚8时35分', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-13 20:35:00', '2021-06-13 20:35:59']}],
             ['当晚十时', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-14 22:00:00', '2021-06-14 22:59:59']}],
+            ['今天十一点半', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-14 11:30:00', '2021-06-14 11:30:59']}],
 
             # 年，节日
             ['教师节', {'year': 2021}, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-09-10 00:00:00', '2021-09-10 23:59:59']}],
@@ -284,6 +285,7 @@ class TestTimeParser(unittest.TestCase):
             ['13:20~次日05:40', _ts_1, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 13:20:00', '2021-06-15 05:40:59']}],
             ['夜里12点', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-15 00:00:00', '2021-06-15 00:59:59']}],
             ['下午5点多钟', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-14 17:00:00', '2021-06-14 17:59:59']}],  # 当设定 strict 参数时会报错
+            ['十一点半', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-14 11:30:00', '2021-06-14 11:30:59']}],
 
             # 时分秒 标准格式按 `:` 区隔
             ['上月30号12:37', _ts_1, {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-05-30 12:37:00', '2021-05-30 12:37:59']}],

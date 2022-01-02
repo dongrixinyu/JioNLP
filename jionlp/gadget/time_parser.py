@@ -1494,7 +1494,9 @@ class TimeParser(object):
 
             # festival group
             [self.limit_year_fixed_solar_festival_pattern, self.normalize_limit_year_fixed_solar_festival],
-            [self.year_fixed_solar_festival_pattern, self.normalize_year_fixed_solar_festival],
+            # 调整了 self.year_fixed_solar_festival_pattern 位置，避免出现 “今天十一点半” 字符串中 “十一” 被识别为节日
+            # 该正则与 self.limit_day_pattern 相矛盾
+            # [self.year_fixed_solar_festival_pattern, self.normalize_year_fixed_solar_festival],
             [self.limit_year_fixed_lunar_festival_pattern, self.normalize_limit_year_fixed_lunar_festival],
             [self.year_fixed_lunar_festival_pattern, self.normalize_year_fixed_lunar_festival],
             [self.limit_year_regular_solar_festival_pattern, self.normalize_limit_year_regular_solar_festival],
@@ -1504,6 +1506,7 @@ class TimeParser(object):
             [self.limit_year_month_day_pattern, self.normalize_limit_year_month_day],
             [self.blur_year_pattern, self.normalize_blur_year],
             [self.limit_day_pattern, self.normalize_limit_day],
+            [self.year_fixed_solar_festival_pattern, self.normalize_year_fixed_solar_festival],
             [self.lunar_year_month_day_pattern, self.normalize_lunar_year_month_day],
             [self.year_month_day_pattern, self.normalize_year_month_day],
             [self.standard_year_pattern, self.normalize_standard_year],
