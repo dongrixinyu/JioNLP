@@ -98,7 +98,7 @@ def analyse_freq_words(dataset_x: List[List[str]], dataset_y: List[Any],
 
 
 if __name__ == '__main__':
-    import pkuseg
+    import spacy_pkuseg as pkuseg
     import random
     import jionlp as jio
     
