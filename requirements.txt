@@ -2,4 +2,4 @@ numpy
 jieba
 requests
 zipfile36
-pkuseg
+spacy-pkuseg
