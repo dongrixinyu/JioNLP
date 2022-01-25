@@ -24,7 +24,10 @@ import os
 import re
 import json
 import numpy as np
-import pkuseg
+try:
+    import spacy_pkuseg as pkuseg
+except:
+    import pkuseg
 import traceback
 
 from jionlp import logging

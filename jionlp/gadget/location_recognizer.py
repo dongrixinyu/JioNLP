@@ -35,7 +35,10 @@
 import copy
 import collections
 
-import pkuseg
+try:
+    import spacy_pkuseg as pkuseg
+except:
+    import pkuseg
 
 from jionlp.dictionary.dictionary_loader import china_location_loader
 from jionlp.dictionary.dictionary_loader import world_location_loader

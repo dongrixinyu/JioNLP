@@ -10,7 +10,10 @@
 import os
 import json
 import numpy as np
-import pkuseg
+try:
+    import spacy_pkuseg as pkuseg
+except:
+    import pkuseg
 
 from jionlp import logging
 from jionlp.rule import clean_text
