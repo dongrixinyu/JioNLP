@@ -8,12 +8,16 @@
 
 
 import os
+import sys
 import shutil
 import zipfile
 
 
 FILE_PATH = os.path.abspath(__file__)
 DIR_PATH = os.path.dirname(os.path.dirname(FILE_PATH))
+
+if hasattr(sys, 'frozen'):
+    DIR_PATH = os.path.dirname(os.path.realpath(sys.executable))
 
 UNZIP_FILE_LIST = [
     'china_location.txt', 'chinese_char_dictionary.txt',
