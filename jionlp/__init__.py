@@ -23,7 +23,8 @@ logging = set_logger(level='INFO', log_dir_name='.jionlp_logs')
 DIR_PATH = os.path.dirname(os.path.abspath(__file__))
 for file_name in UNZIP_FILE_LIST:
     if not os.path.exists(os.path.join(DIR_PATH, 'dictionary', file_name)):
-        unzip_file()
+        zip_file = '.'.join(file_name.split('.')[:-1]) + '.zip'
+        unzip_file(zip_file)
 
 
 history = """
