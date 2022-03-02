@@ -1,6 +1,6 @@
 <p align="center">
     <a alt="jionlp logo">
-        <img src="../../blob/master/image/jionlp_logo.jpg" / style="width:300px;height:130px">
+        <img src="../../blob/master/image/jionlp_logo.jpg" / style="width:300px;height:100px">
     </a>
 </p>
 <p align="center">
