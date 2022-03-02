@@ -23,6 +23,7 @@ class Extractor(object):
         self.money_pattern = None
         self.email_pattern = None
         self.email_domain_pattern = None
+        self.email_prefix_pattern = None
         self.url_pattern = None
         self.phone_number_pattern = None
         self.ip_address_pattern = None
@@ -32,6 +33,7 @@ class Extractor(object):
         self.strict_qq_pattern = None
         self.cell_phone_pattern = None
         self.landline_phone_pattern = None
+        self.phone_prefix_pattern = None
         self.extract_parentheses_pattern = None
         self.remove_parentheses_pattern = None
         self.parentheses_pattern = PARENTHESES_PATTERN
@@ -47,6 +49,7 @@ class Extractor(object):
         """ 正则抽取器的基础函数
 
         Args:
+            pattern(re.compile): 正则表达式对象
             text(str): 字符串文本
             with_offset(bool): 是否携带 offset （抽取内容字段在文本中的位置信息）
 
@@ -55,15 +58,9 @@ class Extractor(object):
 
         """
         if with_offset:
-            '''
-            if pattern == self.strict_qq_pattern:
-                for item in pattern.finditer(text):
-                    pdb.set_trace()
-                pdb.set_trace()
-            #'''
             results = [{'text': item.group(1), 
                         'offset': (item.span()[0] - 1, item.span()[1] - 1)}
-                      for item in pattern.finditer(text)]
+                       for item in pattern.finditer(text)]
         else:
             results = [item.group(1) for item in pattern.finditer(text)]
         
@@ -95,8 +92,9 @@ class Extractor(object):
                    convert_full2half=True,
                    remove_exception_char=True, remove_url=True,
                    remove_redundant_char=True, remove_parentheses=True,
-                   remove_email=True, remove_phone_number=True):
-        """ 清洗文本
+                   remove_email=True, remove_phone_number=True,
+                   delete_prefix=False):
+        """ 清洗文本，关键字参数均默认为 True
 
         Args:
             text(str): 待清理文本
@@ -108,6 +106,7 @@ class Extractor(object):
             remove_url(bool): 是否删除 url 链接
             remove_email(bool): 是否删除 email
             remove_phone_number(bool): 是否删除电话号码
+            delete_prefix(bool): 是否删除 email 和 电话号码的前缀，如 `E-mail: xxxx@gmail.com`
 
         Returns:
             str: 清理后的文本
@@ -127,9 +126,9 @@ class Extractor(object):
         if remove_url:
             text = self.remove_url(text)
         if remove_email:
-            text = self.remove_email(text)
+            text = self.remove_email(text, delete_prefix=delete_prefix)
         if remove_phone_number:
-            text = self.remove_phone_number(text)
+            text = self.remove_phone_number(text, delete_prefix=delete_prefix)
 
         return text
         
@@ -167,12 +166,11 @@ class Extractor(object):
                 
             detail_results = list()
             for item in results:
-                domain_name = self.email_domain_pattern.search(
-                    item['text']).group(1)
+                domain_name = self.email_domain_pattern.search(item['text']).group(1)
                 item.update({'domain_name': domain_name})
                 detail_results.append(item)
             return detail_results
-            
+
     def extract_id_card(self, text, detail=False):
         """ 提取文本中的 ID 身份证号
 
@@ -218,7 +216,7 @@ class Extractor(object):
             detail(bool): 返回字符串的详细信息 offset，默认为 False
 
         Returns:
-            list: email列表
+            list: 货币金额列表
 
         Examples:
             >>> import jionlp as jio
@@ -285,7 +283,7 @@ class Extractor(object):
             strict(bool): QQ号很容易和其他数字混淆，因此选择采用严格或宽松规则匹配
 
         Returns:
-            list: email列表
+            list: QQ 号列表
 
         """
         if self.qq_pattern is None:
@@ -400,11 +398,13 @@ class Extractor(object):
                 
         return content_list
 
-    def remove_email(self, text):
+    def remove_email(self, text, delete_prefix=False):
         """ 删除文本中的 email
 
         Args:
             text(str): 字符串文本
+            delete_prefix(bool): 删除电子邮箱前的前缀符，如 `E-mail: xxxx@163.com`
+                由于计算前缀符的匹配，该方法计算效率会慢。
 
         Returns:
             str: 删除 email 后的文本
@@ -412,9 +412,36 @@ class Extractor(object):
         """
         if self.email_pattern is None:
             self.email_pattern = re.compile(EMAIL_PATTERN)
-            
+            self.email_prefix_pattern = re.compile(EMAIL_PREFIX_PATTERN)
+
         text = ''.join(['#', text, '#'])
-        return self.email_pattern.sub('', text)[1:-1]
+        if not delete_prefix:
+            text = self.email_pattern.sub('', text)
+            return text[1:-1]
+        else:
+
+            results = self._extract_base(self.email_pattern, text, with_offset=True)
+            prefix_results = self._extract_base(self.email_prefix_pattern, text, with_offset=True)
+
+            offset_list = [item['offset'][0] for item in results]
+
+            clean_prefix_offsets = [
+                item['offset'] for item in prefix_results if item['offset'][1] in offset_list]
+
+            final_text_list = list()
+            for idx, item in enumerate(clean_prefix_offsets):
+                if idx == 0:
+                    final_text_list.append(text[0: item[0]+1])
+
+                if idx == len(clean_prefix_offsets) - 1:
+                    final_text_list.append(text[item[1]+1:])
+                else:
+                    final_text_list.append(text[item[1]+1: clean_prefix_offsets[idx + 1][0]+1])
+
+            text = ''.join(final_text_list)
+            text = self.email_pattern.sub('', text)
+
+        return text[1:-1]
 
     def remove_exception_char(self, text):
         """ 删除文本中的异常字符
@@ -514,11 +541,12 @@ class Extractor(object):
                 return text
             length = len(text)
 
-    def remove_phone_number(self, text):
+    def remove_phone_number(self, text, delete_prefix=False):
         """ 删除文本中的电话号码
 
         Args:
             text(str): 字符串文本
+            delete_prefix(bool): 删除电话号码前缀，如 `电  话：198xxxxxxxx`
 
         Returns:
             str: 删除电话号码后的文本
@@ -526,14 +554,44 @@ class Extractor(object):
         """
         if self.cell_phone_pattern is None:
             self.cell_phone_pattern = re.compile(CELL_PHONE_PATTERN)
-            
+            self.phone_prefix_pattern = re.compile(PHONE_PREFIX_PATTERN)
+
         if self.landline_phone_pattern is None:
             self.landline_phone_pattern = re.compile(LANDLINE_PHONE_PATTERN)
+            self.phone_prefix_pattern = re.compile(PHONE_PREFIX_PATTERN)
         
         text = ''.join(['#', text, '#'])
-        text = self.cell_phone_pattern.sub('', text)
-        text = self.landline_phone_pattern.sub('', text)
-        
+
+        if not delete_prefix:
+            text = self.cell_phone_pattern.sub('', text)
+            text = self.landline_phone_pattern.sub('', text)
+
+        else:
+            cell_results = self._extract_base(self.cell_phone_pattern, text, with_offset=True)
+            landline_results = self._extract_base(self.landline_phone_pattern, text, with_offset=True)
+            results = sorted(cell_results + landline_results, key=lambda i: i['offset'][0])
+
+            prefix_results = self._extract_base(self.phone_prefix_pattern, text, with_offset=True)
+
+            offset_list = [item['offset'][0] for item in results]
+
+            clean_prefix_offsets = [
+                item['offset'] for item in prefix_results if item['offset'][1] in offset_list]
+
+            final_text_list = list()
+            for idx, item in enumerate(clean_prefix_offsets):
+                if idx == 0:
+                    final_text_list.append(text[0: item[0]+1])
+
+                if idx == len(clean_prefix_offsets) - 1:
+                    final_text_list.append(text[item[1]+1:])
+                else:
+                    final_text_list.append(text[item[1]+1: clean_prefix_offsets[idx + 1][0]+1])
+
+            text = ''.join(final_text_list)
+            text = self.cell_phone_pattern.sub('', text)
+            text = self.landline_phone_pattern.sub('', text)
+
         return text[1:-1]
     
     def remove_qq(self, text, strict=True):
