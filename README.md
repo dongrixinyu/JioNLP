@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-6k-yellow" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.51-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.52-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -78,7 +78,7 @@ moneys = [jio.parse_money(text) for text in text_list]
 - 支持**口语化中文**格式，如：三十五块三毛；但对于“三十五块八”这样的字符串，在文本中存在**歧义**，如“三十五块八颗糖”等，因此，```jio.ner.extract_money``` 对于此字符串不予抽取，但```parse_money```可以将“三十五块八”看作完整的口语化金额，标准化为“35.80元”
 - 支持多种常见货币类型：人民币，港元，澳门元，美元，日元，澳元，韩元，卢布，英镑，马克，法郎，欧元，加元，泰铢，台币等。
 
-#### Update 2021-11-19
+#### Update 2022-03-07
 ## 更新 [时间语义解析](../../wiki/时间语义解析-说明文档#user-content-时间语义解析)
 
 #### jio.parse_time 给定时间字符串，解析其为时间戳、时长等。
@@ -90,7 +90,7 @@ res = jio.parse_time('今年9月', time_base={'year': 2021})
 res = jio.parse_time('零三年元宵节晚上8点半', time_base=time.time())
 res = jio.parse_time('一万个小时')
 res = jio.parse_time('100天之后', time.time())
-res = jio.parse_time('每周五下午4点', time.time())
+res = jio.parse_time('每周五下午4点', time.time(), period_results_num=2)
 print(res)
 
 # {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-09-01 00:00:00', '2021-09-30 23:59:59']}
@@ -98,7 +98,9 @@ print(res)
 # {'type': 'time_delta', 'definition': 'accurate', 'time': {'hour': 10000.0}}
 # {'type': 'time_span', 'definition': 'blur', 'time': ['2021-10-22 00:00:00', 'inf']}
 # {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'day': 7}, 
-#  'point': {'time': ['2021-07-16 16:00:00', '2021-07-16 16:59:59'], 'string': '周五下午4点'}}}
+#  'point': {'time': [['2021-07-16 16:00:00', '2021-07-16 16:59:59'],
+#                     ['2021-07-16 16:00:00', '2021-07-16 16:59:59']], 'string': '周五下午4点'}}}
+
 ```
 
 - 目前支持年月日、时分秒、星期、季节、季度、节日、农历、时间范围、时间段、时间周期、模糊时间代词等解析。

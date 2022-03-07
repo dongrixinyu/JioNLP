@@ -135,6 +135,10 @@ class TimeParser(object):
         ret_typr(str): 包括 'str' 和 'int' 两种， 默认为 'str'，返回结果为标准时间字符串，若为 'int' 返回时间戳。
         strict(bool): 该参数检查时间字符串是否包含噪声，若包含噪声，则直接报错。默认为 False，一般不建议设为 True。
         ret_future(bool): 返回偏向未来的时间，如 `周一` 可按 `下周一` 进行解析。
+        period_results_num(int): 当返回类型为 time_period 时，可以指定返回多少个具体的时间点。默认为 None。
+            该参数设置的原因在于，时间周期的结构化描述非常困难，例如 `每个工作日上午9点`，包含了 每周 7 天，每周工作日 5天，每天上午 9 点
+            三重周期，想要以结构化方式表示这三重信息非常困难。并且，时间周期，更加常用于表达从 time_base 起之后的时间。因此，直接采用
+            返回时间周期实例的方式进行返回。该参数表示返回多少个实例，其中，第一个实例为最靠近传输 time_base 的实例。按时间顺序以此类推。
 
     Returns:
         见 Examples
@@ -146,7 +150,7 @@ class TimeParser(object):
         >>> res = jio.parse_time('零三年元宵节晚上8点半', time_base=time.time())
         >>> res = jio.parse_time('一万个小时')
         >>> res = jio.parse_time('100天之后', time.time())
-        >>> res = jio.parse_time('每周五下午4点', time.time())
+        >>> res = jio.parse_time('每周五下午4点', time.time(), peroid_results_num=2)
         >>> print(res)
 
         # {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-09-01 00:00:00', '2021-09-30 23:59:59']}
@@ -154,7 +158,8 @@ class TimeParser(object):
         # {'type': 'time_delta', 'definition': 'accurate', 'time': {'hour': 10000.0}}
         # {'type': 'time_span', 'definition': 'blur', 'time': ['2021-10-22 00:00:00', 'inf']}
         # {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'day': 7},
-        #  'point': {'time': ['2021-07-16 16:00:00', '2021-07-16 16:59:59'], 'string': '周五下午4点'}}}
+        #  'point': {'time': [['2021-07-16 16:00:00', '2021-07-16 16:59:59'],
+                              ['2021-07-23 16:00:00', '2021-07-23 16:59:59']], 'string': '周五下午4点'}}}
 
     """
     def __init__(self):
@@ -663,7 +668,7 @@ class TimeParser(object):
         # 周期性日期
         self.period_time_pattern = re.compile(
             r'每((间)?隔)?([一二两三四五六七八九十0-9]+|半)?'
-            r'(年|(个)?季度|(个)?月|(个)?(星期|礼拜)|周|日|天|(个)?(小时|钟头)|分(钟)?|秒(钟)?)')
+            r'(年|(个)?季度|(个)?月|(个)?(星期|礼拜)|(个)?周|((个)?工作)?日|天|(个)?(小时|钟头)|分(钟)?|秒(钟)?)')
 
         # 由于 time_span 格式造成的时间单位缺失的检测
         # 如：`去年9~12月`、 `2016年8——10月`，但 `2017年9月10日11:00至2018年` 除外，因最后为时、分
@@ -772,7 +777,8 @@ class TimeParser(object):
         return time_string.strip()  # .replace(' ', '')
 
     def __call__(self, time_string, time_base=time.time(), time_type=None,
-                 ret_type='str', strict=False, virtual_time=False, ret_future=False):
+                 ret_type='str', strict=False, virtual_time=False, ret_future=False,
+                 period_results_num=None):
         """ 解析时间字符串。 """
         if self.future_time is None:
             self._preprocess()
@@ -788,7 +794,7 @@ class TimeParser(object):
         self.time_base_handler = TimeParser._convert_time_base2handler(time_base)
 
         # 按 time_period 解析，未检测到后，按 time_delta 解析
-        period_res, blur_time = self.parse_time_period(time_string)
+        period_res, blur_time = self.parse_time_period(time_string, period_results_num=period_results_num)
         if period_res:
             return {'type': 'time_period',
                     'definition': blur_time,
@@ -1169,9 +1175,13 @@ class TimeParser(object):
 
         return first_string, second_string
 
-    def parse_time_period(self, time_string):
-        """ 判断字符串是否为 time_period，若是则返回结果，若不是则返回 None，跳转到其它类型解析。
-        """
+    def parse_time_period(self, time_string, period_results_num=None):
+        """ 判断字符串是否为 time_period，若是则返回结果，若不是则返回 None，跳转到其它类型解析。 """
+
+        has_weekday = False
+        if '工作日' in time_string:
+            has_weekday = True
+
         searched_res = self.period_time_pattern.search(time_string)
         if searched_res:
             period_time = searched_res.group()
@@ -1185,11 +1195,80 @@ class TimeParser(object):
                 if (period_time.endswith('礼拜') or period_time.endswith('周') or period_time.endswith('星期'))\
                         and (not time_point_string.startswith('周')):
                     time_point_string = '周' + time_point_string
+
                 try:
-                    first_full_time_handler, second_full_time_handler, _, blur_time = self.parse_time_span_point(
-                        time_point_string)
-                    first_std_time_string, second_std_time_string = self.time_handler2standard_time(
-                        first_full_time_handler, second_full_time_handler)
+                    if period_results_num is None:
+
+                        if has_weekday:
+                            # `每周工作日9点` 中，`工作日9点`要进入 time_point_string，需要将 `工作日` 剔除
+                            time_point_string = time_point_string.split('工作日')[-1]
+
+                            for i in range(7):
+                                first_full_time_handler, second_full_time_handler, _, blur_time = self.parse_time_span_point(
+                                    time_point_string)
+                                is_weekday = TimeParser._check_weekday(first_full_time_handler)
+                                if is_weekday:
+                                    break
+                                else:
+                                    cur_time_base_datetime = TimeParser._convert_handler2datetime(
+                                        self.time_base_handler)
+
+                                    cur_time_base_datetime += datetime.timedelta(days=1)
+                                    self.time_base_handler = TimeParser._convert_time_base2handler(
+                                        cur_time_base_datetime)
+
+                            first_std_time_string, second_std_time_string = self.time_handler2standard_time(
+                                first_full_time_handler, second_full_time_handler)
+                            results = [first_std_time_string, second_std_time_string]
+
+                        else:
+                            first_full_time_handler, second_full_time_handler, _, blur_time = self.parse_time_span_point(
+                                time_point_string)
+                            first_std_time_string, second_std_time_string = self.time_handler2standard_time(
+                                first_full_time_handler, second_full_time_handler)
+
+                            results = [first_std_time_string, second_std_time_string]
+
+                    elif type(period_results_num) is int and period_results_num > 0:
+
+                        if has_weekday:
+                            time_point_string = time_point_string.split('工作日')[-1]
+
+                        results = list()
+
+                        while len(results) < period_results_num:
+                            first_full_time_handler, second_full_time_handler, _, blur_time = self.parse_time_span_point(
+                                time_point_string)
+                            first_std_time_string, second_std_time_string = self.time_handler2standard_time(
+                                first_full_time_handler, second_full_time_handler)
+
+                            cur_time_base_datetime = TimeParser._convert_handler2datetime(self.time_base_handler)
+
+                            if has_weekday:
+                                is_weekday = TimeParser._check_weekday(cur_time_base_datetime)
+                                if is_weekday and ([first_std_time_string, second_std_time_string] not in results):
+                                    results.append([first_std_time_string, second_std_time_string])
+                            else:
+                                if [first_std_time_string, second_std_time_string] not in results:
+                                    results.append([first_std_time_string, second_std_time_string])
+
+                            if 'year' in period_delta:
+                                cur_time_base_datetime += datetime.timedelta(days=365)
+                            if 'month' in period_delta:
+                                cur_time_base_datetime += datetime.timedelta(days=30.417)
+                            if 'day' in period_delta:
+                                cur_time_base_datetime += datetime.timedelta(days=1)
+                            if 'hour' in period_delta:
+                                cur_time_base_datetime += datetime.timedelta(hours=1)
+                            if 'minute' in period_delta:
+                                cur_time_base_datetime += datetime.timedelta(minutes=1)
+                            if 'second' in period_delta:
+                                cur_time_base_datetime += datetime.timedelta(seconds=1)
+
+                            self.time_base_handler = TimeParser._convert_time_base2handler(cur_time_base_datetime)
+                    else:
+                        raise ValueError('the given results_num `{}` is illegal.'.format(period_results_num))
+
                 except Exception as e:
                     # 即无法解析的字符串，按照原字符串进行返回
                     logging.error(traceback.format_exc())
@@ -1199,9 +1278,10 @@ class TimeParser(object):
                         raise ValueError('the given time string `{}` is illegal.'.format(time_string))
 
                     first_std_time_string, second_std_time_string = None, None
+                    results = [first_std_time_string, second_std_time_string]
                     blur_time = 'blur'
 
-                period_point = {'time': [first_std_time_string, second_std_time_string],
+                period_point = {'time': results,
                                 'string': time_point_string}
             else:
                 period_point = None
@@ -1252,7 +1332,6 @@ class TimeParser(object):
             [self.standard_delta_pattern, self.normalize_standard_time_delta],
             [self.law_delta_pattern, self.normalize_law_delta],
             [self.special_time_delta_pattern, self.normalize_special_time_delta],
-
         ]
 
         cur_func = None
@@ -1439,6 +1518,13 @@ class TimeParser(object):
             return 'blur'
 
         return time_definition
+
+    @staticmethod
+    def _check_weekday(time_base_datetime):
+        if time_base_datetime.weekday() <= 4:  # 周一至周五，0~4，周六日 5、6
+            return True
+        else:
+            return False
 
     def parse_time_point(self, time_string, time_base_handler):
         """解析时间点字符串，
