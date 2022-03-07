@@ -28,6 +28,7 @@ try:
     import spacy_pkuseg as pkuseg
 except:
     import pkuseg
+
 import traceback
 
 from jionlp import logging
@@ -66,6 +67,7 @@ class ChineseKeyPhrasesExtractor(object):
         func_word_num: 允许短语中出现的虚词个数，strict_pos 为 True 时无效
         stop_word_num: 允许短语中出现的停用词个数，strict_pos 为 True 时无效
         max_phrase_len: 允许短语的最长长度，默认为 25 个字符
+        min_phrase_len: 允许短语的最短长度，默认为 1 个字符
         topic_theta: 主题权重的权重调节因子，默认0.5，范围（0~无穷）
         strict_pos: (bool) 为 True 时仅允许名词短语出现，默认为 True
         allow_pos_weight: (bool) 考虑词性权重，即某些词性组合的短语首尾更倾向成为关键短语，默认为 True
@@ -154,7 +156,7 @@ class ChineseKeyPhrasesExtractor(object):
     
     def __call__(self, text, top_k=5, with_weight=False,
                  func_word_num=1, stop_word_num=0, 
-                 max_phrase_len=25,
+                 max_phrase_len=25, min_phrase_len=1,
                  topic_theta=0.5, allow_pos_weight=True,
                  strict_pos=True, allow_length_weight=True,
                  allow_topic_weight=True,
@@ -257,11 +259,13 @@ class ChineseKeyPhrasesExtractor(object):
                         if not strict_pos:  
                             rule_flag = self._loose_candidate_phrases_rules(
                                 candidate_phrase, func_word_num=func_word_num,
-                                max_phrase_len=max_phrase_len,  
+                                max_phrase_len=max_phrase_len,
+                                min_phrase_len=min_phrase_len,
                                 stop_word_num=stop_word_num)
                         else:
                             rule_flag = self._strict_candidate_phrases_rules(
-                                candidate_phrase, max_phrase_len=max_phrase_len)
+                                candidate_phrase, max_phrase_len=max_phrase_len,
+                                min_phrase_len=min_phrase_len)
                         if not rule_flag:
                             continue
 
@@ -395,16 +399,17 @@ class ChineseKeyPhrasesExtractor(object):
                 sim_ratio = len(common_part) / len(candidate_info)
         return sim_ratio
         
-    def _loose_candidate_phrases_rules(self, candidate_phrase,
-                                       max_phrase_len=25, 
-                                       func_word_num=1, stop_word_num=0):
+    def _loose_candidate_phrases_rules(
+            self, candidate_phrase, max_phrase_len=25, min_phrase_len=1,
+            func_word_num=1, stop_word_num=0):
         """ 按照宽松规则筛选候选短语，对词性和停用词宽松 """
         # 条件一：一个短语不能超过 12个 token
         if len(candidate_phrase) > 12:
             return False
 
-        # 条件二：一个短语不能超过 25 个 char
-        if len(''.join([item[0] for item in candidate_phrase])) > max_phrase_len:
+        # 条件二：一个短语不能超过 25 个 char，且不能短于最短长度
+        length = len(''.join([item[0] for item in candidate_phrase]))
+        if length > max_phrase_len or length < min_phrase_len:
             return False
 
         # 条件三：一个短语中不能出现超过一个虚词
@@ -436,15 +441,16 @@ class ChineseKeyPhrasesExtractor(object):
             return False
         return True
     
-    def _strict_candidate_phrases_rules(self, candidate_phrase, 
-                                        max_phrase_len=25):
+    def _strict_candidate_phrases_rules(
+            self, candidate_phrase, max_phrase_len=25, min_phrase_len=1):
         """ 按照严格规则筛选候选短语，严格限制在名词短语 """
         # 条件一：一个短语不能超过 12个 token
         if len(candidate_phrase) > 12:
             return False
 
-        # 条件二：一个短语不能超过 25 个 char
-        if len(''.join([item[0] for item in candidate_phrase])) > max_phrase_len:
+        # 条件二：一个短语不能超过 25 个 char，不能短于最短长度
+        length = len(''.join([item[0] for item in candidate_phrase]))
+        if length > max_phrase_len or length < min_phrase_len:
             return False
 
         # 条件三：短语必须是名词短语，不能有停用词

@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://img.shields.io/badge/downloads-6k-yellow" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.52-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.53-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -99,7 +99,7 @@ print(res)
 # {'type': 'time_span', 'definition': 'blur', 'time': ['2021-10-22 00:00:00', 'inf']}
 # {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'day': 7}, 
 #  'point': {'time': [['2021-07-16 16:00:00', '2021-07-16 16:59:59'],
-#                     ['2021-07-16 16:00:00', '2021-07-16 16:59:59']], 'string': '周五下午4点'}}}
+#                     ['2021-07-23 16:00:00', '2021-07-23 16:59:59']], 'string': '周五下午4点'}}}
 
 ```
 
