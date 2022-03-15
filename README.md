@@ -9,7 +9,7 @@
     <a alt="Size">
         <img src="https://img.shields.io/badge/size-20.1m-orange" /></a>
     <a alt="Downloads">
-        <img src="https://img.shields.io/badge/downloads-6k-yellow" /></a>
+        <img src="https://img.shields.io/pypi/dm/jionlp?color=yellow" /></a>
     <a alt="Version">
         <img src="https://img.shields.io/badge/version-1.3.53-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
