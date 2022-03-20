@@ -5,10 +5,10 @@
 # license: Apache License 2.0
 # email: dongrixinyu.89@163.com
 # github: https://github.com/dongrixinyu/JioNLP
-# description: Preprocessing and Parsing tool for Chinese NLP
+# description: Preprocessing & Parsing tool for Chinese NLP
 """
 
-__version__ = '1.3.53'
+__version__ = '1.3.54'
 
 
 import os

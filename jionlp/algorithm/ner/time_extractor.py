@@ -2,9 +2,9 @@
 # library: jionlp
 # author: dongrixinyu
 # license: Apache License 2.0
-# Email: dongrixinyu.89@163.com
+# email: dongrixinyu.89@163.com
 # github: https://github.com/dongrixinyu/JioNLP
-# description: Preprocessing tool for Chinese NLP
+# description: Preprocessing & Parsing tool for Chinese NLP
 
 """
 TODO:
@@ -41,6 +41,7 @@ class TimeExtractor(object):
         with_parsing(bool): 指示返回结果是否包含解析信息，默认为 True
         ret_all(bool): 某些时间表达，在大多数情况下并非表达时间，如 ”一点“ 之于 ”他一点也不友善“，默认按绝大概率处理，
             即不返回此类伪时间表达，该参数默认为 False；若希望返回所有抽取到的时间表达，须将该参数置 True。
+        其它(若干)属于 parse_time 的参数。参考 `jio.parse_time.__doc__`
 
     Returns:
         list(dict): 包含时间实体的列表，其中包括 text、type、offset 三个字段，和工具包中 NER 标准处理格式一致。
@@ -88,7 +89,8 @@ class TimeExtractor(object):
 
         self.single_char_time = ['春', '夏', '秋', '冬']
 
-    def __call__(self, text, time_base=time.time(), with_parsing=True, ret_all=False):
+    def __call__(self, text, time_base=time.time(), with_parsing=True, ret_all=False,
+                 ret_type='str', ret_future=False, period_results_num=None):
         if self.parse_time is None:
             self._prepare()
 
@@ -102,7 +104,9 @@ class TimeExtractor(object):
                 # 此循环意在找出同一个 candidate 中包含的多个 time_entity
 
                 true_string, result, offset = self.grid_search(
-                    candidate['time_candidate'][bias:], time_base=time_base)
+                    candidate['time_candidate'][bias:], time_base=time_base,
+                    ret_type=ret_type, ret_future=ret_future,
+                    period_results_num=period_results_num)
 
                 if true_string is not None:
 
@@ -169,7 +173,8 @@ class TimeExtractor(object):
         直到解析错误或解析结果出错
         """
 
-    def grid_search(self, time_candidate, time_base=time.time()):
+    def grid_search(self, time_candidate, time_base=time.time(),
+                    ret_type='str', ret_future=False, period_results_num=None):
         """ 全面搜索候选时间字符串，从长至短，较优 """
         length = len(time_candidate)
         for i in range(length):  # 控制总长，若想控制单字符的串也被返回考察，此时改为 length + 1
@@ -208,7 +213,9 @@ class TimeExtractor(object):
                                 continue
 
                     result = self.parse_time(
-                        sub_string_for_parse, time_base=time_base, strict=True)
+                        sub_string_for_parse, time_base=time_base, strict=True,
+                        ret_type=ret_type, ret_future=ret_future,
+                        period_results_num=period_results_num)
 
                     return sub_string, result, offset
                 except (ValueError, Exception):
