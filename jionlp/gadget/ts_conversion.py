@@ -2,9 +2,9 @@
 # library: jionlp
 # author: dongrixinyu
 # license: Apache License 2.0
-# Email: dongrixinyu.89@163.com
+# email: dongrixinyu.89@163.com
 # github: https://github.com/dongrixinyu/JioNLP
-# description: Preprocessing tool for Chinese NLP
+# description: Preprocessing & Parsing tool for Chinese NLP
 
 
 """
@@ -30,8 +30,7 @@ from .trie_tree import TrieTree
 
 
 class TSConversion(object):
-    """
-    给定一段文本，将其中的简体字转换为繁体字，或将繁体字转换为简体字
+    """ 给定一段文本，将其中的简体字转换为繁体字，或将繁体字转换为简体字
 
     """
     def __init__(self):

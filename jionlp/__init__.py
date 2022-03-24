@@ -8,7 +8,7 @@
 # description: Preprocessing & Parsing tool for Chinese NLP
 """
 
-__version__ = '1.3.54'
+__version__ = '1.3.55'
 
 
 import os
@@ -80,6 +80,7 @@ history = """
 │   | 2021-12-04 | add chinese word segmentor tools                    |   │
 │   | 2022-03-02 | update email & tel rules                            |   │
 │   | 2022-03-07 | update time period parser                           |   │
+│   | 2022-03-24 | add cws labeled sample correction                   |   │
 │                                                                          │
 ╰──────────────────────────────────────────────────────────────────────────╯
 """

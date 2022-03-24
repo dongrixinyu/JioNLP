@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://img.shields.io/pypi/dm/jionlp?color=yellow" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.54-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.55-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -26,29 +26,27 @@
 - 做 NLP 任务，需要给模型添加偏旁、拼音、词典、繁体转换信息？用 JioNLP
 #### 总之，JioNLP 提供 NLP 任务预处理功能，准确、高效、零使用门槛，并提供一步到位的查阅入口。
 
-#### 功能主要包括：文本清洗，删除HTML标签、删除异常字符、删除冗余字符，转换全角字母、数字、空格为半角，抽取及删除E-mail及域名、抽取及删除（手机号、座机号）电话号码、抽取及删除QQ号、抽取及删除括号内容、抽取及删除身份证号、抽取及删除IP地址、抽取及删除URL超链接、抽取及删除货币金额与单位，金额数字转大写汉字，时间语义解析，解析身份证号信息、解析手机号码归属地、解析座机区号归属地、解析手机号码运营商，按行快速读写文件，（多功能）停用词过滤，（优化的）分句，地址解析，新闻地域识别，繁简体转换，汉字转拼音，汉字偏旁、字形、四角编码、五笔编码拆解，基于词典的情感分析，色情数据过滤，反动数据过滤，关键短语抽取，抽取式文本摘要，成语接龙，成语词典、歇后语词典、新华字典、新华词典、停用词典、中国地名词典、中国县级地名变更词典、世界地名词典，时间实体抽取，基于词典的NER，NER的字、词级别转换，NER的entity和tag格式转换，NER模型的预测阶段加速并行工具集，NER标注和模型预测的结果差异对比，NER标注数据集分割与统计，NER实体收集、文本分类标注数据集的分割与统计、回译数据增强、相邻近汉字换位数据增强、同音词替换数据增强、随机增删字符数据增强、实体替换数据增强、公历转农历日期、农历转公历日期
+#### 功能主要包括：文本清洗，删除HTML标签、删除异常字符、删除冗余字符，转换全角字母、数字、空格为半角，抽取及删除E-mail及域名、抽取及删除（手机号、座机号）电话号码、抽取及删除QQ号、抽取及删除括号内容、抽取及删除身份证号、抽取及删除IP地址、抽取及删除URL超链接、抽取及删除货币金额与单位，金额数字转大写汉字，时间语义解析，解析身份证号信息、解析手机号码归属地、解析座机区号归属地、解析手机号码运营商，按行快速读写文件，（多功能）停用词过滤，（优化的）分句，地址解析，新闻地域识别，繁简体转换，汉字转拼音，汉字偏旁、字形、四角编码、五笔编码拆解，基于词典的情感分析，色情数据过滤，反动数据过滤，关键短语抽取，抽取式文本摘要，成语接龙，成语词典、歇后语词典、新华字典、新华词典、停用词典、中国地名词典、中国县级地名变更词典、世界地名词典，时间实体抽取，基于词典的NER，NER的字、词级别转换，NER的entity和tag格式转换，NER模型的预测阶段加速并行工具集，NER标注和模型预测的结果差异对比，NER标注数据集分割与统计，NER实体收集、分词数据统计、分词数据矫正、文本分类标注数据集的分割与统计、回译数据增强、相邻近汉字换位数据增强、同音词替换数据增强、随机增删字符数据增强、实体替换数据增强、公历转农历日期、农历转公历日期
 
 
-#### Update 2021-10-25
-## 更新 [货币金额实体抽取](../../wiki/NER-说明文档#user-content-货币金额实体抽取)
+#### Updata 2022-03-24
+## 新增 [**分词数据矫正-标准词典**](../../wiki/分词-说明文档#user-content-分词数据矫正-标准词典) 
 
-#### jio.ner.extract_money 从文本中抽取货币金额实体（不依赖模型，纯规则）。
-#### 配合 jio.parse_time 货币金额解析使用（见下一个 Update）
-``` python
-import jionlp as jio
-text = '张三赔偿李大花人民币车费601,293.11元，工厂费大约一万二千三百四十五元,利息叁伍佰日元，打印费人民币十块钱。'
-res = jio.ner.extract_money(text, with_parsing=False)
-print(res)
+#### jio.cws.CWSDCWithStandardWords 使用标准词典对分词标注数据进行矫正和修复
+```
+>>> import jionlp as jio
+>>> sample_list = [['学习', '区', '块链', '。'], ['没有', '条', '不紊', '地', '。']]
+>>> words = ['区块链', '有条不紊']
 
-# [{'text': '601,293.11元', 'offset': [12, 23], 'type': 'money'},
-#  {'text': '大约一万二千三百四十五元', 'offset': [27, 39], 'type': 'money'},
-#  {'text': '叁伍佰日元', 'offset': [42, 47], 'type': 'money'},
-#  {'text': '人民币十块钱', 'offset': [50, 56], 'type': 'money'}]
+>>> dc_with_standard_words = jio.cws.CWSDCWithStandardWords(words)
+>>> for sample in sample_list:
+>>> ... res = dc_with_standard_words(sample, verbose=True)
+>>> ... print(res)
 
+# ['学习', '区块链', '。']
+# ['没', '有条不紊', '地', '。']
 ```
 
-#### 完整示例
-[JioNLP在线版-货币金额抽取与解析](http://182.92.160.94:16666/#/parse_money)
 
 #### Update 2021-10-25
 ## 更新 [货币金额解析](../../wiki/正则抽取与解析-说明文档#user-content-货币金额解析)
@@ -268,7 +266,7 @@ $ jio_help
 |[**word 转 tag**](../../wiki/分词-说明文档#user-content-word-转-tag) |cws.word2tag|将 json 格式分词序列转换为模型处理的 tag 序列 | |
 |[**tag 转 word**](../../wiki/分词-说明文档#user-content-tag-转-word) |cws.tag2word|将模型处理的 tag 序列转换为 json 格式分词 | |
 |[**统计F1值**](../../wiki/分词-说明文档#user-content-统计-f1-值) |cws.f1|比对分词标注标签于模型预测标签的F1值 | |
-
+|[**分词数据矫正-标准词典**](../../wiki/分词-说明文档#user-content-分词数据矫正-标准词典) |cws.CWSDCWithStandardWords |使用标准词典对分词标注数据进行矫正和修复 | |
 
 ### 初衷
 
