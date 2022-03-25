@@ -93,6 +93,9 @@ def tag2word(char_list: List[str], tags: List[str], verbose=False):
     assert len(char_list) == tag_length, \
         'the length of `char list` and `tag list` is not same.'
 
+    if tag_length == 1:
+        return char_list
+
     def _wrong_message(_idx, ts):
         if verbose:
             logging.info(char_list)
