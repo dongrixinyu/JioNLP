@@ -29,6 +29,7 @@ class CWSDCWithStandardWords(object):
     """ 给定一条分词标注数据，依据标准的词汇库，调整分词标注数据
     例如，样本数据为 ['学习', '区', '块链', '。'], 标准词典为 ['区块链', '有条不紊']
     被矫正的数据为 ['学习', '区块链', '。']
+    该方法默认采用了 BI 标注标注对数据进行处理。
 
     注意：
         此种方法是采用词典来调整分词数据，其基本条件为，标准词汇数据不可以具有前后歧义，例如：
@@ -61,14 +62,18 @@ class CWSDCWithStandardWords(object):
             if typing is not None:
 
                 tags[i] = 'B'
-                for k in range(i + 1, i + step):
-                    tags[k] = 'I'
+                tags[i + 1: i + step] = 'I'
+
+                # for k in range(i + 1, i + step):
+                #     tags[k] = 'I'
+
                 if i + step < end:
                     tags[i + step] = 'B'
                 if verbose:
                     logging.info('text: `{}`, word: `{}`.'.format(
                         text[max(0, i - 3): min(end, i + step + 3)], pointer[0: step]))
             i += step
+
         words_list = tag2word(char_list, tags)
 
         return words_list

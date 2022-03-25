@@ -24,7 +24,7 @@ DESCRIPTION:
 
 """
 
-
+import numpy as np
 from typing import List
 
 from jionlp import logging
@@ -40,40 +40,40 @@ def word2tag(word_list: List[str]):
     Args:
         word_list(List[str]): 分词词汇的 list
     return:
-        List[List[str], List[str]]: tag 格式的数据
+        List[str, numpy.ndarray[str]]: tag 格式的数据
 
     Examples:
         >>> word_list = ["他", "指出", "：", "近", "几", "年", "来", "，", "足球场", "风气", "差劲", "。"]
         >>> print(jio.cws.word2tag(word_list))
 
-        # [['他', '指', '出', '：', '近', '几', '年', '来', '，', '足', '球', '场', '风', '气', '差', '劲', '。'],
-        #  ['B', 'B', 'I', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'I', 'I', 'B', 'I', 'B', 'I', 'B']]
+        # ['他指出：近几年来，足球场风气差劲。',
+        #  numpy.ndarray(['B', 'B', 'I', 'B', 'B', 'B', 'B', 'B', 'B',
+        #                 'B', 'I', 'I', 'B', 'I', 'B', 'I', 'B'], dtype='<U1')]
 
     """
 
-    tags = list()
-    chars = list()
+    chars = ''.join(word_list)
+    tags = np.empty(len(chars), dtype=np.unicode)
 
+    offset = 0
     for word in word_list:
         word_length = len(word)
-        for i in range(word_length):
-            if i == 0:
-                tags.append('B')
-            else:
-                tags.append('I')
-            chars.append(word[i])
+        tags[offset] = 'B'
+        if word_length >= 1:
+            tags[offset + 1: offset + word_length] = 'I'
+        offset += word_length
 
-    assert len(chars) == len(tags)
+    assert len(chars) == tags.shape[0]
     return [chars, tags]
 
 
-def tag2word(char_list: List[str], tags: List[str], verbose=False):
+def tag2word(chars: str, tags: List[str], verbose=False):
     """ 将 tag 格式转为词汇列表，
     若格式中有破损不满足 BI 标准，则不转换为词汇并支持报错。
     该函数针对单条数据处理，不支持批量处理。
 
     Args:
-        char_list(List[str]): 输入的文本字符列表
+        chars(str): 输入的文本字符串
         tags(List[str]): 文本序列对应的标签
         verbose(bool): 是否打印出抽取实体时的详细错误信息，该函数并不处理报错返回，
             仍按一定形式将有标签逻辑错误数据进行组织并返回。
@@ -82,61 +82,64 @@ def tag2word(char_list: List[str], tags: List[str], verbose=False):
         list: 词汇列表
 
     Examples:
-        >>> char_list = ['他', '指', '出', '：', '近', '几', '年', '来', '，', '足', '球', '场', '风', '气', '差', '劲', '。']
+        >>> chars = '他指出：近几年来，足球场风气差劲。'
         >>> tags = ['B', 'B', 'I', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'I', 'I', 'B', 'I', 'B', 'I', 'B']
-        >>> print(jio.cws.tag2word(char_list, tags))
+        >>> print(jio.cws.tag2word(chars, tags))
 
         # ["他", "指出", "：", "近", "几", "年", "来", "，", "足球场", "风气", "差劲", "。"]
 
     """
+
     tag_length = len(tags)
-    assert len(char_list) == tag_length, \
-        'the length of `char list` and `tag list` is not same.'
+    assert len(chars) == tag_length, 'the length of `chars` and `tags` is not same.'
 
     if tag_length == 1:
-        return char_list
+        return [chars]
 
     def _wrong_message(_idx, ts):
-        if verbose:
-            logging.info(char_list)
-            logging.info(tags)
-            logging.warning('wrong tag: {}'.format(
-                ts[start if start is not None else max(0, _idx - 2): _idx + 2]))
+        logging.info(chars)
+        logging.info(tags)
+        logging.warning('wrong tag: {}'.format(
+            ts[start if start is not None else max(0, _idx - 2): _idx + 2]))
 
     word_list = list()
     start = None
 
-    for idx, (tag, char) in enumerate(zip(tags, char_list)):
+    for idx, (tag, char) in enumerate(zip(tags, chars)):
 
         if tag == 'I':
             if idx == 0:
-                _wrong_message(idx, tags)
+                if verbose:
+                    _wrong_message(idx, tags)
                 start = idx
                 continue
             elif idx == tag_length - 1:
-                word = ''.join(char_list[start:])
+                word = chars[start:]
             else:
                 continue
+
         elif tag == 'B':
             if idx == 0:
                 start = idx
                 continue
             elif idx == tag_length - 1:
-                word_list.append(''.join(char_list[start:idx]))
-                word = char_list[-1]
+                word_list.append(chars[start: idx])
+                word = chars[-1]
             else:
                 if start is None:
-                    _wrong_message(idx, tags)
+                    if verbose:
+                        _wrong_message(idx, tags)
                     continue
-                word = ''.join(char_list[start: idx])
+                word = chars[start: idx]
                 start = idx
         else:
-            _wrong_message(idx, tags)
+            if verbose:
+                _wrong_message(idx, tags)
             return word_list
 
         word_list.append(word)
 
-    assert len(''.join(word_list)) == len(char_list), \
+    assert len(''.join(word_list)) == len(chars), \
         'the length of char list must be same.'
-    return word_list
 
+    return word_list
