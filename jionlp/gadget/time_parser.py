@@ -2,9 +2,9 @@
 # library: jionlp
 # author: dongrixinyu
 # license: Apache License 2.0
-# Email: dongrixinyu.89@163.com
+# email: dongrixinyu.89@163.com
 # github: https://github.com/dongrixinyu/JioNLP
-# description: Preprocessing tool for Chinese NLP
+# description: Preprocessing & Parsing tool for Chinese NLP
 
 
 """
@@ -52,6 +52,21 @@ TODO unresolved:
     腊月18 => 农历日期存在小写
     此时
     2.15 => 既可解析为小数 二点一五，也可解析为 二月十五日
+
+Problem:
+    礼拜1 => 是否支持此种类型？一般地，星期不支持阿拉伯数字，容易在 extract_time 中产生歧义
+    今天是12月16日，星期四，农历十一月十三 => 所有日期都指向同一个时间，不应当分开解析。抑或，应当分别解析为相同的时间
+    "20201110" => 是否应当解析
+    在签署本合同30日之前 => 30日被解析为当月 30号
+    "本月10号-20号 10点-20点" => 双 span 构成 period
+    每年阴历4月3日 元月25号和元月30号 => 这种 公农历 交错的日期应该如何解析
+    2021年12月29日 至 2021年12月31日，每天上午9:00至11:30，下午14:30至17:00。时间周期
+    订单日期在2019-10-11和2019-11-11之间的销售金额 => time_span 由 和 字连接
+    2021年近期1个季度
+    2020年农历二月初 => 扩展农历日期的描述
+    未来十天 => 从现在起计算的十天
+    最近3天 => 过去的三天  or 从现在起计算的三天
+    去年中秋节前后 => 模糊时间
 
 """
 
@@ -260,8 +275,10 @@ class TimeParser(object):
 
         # `年、月、日`：`2009年5月31日`、`一九九二年四月二十五日`
         self.year_month_day_pattern = re.compile(
-            ''.join([bracket(YEAR_STRING), bracket_absence(MONTH_STRING), bracket_absence(DAY_STRING), I,
-                     bracket(MONTH_STRING), bracket_absence(DAY_STRING), I, bracket(DAY_STRING)]))
+            ''.join([bracket(YEAR_STRING), bracket_absence(MONTH_STRING), bracket_absence(DAY_STRING),
+                     absence(TIME_POINT_SUFFIX), I,
+                     bracket(MONTH_STRING), bracket_absence(DAY_STRING), absence(TIME_POINT_SUFFIX),
+                     I, bracket(DAY_STRING), absence(TIME_POINT_SUFFIX)]))
 
         # `年、季度`：`2018年前三季度`
         self.year_solar_season_pattern = re.compile(
@@ -272,7 +289,7 @@ class TimeParser(object):
             ''.join([bracket(LIMIT_YEAR_STRING), r'(([第前后头]?[一二三四1-4两]|首)(个)?季度[初中末]?)']))
 
         # `限定季度`：`上季度`
-        self.limit_solar_season_pattern = re.compile(r'([上下](个)?)季度[初中末]?')
+        self.limit_solar_season_pattern = re.compile(r'([上下](个)?|本|这)季度[初中末]?')
 
         # `年、范围月`：`2018年前三个月`
         self.year_span_month_pattern = re.compile(
@@ -393,13 +410,13 @@ class TimeParser(object):
 
         # 星期 （一般不与年月相关联）
         self.standard_week_day_pattern = re.compile(
-            '(上上|上|下下|下|本|这)?(个)?(周)?' + WEEK_STRING + '[一二三四五六日末天]')
+            '(上上|上|下下|下|本|这)?(一)?(个)?(周)?' + WEEK_STRING + '[一二三四五六日末天]')
 
         # 星期前后推算
         self.blur_week_pattern = re.compile(
             '[前后]' + WEEK_NUM_STRING + '(个)?' + WEEK_STRING + I +
             WEEK_NUM_STRING + '(个)?' + WEEK_STRING + '(之)?[前后]' + I +
-            '(上上|上|下下|下|本|这)?(个)?' + WEEK_STRING)
+            '(上上|上|下下|下|本|这)?(一)?(个)?' + WEEK_STRING)
 
         # 月、第n个星期k
         self.limit_week_pattern = re.compile(
@@ -429,7 +446,7 @@ class TimeParser(object):
 
         # 限定年 农历固定节日
         self.limit_year_fixed_lunar_festival_pattern = re.compile(
-            ''.join([bracket(LIMIT_YEAR_STRING), LU_A, FIXED_LUNAR_FESTIVAL]))
+            ''.join([bracket(LIMIT_YEAR_STRING), LU_A, FIXED_LUNAR_FESTIVAL, absence(TIME_POINT_SUFFIX)]))
 
         # 公历规律节日
         self.year_regular_solar_festival_pattern = re.compile(
@@ -440,7 +457,7 @@ class TimeParser(object):
             bracket_absence(LIMIT_YEAR_STRING) + REGULAR_FOREIGN_FESTIVAL)
 
         # 限定性`日`
-        self.limit_day_pattern = re.compile(r'(前|今|明|同一|当|后|大前|大后|昨|次)[天日晚]')
+        self.limit_day_pattern = re.compile(r'(前|今|明|同一|当|后|大前|大后|昨|次|本)[天日晚]')
 
         # 时分秒 文字
         self.hour_minute_second_pattern = re.compile(
@@ -578,7 +595,7 @@ class TimeParser(object):
 
         self.week_1_pattern = re.compile('[前后][一二两三四五六七八九1-9](个)?' + WEEK_STRING)
         self.week_2_pattern = re.compile('[一两三四五六七八九1-9](个)?' + WEEK_STRING + '(之)?[前后]')
-        self.week_3_pattern = re.compile('(上上|上|下下|下|本|这)(个)?' + WEEK_STRING)
+        self.week_3_pattern = re.compile('(上上|上|下下|下|本|这)(一)?(个)?' + WEEK_STRING)
         self.week_4_pattern = re.compile(WEEK_STRING + '[一二三四五六日末天]')
         self.week_5_pattern = re.compile(''.join(['第', WEEK_NUM_STRING, '(个)?', WEEK_STRING]))
         self.ymd_segs = re.compile(r'[\-.·/]')
@@ -610,22 +627,24 @@ class TimeParser(object):
 
         # for TIME_SPAN pattern
         self.first_1_span_pattern = re.compile(
-            r'(?<=(从|自))([^起到至\-—~]+)(?=(起|到|至|以来|开始|—|－|-|~))|'
-            r'(?<=(从|自))([^起到至\-—~]+)')
-        self.first_2_span_pattern = re.compile(r'(.+)(?=(——|--|~~|－－))')  # (之以)?后)$
-        self.first_3_span_pattern = re.compile(r'([^起到至\-—~]+)(?=(起|到|至|以来|开始|－|—|-|~))')
+            r'(?<=(从|自))([^起到至\-—~～]+)(?=(起|到|至|以来|开始|—|－|-|~|～))|'
+            r'(?<=(从|自))([^起到至\-—~～]+)')
+        self.first_2_span_pattern = re.compile(r'(.+)(?=(——|--|~~|－－|～～))')
+        self.first_3_span_pattern = re.compile(r'([^起到至\-—~～]+)(?=(起|到|至|以来|开始|－|—|-|~|～))')
+        self.first_4_span_pattern = re.compile(r'(.+)(?=(之后|以后)$)')  # (之以)?后)$
+        self.first_5_span_pattern = re.compile(r'(.+)(?=(后)$)')  # (之以)?后)$
 
-        self.second_0_span_pattern = re.compile(r'(?<=(以来|开始|——|--|~~|－－))(.+)')
-        self.second_1_span_pattern = re.compile(r'(?<=[起到至\-—~－])([^起到至\-—~－]+)(?=([之以]?前|止))')
-        self.second_2_span_pattern = re.compile(r'(?<=[起到至\-—~－])([^起到至\-—~－]+)')
+        self.second_0_span_pattern = re.compile(r'(?<=(以来|开始|——|--|~~|－－|～～))(.+)')
+        self.second_1_span_pattern = re.compile(r'(?<=[起到至\-—~～－])([^起到至\-—~～－]+)(?=([之以]?前|止)$)')
+        self.second_2_span_pattern = re.compile(r'(?<=[起到至\-—~～－])([^起到至\-—~～－]+)')
         self.second_3_span_pattern = re.compile(
             r'^((\d{1,2}|[一二两三四五六七八九十百千]+)[几多]?年(半)?(多)?|半年(多)?|几[十百千](多)?年)'
-            r'(?=([之以]?前|止))')  # 此种匹配容易和 `三年以前` 相互矛盾，因此设置正则
+            r'(?=([之以]?前|止)$)')  # 此种匹配容易和 `三年以前` 相互矛盾，因此设置正则
 
         # for delta span pattern
-        self.first_delta_span_pattern = re.compile(r'([^到至\-—~]+)(?=(——|--|~~|－－|到|至|－|—|-|~))')
-        self.second_1_delta_span_pattern = re.compile(r'(?<=(——|--|~~|－－))([^到至\-—~]+)')
-        self.second_2_delta_span_pattern = re.compile(r'(?<=[到至－—\-~])([^到至－\-—~]+)')
+        self.first_delta_span_pattern = re.compile(r'([^到至\-—~～]+)(?=(——|--|~~|～～|－－|到|至|－|—|-|~|～))')
+        self.second_1_delta_span_pattern = re.compile(r'(?<=(——|--|~~|～～|－－))([^到至\-—~～]+)')
+        self.second_2_delta_span_pattern = re.compile(r'(?<=[到至－—\-~～])([^到至－\-—~～]+)')
 
         # 公历固定节日
         self.fixed_solar_holiday_dict = {
@@ -634,7 +653,7 @@ class TimeParser(object):
             '植树节': [3, 12], '五一': [5, 1], '劳动节': [5, 1], '青年节': [5, 4],
             '六一': [6, 1], '儿童节': [6, 1], '七一': [7, 1], '建党节': [7, 1],
             '八一': [8, 1], '建军节': [8, 1], '教师节': [9, 10], '国庆节': [10, 1],
-            '十一': [10, 1], '国庆': [10, 1],
+            '十一': [10, 1], '国庆': [10, 1], '清明节': [4, 5],  # 清明节有误, 4~6 日
 
             # 西方
             '情人节': [2, 14], '愚人节': [4, 1], '万圣节': [10, 31], '圣诞': [12, 25],
@@ -651,7 +670,7 @@ class TimeParser(object):
             '大年初四': [1, 4], '大年初五': [1, 5], '大年初六': [1, 6], '大年初七': [1, 7],
             '大年初八': [1, 8], '大年初九': [1, 9], '大年初十': [1, 10],
             '元宵': [1, 15], '填仓节': [1, 25], '龙抬头': [2, 2],
-            '上巳节': [3, 3], '寒食节': [4, 3], '清明节': [4, 4],  # 清明节有误, 4~6 日
+            '上巳节': [3, 3], '寒食节': [4, 3],
             '浴佛节': [4, 8], '端午': [5, 5], '端阳': [5, 5], '姑姑节': [6, 6],
             '七夕': [7, 7], '中元': [7, 15], '财神节': [7, 22], '中秋': [8, 15],
             '重阳': [9, 9], '下元节': [10, 15], '寒衣节': [10, 1], '腊八': [12, 8],
@@ -674,13 +693,13 @@ class TimeParser(object):
         # 如：`去年9~12月`、 `2016年8——10月`，但 `2017年9月10日11:00至2018年` 除外，因最后为时、分
         self.time_span_point_compensation = re.compile(
             absence(BLUR_HOUR_STRING) +
-            r'(?!:)[\d一二三四五六七八九十零]{1,2}[月日号点时]?(到|至|——|－－|--|~~|—|－|-|~)'
+            r'(?!:)[\d一二三四五六七八九十零]{1,2}[月日号点时]?(到|至|——|－－|--|~~|～～|—|－|-|~|～)'
             r'([\d一二三四五六七八九十零]{1,2}[月日号点时]|[\d一二三四五六七八九十零]{2,4}年)')
 
         # 由于 time_span 格式造成的时间单位缺失的检测
         # 如：`9~12个月`、 `8——10个星期`
         self.time_span_delta_compensation = re.compile(
-            r'[\d一二三四五六七八九十百千万零]{1,10}(到|至|——|－－|--|~~|—|－|-|~)'
+            r'[\d一二三四五六七八九十百千万零]{1,10}(到|至|——|－－|--|~~|～～|—|－|-|~|～)'
             r'([\d一二三四五六七八九十百千万零]{1,10}(年|个月|周|(个)?(星期|礼拜)|日|天|(个)?(小时|钟头)|分钟|秒))')
         self.time_delta_exception_pattern = re.compile(
             r'(' + bracket(YEAR_STRING) + I + bracket(DAY_STRING) + r')')
@@ -945,7 +964,9 @@ class TimeParser(object):
         return time_string
 
     def parse_time_span_point(self, time_string):
+        # 按照 “从 …… 至 ……” 进行解析
         first_time_string, second_time_string = self.parse_span_2_2_point(time_string)
+
         if first_time_string is not None or second_time_string is not None:
             time_type = 'time_span'
             old_time_base_handler = self.time_base_handler
@@ -1144,6 +1165,10 @@ class TimeParser(object):
             first_res = self.first_2_span_pattern.search(time_string)
         elif self.first_3_span_pattern.search(time_string):
             first_res = self.first_3_span_pattern.search(time_string)
+        elif self.first_4_span_pattern.search(time_string) and '前后' not in time_string:
+            first_res = self.first_4_span_pattern.search(time_string)
+        elif self.first_5_span_pattern.search(time_string) and '前后' not in time_string:
+            first_res = self.first_5_span_pattern.search(time_string)
         else:
             first_res = None
 
@@ -1257,7 +1282,10 @@ class TimeParser(object):
                             if 'month' in period_delta:
                                 cur_time_base_datetime += datetime.timedelta(days=30.417)
                             if 'day' in period_delta:
-                                cur_time_base_datetime += datetime.timedelta(days=1)
+                                if not has_weekday:  # 若日期非按每一日结算，则须按 7天为单位跳过，否则会报错。
+                                    cur_time_base_datetime += datetime.timedelta(days=7)
+                                else:
+                                    cur_time_base_datetime += datetime.timedelta(days=1)
                             if 'hour' in period_delta:
                                 cur_time_base_datetime += datetime.timedelta(hours=1)
                             if 'minute' in period_delta:
@@ -1515,6 +1543,8 @@ class TimeParser(object):
         if '左右' in time_string[-2:]:
             return 'blur'
         if '许' in time_string[-1]:
+            return 'blur'
+        if '前后' in time_string[-2:]:
             return 'blur'
 
         return time_definition
@@ -1998,7 +2028,8 @@ class TimeParser(object):
 
         time_handler = time_point.handler()
 
-        return time_handler, time_handler, 'time_point', 'accurate'
+        time_definition = self._check_blur(time_string, 'accurate')
+        return time_handler, time_handler, 'time_point', time_definition
 
     def normalize_limit_solar_season(self, time_string):
         """ 解析限定 季度 """
@@ -2120,6 +2151,20 @@ class TimeParser(object):
                 else:
                     first_time_point.month = 1
                     second_time_point.month = 3
+        elif '这' in time_string or '本' in time_string:
+            if self.time_base_handler[1] in [1, 2, 3]:
+                first_time_point.month = 1
+                second_time_point.month = 3
+            elif self.time_base_handler[1] in [4, 5, 6]:
+                first_time_point.month = 4
+                second_time_point.month = 6
+            elif self.time_base_handler[1] in [7, 8, 9]:
+                first_time_point.month = 7
+                second_time_point.month = 9
+            elif self.time_base_handler[1] in [10, 11, 12]:
+                first_time_point.month = 10
+                second_time_point.month = 12
+
         else:
             raise ValueError('the given `{}` is illegal.'.format(time_string))
 
@@ -3478,13 +3523,16 @@ class TimeParser(object):
             if '大前' in year_string:
                 first_year = time_base_handler[0] - 3
                 second_year = time_base_handler[0] - 3
+            elif '前一' in year_string:
+                first_year = time_base_handler[0] - 1
+                second_year = time_base_handler[0] - 1
             elif '前' in year_string:
                 first_year = time_base_handler[0] - 2
                 second_year = time_base_handler[0] - 2
             elif '去' in year_string or '上' in year_string:
                 first_year = time_base_handler[0] - 1
                 second_year = time_base_handler[0] - 1
-            elif '今' in year_string or '同' in time_string or '当' in time_string or '本' in time_string:
+            elif '今' in year_string or '这' in time_string or '同' in time_string or '当' in time_string or '本' in time_string:
                 first_year = time_base_handler[0]
                 second_year = time_base_handler[0]
             elif '明' in year_string or '次' in year_string:
@@ -3540,7 +3588,7 @@ class TimeParser(object):
                 else:
                     first_time_point.month = time_base_handler[1] + 1
                     second_time_point.month = time_base_handler[1] + 1
-            elif '同' in month_string or '本' in month_string or '当' in month_string:
+            elif '同' in month_string or '本' in month_string or '当' in month_string or '这' in month_string:
                 first_time_point.month = time_base_handler[1]
                 second_time_point.month = time_base_handler[1]
             else:
@@ -4590,7 +4638,9 @@ class TimeParser(object):
             raise ValueError('The given time string `{}` is illegal.'.format(time_string))
 
         time_handler = time_point.handler()
-        return time_handler, time_handler, 'time_point', 'accurate'
+
+        time_definition = self._check_blur(time_string, 'accurate')
+        return time_handler, time_handler, 'time_point', time_definition
 
     def normalize_year_regular_solar_festival(self, time_string):
         """ 解析 `农历规律节日` 时间 """

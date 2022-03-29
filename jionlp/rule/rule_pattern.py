@@ -235,7 +235,7 @@ SE_N = r'[012345]?\d'  # 秒 数字格式
 HMS_GAP = '[:：]'
 HMS_PATTERN_1 = '^(' + HO_N + HMS_GAP + MI_N + '(' + HMS_GAP + SE_N + ')?)$'  # 纯数字格式时分秒，或时分
 HMS_PATTERN_2 = '^(' + HO_N + '(点|时|小时)(' + MI_N + '分(钟)?(' + SE_N + '秒(钟)?)?)?)$'  # 带汉字时分秒
-HMS_PATTERN_3 = '^(' + HMS_PATTERN_1 + r'[\-\~—]{1,2}' + HMS_PATTERN_1 + ')$'  # 时间段
+HMS_PATTERN_3 = '^(' + HMS_PATTERN_1 + r'[\-\~～—]{1,2}' + HMS_PATTERN_1 + ')$'  # 时间段
 # HMS_PATTERN_4 = '^([012]?\d点)$'  # 有一定前提条件，即前后必须也有时间词汇
 
 # 年月日格式
@@ -253,7 +253,7 @@ YMD_PATTERN_4 = '^((公元(前)?)?' + r'(([12]?\d|(二)?十(一|二|三|四|五|
 YMD_PATTERN_5 = '^(一|二|三|四|五|六|七|八|九|零|〇|○|0){4}年$'
 
 # 年月日-时分秒合并格式
-YMD_HMS_PATTERN = '^(' + YMD_PATTERN_2[1:-1] + r'([\-\~\—]{1,2})?' + HMS_PATTERN_1[1:-1] + ')$'
+YMD_HMS_PATTERN = '^(' + YMD_PATTERN_2[1:-1] + r'([\-\~\—～]{1,2})?' + HMS_PATTERN_1[1:-1] + ')$'
 
 # 农历日期
 LUNAR_PATTERN = '((闰)?(元|正|腊|一|二|三|四|五|六|七|八|九|十(一|二)?)月|大年)(初(一|二|三|四|五|六|七|八|九|十)|(一|二|三|四|五|六|七|八|九|十){2,3})'
@@ -275,6 +275,7 @@ WEEK_PATTERN = '((上(半)?|下(半)?|这|本|前|今|当|上上|下下)?(星期
 # 常见时间短语
 COMMON_TIME_PATTERN_1 = '^(年|月|日|时)$'
 COMMON_YEAR_PATTERN = r'(昔|翌|头(一|两|几|些)?|(大)?前(一|半|两|几|些)?|近(一|两|几|些)?|这(一|两|几|些)?|那(一|两|几|些)?|上(半)?|下(半)?|(大)?后(一|半|两|几|些)?|同|当|早(一|两|几|些)?|每|去|今|往|本|次|明|明后)?年(中|度|初|前|末|底|终|内)?'
+COMMON_SEASON_PATTERN = r'(本|上|下|这)'  # 季度
 COMMON_MONTH_PATTERN = r'(下(个)?|首(个)?|前(两|几)?|上(个)?|这(个)?|次|这(些|个)?|那(些|个)?|上半(个)?|下半(个)?|同|本|当|每)?月(份|中|度|初|末|底)?'
 COMMON_DAY_PATTERN = r'(昔|首|前(一|两|几|些)?|翌|昨|次|今|往|明|平|即|往|半|旧|近(一|两|几|些)?|后(一|两|几|些)?|这(一|两|几|些)?|那(一|两|几|些)?|上半|下半|同|当|每(一)?)?(天|日)(前|后)?'
 COMMON_TIME_PATTERN_2 = '(下|中|上)(午|旬)|近(期|日)|此前'
@@ -287,7 +288,8 @@ COMMON_TIME_PATTERN_7 = '午(后|时)'
 # 各类型的时间正则汇总，可根据需要进行增删
 TIME_PATTERN = '(' + '|'.join(
     [COMMON_TIME_PATTERN_1,
-     COMMON_YEAR_PATTERN, COMMON_MONTH_PATTERN, COMMON_DAY_PATTERN,
+     COMMON_YEAR_PATTERN, COMMON_SEASON_PATTERN,
+     COMMON_MONTH_PATTERN, COMMON_DAY_PATTERN,
      COMMON_TIME_PATTERN_2, COMMON_TIME_PATTERN_3, COMMON_TIME_PATTERN_4,
      COMMON_TIME_PATTERN_5, COMMON_TIME_PATTERN_6, COMMON_TIME_PATTERN_7,
      WEEK_PATTERN, LUNAR_PATTERN, YMD_HMS_PATTERN, SEASON_PATTERN,
@@ -307,7 +309,7 @@ URL_PATTERN = r'(?<=[^.])((?:(?:https?|ftp|file)://|(?<![a-zA-Z\-\.])www\.)' \
 # 针对 time_parser 的正则字符串
 # 字符串操作
 # 年
-LIMIT_YEAR_STRING = r'(前|今|明|去|同|当|后|大前|本|次|上(一)?)年'
+LIMIT_YEAR_STRING = r'(前(一)?|今|明|去|同|当|后|大前|本|次|上(一)?|这(一)?)年'
 LUNAR_YEAR_STRING = r'([一二三四五六七八九零〇]{2}|[一二三四五六七八九零〇]{4}|[12]\d{3}|\d{2})年'
 YEAR_STRING = r'([12]?\d{2,3}|[一二三四五六七八九零〇]{2,4})年'
 
@@ -317,7 +319,7 @@ MONTH_STRING = MONTH_NUM_STRING + r'月(份)?'
 MONTH_NUM_STRING = MONTH_NUM_STRING[:-2] + r'两])'  # 1~12 order month num
 BLUR_MONTH_STRING = r'(初|[一]开年|伊始|末|尾|终|底|[上下]半年|[暑寒][假期]|[前中后]期)'
 LUNAR_MONTH_STRING = r'(闰)?([正一二三四五六七八九十冬腊]|十[一二]|[1-9]|1[012])月'
-LIMIT_MONTH_STRING = r'([下上](个)?|同|本|当|次)月'
+LIMIT_MONTH_STRING = r'([下上]((一)?个)?|同|本|当|次|这)月'
 SELF_EVI_LUNAR_MONTH_STRING = r'((闰)?[正冬腊]|闰([一二三四五六七八九十]|十[一二]|[1-9]|1[012]))月'
 
 # 周
@@ -346,7 +348,7 @@ LU = r'([农阴]历)'
 LU_A = absence(LU)
 
 # appendix
-TIME_POINT_SUFFIX = r'(左右|许)'
+TIME_POINT_SUFFIX = r'(左右|许|前后)'
 TIME_SPAN_SUFFIX = r'((之)?间)'
 # TIME_DELTA_SUFFIX = r''
 
@@ -396,12 +398,13 @@ DELTA_SUB = r'([之以]?[内前后来])'
 ########################################################################
 # 时间 NER 字符规则
 TIME_CHAR_STRING = ''.join(
-    [r'(现在|开始|黎明|过去|',
+    [r'(现在|开始|黎明|过去|愚人|感恩|圣诞|儿童|劳动|父亲|母亲|礼拜|霜降|立春|立冬|小寒|大寒|',
+     r'立夏|立秋|冬至|',
      r'[102年月日3589647时午至天上个分今下\:\-点晚前一小后周起内以底三晨钟来半两凌当十份季去早多第五中初\.度二从六期旬到间四节号：',
-     r'代\~\—春明昨星末秋之同·世纪本七九秒每次八夏/夜零正冬腊余工作元国清傍交易首 ()（）、万宵全暑头端庆旦－际消费者权益大里农历双财',
-     r'近运深, ”夕〇几汛儿童劳动假圣诞壹感恩无数白百刻许左右的这])+'])
-FAKE_POSITIVE_START_STRING = r'[起到至以开－\—\-\~]'  # 此字符串不可作为时间串的开始， `以来|开始` 为取首字
-FAKE_POSITIVE_END_STRING = r'[到至－\—\-\~]'  # 此字符串不可作为时间串的结束
+     r'代\~\—～春明昨星末秋之同·世纪本七九秒每次八夏/夜零正冬腊余工作元国清傍交易首 ()（）、万宵全暑头端庆旦－际消费者权益大里农阴历双财',
+     r'近运深, ”夕〇几汛假壹无数白百刻许左右的这本])+'])
+FAKE_POSITIVE_START_STRING = r'[起到至以开－\—\-\~～]'  # 此字符串不可作为时间串的开始， `以来|开始` 为取首字
+FAKE_POSITIVE_END_STRING = r'[到至－\—\-\~～]'  # 此字符串不可作为时间串的结束
 
 ########################################################################
 # 货币金额 NER 字符规则
