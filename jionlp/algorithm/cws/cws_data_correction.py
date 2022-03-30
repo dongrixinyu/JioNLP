@@ -18,7 +18,7 @@ DESCRIPTION:
 
 
 from typing import List
-# import numpy as np
+import numpy as np
 
 from jionlp import logging
 from jionlp.gadget.trie_tree import TrieTree
@@ -60,18 +60,22 @@ class CWSDCWithStandardWords(object):
             pointer = text[i: self.standard_word_tree.depth + i]
             step, typing = self.standard_word_tree.search(pointer)
             if typing is not None:
-
+                if verbose:
+                    # 当原标签非正确的打标结果，则需要打印出详细日志
+                    if i + step < end:
+                        if tags[i] != 'B' or (not np.all(tags[-3:-1] == 'I')) or tags[i + step] != 'B':
+                            logging.info('text: `{}`, word: `{}`.'.format(
+                                text[max(0, i - 3): min(end, i + step + 3)], pointer[0: step]))
+                    else:
+                        if tags[i] != 'B' or (not np.all(tags[-3:-1] == 'I')):
+                            logging.info('text: `{}`, word: `{}`.'.format(
+                                text[max(0, i - 3): min(end, i + step + 3)], pointer[0: step]))
                 tags[i] = 'B'
                 tags[i + 1: i + step] = 'I'
 
-                # for k in range(i + 1, i + step):
-                #     tags[k] = 'I'
-
                 if i + step < end:
                     tags[i + step] = 'B'
-                if verbose:
-                    logging.info('text: `{}`, word: `{}`.'.format(
-                        text[max(0, i - 3): min(end, i + step + 3)], pointer[0: step]))
+
             i += step
 
         words_list = tag2word(char_list, tags)
