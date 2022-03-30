@@ -63,13 +63,14 @@ class CWSDCWithStandardWords(object):
                 if verbose:
                     # 当原标签非正确的打标结果，则需要打印出详细日志
                     if i + step < end:
-                        if tags[i] != 'B' or (not np.all(tags[-3:-1] == 'I')) or tags[i + step] != 'B':
+                        if tags[i] != 'B' or (not np.all(tags[i + 1: i + step] == 'I')) or tags[i + step] != 'B':
                             logging.info('text: `{}`, word: `{}`.'.format(
                                 text[max(0, i - 3): min(end, i + step + 3)], pointer[0: step]))
                     else:
-                        if tags[i] != 'B' or (not np.all(tags[-3:-1] == 'I')):
+                        if tags[i] != 'B' or (not np.all(tags[i + 1: i + step] == 'I')):
                             logging.info('text: `{}`, word: `{}`.'.format(
                                 text[max(0, i - 3): min(end, i + step + 3)], pointer[0: step]))
+
                 tags[i] = 'B'
                 tags[i + 1: i + step] = 'I'
 
