@@ -49,7 +49,7 @@ class MoneyExtractor(object):
         #      absence(MONEY_SUFFIX_STRING)])
 
         # self.money_string_pattern = re.compile(single_money_pattern)
-
+        self.qian_wan_yi_yuan_exception_check_pattern = re.compile(r'[k千仟w万萬亿]元[0-9]')
         self.money_num_string_pattern = re.compile(MONEY_NUM_STRING)
         self.money_string_pattern = re.compile(MONEY_CHAR_STRING)
 
@@ -109,14 +109,20 @@ class MoneyExtractor(object):
         if money_string[0] in '，,' or money_string[-1] in '，,':
             return False
 
-        # 字符串为纯数值，则剔除，如 “12”
+        # rule 2: 字符串为纯数值，则剔除，如 “12”
         if self.money_num_string_pattern.search(money_string):
+            return False
+
+        # rule 3: [千万亿]元 后一般不再添加数字再构成角分等信息，如：`359万元2`
+        matched_res = self.qian_wan_yi_yuan_exception_check_pattern.search(money_string)
+        if matched_res:
             return False
 
         return True
 
     def _cleaning(self, money_string):
         # 对字符串进行清洗
+        # 清洗空格字符串
         money_string = money_string.replace(' ', '')
 
         return money_string
@@ -130,10 +136,11 @@ class MoneyExtractor(object):
                     offset = [j, length - i + j + 1]
                     sub_string = money_candidate[j: offset[1]]
 
-                    # 对字符串进行清洗和过滤
+                    # 对字符串进行过滤
                     if not self._filter(sub_string):
                         continue
 
+                    # 对字符串进行清洗
                     clean_sub_string = self._cleaning(sub_string)
 
                     result = self.parse_money(clean_sub_string)

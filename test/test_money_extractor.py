@@ -25,6 +25,8 @@ class TestMoneyExtractor(unittest.TestCase):
              [{'text': '10k~15k', 'offset': [7, 14], 'type': 'money'}]],
             ['基站总数是10000，其中有9000台是huawei 建的，还有一台是实验品。',
              []],
+            ['2.2本计划投资3541.07万元2.3本项目……',
+             [{'text': '3541.07万元', 'offset': [8, 17], 'type': 'money'}]]
         ]
 
         for item in money_string_list:
