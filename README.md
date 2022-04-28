@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://pepy.tech/badge/jionlp/month" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.3.57-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.3.58-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -273,7 +273,7 @@ $ jio_help
 
 - NLP 预处理与解析至关重要，且非常耗时。本 lib 能快速辅助完成各种琐碎的预处理、解析操作，加速开发进度，把有限的精力用在思考而非 code 上。
 - 如有功能建议、bug，可通过 issue 按模板提出。
-- 如感兴趣合作完善本工具包，请参考 **TODO.txt** 文件进行功能添加。
+- 非常欢迎各位 NLP 开发者和研究者 **合作完善本工具包，添加新功能** 。
 
 ### 做 NLP不易，欢迎加入自然语言处理 Wechat 交流群
 ### 如以下码失效，请先添加 vx：dongrixinyu89
