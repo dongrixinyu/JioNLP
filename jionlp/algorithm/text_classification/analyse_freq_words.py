@@ -7,7 +7,6 @@
 # description: Preprocessing tool for Chinese NLP
 
 
-import os
 import pdb
 import copy
 import collections
@@ -39,13 +38,14 @@ def analyse_freq_words(dataset_x: List[List[str]], dataset_y: List[Any],
             和概率。
 
     Examples:
-        >>> import jieba
+        >>> import jiojio
         >>> import jionlp as jio
         >>> dataset_x = ['房间比较差，挺糟糕的，尤其是洗手间。',
                          '真糟糕！连热水都没有。',
                          '价格比比较不错的酒店。']
         >>> dataset_y = ['负', '负', '正']
-        >>> dataset_x = [jieba.lcut(text) for text in dataset_x]  # 采用任何分词器处理均可
+        >>> jiojio.init()
+        >>> dataset_x = [jiojio.cut(text) for text in dataset_x]  # 采用任何分词器处理均可
         >>> dataset_x = [jio.remove_stopwords(text_segs) for text in dataset_x]  # 去停用词
         >>> result = jio.text_classification.analyse_freq_words(
             ... dataset_x, dataset_y, min_word_freq=1)

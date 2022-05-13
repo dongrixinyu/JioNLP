@@ -163,7 +163,8 @@ def char2word(char_entity_list, word_token_list, verbose=False):
     """ 将字 token 的 ner 训练数据组织成词 token，数据结构不变。针对单条数据处理，
     不支持批量处理。
     根据经验，jieba 分词的分词错误造成实体被丢弃，其错误率在 4.62%，
-    而 pkuseg 分词器造成的错误率在 3.44%。
+    而 pkuseg 分词器造成的错误率在 3.44%，
+    jiojio 分词器的错误率在 2.72%。
 
     Args:
         char_entity_list: 以字 token 为基准对应的实体列表

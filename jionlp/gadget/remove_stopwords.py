@@ -9,7 +9,7 @@
 
 """
 TODO:
-    1、常用的分词器有 jieba、清华 thuseg、北大 pkuseg 等。
+    1、常用的分词器有 jiojo、jieba、北大 pkuseg、LAC 等。
     2、在时间的过滤中，主要使用规则过滤，jieba 常常将 “2017年” 拆分开，
        而北大分词器则作为整体返回，因此，需要在后续中，增加对“2017”, “年”
        类时间的过滤。
@@ -49,7 +49,6 @@ TODO:
 """
 import os
 import re
-import pdb
 import typing
 
 from jionlp.dictionary.dictionary_loader import stopwords_loader, world_location_loader, china_location_loader, negative_words_loader
@@ -58,7 +57,7 @@ from jionlp.rule.rule_pattern import TIME_PATTERN, NUMBER_PATTERN, CHINESE_CHAR_
 
 class RemoveStopwords(object):
     """ 给出分词之后的结果，做判定，其中分词器使用用户自定义的，推荐的有
-    jieba 分词器、清华分词器 thuseg、北大分词器 pkuseg。
+    jiojio 分词器、jieba、pkuseg、LAC 等。
     该方法处理速度较快，但由于大量的中文词汇包含多义，如“本”字包含名词、
     代词、连词等词性，因此准确性较差。是词性标注的简易替代品。
 

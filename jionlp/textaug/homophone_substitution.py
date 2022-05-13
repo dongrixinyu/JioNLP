@@ -8,8 +8,8 @@
 
 
 import numpy as np
-import jieba
 
+import jiojio
 from jionlp.gadget.pinyin import Pinyin
 from jionlp.dictionary.dictionary_loader import word_distribution_loader
 
@@ -55,8 +55,7 @@ class HomophoneSubstitution(object):
         self.word_pinyin_dict = None
 
     def _prepare(self, homo_ratio=0.02, seed=1):
-        self.jieba_obj = jieba
-        self.jieba_obj.initialize()
+        jiojio.init()
 
         self.random = np.random
         self.seed = seed
@@ -107,7 +106,7 @@ class HomophoneSubstitution(object):
                 or self.seed != seed:
             self._prepare(homo_ratio=homo_ratio, seed=seed)
 
-        segs = self.jieba_obj.lcut(text)
+        segs = jiojio.cut(text)
         pinyin_segs = [self.pinyin(seg, formater='detail') for seg in segs]
 
         augmentation_text_list = list()

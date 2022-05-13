@@ -481,7 +481,7 @@ def telecom_operator_loader():
 
 
 def word_distribution_loader():
-    """ 加载 jieba 分词后的词汇结果在中文文本中的词频分布，返回每个词在语料中的出现总次数、概率、
+    """ 加载 jiojio 分词后的词汇结果在中文文本中的词频分布，返回每个词在语料中的出现总次数、概率、
     概率的 -log10 值。
 
     Returns:
