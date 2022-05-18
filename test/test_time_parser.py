@@ -1069,6 +1069,20 @@ class TestTimeParser(unittest.TestCase):
             print(item[0])
             self.assertEqual(time_res, item[3])
 
+        # 农历时间的解析与参数控制
+        time_string_list = [
+            # 标准数字 年、月、日、时、分、秒
+            ['四月十三', _ts_1,
+             {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-04-13 00:00:00', '2021-04-13 23:59:59']}],
+        ]
+
+        for item in time_string_list:
+            time_res = jio.parse_time(item[0], lunar_date=False, time_base=item[1], period_results_num=item[2])
+            print(item[0])
+            print(item[2])
+            print(time_res)
+            self.assertEqual(time_res, item[2])
+
 
 if __name__ == '__main__':
     suite = unittest.TestSuite()
