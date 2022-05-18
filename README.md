@@ -89,6 +89,7 @@ res = jio.parse_time('今年9月', time_base={'year': 2021})
 res = jio.parse_time('零三年元宵节晚上8点半', time_base=time.time())
 res = jio.parse_time('一万个小时')
 res = jio.parse_time('100天之后', time.time())
+res = jio.parse_time('四月十三', lunar_date=False)
 res = jio.parse_time('每周五下午4点', time.time(), period_results_num=2)
 print(res)
 
@@ -97,6 +98,7 @@ print(res)
 # {'type': 'time_delta', 'definition': 'accurate', 'time': {'hour': 10000.0}}
 # {'type': 'time_span', 'definition': 'blur', 'time': ['2021-10-22 00:00:00', 'inf']}
 # {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'day': 7}, 
+# {'type': 'time_point', 'definition': 'accurate', 'time': ['2022-04-13 00:00:00', '2022-04-13 23:59:59']}
 #  'point': {'time': [['2021-07-16 16:00:00', '2021-07-16 16:59:59'],
 #                     ['2021-07-23 16:00:00', '2021-07-23 16:59:59']], 'string': '周五下午4点'}}}
 

@@ -796,7 +796,7 @@ class TimeParser(object):
 
     def __call__(self, time_string, time_base=time.time(), time_type=None,
                  ret_type='str', strict=False, virtual_time=False, ret_future=False,
-                 period_results_num=None):
+                 period_results_num=None, lunar_date=True):
         """ 解析时间字符串。 """
         if self.future_time is None:
             self._preprocess()
@@ -804,6 +804,7 @@ class TimeParser(object):
         self.string_strict = strict  # 用于控制字符串中的 杂串不被包含
         self.virtual_time = virtual_time  # 指示虚拟时间，若有些模糊字符串可解析为虚拟时间，则按虚拟时间解析，如“前两天”
         self.ret_future = ret_future
+        self.lunar_date = lunar_date
 
         # 清洗字符串
         time_string = TimeParser._cleansing(time_string)
@@ -4000,9 +4001,12 @@ class TimeParser(object):
 
         # 对农历日期的补全
         lunar_time_handler = TimeParser.time_completion(lunar_time_handler, self.time_base_handler)
-
-        first_time_handler, second_time_handler = self._convert_lunar2solar(
-            lunar_time_handler, leap_month=leap_month)
+        
+        if self.lunar_date:
+            first_time_handler, second_time_handler = self._convert_lunar2solar(
+                lunar_time_handler, leap_month=leap_month)
+        else:
+            first_time_handler, second_time_handler = lunar_time_handler, lunar_time_handler
 
         return first_time_handler, second_time_handler, 'time_point', 'accurate'
 
