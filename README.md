@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://pepy.tech/badge/jionlp/month" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.4.1-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.4.2-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -29,30 +29,27 @@
 #### 功能主要包括：文本清洗，删除HTML标签、删除异常字符、删除冗余字符，转换全角字母、数字、空格为半角，抽取及删除E-mail及域名、抽取及删除（手机号、座机号）电话号码、抽取及删除QQ号、抽取及删除括号内容、抽取及删除身份证号、抽取及删除IP地址、抽取及删除URL超链接、抽取及删除货币金额与单位，金额数字转大写汉字，时间语义解析，解析身份证号信息、解析手机号码归属地、解析座机区号归属地、解析手机号码运营商，按行快速读写文件，（多功能）停用词过滤，（优化的）分句，地址解析，新闻地域识别，繁简体转换，汉字转拼音，汉字偏旁、字形、四角编码、五笔编码拆解，基于词典的情感分析，色情数据过滤，反动数据过滤，关键短语抽取，抽取式文本摘要，成语接龙，成语词典、歇后语词典、新华字典、新华词典、停用词典、中国地名词典、中国县级地名变更词典、世界地名词典，时间实体抽取，基于词典的NER，NER的字、词级别转换，NER的entity和tag格式转换，NER模型的预测阶段加速并行工具集，NER标注和模型预测的结果差异对比，NER标注数据集分割与统计，NER实体收集、文本分类标注数据集的分割与统计、回译数据增强、相邻近汉字换位数据增强、同音词替换数据增强、随机增删字符数据增强、实体替换数据增强、公历转农历日期、农历转公历日期
 
 
-#### Updata 2022-03-24
-## 新增 [**分词数据矫正-标准词典**](../../wiki/分词-说明文档#user-content-分词数据矫正-标准词典) 
+#### Updata 2022-05-26
+## 更新 [**关键短语抽取**](../../wiki/Gadget-说明文档#user-content-关键短语抽取) 
 
-#### jio.cws.CWSDCWithStandardWords 使用标准词典对分词标注数据进行矫正和修复
+#### jio.keyphrase.extract_keyphrase 对一篇文本关键短语抽取
 ```
 >>> import jionlp as jio
->>> sample_list = [['学习', '区', '块链', '。'], ['没有', '条', '不紊', '地', '。']]
->>> words = ['区块链', '有条不紊']
+>>> text = '浑水创始人：七月开始调查贝壳，因为“好得难以置信” 2021年12月16日，做空机构浑水在社交媒体上公开表示，正在做空美股上市公司贝壳...'
 
->>> dc_with_standard_words = jio.cws.CWSDCWithStandardWords(words)
->>> for sample in sample_list:
->>> ... res = dc_with_standard_words(sample, verbose=True)
->>> ... print(res)
+>>> keyphrases = jio.keyphrase.extract_keyphrase(text)
+>>> print(keyphrases)
+>>> print(jio.keyphrase.extract_keyphrase.__doc__)
 
-# ['学习', '区块链', '。']
-# ['没', '有条不紊', '地', '。']
+# ['浑水创始人', '开始调查贝壳', '做空机构浑水', '美股上市公司贝壳', '美国证监会']
+
 ```
-
 
 
 #### Update 2021-10-25
 ## 更新 [货币金额解析](../../wiki/正则抽取与解析-说明文档#user-content-货币金额解析)
 
-#### jio.parse_money 给定货币金额字符串，解析其标准金额、货币类型、精确度。
+#### jio.parse_money 给定货币金额字符串，解析其标准金额、货币类型、精确度。工具的分词工具全面迁移至 jiojio
 
 ```python
 import jionlp as jio
@@ -284,5 +281,5 @@ $ jio_help
 ### 或者扫码请作者喝杯咖啡 (●'◡'●)，谢谢啦 ~~
 - 感谢[致谢](../../wiki/致谢篇)名单中赞助的小伙伴们，你们的打赏让我更有动力
 
-![image](../../blob/master/image/payment_code.png)
+![image](../../blob/master/image/payment_code.jpg)
 

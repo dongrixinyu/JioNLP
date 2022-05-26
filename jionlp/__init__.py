@@ -8,10 +8,11 @@
 # description: Preprocessing & Parsing tool for Chinese NLP
 """
 
-__version__ = '1.4.1'
+__version__ = '1.4.2'
 
 
 import os
+import jiojio
 
 from jionlp.util.logger import set_logger
 from jionlp.util.zip_file import unzip_file, UNZIP_FILE_LIST

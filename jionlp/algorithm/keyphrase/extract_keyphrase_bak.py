@@ -22,15 +22,16 @@ DESCRIPTION:
 
 import os
 import re
-import pdb
 import json
 import numpy as np
+try:
+    import spacy_pkuseg as pkuseg
+except:
+    import pkuseg
 
 import traceback
-from collections import Counter
 
 from jionlp import logging
-from jionlp import jiojio
 from jionlp.rule import clean_text
 from jionlp.gadget import split_sentence
 from jionlp.dictionary import stopwords_loader
@@ -41,11 +42,21 @@ from jionlp.util import pkuseg_postag_loader
 DIR_PATH = os.path.dirname(os.path.abspath(__file__))
 
 
+class Chunking(object):
+    """ 根据词性和规则，从文本中找出名词类短语
+    """
+    def __init__(self):
+        pass
+
+    def __call__(self, text):
+        pass
+
+
 class ChineseKeyPhrasesExtractor(object):
     """ 关键短语提取在生成词云、提供摘要阅读、关键信息检索等任务中有重要作用，
     来作为文本的关键词。
 
-    原理简述：在 tfidf 方法提取的碎片化的关键词（默认使用 jiojio 的分词工具）基础上，
+    原理简述：在 tfidf 方法提取的碎片化的关键词（默认使用 pkuseg 的分词工具）基础上，
     将在文本中相邻的关键词合并，并根据权重进行调整，同时合并较为相似的短语，并结合
     LDA 模型，寻找突出主题的词汇，增加权重，组合成结果进行返回。
 
@@ -65,8 +76,7 @@ class ChineseKeyPhrasesExtractor(object):
         without_person_name: (bool) 决定是否剔除短语中的人名，默认为 False
         without_location_name: (bool) 决定是否剔除短语中的地名，默认为 False
         remove_phrases_list: (list) 将某些不想要的短语剔除，使其不出现在最终结果中
-        remove_words_list: (list|set) 将某些不想要的词剔除，使包含该词的短语不出现在最终结果中，
-            建议选择 set 数据结构，速度更快
+        remove_words_list: (list) 将某些不想要的词剔除，使包含该词的短语不出现在最终结果中
         specified_words: (dict) 行业名词:词频，若不为空，则仅返回包含该词的短语
         bias: (int|float) 若指定 specified_words，则可选择定义权重增加值
 
@@ -85,27 +95,24 @@ class ChineseKeyPhrasesExtractor(object):
         
     def _prepare(self):
         # 词性预处理
-        # 词性参考 jiojio.pos_types()
+        # 词性参考 https://github.com/lancopku/pkuseg-python/blob/master/tags.txt
+        # jio.util.pkuseg_postag_loader()
         self.pos_name = set(pkuseg_postag_loader().keys())
-        # self.pos_name = set(sorted(list(jiojio.pos_types()['model_type'].keys())))
-        self.pos_name = set(['a', 'ad', 'an', 'c', 'd', 'f', 'm', 'n', 'nr', 'nr1', 'nrf', 'ns', 'nt',
-                             'nz', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'vd', 'vi', 'w', 'wx', 'x'])
         self.pos_exception = set(['u', 'p', 'c', 'y', 'e', 'o', 'w'])
         self.loose_pos_name = self.pos_name - self.pos_exception
-        self.strict_pos_name = ['a', 'n', 'nr', 'ns', 'nt', 'nx', 'nz',
+        self.strict_pos_name = ['a', 'n', 'j', 'nr', 'ns', 'nt', 'nx', 'nz', 
                                 'ad', 'an', 'vn', 'vd', 'vx']
-        # 各类词性由 jiojio 转至 pkuseg 的映射
-        self.trans_map = {'nr1': 'nr', 'nrf': 'nr', 'vi': 'v', 'wx': 'w', 'x': 'nz'}
 
         # 去除冗余短语的规则
         self.redundant_strict_pattern = re.compile('[\*\|`\;:丨－\<\>]')  # 有一个字符即抛弃
         self.redundant_loose_pattern = re.compile('[/\d\.\-:=a-z+,%]+')  # 全部是该字符即抛弃
+        self.extra_date_ptn = re.compile('\d{1,2}[月|日]')
         
         # 加载 idf，计算其 oov 均值
         self.idf_dict = idf_loader()
         self.median_idf = sorted(self.idf_dict.values())[len(self.idf_dict) // 2]
-        jiojio.init(pos_rule=True, pos=True)
-
+        self.seg = pkuseg.pkuseg(postag=True)  # 北大分词器
+        
         # 短语长度权重字典，调整绝大多数的短语要位于 2~6 个词之间
         # 根据人工抽取的关键短语结果，短语词长有一个泊松分布，而根据 idf 和 lda 概率的结果，也有一个
         # 分布，两者之间存在偏差，因此，直接对短语长度分布采用权重进行调节，使抽取分布逼近人工的分布。
@@ -146,7 +153,7 @@ class ChineseKeyPhrasesExtractor(object):
         self.topic_num = len(self.word_topic_weight)
         
         self._topic_prominence()  # 预计算主题突出度
-
+    
     def __call__(self, text, top_k=5, with_weight=False,
                  func_word_num=1, stop_word_num=0, 
                  max_phrase_len=25, min_phrase_len=1,
@@ -158,215 +165,228 @@ class ChineseKeyPhrasesExtractor(object):
                  remove_phrases_list=None,
                  remove_words_list=None,
                  specified_words=dict(), bias=None):
+        try:
+            # 初始化加载
+            if self.unk_topic_prominence_value == 0.:
+                self._prepare()
+                
+            # 配置参数
+            if without_location_name:
+                if 'ns' in self.strict_pos_name:
+                    self.strict_pos_name.remove('ns')
+                if 'ns' in self.pos_name:
+                    self.pos_name.remove('ns')
+            else:
+                if 'ns' not in self.strict_pos_name:
+                    self.strict_pos_name.append('ns')
+                if 'ns' not in self.pos_name:
+                    self.pos_name.add('ns')
 
-        # 初始化加载
-        if self.unk_topic_prominence_value == 0.:
-            self._prepare()
+            if without_person_name:
+                if 'nr' in self.strict_pos_name:
+                    self.strict_pos_name.remove('nr')
+                if 'nr' in self.pos_name:
+                    self.pos_name.remove('nr')
+            else:
+                if 'nr' not in self.strict_pos_name:
+                    self.strict_pos_name.append('nr')
+                if 'nr' not in self.pos_name:
+                    self.pos_name.add('nr')
 
-        # 配置参数
-        if without_location_name:
-            if 'ns' in self.strict_pos_name:
-                self.strict_pos_name.remove('ns')
-            if 'ns' in self.pos_name:
-                self.pos_name.remove('ns')
-        else:
-            if 'ns' not in self.strict_pos_name:
-                self.strict_pos_name.append('ns')
-            if 'ns' not in self.pos_name:
-                self.pos_name.add('ns')
+            # step0: 清洗文本，去除杂质
+            text = clean_text(text)
 
-        if without_person_name:
-            if 'nr' in self.strict_pos_name:
-                self.strict_pos_name.remove('nr')
-            if 'nr' in self.pos_name:
-                self.pos_name.remove('nr')
-        else:
-            if 'nr' not in self.strict_pos_name:
-                self.strict_pos_name.append('nr')
-            if 'nr' not in self.pos_name:
-                self.pos_name.add('nr')
+            # step1: 分句，使用北大的分词器 pkuseg 做分词和词性标注
+            sentences_list = split_sentence(text, criterion='fine')
+            
+            sentences_segs_list = list()
+            counter_segs_list = list()
+            for sen in sentences_list:
+                sen_segs = self.seg.cut(sen)
+                # print('\t'.join([item[0] + '_' + item[1] for item in sen_segs]))
+                sentences_segs_list.append(sen_segs)
+                counter_segs_list.extend(sen_segs)
 
-        # step0: 清洗文本，去除杂质
-        text = clean_text(text)
-
-        # step1: 分句，使用 jiojio 做分词和词性标注
-        sentences_list = split_sentence(text, criterion='fine')
-
-        sentences_segs_list = list()
-        counter_segs_list = list()
-        for sen in sentences_list:
-            sen_segs_jio = jiojio.cut(sen)
-
-            sen_segs = [(item[0], self.trans_map[item[1]])
-                        if item[1] in self.trans_map else item
-                        for item in sen_segs_jio]
-            sentences_segs_list.append(sen_segs)
-            counter_segs_list.extend(sen_segs)
-
-        # step2: 计算词频
-        total_length = len(counter_segs_list)
-        freq_counter = Counter([item[0] for item in counter_segs_list])
-        freq_dict = dict(freq_counter.most_common())
-
-        # step3: 计算每一个词的权重，tfidf 方式
-        sentences_segs_weights_list = list()
-        for sen, sen_segs in zip(sentences_list, sentences_segs_list):
-            sen_segs_weights = list()
-            for word_pos in sen_segs:
+            # step2: 计算词频
+            total_length = len(counter_segs_list)
+            freq_dict = dict()
+            for word_pos in counter_segs_list:
                 word, pos = word_pos
-                if pos in self.pos_name:  # 虚词权重为 0
-                    if word in self.stop_words:  # 停用词权重为 0
-                        weight = 0.0
-                    else:
-                        if word in specified_words:  # 为词计算权重
-                            if bias is None:
-                                weight = freq_dict[word] * self.idf_dict.get(
-                                    word, self.median_idf) / total_length + 1 / specified_words[word]
-                            else:
-                                weight = freq_dict[word] * self.idf_dict.get(
-                                    word, self.median_idf) / total_length + bias
-                        else:
-                            weight = freq_dict[word] * self.idf_dict.get(
-                                word, self.median_idf) / total_length
+                if word in freq_dict:
+                    freq_dict[word][1] += 1
                 else:
-                    weight = 0.0
-                sen_segs_weights.append(weight)
-            sentences_segs_weights_list.append(sen_segs_weights)
+                    freq_dict.update({word: [pos, 1]})
 
-        # step4: 通过一定规则，找到候选短语集合，以及其权重
-        candidate_phrases_dict = dict()
-        for sen_segs, sen_segs_weights in zip(sentences_segs_list, sentences_segs_weights_list):
-            sen_length = len(sen_segs)
-
-            for n in range(1, min(13, sen_length + 1)):  # n-grams
-                for i in range(0, sen_length - n + 1):
-
-                    candidate_phrase = sen_segs[i: i + n]
-                    # print(len(candidate_phrase), candidate_phrase)
-
-                    # 找短语过程中需要进行过滤，分为严格、宽松规则
-                    if not strict_pos:
-                        rule_flag = self._loose_candidate_phrases_rules(
-                            candidate_phrase, func_word_num=func_word_num,
-                            max_phrase_len=max_phrase_len,
-                            min_phrase_len=min_phrase_len,
-                            stop_word_num=stop_word_num)
-                    else:
-                        rule_flag = self._strict_candidate_phrases_rules(
-                            candidate_phrase, max_phrase_len=max_phrase_len,
-                            min_phrase_len=min_phrase_len)
-                    if not rule_flag:
-                        continue
-
-                    # 由于 pkuseg 的缺陷，会把一些杂质符号识别为 n、v、adj，故须删除
-                    '''
-                    redundant_flag = False
-                    for item in candidate_phrase:
-                        matched = self.redundant_strict_pattern.search(item[0])
-                        if matched is not None:
-                            redundant_flag = True
-                            break
-                        matched = self.redundant_loose_pattern.search(item[0])
-
-                        if matched is not None and matched.group() == item[0]:
-                            redundant_flag = True
-                            break
-                    if redundant_flag:
-                        continue
-                    # '''
-                    # 如果短语中包含了某些不想要的词，则跳过
-                    if remove_words_list is not None:
-                        unwanted_phrase_flag = False
-                        for item in candidate_phrase:
-                            if item[0] in remove_words_list:
-                                unwanted_phrase_flag = True
-                                break
-                        if unwanted_phrase_flag:
-                            continue
-
-                    # 如果短语中没有一个 token 存在于指定词汇中，则跳过
-                    if specified_words != dict():
-                        with_specified_words_flag = False
-                        for item in candidate_phrase:
-                            if item[0] in specified_words:
-                                with_specified_words_flag = True
-                                break
-                        if not with_specified_words_flag:
-                            continue
-
-                    # 条件六：短语的权重需要乘上'词性权重'
-                    if allow_pos_weight:
-                        if len(candidate_phrase) == 1:
-                            start_end_pos = candidate_phrase[0][1]
+            # step3: 计算每一个词的权重，tfidf 方式
+            sentences_segs_weights_list = list()
+            for sen, sen_segs in zip(sentences_list, sentences_segs_list):
+                sen_segs_weights = list()
+                for word_pos in sen_segs:
+                    word, pos = word_pos
+                    if pos in self.pos_name:  # 虚词权重为 0
+                        if word in self.stop_words:  # 停用词权重为 0
+                            weight = 0.0
                         else:
-                            start_end_pos = candidate_phrase[0][1] + '|' + candidate_phrase[-1][1]
-                        pos_weight = self.pos_combine_weights_dict.get(start_end_pos, 1.0)
+                            if word in specified_words:  # 为词计算权重
+                                if bias is None:
+                                    weight = freq_dict[word][1] * self.idf_dict.get(
+                                        word, self.median_idf) / total_length + 1 / specified_words[word]
+                                else:
+                                    weight = freq_dict[word][1] * self.idf_dict.get(
+                                        word, self.median_idf) / total_length + bias
+                            else:
+                                weight = freq_dict[word][1] * self.idf_dict.get(
+                                    word, self.median_idf) / total_length
                     else:
-                        pos_weight = 1.0
+                        weight = 0.0
+                    sen_segs_weights.append(weight)
+                sentences_segs_weights_list.append(sen_segs_weights)
 
-                    # 条件七：短语的权重需要乘上 `长度权重`
-                    if allow_length_weight:
-                        length_weight = self.phrases_length_control_dict.get(
-                            len(sen_segs_weights[i: i + n]),
-                            self.phrases_length_control_none)
-                    else:
-                        length_weight = 1.0
+            # step4: 通过一定规则，找到候选短语集合，以及其权重
+            candidate_phrases_dict = dict()
+            for sen_segs, sen_segs_weights in zip(sentences_segs_list, sentences_segs_weights_list):
+                sen_length = len(sen_segs)
 
-                    # 条件八：短语的权重需要加上 `主题突出度权重`
-                    if allow_topic_weight:
-                        topic_weight_list = [self.topic_prominence_dict.get(item[0], self.unk_topic_prominence_value) for item in candidate_phrase]
-                        topic_weight = sum(topic_weight_list) / len(candidate_phrase)
-                    else:
-                        topic_weight = 0.0
+                for n in range(1, sen_length + 1):  # n-grams
+                    for i in range(0, sen_length - n + 1):
+                        candidate_phrase = sen_segs[i: i + n]
 
-                    candidate_phrase_weight = sum(sen_segs_weights[i: i + n]) * length_weight * pos_weight + \
-                        topic_weight * topic_theta
-
-                    candidate_phrase_string = ''.join([tup[0] for tup in candidate_phrase])
-                    if remove_phrases_list is not None:
-                        if candidate_phrase_string in remove_phrases_list:
+                        # 由于 pkuseg 的缺陷，日期被识别为 n 而非 t，故删除日期
+                        res = self.extra_date_ptn.match(candidate_phrase[-1][0])
+                        if res is not None:
                             continue
 
-                    if candidate_phrase_string not in candidate_phrases_dict:
-                        candidate_phrases_dict.update(
-                            {candidate_phrase_string: [candidate_phrase,
-                                                       candidate_phrase_weight]})
+                        # 找短语过程中需要进行过滤，分为严格、宽松规则
+                        if not strict_pos:  
+                            rule_flag = self._loose_candidate_phrases_rules(
+                                candidate_phrase, func_word_num=func_word_num,
+                                max_phrase_len=max_phrase_len,
+                                min_phrase_len=min_phrase_len,
+                                stop_word_num=stop_word_num)
+                        else:
+                            rule_flag = self._strict_candidate_phrases_rules(
+                                candidate_phrase, max_phrase_len=max_phrase_len,
+                                min_phrase_len=min_phrase_len)
+                        if not rule_flag:
+                            continue
 
-        # step5: 将 overlapping 过量的短语进行去重过滤
-        # 尝试了依据权重高低，将较短的短语替代重复了的较长的短语，但效果不好，故删去
-        candidate_phrases_list = sorted(
-            candidate_phrases_dict.items(),
-            key=lambda item: len(item[1][0]), reverse=True)
+                        # 由于 pkuseg 的缺陷，会把一些杂质符号识别为 n、v、adj，故须删除
+                        redundant_flag = False
+                        for item in candidate_phrase:
+                            matched = self.redundant_strict_pattern.search(item[0])
+                            if matched is not None:
+                                redundant_flag = True
+                                break
+                            matched = self.redundant_loose_pattern.search(item[0])
 
-        de_duplication_candidate_phrases_list = list()
-        for item in candidate_phrases_list:
-            sim_ratio = self._mmr_similarity(
-                item, de_duplication_candidate_phrases_list)
-            if sim_ratio != 1:
-                item[1][1] = (1 - sim_ratio) * item[1][1]
-                de_duplication_candidate_phrases_list.append(item)
+                            if matched is not None and matched.group() == item[0]:
+                                redundant_flag = True
+                                break
+                        if redundant_flag:
+                            continue
+                            
+                        # 如果短语中包含了某些不想要的词，则跳过
+                        if remove_words_list is not None:
+                            unwanted_phrase_flag = False
+                            for item in candidate_phrase:
+                                if item[0] in remove_words_list:
+                                    unwanted_phrase_flag = True
+                                    break
+                            if unwanted_phrase_flag:
+                                continue
 
-        # step6: 按重要程度进行排序，选取 top_k 个
-        candidate_phrases_list = sorted(
-            de_duplication_candidate_phrases_list,
-            key=lambda item: item[1][1], reverse=True)
+                        # 如果短语中没有一个 token 存在于指定词汇中，则跳过
+                        if specified_words != dict():
+                            with_specified_words_flag = False
+                            for item in candidate_phrase:
+                                if item[0] in specified_words:
+                                    with_specified_words_flag = True
+                                    break
+                            if not with_specified_words_flag:
+                                continue
 
-        if with_weight:
-            if top_k != -1:
-                final_res = [(item[0], item[1][1]) for item in candidate_phrases_list[:top_k]
-                             if item[1][1] > 0]
+                        # 条件六：短语的权重需要乘上'词性权重'
+                        if allow_pos_weight:
+                            start_end_pos = None
+                            if len(candidate_phrase) == 1:
+                                start_end_pos = candidate_phrase[0][1]
+                            elif len(candidate_phrase) >= 2:
+                                start_end_pos = candidate_phrase[0][1] + '|' + candidate_phrase[-1][1]
+                            pos_weight = self.pos_combine_weights_dict.get(start_end_pos, 1.0)
+                        else:
+                            pos_weight = 1.0
+
+                        # 条件七：短语的权重需要乘上 '长度权重'
+                        if allow_length_weight:
+                            length_weight = self.phrases_length_control_dict.get(
+                                len(sen_segs_weights[i: i + n]), 
+                                self.phrases_length_control_none)
+                        else:
+                            length_weight = 1.0
+
+                        # 条件八：短语的权重需要加上`主题突出度权重`
+                        if allow_topic_weight:
+                            topic_weight = 0.0
+                            for item in candidate_phrase:
+                                topic_weight += self.topic_prominence_dict.get(
+                                    item[0], self.unk_topic_prominence_value)
+                            topic_weight = topic_weight / len(candidate_phrase)
+                        else:
+                            topic_weight = 0.0
+
+                        candidate_phrase_weight = sum(sen_segs_weights[i: i + n])
+                        candidate_phrase_weight *= length_weight * pos_weight
+                        candidate_phrase_weight += topic_weight * topic_theta
+
+                        candidate_phrase_string = ''.join([tup[0] for tup in candidate_phrase])
+                        if remove_phrases_list is not None:
+                            if candidate_phrase_string in remove_phrases_list:
+                                continue
+                        if candidate_phrase_string not in candidate_phrases_dict:
+                            candidate_phrases_dict.update(
+                                {candidate_phrase_string: [candidate_phrase, 
+                                                           candidate_phrase_weight]})
+
+            # step5: 将 overlapping 过量的短语进行去重过滤
+            # 尝试了依据权重高低，将较短的短语替代重复了的较长的短语，但效果不好，故删去
+            candidate_phrases_list = sorted(
+                candidate_phrases_dict.items(), 
+                key=lambda item: len(item[1][0]), reverse=True)
+
+            de_duplication_candidate_phrases_list = list()
+            for item in candidate_phrases_list:
+                sim_ratio = self._mmr_similarity(
+                    item, de_duplication_candidate_phrases_list)
+                if sim_ratio != 1:
+                    item[1][1] = (1 - sim_ratio) * item[1][1]
+                    de_duplication_candidate_phrases_list.append(item)
+
+            # step6: 按重要程度进行排序，选取 top_k 个
+            candidate_phrases_list = sorted(
+                de_duplication_candidate_phrases_list, 
+                key=lambda item: item[1][1], reverse=True)
+            for candi in candidate_phrases_list[:top_k]:
+                print(candi)
+
+            if with_weight:
+                if top_k != -1:
+                    final_res = [(item[0], item[1][1]) for item in candidate_phrases_list[:top_k]
+                                 if item[1][1] > 0]
+                else:
+                    final_res = [(item[0], item[1][1]) for item in candidate_phrases_list
+                                 if item[1][1] > 0]
             else:
-                final_res = [(item[0], item[1][1]) for item in candidate_phrases_list
-                             if item[1][1] > 0]
-        else:
-            if top_k != -1:
-                final_res = [item[0] for item in candidate_phrases_list[:top_k]
-                             if item[1][1] > 0]
-            else:
-                final_res = [item[0] for item in candidate_phrases_list
-                             if item[1][1] > 0]
+                if top_k != -1:
+                    final_res = [item[0] for item in candidate_phrases_list[:top_k]
+                                 if item[1][1] > 0]
+                else:
+                    final_res = [item[0] for item in candidate_phrases_list
+                                 if item[1][1] > 0]
+            return final_res
 
-        return final_res
+        except Exception as e:
+            logging.error('the text is illegal. \n{}'.format(traceback.format_exc()))
+            return list()
 
     @staticmethod
     def _mmr_similarity(candidate_item,
@@ -380,7 +400,6 @@ class ChineseKeyPhrasesExtractor(object):
             common_part = candidate_info & no_info
             if sim_ratio < len(common_part) / len(candidate_info):
                 sim_ratio = len(common_part) / len(candidate_info)
-
         return sim_ratio
         
     def _loose_candidate_phrases_rules(
