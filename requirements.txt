@@ -2,4 +2,3 @@ numpy
 jiojio
 requests
 zipfile36
-spacy-pkuseg
