@@ -83,6 +83,7 @@ history = """
 │   | 2022-03-07 | update time period parser                           |   │
 │   | 2022-03-24 | add cws labeled sample correction                   |   │
 │   | 2022-04-10 | update money extractor                              |   │
+│   | 2022-05-26 | transfer from pkuseg to jiojio                      |   │
 │                                                                          │
 ╰──────────────────────────────────────────────────────────────────────────╯
 """
@@ -95,5 +96,3 @@ from jionlp.gadget import *
 from jionlp.textaug import *
 from jionlp.algorithm import *
 
-# from jionlp.util.fast_loader import FastLoader
-# rule = FastLoader('rule', globals(), 'jionlp.rule')

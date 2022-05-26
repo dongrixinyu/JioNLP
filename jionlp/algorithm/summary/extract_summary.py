@@ -11,6 +11,8 @@ import os
 import json
 import numpy as np
 
+from collections import Counter
+
 from jionlp import jiojio
 from jionlp import logging
 from jionlp.rule import clean_text
@@ -127,13 +129,8 @@ class ChineseSummaryExtractor(object):
 
             # step 3: 计算词频
             total_length = len(counter_segs_list)
-            freq_dict = dict()
-            for word_pos in counter_segs_list:
-                word, pos = word_pos
-                if word in freq_dict:
-                    freq_dict[word][1] += 1
-                else:
-                    freq_dict.update({word: [pos, 1]})
+            freq_counter = Counter([item[0] for item in counter_segs_list])
+            freq_dict = dict(freq_counter.most_common())
 
             # step 4: 计算每一个词的权重
             for sen, sen_segs in sentences_segs_dict.items():
@@ -143,7 +140,7 @@ class ChineseSummaryExtractor(object):
                     if pos not in self.pos_name and word in self.stop_words:  # 虚词权重为 0
                         weight = 0.0
                     else:
-                        weight = freq_dict[word][1] * self.idf_dict.get(
+                        weight = freq_dict[word] * self.idf_dict.get(
                             word, self.median_idf) / total_length
                     sen_segs_weights.append(weight)
 
