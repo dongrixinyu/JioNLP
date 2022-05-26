@@ -7,7 +7,7 @@
     <a alt="License">
         <img src="https://img.shields.io/github/license/dongrixinyu/JioNLP?color=crimson" /></a>
     <a alt="Size">
-        <img src="https://img.shields.io/badge/size-20.1m-orange" /></a>
+        <img src="https://img.shields.io/badge/size-19.3m-orange" /></a>
     <a alt="Downloads">
         <img src="https://pepy.tech/badge/jionlp/month" /></a>
     <a alt="Version">
