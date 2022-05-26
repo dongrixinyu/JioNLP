@@ -11,7 +11,7 @@
 给定一篇中文文本，确定其归属地。主要应用在新闻领域，确定新闻的发生地
 注意事项：
     1、该方法主要应用于舆情分析与统计
-    2、该方法采用了分词器 jiojio，采用词性标注得到的地名 ns 进行统计计算
+    2、该方法采用了北大分词器 pkuseg，采用词性标注得到的地名 ns 进行统计计算
        因此，方法的计算效果和性能 90% 程度上受到分词器影响。
     3、该方法抽取结果中，排序靠后的地址可能存在错误，如，原文中出现“北京朝阳”，
        而结果中返回了
@@ -35,7 +35,11 @@
 import copy
 import collections
 
-from jionlp import jiojio
+try:
+    import spacy_pkuseg as pkuseg
+except:
+    import pkuseg
+
 from jionlp.dictionary.dictionary_loader import china_location_loader
 from jionlp.dictionary.dictionary_loader import world_location_loader
 
@@ -46,8 +50,8 @@ class LocationRecognizer(object):
     具体假设为，每一个句子仅识别一个地址，然后统计所有的结果
 
     计算方法：
-    1、对文本做分词与词性标注（默认使用分词工具 jiojio），找出其中地名词汇，统计词频；
-    2、对所有地名词汇进行扩充，如，将 “广州” 扩展成
+    1、对文本做分词与词性标注（默认使用北大工具 pkuseg），找出其中地名词汇，统计词频；
+    2、对所有地名词汇进行扩充，如，将“广州”扩展成
        {'province': '广东省', 'city': '广州市', 'county': None}；
     3、将存在上下级关系的地名进行合并，如“西藏”和“拉萨”，同属于一个地址，则进行合并，
        {'province': '西藏', 'city': '拉萨', 'county': None}；
@@ -104,12 +108,11 @@ class LocationRecognizer(object):
 
     """
     def __init__(self):
-        self.load_flag = None
+        self.pkuseg = None
         
     def _prepare(self):
-        jiojio.init(pos_rule=True, pos=True)
-        self.load_flag = True
-
+        self.pkuseg = pkuseg.pkuseg(postag=True)
+        
         china_loc = china_location_loader()
         world_loc = world_location_loader()
         self._mapping_china_location(china_loc)
@@ -377,12 +380,12 @@ class LocationRecognizer(object):
 
     def __call__(self, text, top_k='default'):
 
-        if self.load_flag is None:
+        if self.pkuseg is None:
             self._prepare()
         
         final_res = {'domestic': None, 'foreign': None, 'others': None}
         
-        text_pos_seg = jiojio.cut(text)
+        text_pos_seg = self.pkuseg.cut(text)
         text_location = [item[0] for item in text_pos_seg if item[1] == 'ns']
         if len(text_location) == 0:
             return {'domestic': None, 'foreign': None, 'others': None}

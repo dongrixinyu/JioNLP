@@ -10,8 +10,11 @@
 import os
 import json
 import numpy as np
+try:
+    import spacy_pkuseg as pkuseg
+except:
+    import pkuseg
 
-from jionlp import jiojio
 from jionlp import logging
 from jionlp.rule import clean_text
 from jionlp.rule import check_chinese_char
@@ -30,7 +33,7 @@ class ChineseSummaryExtractor(object):
 
     原理简述：为每个文本中的句子分配权重，权重计算包括 tfidf 方法的权重，以及
     LDA 主题权重，以及 lead-3 得到位置权重，并在最后结合 MMR 模型对句子做筛选，
-    得到抽取式摘要。（默认使用 jiojio 的分词工具效果好）
+    得到抽取式摘要。（默认使用 pkuseg 的分词工具效果好）
 
     Args:
         text(str): utf-8 编码中文文本，尤其适用于新闻文本
@@ -56,9 +59,9 @@ class ChineseSummaryExtractor(object):
 
     def _prepare(self):
         self.pos_name = set(pkuseg_postag_loader().keys())
-        self.strict_pos_name = ['a', 'n', 'nr', 'ns', 'nt', 'nx', 'nz',
+        self.strict_pos_name = ['a', 'n', 'j', 'nr', 'ns', 'nt', 'nx', 'nz',
                                 'ad', 'an', 'vn', 'vd', 'vx']
-        jiojio.init(pos_rule=True, pos=True)
+        self.seg = pkuseg.pkuseg(postag=True)  # 北大分词器
 
         # 加载 idf，计算其 oov 均值
         self.idf_dict = idf_loader()
@@ -121,7 +124,7 @@ class ChineseSummaryExtractor(object):
                 if not check_chinese_char(sen):  # 若无中文字符，则略过
                     continue
 
-                sen_segs = jiojio.cut(sen)
+                sen_segs = self.seg.cut(sen)
                 sentences_segs_dict.update({sen: [idx, sen_segs, list(), 0]})
                 counter_segs_list.extend(sen_segs)
 
