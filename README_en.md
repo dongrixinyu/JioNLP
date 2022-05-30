@@ -188,9 +188,9 @@ $ jio_help
 
 | Features   | Function name   |Description   |Star   |
 |--------|--------|-------|-------|
-|[**read file by iteration**](../../wiki/文件读写-说明文档#user-content-文件读取iter) |read_file_by_iter |以迭代器形式方便按行读取文件，节省内存，<br>支持指定**行数**，**跳过空行** ||
-|[**read file by line**](../../wiki/文件读写-说明文档#user-content-文件读取list) |read_file_by_line |按行读取文件，支持指定**行数**，**跳过空行** |⭐ |
-|[write file by line](../../wiki/文件读写-说明文档#user-content-文件写入) |write_file_by_line| 将 list 中元素按行写入文件 |⭐ |
+|[**read file by iteration**](../../wiki/文件读写-说明文档#user-content-文件读取iter) |read_file_by_iter |read file by iteration to get a json list ||
+|[**read file by line**](../../wiki/文件读写-说明文档#user-content-文件读取list) |read_file_by_line |read file to get a json list |⭐ |
+|[write file by line](../../wiki/文件读写-说明文档#user-content-文件写入) |write_file_by_line| write a list of text to the file |⭐ |
 |[get the time consumption](../../wiki/文件读写-说明文档#user-content-计时器) |TimeIt | get the seconds of a given programming consuming | |
 |[jionlp logger](../../wiki/文件读写-说明文档#user-content-日志处理设置函数) |set_logger |the logger used by jionlp | |
 
