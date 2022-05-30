@@ -20,7 +20,6 @@ from jionlp.rule import check_chinese_char
 from jionlp.gadget import split_sentence
 from jionlp.dictionary import stopwords_loader
 from jionlp.dictionary import idf_loader
-from jionlp.util import pkuseg_postag_loader
 
 
 DIR_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -57,7 +56,8 @@ class ChineseSummaryExtractor(object):
         self.unk_topic_prominence_value = 0.
 
     def _prepare(self):
-        self.pos_name = set(pkuseg_postag_loader().keys())
+        # self.pos_name = set(pkuseg_postag_loader().keys())
+        self.pos_name = set(sorted(list(jiojio.pos_types()['model_type'].keys())))
         self.strict_pos_name = ['a', 'n', 'nr', 'ns', 'nt', 'nx', 'nz',
                                 'ad', 'an', 'vn', 'vd', 'vx']
         jiojio.init(pos_rule=True, pos=True)
