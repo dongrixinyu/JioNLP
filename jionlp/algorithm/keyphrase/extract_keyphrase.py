@@ -42,7 +42,7 @@ DIR_PATH = os.path.dirname(os.path.abspath(__file__))
 
 class ChineseKeyPhrasesExtractor(object):
     """ 关键短语提取在生成词云、提供摘要阅读、关键信息检索等任务中有重要作用，
-    来作为文本的关键词。
+    可替换文本的关键词，呈现更多的文本语义信息。
 
     原理简述：在 tfidf 方法提取的碎片化的关键词（默认使用 jiojio 的分词工具）基础上，
     将在文本中相邻的关键词合并，并根据权重进行调整，同时合并较为相似的短语，并结合
