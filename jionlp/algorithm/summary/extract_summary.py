@@ -56,8 +56,10 @@ class ChineseSummaryExtractor(object):
         self.unk_topic_prominence_value = 0.
 
     def _prepare(self):
-        # self.pos_name = set(pkuseg_postag_loader().keys())
-        self.pos_name = set(sorted(list(jiojio.pos_types()['model_type'].keys())))
+        # self.pos_name = set(sorted(list(jiojio.pos_types()['model_type'].keys())))
+        self.pos_name = set(['a', 'ad', 'an', 'c', 'd', 'f', 'm', 'n', 'nr', 'nr1', 'nrf', 'ns', 'nt',
+                             'nz', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'vd', 'vi', 'w', 'wx', 'x'])
+
         self.strict_pos_name = ['a', 'n', 'nr', 'ns', 'nt', 'nx', 'nz',
                                 'ad', 'an', 'vn', 'vd', 'vx']
         jiojio.init(pos_rule=True, pos=True)

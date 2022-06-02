@@ -85,10 +85,9 @@ class ChineseKeyPhrasesExtractor(object):
     def _prepare(self):
         # 词性预处理
         # 词性参考 jiojio.pos_types()
-        # self.pos_name = set(pkuseg_postag_loader().keys())
-        self.pos_name = set(sorted(list(jiojio.pos_types()['model_type'].keys())))
-        # self.pos_name = set(['a', 'ad', 'an', 'c', 'd', 'f', 'm', 'n', 'nr', 'nr1', 'nrf', 'ns', 'nt',
-        #                      'nz', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'vd', 'vi', 'w', 'wx', 'x'])
+        # self.pos_name = set(sorted(list(jiojio.pos_types()['model_type'].keys())))
+        self.pos_name = set(['a', 'ad', 'an', 'c', 'd', 'f', 'm', 'n', 'nr', 'nr1', 'nrf', 'ns', 'nt',
+                             'nz', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'vd', 'vi', 'w', 'wx', 'x'])
         self.pos_exception = set(['u', 'p', 'c', 'y', 'e', 'o', 'w'])
         self.loose_pos_name = self.pos_name - self.pos_exception
         self.strict_pos_name = ['a', 'n', 'nr', 'ns', 'nt', 'nx', 'nz',
