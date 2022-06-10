@@ -30,7 +30,7 @@ import traceback
 from collections import Counter
 
 from jionlp import logging
-from jionlp import jiojio
+import jiojio
 from jionlp.rule import clean_text
 from jionlp.gadget import split_sentence
 from jionlp.dictionary import stopwords_loader

@@ -35,7 +35,7 @@
 import copy
 import collections
 
-from jionlp import jiojio
+import jiojio
 from jionlp.dictionary.dictionary_loader import china_location_loader
 from jionlp.dictionary.dictionary_loader import world_location_loader
 

@@ -13,7 +13,7 @@ import numpy as np
 
 from collections import Counter
 
-from jionlp import jiojio
+import jiojio
 from jionlp import logging
 from jionlp.rule import clean_text
 from jionlp.rule import check_chinese_char
