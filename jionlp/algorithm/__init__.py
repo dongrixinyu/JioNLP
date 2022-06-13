@@ -13,3 +13,4 @@ from . import keyphrase
 from . import sentiment
 from . import summary
 from . import text_classification
+from . import new_word

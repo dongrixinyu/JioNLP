@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://pepy.tech/badge/jionlp/month" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.4.5-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.4.6-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -31,6 +31,25 @@
 
 
 #### Updata 2022-05-26
+## 更新 **新词发现** 
+
+#### jio.new_word.new_word_discovery 对一个文本语料文件提取所发现的新词
+```
+>>> import jionlp as jio
+>>> input_file = '/path/to/text_file.txt'
+
+>>> new_words_dict = jio.new_word.new_word_discovery(input_file)
+>>> print(new_words_dict)
+>>> print(jio.new_word.new_word_discovery.__doc__)
+
+# {'浑水': [34, 6.9],
+#  '贝壳': [28, 6.7],
+#  '证监会': [18, 5.8]}
+
+```
+
+
+#### Updata 2022-05-26
 ## 更新 [**关键短语抽取**](../../wiki/Gadget-说明文档#user-content-关键短语抽取) 
 
 #### jio.keyphrase.extract_keyphrase 对一篇文本关键短语抽取
@@ -45,35 +64,6 @@
 # ['浑水创始人', '开始调查贝壳', '做空机构浑水', '美股上市公司贝壳', '美国证监会']
 
 ```
-
-
-#### Update 2021-10-25
-## 更新 [货币金额解析](../../wiki/正则抽取与解析-说明文档#user-content-货币金额解析)
-
-#### jio.parse_money 给定货币金额字符串，解析其标准金额、货币类型、精确度。工具的分词工具全面迁移至 jiojio
-
-```python
-import jionlp as jio
-text_list = ['约4.287亿美元', '两个亿卢布', '六十四万零一百四十三元一角七分', '3000多欧元', '三五佰块钱', '七百到九百亿泰铢'] 
-moneys = [jio.parse_money(text) for text in text_list]
-
-# 约4.287亿美元: {'num': '428700000.00', 'case': '美元', 'definition': 'blur'}
-# 两个亿卢布: {'num': '200000000.00', 'case': '卢布', 'definition': 'accurate'}
-# 六十四万零一百四十三元一角七分: {'num': '640143.17', 'case': '元', 'definition': 'accurate'}
-# 3000多欧元: {'num': ['3000.00', '4000.00'], 'case': '欧元', 'definition': 'blur'}
-# 三五百块钱: {'num': ['300.00', '500.00'], 'case': '元', 'definition': 'blur'}
-# 七百到九百亿泰铢: {'num': ['70000000000.00', '90000000000.00'], 'case': '泰铢', 'definition': 'blur'}
-
-```
-
-- 支持纯数字格式，如：987273.3美元
-- 支持大写中文金额，如：柒仟六佰零弎萬肆仟叁佰贰拾壹元伍分
-- 支持混合格式，如：1.26万港元
-- 支持**修饰词**解析，如：将近6万块钱、至少1000块钱以上
-- 支持**模糊金额**解析，如：两万多元钱，6千多亿日元
-- 支持**金额范围**解析，如：十二到十五万泰铢、三四仟块钱
-- 支持**口语化中文**格式，如：三十五块三毛；但对于“三十五块八”这样的字符串，在文本中存在**歧义**，如“三十五块八颗糖”等，因此，```jio.ner.extract_money``` 对于此字符串不予抽取，但```parse_money```可以将“三十五块八”看作完整的口语化金额，标准化为“35.80元”
-- 支持多种常见货币类型：人民币，港元，澳门元，美元，日元，澳元，韩元，卢布，英镑，马克，法郎，欧元，加元，泰铢，台币等。
 
 #### Update 2022-03-07
 ## 更新 [时间语义解析](../../wiki/时间语义解析-说明文档#user-content-时间语义解析)

@@ -90,6 +90,7 @@ class HomophoneSubstitution(object):
         for pinyin, word_dict in word_pinyin_dict.items():
             if len(word_dict) <= 1:  # 拼音对应词汇数量过少
                 continue
+
             word_keys = [item[0] for item in word_dict.items()]
             word_values = [item[1] for item in word_dict.items()]
             total_num = sum(word_values)
