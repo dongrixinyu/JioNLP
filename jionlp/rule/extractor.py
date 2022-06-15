@@ -66,19 +66,24 @@ class Extractor(object):
         
         return results
 
-    def remove_redundant_char(self, text):
+    def remove_redundant_char(self, text, redundant_chars=None):
         """去除冗余字符
 
         Args:
-            text: 待处理文本
+            text(str): 待处理文本
+            redundant_chars(str|list): 自定义待去除的冗余字符串 或 list，
+                如 ”哈嗯~“，或 ['哈', '嗯', '\u3000']，若不指定则采用默认的冗余字符串。
 
         Returns:
-            正则pattern
+            删除冗余字符后的文本
 
         """
         if self.redundant_pattern is None:
             pattern_list = list()
-            for char in REDUNDANT_PATTERN:
+            if redundant_chars is None:
+                redundant_chars = REDUNDANT_PATTERN
+
+            for char in redundant_chars:
                 pattern_tmp = '(?<={char}){char}+'.format(
                     char=re.escape(char))
                 pattern_list.append(pattern_tmp)
@@ -93,7 +98,7 @@ class Extractor(object):
                    remove_exception_char=True, remove_url=True,
                    remove_redundant_char=True, remove_parentheses=True,
                    remove_email=True, remove_phone_number=True,
-                   delete_prefix=False):
+                   delete_prefix=False, redundant_chars=None):
         """ 清洗文本，关键字参数均默认为 True
 
         Args:
@@ -107,6 +112,8 @@ class Extractor(object):
             remove_email(bool): 是否删除 email
             remove_phone_number(bool): 是否删除电话号码
             delete_prefix(bool): 是否删除 email 和 电话号码的前缀，如 `E-mail: xxxx@gmail.com`
+            redundant_chars(str|list|None): 自定义待去除的冗余字符串 或 list，
+                如 ”哈嗯~“，或 ['哈', '嗯', '\u3000']，若不指定则采用默认的冗余字符串。
 
         Returns:
             str: 清理后的文本
@@ -120,7 +127,8 @@ class Extractor(object):
         if convert_full2half:
             text = self.convert_full2half(text)
         if remove_redundant_char:
-            text = self.remove_redundant_char(text)
+            text = self.remove_redundant_char(
+                text, redundant_chars=redundant_chars)
         if remove_parentheses:
             text = self.remove_parentheses(text)
         if remove_url:

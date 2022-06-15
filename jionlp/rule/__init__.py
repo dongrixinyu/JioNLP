@@ -33,6 +33,7 @@ remove_qq = extractor.remove_qq
 remove_parentheses = extractor.remove_parentheses
 remove_html_tag = extractor.remove_html_tag
 remove_exception_char = extractor.remove_exception_char
+remove_redundant_char = extractor.remove_redundant_char
 
 check_chinese_char = extractor.check_chinese_char
 

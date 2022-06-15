@@ -46,6 +46,7 @@ def set_logger(level='INFO', log_dir_name='.jionlp_logs'):
     Args:
         level(str): 日志级别，若为 None，则不打印日志
         log_dir_name(str): 日志文件存储目录，若为 None，则不将日志写入文件
+
     """
     # 设置日志级别
     if level is None:

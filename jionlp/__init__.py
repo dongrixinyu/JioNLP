@@ -8,7 +8,7 @@
 # description: Preprocessing & Parsing tool for Chinese NLP
 """
 
-__version__ = '1.4.6'
+__version__ = '1.4.7'
 
 
 import os
@@ -84,6 +84,7 @@ history = """
 │   | 2022-04-10 | update money extractor                              |   │
 │   | 2022-05-26 | transfer from pkuseg to jiojio                      |   │
 │   | 2022-06-13 | add new_word_discovery                              |   │
+│   | 2022-06-15 | expose and update redundant char remover            |   │
 │                                                                          │
 ╰──────────────────────────────────────────────────────────────────────────╯
 """

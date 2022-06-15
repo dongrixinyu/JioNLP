@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://pepy.tech/badge/jionlp/month" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.4.6-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.4.7-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -30,7 +30,7 @@
 #### 功能主要包括：文本清洗，删除HTML标签、删除异常字符、删除冗余字符，转换全角字母、数字、空格为半角，抽取及删除E-mail及域名、抽取及删除（手机号、座机号）电话号码、抽取及删除QQ号、抽取及删除括号内容、抽取及删除身份证号、抽取及删除IP地址、抽取及删除URL超链接、抽取及删除货币金额与单位，金额数字转大写汉字，时间语义解析，解析身份证号信息、解析手机号码归属地、解析座机区号归属地、解析手机号码运营商，按行快速读写文件，（多功能）停用词过滤，（优化的）分句，地址解析，新闻地域识别，繁简体转换，汉字转拼音，汉字偏旁、字形、四角编码、五笔编码拆解，基于词典的情感分析，色情数据过滤，反动数据过滤，关键短语抽取，抽取式文本摘要，成语接龙，成语词典、歇后语词典、新华字典、新华词典、停用词典、中国地名词典、中国县级地名变更词典、世界地名词典，时间实体抽取，基于词典的NER，NER的字、词级别转换，NER的entity和tag格式转换，NER模型的预测阶段加速并行工具集，NER标注和模型预测的结果差异对比，NER标注数据集分割与统计，NER实体收集、文本分类标注数据集的分割与统计、回译数据增强、相邻近汉字换位数据增强、同音词替换数据增强、随机增删字符数据增强、实体替换数据增强、公历转农历日期、农历转公历日期
 
 
-#### Updata 2022-05-26
+#### Update 2022-06-13
 ## 更新 **新词发现** 
 
 #### jio.new_word.new_word_discovery 对一个文本语料文件提取所发现的新词
@@ -194,7 +194,9 @@ $ jio_help
 |[删除 **QQ**](../../wiki/正则抽取与解析-说明文档#user-content-删除文本中的-qq-号) |remove_qq|删除文本中的 qq 号| |
 |[删除 **HTML**标签](../../wiki/正则抽取与解析-说明文档#user-content-删除文本中的-html-标签) |remove_html_tag|删除文本中残留的 HTML 标签 | |
 |[删除**括号**中的内容](../../wiki/正则抽取与解析-说明文档#user-content-删除文本括号信息) |remove_parentheses|删除括号内容，包括 **{}「」[]【】()（）<>《》** | |
-|[删除异常字符](../../wiki/正则抽取与解析-说明文档#user-content-删除文本中的异常字符) |remove_exception_char|删除文本中异常字符，主要保留汉字、常用的标点，<br>单位计算符号，字母数字等 | |
+|[删除**异常**字符](../../wiki/正则抽取与解析-说明文档#user-content-删除文本中的异常字符) |remove_exception_char|删除文本中异常字符，主要保留汉字、常用的标点，<br>单位计算符号，字母数字等 | |
+|[删除**冗余**字符](../../wiki/正则抽取与解析-说明文档#user-content-删除文本中的冗余字符) |remove_redundant_char|删除文本中冗余重复字符 | |
+
 
 ### 4.文件读写工具
 
