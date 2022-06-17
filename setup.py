@@ -5,7 +5,7 @@
 # license: Apache License 2.0
 # Email: dongrixinyu.89@163.com
 # github: https://github.com/dongrixinyu/JioNLP
-# description: Preprocessing tool for Chinese NLP
+# description: Preprocessing & Parsing tool for Chinese NLP
 """
 
 import os
@@ -18,13 +18,11 @@ DIR_PATH = os.path.dirname(os.path.abspath(__file__))
 LONG_DOC = '''
 ==================================== JioNLP ====================================
 
-中文 NLP 数据预处理工具包，完成训练 NLP 模型前后的数据预处理，如文本数据增强、文本清洗、特定
-信息抽取、数据集概况分析、模型加速、相关模型任务 baseline、词典等。
+中文 NLP 文本预处理与解析工具包，完成 NLP 模型训练前后的预处理与解析，如文本数据增强、
+文本清洗、特定信息抽取、数据集概况分析、模型加速、相关模型任务 baseline、各类词典等。
 
 # 安装：
-    $ git clone https://github.com/dongrixinyu/JioNLP
-    $ cd ./JioNLP
-    $ pip install .
+    $ pip install jionlp
 
 # 导入：
     >>> import jionlp as jio
