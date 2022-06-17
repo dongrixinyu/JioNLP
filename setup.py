@@ -10,7 +10,6 @@
 
 import os
 import re
-
 from setuptools import setup, find_packages
 
 
@@ -52,10 +51,14 @@ __url__ = 'https://github.com/dongrixinyu/JioNLP'
 __description__ = 'Chinese NLP Preprocessing & Parsing'
 
 
-with open(os.path.join(DIR_PATH, 'requirements.txt'), 
+with open(os.path.join(DIR_PATH, 'requirements.txt'),
           'r', encoding='utf-8') as f:
     requirements = f.readlines()
 
+# delete test module
+jionlp_packages = find_packages()
+if 'test' in jionlp_packages:
+    jionlp_packages.remove('test')
 
 setup(name=__name__,
       version=__version__,
@@ -67,7 +70,7 @@ setup(name=__name__,
       long_description_content_type='text/markdown',
       license=__license__,
       py_modules=list(),
-      packages=find_packages(),
+      packages=jionlp_packages,
       include_package_data=True,
       install_requires=requirements,
       entry_points={
