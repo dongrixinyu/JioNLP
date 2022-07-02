@@ -242,8 +242,9 @@ class TimeParser(object):
         self.string_strict = False
 
     def _preprocess_regular_expression(self):
-        # 未来时间扩展 单元基
-        self.future_time_unit_pattern = re.compile('(年|月|周|星期|礼拜|日|号|节)')
+        # 未来时间扩展 单元基，合并或分开是个问题
+        self.future_time_unit_pattern = re.compile('(年|月|周|星期|礼拜|日|号|节|时|点)')
+        self.future_time_unit_hms_pattern = re.compile('(时|点|分)')
 
         # 中文字符判定
         self.chinese_char_pattern = re.compile(CHINESE_CHAR_PATTERN)
@@ -932,7 +933,6 @@ class TimeParser(object):
             self.year_month_day_pattern,
             self.standard_year_pattern,
         ]
-
         hms_time_patterns = [
             # TIME_POINT 型
             self.hour_minute_second_pattern,
@@ -942,7 +942,8 @@ class TimeParser(object):
         ]
 
         # 命中以上正则，则考虑扩展为未来时间
-        for ymd_limit_pattern in ymd_time_patterns:
+        time_string_flag = False
+        for ymd_limit_pattern in ymd_time_patterns + hms_time_patterns:
             ymd_string = TimeParser.parse_pattern(time_string, ymd_limit_pattern)
             if ymd_string != '':
                 time_string_flag = True
@@ -958,6 +959,9 @@ class TimeParser(object):
                     time_string = '下个月' + time_string
                 elif matched_unit in ['周', '星期', '礼拜']:
                     time_string = '下' + time_string
+
+                elif matched_unit in ['时', '点']:
+                    time_string = '明天' + time_string
                 else:
                     pass
 
@@ -1039,23 +1043,22 @@ class TimeParser(object):
 
             # 检查 handler，确定是否按 ret_future 未来时间解析
             if self.ret_future:
-                res = self._compare_handler(self.time_base_handler, first_full_time_handler)
-                if res == 1:
-                    future_time_string = self._adjust_underlying_future_time(time_string)
-                    first_full_time_handler, second_full_time_handler, time_type, \
-                    blur_time = self.parse_time_point(
-                        future_time_string, self.time_base_handler)
+
+                future_time_string = self._adjust_underlying_future_time(time_string)
+                first_full_time_handler, second_full_time_handler, time_type, blur_time = self.parse_time_point(
+                    future_time_string, self.time_base_handler)
 
         return first_full_time_handler, second_full_time_handler, time_type, blur_time
 
     @staticmethod
     def _cut_zero_key(dict_obj):
         # 删除其中值为 0 的 key
-        cut_dict = dict()
-        for unit, num in dict_obj.items():
-            if num > 0:
-                cut_dict.update({unit: num})
-        return cut_dict
+        return dict([item for item in dict_obj.items() if item[1] > 0])
+        # cut_dict = dict()
+        # for unit, num in dict_obj.items():
+        #     if num > 0:
+        #         cut_dict.update({unit: num})
+        # return cut_dict
 
     def parse_time_delta_span(self, time_string, time_type=None):
         first_time_string, second_time_string = self.parse_delta_span_2_2_delta(time_string)
@@ -1431,6 +1434,7 @@ class TimeParser(object):
         """ 将 time_delta 归一化 """
         # 处理字符串的问题
         time_string = time_string.replace('俩', '两个')
+        time_string = time_string.replace('仨', '三个')
 
         delta = pattern.search(time_string)
         time_delta = 0
@@ -3779,18 +3783,19 @@ class TimeParser(object):
 
         time_point.year, _ = self._normalize_limit_year(
             time_string, self.time_base_handler)
-
+        time_type = 'time_span'
         if month is not None:
             time_point.month = int(self._char_num2num(month.group(1)))
 
         if day is not None:
             time_point.day = int(self._char_num2num(day.group(1)))
+            time_type = 'time_point'
 
         time_handler = time_point.handler()
 
         time_definition = self._check_blur(time_string, 'accurate')
 
-        return time_handler, time_handler, 'time_span', time_definition
+        return time_handler, time_handler, time_type, time_definition
 
     def normalize_blur_year(self, time_string):
         """ 解析 模糊年 时间 """

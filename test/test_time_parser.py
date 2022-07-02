@@ -350,7 +350,7 @@ class TestTimeParser(unittest.TestCase):
 
             # 年（限定）、月、日
             ['去年3月3号', {'year': 1966},
-             {'type': 'time_span', 'definition': 'accurate', 'time': ['1965-03-03 00:00:00', '1965-03-03 23:59:59']}],
+             {'type': 'time_point', 'definition': 'accurate', 'time': ['1965-03-03 00:00:00', '1965-03-03 23:59:59']}],
             ['今年六月', {'year': 1966},
              {'type': 'time_span', 'definition': 'accurate', 'time': ['1966-06-01 00:00:00', '1966-06-30 23:59:59']}],
             ['明年3月份', _ts_1,
@@ -363,7 +363,7 @@ class TestTimeParser(unittest.TestCase):
 
             # 限定模糊词汇，‘左右、许’
             ['前年9月2号左右', _ts_1,
-             {'type': 'time_span', 'definition': 'blur', 'time': ['2019-09-02 00:00:00', '2019-09-02 23:59:59']}],
+             {'type': 'time_point', 'definition': 'blur', 'time': ['2019-09-02 00:00:00', '2019-09-02 23:59:59']}],
             ['晚上8点许', _ts_1,
              {'type': 'time_point', 'definition': 'blur', 'time': ['2021-06-14 20:00:00', '2021-06-14 20:59:59']}],
             ['八月二十八号早上8点11分许', _ts_1,
@@ -921,7 +921,10 @@ class TestTimeParser(unittest.TestCase):
              {'type': 'time_span', 'definition': 'blur', 'time': ['2021-05-15 00:00:00', '2021-06-14 01:06:40']}],
             ['近三个月', _ts_1,
              {'type': 'time_span', 'definition': 'blur', 'time': ['2021-03-14 00:00:00', '2021-06-14 01:06:40']}],
-
+            ['近三月', _ts_1,
+             {'type': 'time_span', 'definition': 'blur', 'time': ['2021-03-14 00:00:00', '2021-06-14 01:06:40']}],
+            ['近仨月', _ts_1,
+             {'type': 'time_span', 'definition': 'blur', 'time': ['2021-03-14 00:00:00', '2021-06-14 01:06:40']}],
             # 特殊时间范围
             ['全天', _ts_1,
              {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 00:00:00', '2021-06-14 23:59:59']}],
@@ -1002,17 +1005,19 @@ class TestTimeParser(unittest.TestCase):
         # 未来时间参数扩展
         time_string_list = [
             ['8号晚上9点', _ts_2,
-             {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-09-08 21:00:00', '2021-09-08 21:59:59']}],
+             {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-10-08 21:00:00', '2021-10-08 21:59:59']}],
             ['1号晚上9点', _ts_2,
-             {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-09-01 21:00:00', '2021-09-01 21:59:59']}],
+             {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-10-01 21:00:00', '2021-10-01 21:59:59']}],
             ['3月8号', _ts_2,
-             {'type': 'time_span', 'definition': 'accurate', 'time': ['2022-03-08 00:00:00', '2022-03-08 23:59:59']}],
+             {'type': 'time_point', 'definition': 'accurate', 'time': ['2022-03-08 00:00:00', '2022-03-08 23:59:59']}],
             ['10月8号', _ts_2,
-             {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-10-08 00:00:00', '2021-10-08 23:59:59']}],
+             {'type': 'time_point', 'definition': 'accurate', 'time': ['2022-10-08 00:00:00', '2022-10-08 23:59:59']}],
             ['周一', _ts_2,
              {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-09-06 00:00:00', '2021-09-06 23:59:59']}],
             ['妇女节', _ts_2,
              {'type': 'time_point', 'definition': 'accurate', 'time': ['2022-03-08 00:00:00', '2022-03-08 23:59:59']}],
+            ['下午三点', _ts_2,
+             {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-09-02 15:00:00', '2021-09-02 15:59:59']}]
         ]
 
         for item in time_string_list:
