@@ -1,6 +1,6 @@
 <p align="center">
     <a alt="jionlp logo">
-        <img src="../../blob/master/image/jionlp_logo.jpg" / style="width:300px;height:100px">
+        <img src="../../blob/master/image/jionlp_logo.jpg" style="width:300px;height:100px">
     </a>
 </p>
 <p align="center">
@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://pepy.tech/badge/jionlp/month" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.4.7-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.4.8-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -29,6 +29,20 @@
 
 #### 功能主要包括：文本清洗，删除HTML标签、删除异常字符、删除冗余字符，转换全角字母、数字、空格为半角，抽取及删除E-mail及域名、抽取及删除（手机号、座机号）电话号码、抽取及删除QQ号、抽取及删除括号内容、抽取及删除身份证号、抽取及删除IP地址、抽取及删除URL超链接、抽取及删除货币金额与单位，金额数字转大写汉字，时间语义解析，解析身份证号信息、解析手机号码归属地、解析座机区号归属地、解析手机号码运营商，按行快速读写文件，（多功能）停用词过滤，（优化的）分句，地址解析，新闻地域识别，繁简体转换，汉字转拼音，汉字偏旁、字形、四角编码、五笔编码拆解，基于词典的情感分析，色情数据过滤，反动数据过滤，关键短语抽取，抽取式文本摘要，成语接龙，成语词典、歇后语词典、新华字典、新华词典、停用词典、中国地名词典、中国县级地名变更词典、世界地名词典，时间实体抽取，基于词典的NER，NER的字、词级别转换，NER的entity和tag格式转换，NER模型的预测阶段加速并行工具集，NER标注和模型预测的结果差异对比，NER标注数据集分割与统计，NER实体收集、文本分类标注数据集的分割与统计、回译数据增强、相邻近汉字换位数据增强、同音词替换数据增强、随机增删字符数据增强、实体替换数据增强、公历转农历日期、农历转公历日期
 
+
+#### Update 2022-07-03
+## 更新 [**归一化文本函数族**](../../wiki/正则抽取与解析-说明文档#user-content-归一化文本中的-e-mail)
+
+#### 包括归一化电子邮箱名、IP地址、身份证号、URL、电话号码、QQ号等。
+#### jio.replace_email 归一化文本中的 E-mail 信息为<email>
+
+```
+>>> text = '张晨星zcx@gmail.com，现在电子邮件可以带中文了吗？'
+>>> res = jionlp.replace_email(text)
+>>> print(res)
+
+# '张晨星<url>，现在电子邮件可以带中文了吗？'
+```
 
 #### Update 2022-06-13
 ## 更新 **新词发现** 
@@ -65,7 +79,7 @@
 
 ```
 
-#### Update 2022-03-07
+#### Update 2022-07-02
 ## 更新 [时间语义解析](../../wiki/时间语义解析-说明文档#user-content-时间语义解析)
 
 #### jio.parse_time 给定时间字符串，解析其为时间戳、时长等。
@@ -198,6 +212,12 @@ $ jio_help
 |[删除**括号**中的内容](../../wiki/正则抽取与解析-说明文档#user-content-删除文本括号信息) |remove_parentheses|删除括号内容，包括 **{}「」[]【】()（）<>《》** | |
 |[删除**异常**字符](../../wiki/正则抽取与解析-说明文档#user-content-删除文本中的异常字符) |remove_exception_char|删除文本中异常字符，主要保留汉字、常用的标点，<br>单位计算符号，字母数字等 | |
 |[删除**冗余**字符](../../wiki/正则抽取与解析-说明文档#user-content-删除文本中的冗余字符) |remove_redundant_char|删除文本中冗余重复字符 | |
+|[归一化 **E-mail**](../../wiki/正则抽取与解析-说明文档#user-content-归一化文本中的-e-mail) |replace_email|归一化文本中的 E-mail 信息为<email> | |
+|[归一化 **URL**](../../wiki/正则抽取与解析-说明文档#user-content-归一化文本中的-url) |replace_url |归一化文本中的 URL 信息为<url> | |
+|[归一化 **电话号码**](../../wiki/正则抽取与解析-说明文档#user-content-归一化电话号码) |replace_phone_number|归一化文本中的电话号码为<tel> | |
+|[归一化 **IP地址**](../../wiki/正则抽取与解析-说明文档#user-content-归一化文本中的-ip-地址)|replace_ip_address|归一化文本中的 IP 地址为<ip> | |
+|[归一化 **身份证号**](../../wiki/正则抽取与解析-说明文档#user-content-归一化文本中的身份证号) |replace_id_card|归一化文本中的身份证信息为<id> | |
+|[归一化 **QQ**](../../wiki/正则抽取与解析-说明文档#user-content-归一化文本中的-qq-号) |replace_qq|归一化文本中的 qq 号为<qq> | |
 
 
 ### 4.文件读写工具
@@ -269,12 +289,14 @@ $ jio_help
 - 如有功能建议、bug，可通过 issue 按模板提出。
 - 非常欢迎各位 NLP 开发者和研究者 **合作完善本工具包，添加新功能** 。
 
-### 做 NLP不易，欢迎加入自然语言处理 Wechat 交流群
-### 如以下码失效，请先添加 vx：dongrixinyu89
-![image](../../blob/master/image/qr_code_for_collection.png)
 ### 如本工具对您有帮助，请点一下右上角 star ⭐
 ### 或者扫码请作者喝杯咖啡 (●'◡'●)，谢谢啦 ~~
 - 感谢[致谢](../../wiki/致谢篇)名单中赞助的小伙伴们，你们的打赏让我更有动力
 
 ![image](../../blob/master/image/payment_code.jpg)
+
+### 做 NLP不易，欢迎加入自然语言处理 Wechat 交流群
+### 如以下码失效，请先添加 vx：dongrixinyu89
+![image](../../blob/master/image/qr_code_for_collection.png)
+
 

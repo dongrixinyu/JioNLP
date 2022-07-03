@@ -642,6 +642,129 @@ class Extractor(object):
         text = ''.join(['￥', text, '￥'])
         return self.url_pattern.sub('', text)[1:-1]
 
+    def replace_email(self, text, token='<email>'):
+        """ 替换文本中的 email 为归一化标签
+
+        Args:
+            text(str): 字符串文本
+            token(str): 替换 email 的 token，默认为 `<email>`，与预训练模型保持一致
+
+        Returns:
+            str: 替换 email 为归一化 token 后的文本
+
+        """
+        if self.email_pattern is None:
+            self.email_pattern = re.compile(EMAIL_PATTERN)
+            self.email_prefix_pattern = re.compile(EMAIL_PREFIX_PATTERN)
+
+        text = ''.join(['#', text, '#'])
+
+        text = self.email_pattern.sub(token, text)
+        return text[1:-1]
+
+    def replace_id_card(self, text, token='<id>'):
+        """ 替换文本中的身份证号为归一化标签
+
+        Args:
+            text(str): 字符串文本
+            token(str): 替换 id 的 token，默认为 `<id>`，与预训练模型保持一致
+
+        Returns:
+            str: 替换身份证 id 为归一化 token 后的文本
+
+        """
+        if self.id_card_pattern is None:
+            self.id_card_pattern = re.compile(ID_CARD_PATTERN)
+
+        text = ''.join(['#', text, '#'])
+        return self.id_card_pattern.sub(token, text)[1:-1]
+
+    def replace_ip_address(self, text, token='<ip>'):
+        """ 替换文本中的 ip 地址为归一化标签
+
+        Args:
+            text(str): 字符串文本
+            token(str): 替换 ip 的 token，默认为 `<ip>`，与预训练模型保持一致
+
+        Returns:
+            str: 替换 ip 地址为归一化 token 后的文本
+
+        """
+        if self.ip_address_pattern is None:
+            self.ip_address_pattern = re.compile(IP_ADDRESS_PATTERN)
+
+        text = ''.join(['#', text, '#'])
+        return self.ip_address_pattern.sub(token, text)[1:-1]
+
+    def replace_phone_number(self, text, token='<tel>'):
+        """ 替换文本中的电话号码为归一化标签 token
+
+        Args:
+            text(str): 字符串文本
+            token(str): 替换 tel 的 token，默认为 `<tel>`，与预训练模型保持一致
+
+        Returns:
+            str: 替换电话号码后为归一化标签 token 的文本
+
+        """
+        if self.cell_phone_pattern is None:
+            self.cell_phone_pattern = re.compile(CELL_PHONE_PATTERN)
+            self.phone_prefix_pattern = re.compile(PHONE_PREFIX_PATTERN)
+
+        if self.landline_phone_pattern is None:
+            self.landline_phone_pattern = re.compile(LANDLINE_PHONE_PATTERN)
+            self.phone_prefix_pattern = re.compile(PHONE_PREFIX_PATTERN)
+
+        text = ''.join(['#', text, '#'])
+
+        text = self.cell_phone_pattern.sub(token, text)
+        text = self.landline_phone_pattern.sub(token, text)
+
+        return text[1:-1]
+
+    def replace_qq(self, text, strict=True, token='<qq>'):
+        """ 替换文本中的电 QQ 号为归一化标签
+
+        Args:
+            text(str): 字符串文本
+            strict(bool): QQ 号容易与其他数字混淆，因此选择严格规则或宽松规则
+            token(str): 替换 QQ 的 token，默认为 `<url>`，与预训练模型保持一致
+
+        Returns:
+            str: 替换 QQ 为归一化 token 后的文本
+
+        """
+        if self.qq_pattern is None:
+            self.qq_pattern = re.compile(QQ_PATTERN)
+            self.strict_qq_pattern = re.compile(STRICT_QQ_PATTERN)
+
+        if strict:
+            # 将无法匹配 qq 字符的文本直接返回
+            match_flag = self.strict_qq_pattern.search(text)
+            if not match_flag:
+                return text
+
+        text = ''.join(['#', text, '#'])
+        return self.qq_pattern.sub(token, text)[1:-1]
+
+    def replace_url(self, text, token='<url>'):
+        """ 将文本中的 url 链接归一化
+
+        Args:
+            text(str): 字符串文本
+            token(str): 替换 url 的 token，默认为 `<url>`，与预训练模型保持一致
+
+        Returns:
+            text: 将 url 链接文本统一替换成标准字符串，默认为 token `<url>`
+                token可以自行定义。
+
+        """
+        if self.url_pattern is None:
+            self.url_pattern = re.compile(URL_PATTERN)
+
+        text = ''.join(['￥', text, '￥'])
+        return self.url_pattern.sub(token, text)[1:-1]
+
     def replace_chinese(self, text, substitute=r' '):
         """ 删除文本中的所有中文字符串
 
