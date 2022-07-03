@@ -212,12 +212,12 @@ $ jio_help
 |[删除**括号**中的内容](../../wiki/正则抽取与解析-说明文档#user-content-删除文本括号信息) |remove_parentheses|删除括号内容，包括 **{}「」[]【】()（）<>《》** | |
 |[删除**异常**字符](../../wiki/正则抽取与解析-说明文档#user-content-删除文本中的异常字符) |remove_exception_char|删除文本中异常字符，主要保留汉字、常用的标点，<br>单位计算符号，字母数字等 | |
 |[删除**冗余**字符](../../wiki/正则抽取与解析-说明文档#user-content-删除文本中的冗余字符) |remove_redundant_char|删除文本中冗余重复字符 | |
-|[归一化 **E-mail**](../../wiki/正则抽取与解析-说明文档#user-content-归一化文本中的-e-mail) |replace_email|归一化文本中的 E-mail 信息为<email> | |
-|[归一化 **URL**](../../wiki/正则抽取与解析-说明文档#user-content-归一化文本中的-url) |replace_url |归一化文本中的 URL 信息为<url> | |
-|[归一化 **电话号码**](../../wiki/正则抽取与解析-说明文档#user-content-归一化电话号码) |replace_phone_number|归一化文本中的电话号码为<tel> | |
-|[归一化 **IP地址**](../../wiki/正则抽取与解析-说明文档#user-content-归一化文本中的-ip-地址)|replace_ip_address|归一化文本中的 IP 地址为<ip> | |
-|[归一化 **身份证号**](../../wiki/正则抽取与解析-说明文档#user-content-归一化文本中的身份证号) |replace_id_card|归一化文本中的身份证信息为<id> | |
-|[归一化 **QQ**](../../wiki/正则抽取与解析-说明文档#user-content-归一化文本中的-qq-号) |replace_qq|归一化文本中的 qq 号为<qq> | |
+|[归一化 **E-mail**](../../wiki/正则抽取与解析-说明文档#user-content-归一化文本中的-e-mail) |replace_email|归一化文本中的 E-mail 信息为\<email\> | |
+|[归一化 **URL**](../../wiki/正则抽取与解析-说明文档#user-content-归一化文本中的-url) |replace_url |归一化文本中的 URL 信息为\<url\> | |
+|[归一化 **电话号码**](../../wiki/正则抽取与解析-说明文档#user-content-归一化电话号码) |replace_phone_number|归一化文本中的电话号码为\<tel\> | |
+|[归一化 **IP地址**](../../wiki/正则抽取与解析-说明文档#user-content-归一化文本中的-ip-地址)|replace_ip_address|归一化文本中的 IP 地址为\<ip\> | |
+|[归一化 **身份证号**](../../wiki/正则抽取与解析-说明文档#user-content-归一化文本中的身份证号) |replace_id_card|归一化文本中的身份证信息为\<id\> | |
+|[归一化 **QQ**](../../wiki/正则抽取与解析-说明文档#user-content-归一化文本中的-qq-号) |replace_qq|归一化文本中的 qq 号为\<qq\> | |
 
 
 ### 4.文件读写工具
