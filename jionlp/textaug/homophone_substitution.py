@@ -103,12 +103,22 @@ class HomophoneSubstitution(object):
 
     def __call__(self, text, augmentation_num=3, homo_ratio=0.02,
                  allow_mispronounce=True, seed=1):
-        if self.word_pinyin_dict is None or self.homo_ratio != homo_ratio \
-                or self.seed != seed:
+        if self.word_pinyin_dict is None:
             self._prepare(homo_ratio=homo_ratio, seed=seed)
 
+        if self.seed != seed:
+            self.seed = seed
+            if seed != 0:
+                self.random.seed(seed)
+
+        if self.homo_ratio != homo_ratio:
+            self.homo_ratio = homo_ratio
+
         segs = jiojio.cut(text)
-        pinyin_segs = [self.pinyin(seg, formater='detail') for seg in segs]
+        pinyin_segs = [self.pinyin(seg, formater='detail')
+                       if type(seg) is str
+                       else self.pinyin(seg[0], formater='detail')
+                       for seg in segs]  # 考虑 jiojio 将 pos 加载的情况。
 
         augmentation_text_list = list()
         count = 0
