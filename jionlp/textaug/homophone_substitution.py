@@ -4,7 +4,7 @@
 # license: Apache License 2.0
 # Email: dongrixinyu.89@163.com
 # github: https://github.com/dongrixinyu/JioNLP
-# description: Preprocessing tool for Chinese NLP
+# description: Preprocessing & Parsing tool for Chinese NLP
 
 
 import numpy as np
@@ -115,10 +115,10 @@ class HomophoneSubstitution(object):
             self.homo_ratio = homo_ratio
 
         segs = jiojio.cut(text)
-        pinyin_segs = [self.pinyin(seg, formater='detail')
-                       if type(seg) is str
-                       else self.pinyin(seg[0], formater='detail')
-                       for seg in segs]  # 考虑 jiojio 将 pos 加载的情况。
+        if len(segs) > 0:
+            if type(segs) is not str:  # 考虑 jiojio 将 pos 加载的情况。
+                segs = [seg[0] for seg in segs]
+        pinyin_segs = [self.pinyin(seg, formater='detail') for seg in segs]
 
         augmentation_text_list = list()
         count = 0
