@@ -254,7 +254,7 @@ $ jio_help
 
 ### Welcome to join the wechat group of NLP technics
 ### Please scan the qr code below and send 【进群】
-![image](../../blob/master/image/qr_code_for_gh.jpg)
+![image](../../blob/master/image/qrcode_for_gh.jpg)
 ### If this tool is useful to your development, please click the github star ⭐
 ### Or scan the Paypal or Wechat QR code to donate money (●'◡'●) Thanks ~~
 - [Thanks](../../wiki/致谢篇) for your donation!
