@@ -253,8 +253,8 @@ $ jio_help
 - If having any suggestions or problems with bugs, you can raise an issue via github.
 
 ### Welcome to join the wechat group of NLP technics
-### Please add new friend wechat name：dongrixinyu89
-![image](../../blob/master/image/qr_code_for_collection.png)
+### Please scan the qr code below and send 【进群】
+![image](../../blob/master/image/qr_code_for_gh.jpg)
 ### If this tool is useful to your development, please click the github star ⭐
 ### Or scan the Paypal or Wechat QR code to donate money (●'◡'●) Thanks ~~
 - [Thanks](../../wiki/致谢篇) for your donation!

@@ -296,7 +296,7 @@ $ jio_help
 ![image](../../blob/master/image/payment_code.jpg)
 
 ### 做 NLP不易，欢迎加入自然语言处理 Wechat 交流群
-### 如以下码失效，请先添加 vx：dongrixinyu89
-![image](../../blob/master/image/qr_code_for_collection.png)
+### 请扫以下码，关注并回复【进群】
+![image](../../blob/master/image/qr_code_for_gh.jpg)
 
 
