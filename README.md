@@ -41,7 +41,7 @@
 >>> res = jionlp.replace_email(text)
 >>> print(res)
 
-# '张晨星<url>，现在电子邮件可以带中文了吗？'
+# '张晨星<email>，现在电子邮件可以带中文了吗？'
 ```
 
 #### Update 2022-06-13
