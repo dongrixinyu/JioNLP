@@ -11,14 +11,14 @@
     <a alt="Downloads">
         <img src="https://pepy.tech/badge/jionlp/month" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.4.9-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.4.10-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
 
 ### &emsp;&emsp; ——JioNLP：中文 NLP 预处理工具包 A Python Lib for Chinese NLP Preprocessing & Parsing
 ### &emsp;&emsp; ——安装：```pip install jionlp```
-### &emsp;&emsp; ——[JioNLP在线版](http://182.92.160.94:16666/#/) 可快速试用部分功能（测试版，可能存在不稳定）
+### &emsp;&emsp; ——[JioNLP在线版](http://www.jionlp.com/) 可快速试用部分功能（测试版，可能存在不稳定）
 ### &emsp;&emsp; ——[English version README.md](../../blob/master/README_en.md)
 
 - 做 NLP 任务，需要清洗、过滤语料？用 JioNLP

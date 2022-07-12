@@ -11,14 +11,14 @@
     <a alt="Downloads">
         <img src="https://pepy.tech/badge/jionlp/month" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.4.7-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.4.10-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
 
 ### &emsp;&emsp; ——JioNLP：A Python Lib for Chinese NLP Preprocessing & Parsing
 ### &emsp;&emsp; ——installation method：```pip install jionlp```
-### &emsp;&emsp; ——[JioNLP online](http://182.92.160.94:16666/#/) is provided for a quick trial of some functions
+### &emsp;&emsp; ——[JioNLP online](http://www.jionlp.com/) is provided for a quick trial of some functions
 ### &emsp;&emsp; ——[中文版 README.md](https://github.com/dongrixinyu/JioNLP)
 
 - Doing NLP tasks, need to clean and filter the corpus? Use JioNLP

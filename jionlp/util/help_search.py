@@ -5,6 +5,7 @@
 # Email: dongrixinyu.89@163.com
 # github: https://github.com/dongrixinyu/JioNLP
 # description: Preprocessing tool for Chinese NLP
+# website: www.jionlp.com
 
 
 import os
@@ -29,7 +30,8 @@ class HelpSearch(object):
     """
     def __init__(self):
         print('`jio.help()` is provided to search how to use jio functions.\n'
-              'Or browse `https://github.com/dongrixinyu/JioNLP` to get help.')
+              'Or browse `https://github.com/dongrixinyu/JioNLP` to get help.\n'
+              'Or browse `http://www.jionlp.com` to try online functions.')
         self.function_dict = None
         self.non_function_list = [
             # 辅助工具

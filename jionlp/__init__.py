@@ -6,9 +6,10 @@
 # email: dongrixinyu.89@163.com
 # github: https://github.com/dongrixinyu/JioNLP
 # description: Preprocessing & Parsing tool for Chinese NLP
+# website: www.jionlp.com/
 """
 
-__version__ = '1.4.9'
+__version__ = '1.4.10'
 
 
 import os
