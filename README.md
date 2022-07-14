@@ -18,7 +18,8 @@
 
 ### &emsp;&emsp; ——JioNLP：中文 NLP 预处理工具包 A Python Lib for Chinese NLP Preprocessing & Parsing
 ### &emsp;&emsp; ——安装：```pip install jionlp```
-### &emsp;&emsp; ——[JioNLP在线版](http://www.jionlp.com/) 可快速试用部分功能（测试版，可能存在不稳定）
+### &emsp;&emsp; ——[JioNLP在线版](http://www.jionlp.com/) 可快速试用部分功能
+### &emsp;&emsp; ——关注微信公众号 “一个Bug” 可获取最新的 JioNLP 更新，及 NLP 资讯
 ### &emsp;&emsp; ——[English version README.md](../../blob/master/README_en.md)
 
 - 做 NLP 任务，需要清洗、过滤语料？用 JioNLP
