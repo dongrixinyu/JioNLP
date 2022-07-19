@@ -20,6 +20,7 @@ from .dictionary_loader import phone_location_loader
 from .dictionary_loader import pinyin_phrase_loader
 from .dictionary_loader import pinyin_char_loader
 from .dictionary_loader import pornography_loader
+from .dictionary_loader import quantifiers_loader
 from .dictionary_loader import sentiment_expand_words_loader
 from .dictionary_loader import sentiment_words_loader
 from .dictionary_loader import stopwords_loader
@@ -43,6 +44,7 @@ DICTIONARY_DESCRIPTION = {
     'phone_location.txt': '电话号码归属地词典',
     'phrase_pinyin.txt': '包含多音字的词汇和短语的注音词典',
     'pornography.txt': '色情词典',
+    'quantifiers_stat.txt': '常见量词统计词典',
     'sentiment_expand_words.txt': '情感词分析中，情感扩张性副词',
     'sentiment_words.txt': '情感分析中，情感词及其权重',
     'sim2tra_word.txt': '简体转繁体字的港台和大陆用语转换词典',

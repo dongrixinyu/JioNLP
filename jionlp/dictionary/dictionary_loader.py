@@ -27,6 +27,7 @@ __all__ = ['char_distribution_loader', 'char_radical_loader',
            'phone_location_loader',
            'pinyin_char_loader', 'pinyin_phrase_loader',
            'pornography_loader',
+           'quantifiers_loader',
            'sentiment_expand_words_loader',
            'sentiment_words_loader', 'stopwords_loader',
            'telecom_operator_loader',
@@ -38,6 +39,32 @@ STRUCTURE_DICT = {
     0: '一体结构', 1: '左右结构', 2: '上下结构', 3: '左中右结构',
     4: '上中下结构', 5: '右上包围结构', 6: '左上包围结构', 7: '左下包围结构',
     8: '全包围结构', 9: '半包围结构'}
+
+
+def quantifiers_loader():
+    """ 加载常见量词词典。返回每个量词在语料中的出现总次数、该词出现时作为量词出现的概率。
+    词典说明：
+        1、此量词词典并不是语料中的全量量词，做了一部分删减。
+            - 若量词的出现频次过低，很难称之为一个完整量词，如 “些些”，则删除；
+            - 若量词的出现频次偏低，且该词作为量词的概率很低，如 “拨”，频次 1860，概率 0.1533。则删除。
+        2、该量词词典根据词性标注语料获取。
+
+    Returns:
+        dict(list): 例如：
+            {'岁': {'total_num': 297368,
+                    'prob': 0.9964}
+            ... }
+    """
+    quantifiers_info = read_file_by_line(
+        os.path.join(GRAND_DIR_PATH, 'dictionary', 'quantifiers_stat.txt'))
+
+    quantifiers_info_dict = dict()
+    for item in quantifiers_info:
+        quantifier, num, prob = item.strip().split('\t')
+        quantifiers_info_dict.update(
+            {quantifier: {'total_num': num, 'prob': prob}})
+
+    return quantifiers_info_dict
 
 
 def char_distribution_loader():
