@@ -126,7 +126,9 @@ class LocationParser(object):
             self.loc_level_key_list.extend(['乡', '村'])
         self.loc_level_key_dict = dict(
             [(loc_level, None) for loc_level in self.loc_level_key_list])
-        self.municipalities_cities = ['北京', '上海', '天津', '重庆', '香港', '澳门']
+        self.municipalities_cities = set([
+            '北京', '上海', '天津', '重庆', '香港', '澳门'])
+        # '北京市', '上海市', '天津市', '重庆市', '香港特别行政区', '澳门特别行政区'])
         
     def get_candidates(self, location_text):
         """ 从地址中获取所有可能涉及到的候选地址 """
@@ -138,7 +140,10 @@ class LocationParser(object):
         for admin_item in self.administrative_map_list:
             count = 0  # 匹配个数
             # offset 中的每一个元素，分别指示在地址中的索引，以及全名或别名
-            offset_list = [[-1, -1], [-1, -1], [-1, -1]]  
+            # 索引指在地址中的那个位置出现，优先处理靠左靠前的
+            # offset 匹配全名用 0 表示，匹配别名用 1 表示。
+            offset_list = [[-1, -1], [-1, -1], [-1, -1]]
+
             for idx, name_item in enumerate(admin_item[1: -1]):
                 match_flag = False
                 cur_name = None
@@ -155,7 +160,13 @@ class LocationParser(object):
                     offset_list[idx][1] = cur_alias
             
             if count > 0:
+
                 cur_item = copy.deepcopy(admin_item)
+
+                # 对于某些城市名，需要进行匹配频次删减，原因在于会干扰其它城市名的匹配次数
+                # 例如：“北海市重庆路其仓11号”，这样的城市名会受到干扰
+                if admin_item[2][1] in self.municipalities_cities:
+                    count -= 1
                 cur_item.extend([count, offset_list])
                 candidate_admin_list.append(cur_item)
                 
@@ -183,20 +194,27 @@ class LocationParser(object):
             if self.town_village:
                 result.update({'town': None, 'village': None})
             return result
-            
+
         # step 2: 寻找匹配最多的候选地址，然后寻找匹配最靠前的候选地址，作为最终的省市县的判断结果
-        candidate_admin_list = sorted(
-            candidate_admin_list, key=lambda i: i[-2], reverse=True)
-        max_matched_num = candidate_admin_list[0][-2]
+
+        # 2.1 找出文本中匹配数量最多的
+        max_matched_num = max([item[-2] for item in candidate_admin_list])
         candidate_admin_list = [item for item in candidate_admin_list
                                 if item[-2] == max_matched_num]
+
+        # 2.2 找出匹配位置最靠前的
         candidate_admin_list = sorted(
             candidate_admin_list, key=lambda i: sum([j[0] for j in i[-1]]))
         
         min_matched_offset = sum([j[0] for j in candidate_admin_list[0][-1]])
         candidate_admin_list = [item for item in candidate_admin_list 
                                 if sum([j[0] for j in item[-1]]) == min_matched_offset]
-        
+
+        # 2.3 优先匹配包含全面的，其次匹配别名，此处将别名的过滤掉
+        full_alias_list = [min([j[1] for j in item[-1] if j[1] > -1]) for item in candidate_admin_list]
+        full_alias_min = min(full_alias_list)
+        candidate_admin_list = [item for val, item in zip(full_alias_list, candidate_admin_list) if val == full_alias_min]
+
         # step 3: 县级存在重复名称，计算候选列表中可能重复的县名
         county_dup_list = [item[3][item[-1][-1][1]] for item in candidate_admin_list]
         county_dup_list = collections.Counter(county_dup_list).most_common()

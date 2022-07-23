@@ -234,6 +234,25 @@ def new_word_discovery(input_file, min_freq=10, min_mutual_information=80, min_e
     Returns:
         dict: 新词 dict
 
+    Examples:
+        >>> import jionlp as jio
+        >>> input_file = '/path/to/text_file.txt'
+
+        # input_file 内的样例文本，即一行一条纯文本即可
+        # 应采儿吸毒是怎么回事？应采儿藏毒事件始末真相
+        # 但刚出道没几年应采儿就因为吸毒入狱，2004年11月6日凌晨，应采儿与朋友从KTV出来驾车经过九龙塘金巴伦道49号时
+        # 董洁，1980年4月19日出生于辽宁省大连市，毕业于中国人民解放军国防大学军事文化学院舞蹈系，中国内地影视女演员。
+        # ...
+
+        >>> new_words_dict = jio.new_word.new_word_discovery(input_file)
+        >>> print(new_words_dict)
+        >>> print(jio.new_word.new_word_discovery.__doc__)
+
+        # {'浑水': [34, 6.9],
+        #  '贝壳': [28, 6.7],
+        #  '应采儿': [17, 6.2],
+        #  '证监会': [18, 5.8]}
+
     """
 
     word_freq = count_ngrams(input_file)

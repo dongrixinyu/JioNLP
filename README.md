@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://pepy.tech/badge/jionlp/month" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.4.12-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.4.13-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -44,25 +44,6 @@
 
 # '张晨星<email>，现在电子邮件可以带中文了吗？'
 ```
-
-#### Update 2022-06-13
-## 更新 **新词发现** 
-
-#### jio.new_word.new_word_discovery 对一个文本语料文件提取所发现的新词
-```
->>> import jionlp as jio
->>> input_file = '/path/to/text_file.txt'
-
->>> new_words_dict = jio.new_word.new_word_discovery(input_file)
->>> print(new_words_dict)
->>> print(jio.new_word.new_word_discovery.__doc__)
-
-# {'浑水': [34, 6.9],
-#  '贝壳': [28, 6.7],
-#  '证监会': [18, 5.8]}
-
-```
-
 
 #### Updata 2022-05-26
 ## 更新 [**关键短语抽取**](../../wiki/Gadget-说明文档#user-content-关键短语抽取) 
