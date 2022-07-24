@@ -434,6 +434,12 @@ class TimeParser(object):
             ''.join([bracket(LIMIT_YEAR_STRING), '第', bracket(WEEK_NUM_STRING),
                      '(个)?', WEEK_STRING]))
 
+        # 1月1  此类不全的日期，缺少日
+        # 注意，此种情况只针对 日 是 阿拉伯数字的情况，若是汉字 日，如 “五月二十”，则按农历进行解析，
+        # 此时，则不存在日期的 “日” 的缺失。
+        self.num_month_num_pattern = re.compile(
+            ''.join(['^', MONTH_NUM_STRING, '月', '([12]\d|3[01]|[0]?[1-9])', '$']))
+
         # 公历固定节日
         self.year_fixed_solar_festival_pattern = re.compile(
             ''.join([bracket_absence(YEAR_STRING), FIXED_SOLAR_FESTIVAL]))
@@ -967,6 +973,21 @@ class TimeParser(object):
 
         return time_string
 
+    def _compensate_num_month_num(self, time_string):
+        """ 一种特定的日期类型，“1月1”，没指明 “日”。因此需要进行补全，然后再进行处理。
+
+        Args:
+            time_string:
+
+        Returns:
+
+        """
+        matched_res = self.num_month_num_pattern.search(time_string)
+        if matched_res is not None:
+            return time_string + '日'
+        else:
+            return time_string
+
     def parse_time_span_point(self, time_string):
         # 按照 “从 …… 至 ……” 进行解析
         first_time_string, second_time_string = self.parse_span_2_2_point(time_string)
@@ -976,6 +997,7 @@ class TimeParser(object):
             old_time_base_handler = self.time_base_handler
             try:
                 if first_time_string is not None and second_time_string is None:
+                    first_time_string = self._compensate_num_month_num(first_time_string)
 
                     first_full_time_handler, _, _, blur_time = self.parse_time_point(
                         first_time_string, self.time_base_handler)
@@ -990,6 +1012,8 @@ class TimeParser(object):
                         second_full_time_handler = self.time_base_handler
                 elif first_time_string is not None and second_time_string is not None:
 
+                    first_time_string = self._compensate_num_month_num(first_time_string)
+                    second_time_string = self._compensate_num_month_num(second_time_string)
                     first_time_string, second_time_string = self._compensate_string(
                         time_string, first_time_string, second_time_string)
 
@@ -1013,6 +1037,8 @@ class TimeParser(object):
                                 second_full_time_handler[4:] = [0, 0]
 
                 elif first_time_string is None and second_time_string is not None:
+                    second_time_string = self._compensate_num_month_num(second_time_string)
+
                     _, second_full_time_handler, _, blur_time = self.parse_time_point(
                         second_time_string, self.time_base_handler)
 
@@ -1037,6 +1063,8 @@ class TimeParser(object):
                         time_string, self.time_base_handler)
         else:
             # 非 time span，按 time_point 解析
+            time_string = self._compensate_num_month_num(time_string)
+
             first_full_time_handler, second_full_time_handler, time_type, \
                 blur_time = self.parse_time_point(
                     time_string, self.time_base_handler)

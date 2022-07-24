@@ -24,6 +24,8 @@ class TestTimeExtractor(unittest.TestCase):
             ['有十分之一的概率，股票赔钱了。', []],
             ['住在南京网2021-09-21热度 578瞰地', [{'text': '2021-09-21', 'offset': [5, 15], 'type': 'time_point'}]],
             ['根据财税2016 36号文', [{'text': '2016', 'offset': [4, 8], 'type': 'time_span'}]],
+            ['他在10月22出生', [{'text': '10月22', 'offset': [2, 7], 'type': 'time_point'}]],
+            ['1月3至2月10', [{'text': '1月3至2月10', 'offset': [0, 8], 'type': 'time_span'}]],
         ]
 
         for item in text_string_list:

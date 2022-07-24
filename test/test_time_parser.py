@@ -311,6 +311,12 @@ class TestTimeParser(unittest.TestCase):
             ['上一个月', _ts_1,
              {'type': 'time_point', 'definition': 'blur', 'time': ['2021-05-01 00:00:00', '2021-05-31 23:59:59']}],
 
+            # 残缺 月、日，
+            ['1月3', _ts_1,
+             {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-01-03 00:00:00', '2021-01-03 23:59:59']}],
+            ['十月31', _ts_1,
+             {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-10-31 00:00:00', '2021-10-31 23:59:59']}],
+
             # 限定月、模糊日
             ['本月初', _ts_1,
              {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-01 00:00:00', '2021-06-05 23:59:59']}],
@@ -459,6 +465,10 @@ class TestTimeParser(unittest.TestCase):
              {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 01:06:40', '2035-12-31 23:59:59']}],
             ['今晚八点以后', _ts_1,
              {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 20:00:00', 'inf']}],
+
+            # 残缺型 ……至……
+            ['1月3至2月10', _ts_1,
+             {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-01-03 00:00:00', '2021-02-10 23:59:59']}],
 
             # time_span，limit 型
             ['前天中午到明天晚上', _ts_1,
