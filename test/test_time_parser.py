@@ -618,6 +618,8 @@ class TestTimeParser(unittest.TestCase):
              {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-16 00:00:00', '2021-06-16 23:59:59']}],
             ['今天', _ts_1,
              {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-14 00:00:00', '2021-06-14 23:59:59']}],
+            ['大大后天', _ts_1,
+             {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-18 00:00:00', '2021-06-18 23:59:59']}],
             ['昨晚8时35分', _ts_1,
              {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-13 20:35:00', '2021-06-13 20:35:59']}],
             ['当晚十时', _ts_1,

@@ -464,7 +464,8 @@ class TimeParser(object):
             bracket_absence(LIMIT_YEAR_STRING) + REGULAR_FOREIGN_FESTIVAL)
 
         # 限定性`日`
-        self.limit_day_pattern = re.compile(r'(前|今|明|同一|当|后|大前|大后|昨|次|本)[天日晚]')
+        self.limit_day_pattern = re.compile(
+            r'(前|今|明|同一|当|后|大大前|大大后|大前|大后|昨|次|本)[天日晚]')
 
         # 时分秒 文字
         self.hour_minute_second_pattern = re.compile(
@@ -594,7 +595,7 @@ class TimeParser(object):
 
         # **** 日|星期 ****
         self.day_1_pattern = re.compile(DAY_STRING)
-        self.day_2_pattern = re.compile(r'(前|今|明|同一|当|后|大前|大后|昨|次)(?=[天日晚])')  # 昨晚9点
+        self.day_2_pattern = re.compile(r'(前|今|明|同一|当|后|大大前|大大后|大前|大后|昨|次)(?=[天日晚])')  # 昨晚9点
         self.day_3_pattern = re.compile(BLUR_DAY_STRING)
         self.lunar_day_pattern = re.compile(LUNAR_DAY_STRING + '(?!月)')
         self.lunar_24st_pattern = re.compile(SOLAR_TERM_STRING)
@@ -4794,7 +4795,9 @@ class TimeParser(object):
         if limit_day:
             limit_day_string = limit_day.group()
             time_base_datetime = TimeParser._convert_handler2datetime(self.time_base_handler)
-            if '大前' in limit_day_string:
+            if '大大前' in limit_day_string:
+                time_base_datetime -= datetime.timedelta(days=4)
+            elif '大前' in limit_day_string:
                 time_base_datetime -= datetime.timedelta(days=3)
             elif '前' in limit_day_string:
                 time_base_datetime -= datetime.timedelta(days=2)
@@ -4804,6 +4807,8 @@ class TimeParser(object):
                 pass
             elif '明' in limit_day_string or '次' in limit_day_string:
                 time_base_datetime += datetime.timedelta(days=1)
+            elif '大大后' in limit_day_string:
+                time_base_datetime += datetime.timedelta(days=4)
             elif '大后' in limit_day_string:
                 time_base_datetime += datetime.timedelta(days=3)
             elif '后' in limit_day_string:
