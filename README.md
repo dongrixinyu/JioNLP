@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://pepy.tech/badge/jionlp/month" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.4.14-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.4.15-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -280,7 +280,7 @@ $ jio_help
 ![image](../../blob/master/image/payment_code.jpg)
 
 ### 做 NLP不易，欢迎加入自然语言处理 Wechat 交流群
-### 请扫以下码，关注并回复【进群】
+### 请扫以下码，或wx搜索公众号“一个Bug”，关注并回复【进群】
 ![image](../../blob/master/image/qrcode_for_gh.jpg)
 
 

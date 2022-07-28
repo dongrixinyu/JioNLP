@@ -8,10 +8,11 @@
 
 
 import re
+import traceback
 
 from jionlp.rule.rule_pattern import MONEY_PREFIX_STRING, \
     MONEY_KUAI_MAO_JIAO_FEN_STRING, MONEY_PREFIX_CASE_STRING, \
-    MONEY_CHAR_STRING, MONEY_NUM_STRING
+    MONEY_CHAR_STRING, MONEY_NUM_STRING, MONEY_SUFFIX_CASE_STRING
 from jionlp.gadget.money_parser import MoneyParser
 
 
@@ -49,9 +50,12 @@ class MoneyExtractor(object):
         #      absence(MONEY_SUFFIX_STRING)])
 
         # self.money_string_pattern = re.compile(single_money_pattern)
+
         self.qian_wan_yi_yuan_exception_check_pattern = re.compile(r'[k千仟w万萬亿]元[0-9]')
         self.money_num_string_pattern = re.compile(MONEY_NUM_STRING)
         self.money_string_pattern = re.compile(MONEY_CHAR_STRING)
+        self.money_unit_pattern = re.compile(MONEY_SUFFIX_CASE_STRING)
+        self.money_span_seg_pattern = re.compile('[-~—－～]+')
 
         # 此类表达虽然可按货币金额解析，但是文本中很大概率并非表示货币金额，故以大概率进行排除，
         # 并设参数 ret_all，即返回所有进行控制，默认为 False，即根据词典进行删除
@@ -118,6 +122,28 @@ class MoneyExtractor(object):
         if matched_res:
             return False
 
+        # rule 4: 字符串中无货币单位，且无金额范围间隔符，则说明字符串有错误
+        matched_res_1 = self.money_unit_pattern.search(money_string)
+        matched_res_2 = self.money_span_seg_pattern.search(money_string)
+        if matched_res_1 is None:
+            if matched_res_2 is None:
+                return False
+
+            # 若有两个以上的间隔字符，说明字符串也是错误的。如“132017-04-09”
+            span_seg_res = self.money_span_seg_pattern.findall(money_string)
+            if len(span_seg_res) > 1:
+                return False
+
+            # 若仅有一个字符间隔，但无 k 或 w 字符样式，也是错误的。如 “12w~19w”
+            if 'k' not in money_string and 'w' not in money_string:
+                return False
+
+        # rule 5: 字符串中仅仅有货币单位，而无货币数额，则说明字符串有误，如，“人民币”，无任何实值
+        if matched_res_1:
+            span_tuple = matched_res_1.span()
+            if span_tuple[1] - span_tuple[0] == len(money_string):
+                return False
+
         return True
 
     def _cleaning(self, money_string):
@@ -147,6 +173,7 @@ class MoneyExtractor(object):
 
                     return sub_string, result, offset
                 except (ValueError, Exception):
+                    print(traceback.format_exc())
                     continue
 
         return None, None, None
@@ -175,7 +202,10 @@ class MoneyExtractor(object):
         return None, None, None
 
     def extract_money_candidates(self, text):
-        """ 获取所有的候选货币金额字符串，其中包含了货币金额 """
+        """ 获取所有的候选货币金额字符串，其中包含了货币金额
+
+        但该正则范围较为宽泛，包含了并非货币金额的字符串。因此若遇到 bug，请提 issue 告知。
+        """
         idx_count = 0
         text_length = len(text)
         money_candidates_list = list()

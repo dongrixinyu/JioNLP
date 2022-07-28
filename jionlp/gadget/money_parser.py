@@ -381,7 +381,12 @@ class MoneyParser(object):
         if '多' in money_string:
             money_string = money_string.replace('多', '')
             definition = 'blur+span'
-            return money_string, definition,
+            return money_string, definition
+
+        if '余' in money_string:
+            money_string = money_string.replace('余', '')
+            definition = 'blur+span'
+            return money_string, definition
 
         if '几' in money_string or '数' in money_string:
             if money_string[0] in '几数':
@@ -623,7 +628,7 @@ class MoneyParser(object):
         # 判断货币类型
         unit, money_string = self._get_currency_case(money_string, default_unit=default_unit)
 
-        # 处理模糊金额，如 “六千多万”、“十几块钱”、“数十元”、“十多块钱” 等
+        # 处理模糊金额，如 “六千多万”、“十几块钱”、“数十元”、“十多块钱”、“2000余元” 等
         money_string, definition = self._accuracy(money_string, definition)
 
         if money_string == '':
