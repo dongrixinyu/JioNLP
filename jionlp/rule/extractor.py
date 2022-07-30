@@ -5,11 +5,10 @@
 # Email: dongrixinyu.89@163.com
 # github: https://github.com/dongrixinyu/JioNLP
 # description: Preprocessing tool for Chinese NLP
+# website: http://www.jionlp.com
 
 
-import os
 import re
-import pdb
 
 from .rule_pattern import *
 
@@ -31,6 +30,8 @@ class Extractor(object):
         self.html_tag_pattern = None
         self.qq_pattern = None
         self.strict_qq_pattern = None
+        self.wechat_id_pattern = None
+        self.strict_wechat_id_pattern = None
         self.cell_phone_pattern = None
         self.landline_phone_pattern = None
         self.phone_prefix_pattern = None
@@ -311,7 +312,53 @@ class Extractor(object):
                 return tmp_res
             else:
                 return list()
-    
+
+    def extract_wechat_id(self, text, detail=False, strict=True):
+        """从文本中抽取出 微信号 号码
+
+        微信官方定义的微信号规则：
+
+        1、可使用6-20个字母、数字、下划线和减号；
+        2、必须以字母开头（字母不区分大小写）；
+        3、不支持设置中文。
+
+        Args:
+            text(str): 字符串文本
+            detail(bool): 是否携带 offset （微信号 在文本中的位置信息）
+            strict(bool): 微信号 很容易和其他数字混淆，因此选择采用严格或宽松规则匹配
+
+        Returns:
+            list: 微信号 列表
+
+        """
+        if self.wechat_id_pattern is None:
+            self.wechat_id_pattern = re.compile(WECHAT_ID_PATTERN)
+            self.strict_wechat_id_pattern = re.compile(STRICT_WECHAT_ID_PATTERN)
+
+        text = ''.join(['#', text, '#'])
+        tmp_res = self._extract_base(
+            self.wechat_id_pattern, text, with_offset=True)
+
+        if not strict:
+            return tmp_res
+        else:
+            # 将无法匹配 微信号 字符的 微信号 删除
+            # 注意该规则未经充分的数据验证，仅凭启发式规则定义而成。
+            final_res = list()
+            for item in tmp_res:
+                end_offset = item['offset'][0]
+                start_offset = max(0, end_offset - 8)  # 此处的考察范围 8 为一个默认值
+                match_flag = self.strict_wechat_id_pattern.search(
+                    text[start_offset: end_offset])
+
+                if match_flag:
+                    if detail:
+                        final_res.append(item)
+                    else:
+                        final_res.append(item['text'])
+
+            return final_res
+
     def extract_url(self, text, detail=False):
         """提取文本中的url链接
 
@@ -330,6 +377,7 @@ class Extractor(object):
         return self._extract_base(self.url_pattern, text, 
                                   with_offset=detail)
 
+    '''
     def _extract_parentheses(self, text, parentheses=PARENTHESES_PATTERN):
         # 额外分支 Ghs 提供的方法
         if self.extract_parentheses_pattern is None or self.parentheses_pattern != parentheses:
@@ -340,6 +388,7 @@ class Extractor(object):
 
         return [{'context': [j for j in i.groups() if j][0], 'offset': i.span(), 'origin': i.group()}
                 for i in reg.compile(self.extract_parentheses_pattern).finditer(text)]
+    '''
 
     def extract_parentheses(self, text, parentheses=PARENTHESES_PATTERN, detail=False):
         """ 提取文本中的括号及括号内内容，当有括号嵌套时，提取每一对

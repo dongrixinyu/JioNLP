@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://pepy.tech/badge/jionlp/month" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.4.15-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.4.16-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -180,6 +180,7 @@ $ jio_help
 |[**清洗文本**](../../wiki/正则抽取与解析-说明文档#user-content-清洗文本) |clean_text|去除文本中的**异常字符、冗余字符、HTML标签、括号信息、**<br>**URL、E-mail、电话号码，全角字母数字转换为半角** |⭐ |
 |[抽取 **E-mail**](../../wiki/正则抽取与解析-说明文档#user-content-抽取-e-mail) |extract_email|抽取文本中的 E-mail，返回**位置**与**域名** | |
 |[解析 **货币金额**](../../wiki/正则抽取与解析-说明文档#user-content-货币金额解析) |extract_money|解析货币金额字符串 |⭐ |
+|[抽取**微信号**](../../wiki/正则抽取与解析-说明文档#user-content-抽取-微信号) |extract_wechat_id| 抽取微信号，返回**位置** | |
 |[抽取**电话号码**](../../wiki/正则抽取与解析-说明文档#user-content-抽取电话号码) |extract_phone_number| 抽取电话号码(含**手机号**、**座机号**)，返回**域名**、**类型**与**位置** | |
 |[抽取中国**身份证** ID](../../wiki/正则抽取与解析-说明文档#user-content-抽取身份证号) |extract_id_card|抽取身份证 ID，配合 **jio.parse_id_card** 返回身份证的<br>详细信息(**省市县**、**出生日期**、**性别**、**校验码**)| |
 |[抽取 **QQ** 号](../../wiki/正则抽取与解析-说明文档#user-content-抽取-qq) |extract_qq|抽取 QQ 号，分为严格规则和宽松规则 | |
