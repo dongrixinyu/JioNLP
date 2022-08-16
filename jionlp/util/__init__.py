@@ -4,7 +4,7 @@
 # license: Apache License 2.0
 # Email: dongrixinyu.89@163.com
 # github: https://github.com/dongrixinyu/JioNLP
-# description: Preprocessing tool for Chinese NLP
+# description: Preprocessing & parsing tool for Chinese NLP
 # website: www.jionlp.com
 
 

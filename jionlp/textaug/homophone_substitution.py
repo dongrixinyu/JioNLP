@@ -116,7 +116,7 @@ class HomophoneSubstitution(object):
 
         segs = jiojio.cut(text)
         if len(segs) > 0:
-            if type(segs) is not str:  # 考虑 jiojio 将 pos 加载的情况。
+            if type(segs[0]) is not str:  # 考虑 jiojio 将 pos 加载的情况。
                 segs = [seg[0] for seg in segs]
         pinyin_segs = [self.pinyin(seg, formater='detail') for seg in segs]
 
