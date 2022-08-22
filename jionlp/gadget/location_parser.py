@@ -76,11 +76,16 @@ class LocationParser(object):
         for prov in china_loc:
             if prov.startswith('_'):
                 continue
-            self.administrative_map_list.append(
-                [china_loc[prov]['_admin_code'], 
-                 [prov, china_loc[prov]['_alias']],
-                 [None, None],
-                 [None, None], True])  # True 表示数据为最新地名，反之为旧地名
+            if china_loc[prov]['_alias'] in self.municipalities_cities:
+                pass
+                # 去除直辖市仅包含省级的信息，因为直辖市一定将匹配至市一级。
+            else:
+                self.administrative_map_list.append(
+                    [china_loc[prov]['_admin_code'],
+                     [prov, china_loc[prov]['_alias']],
+                     [None, None],
+                     [None, None], True])  # True 表示数据为最新地名，反之为旧地名
+
             for city in china_loc[prov]:
                 if city.startswith('_'):
                     continue
@@ -89,6 +94,7 @@ class LocationParser(object):
                      [prov, china_loc[prov]['_alias']],
                      [city, china_loc[prov][city]['_alias']],
                      [None, None], True])
+
                 for county in china_loc[prov][city]:
                     if county.startswith('_'):
                         continue
@@ -116,6 +122,10 @@ class LocationParser(object):
                 {''.join([i[0] for i in item['old_loc']]): item['new_loc']})
 
     def _prepare(self):
+        self.municipalities_cities = set([
+            '北京', '上海', '天津', '重庆', '香港', '澳门'])
+        # '北京市', '上海市', '天津市', '重庆市', '香港特别行政区', '澳门特别行政区'])
+
         # 添加中国区划词典
         china_loc = china_location_loader(detail=self.town_village)
         china_change_loc = china_location_change_loader()
@@ -126,9 +136,6 @@ class LocationParser(object):
             self.loc_level_key_list.extend(['乡', '村'])
         self.loc_level_key_dict = dict(
             [(loc_level, None) for loc_level in self.loc_level_key_list])
-        self.municipalities_cities = set([
-            '北京', '上海', '天津', '重庆', '香港', '澳门'])
-        # '北京市', '上海市', '天津市', '重庆市', '香港特别行政区', '澳门特别行政区'])
         
     def get_candidates(self, location_text):
         """ 从地址中获取所有可能涉及到的候选地址 """
@@ -205,7 +212,32 @@ class LocationParser(object):
         # 2.2 找出匹配位置最靠前的
         candidate_admin_list = sorted(
             candidate_admin_list, key=lambda i: sum([j[0] for j in i[-1]]))
-        
+
+        # 对于有些 地市名 和 县级名简称相同的，需要进行过滤，根据被匹配的 offset 进行确定。
+        # 直辖市除外
+        new_candidate_admin_list = []
+        for item in candidate_admin_list:
+            if item[1][1] in self.municipalities_cities:
+                new_candidate_admin_list.append(item)
+            else:
+                if -1 not in [item[-1][0][0], item[-1][1][0], item[-1][2][0]]:
+                    # 省、市、县全都匹配到
+                    if (item[-1][0][0] < item[-1][1][0]) and (item[-1][1][0] < item[-1][2][0]):
+                        # 必须按照 省、市、县的顺序进行匹配
+                        new_candidate_admin_list.append(item)
+                else:
+                    new_candidate_admin_list.append(item)
+
+        candidate_admin_list = new_candidate_admin_list
+        if len(candidate_admin_list) == 0:
+            result = {'province': None,
+                      'city': None,
+                      'county': None,
+                      'detail': location_text,
+                      'full_location': location_text,
+                      'orig_location': location_text}
+            return result
+
         min_matched_offset = sum([j[0] for j in candidate_admin_list[0][-1]])
         candidate_admin_list = [item for item in candidate_admin_list 
                                 if sum([j[0] for j in item[-1]]) == min_matched_offset]
