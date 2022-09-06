@@ -9,7 +9,7 @@
 # website: www.jionlp.com
 """
 
-__version__ = '1.4.18'
+__version__ = '1.4.19'
 
 
 import os
@@ -88,6 +88,7 @@ history = """
 │   | 2022-06-15 | expose and update redundant char remover            |   │
 │   | 2022-07-03 | add replace_xxx functions                           |   │
 │   | 2022-07-30 | add extract_wechat_id functions                     |   │
+│   | 2022-09-06 | fix extract_money bug                               |   │
 │                                                                          │
 ╰──────────────────────────────────────────────────────────────────────────╯
 """

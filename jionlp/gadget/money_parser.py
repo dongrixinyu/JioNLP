@@ -124,6 +124,14 @@ class MoneyParser(object):
             r'(一二|二三|两三|三四|三五|四五|五六|六七|七八|八九|'
             r'壹贰|贰叁|贰弎|贰仨|两叁|两弎|两仨|叁肆|弎肆|仨肆|叁伍|弎伍|仨伍|肆伍|伍陆|陆柒|柒捌|捌玖)')
 
+        self.alias_RMB_case = {'块钱人民币', '块钱', '人民币', '块', '元人民币', '圆', '圆整'}
+        self.alias_HK_case = {'港币', '元港币'}
+        self.alias_JP_case = {'日币', '元日币'}
+        self.alias_KR_case = {'韩币', '元韩币'}
+        self.alias_TW_case = {'台币', '元新台币', '元台币'}
+        self.alias_AUS_case = {'澳大利亚元', '澳币', '元澳币'}
+        self.alias_USA_case = {'美刀', '美金'}
+
         self.standard_format = '{:.2f}'
         self.type_error = 'the given money_string `{}` is illegal.'
         
@@ -282,19 +290,19 @@ class MoneyParser(object):
             res = res_list[0]
             currency_unit = res.group()
             # 规定标准的货币类型
-            if currency_unit in ['块钱', '人民币', '块', '元人民币', '圆', '圆整']:
+            if currency_unit in self.alias_RMB_case:
                 unit = '元'
-            elif currency_unit in ['港币', '元港币']:
+            elif currency_unit in self.alias_HK_case:
                 unit = '港元'
-            elif currency_unit in ['日币', '元日币']:
+            elif currency_unit in self.alias_JP_case:
                 unit = '日元'
-            elif currency_unit in ['韩币', '元韩币']:
+            elif currency_unit in self.alias_KR_case:
                 unit = '韩元'
-            elif currency_unit in ['台币', '元新台币', '元台币']:
+            elif currency_unit in self.alias_TW_case:
                 unit = '新台币'
-            elif currency_unit in ['澳大利亚元', '澳币', '元澳币']:
+            elif currency_unit in self.alias_AUS_case:
                 unit = '澳元'
-            elif currency_unit in ['美刀', '美金']:
+            elif currency_unit in self.alias_USA_case:
                 unit = '美元'
             else:
                 unit = currency_unit
