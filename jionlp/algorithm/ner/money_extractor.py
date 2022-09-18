@@ -24,6 +24,7 @@ class MoneyExtractor(object):
         with_parsing(bool): 指示返回结果是否包含解析信息，默认为 True
         ret_all(bool): 某些货币金额表达，在大多数情况下并非表达货币金额，如 “几分” 之于 “他有几分不友善”，默认按绝大概率处理，
             即不返回此类伪货币金额表达，该参数默认为 False；若希望返回所有抽取到的货币金额表达，须将该参数置 True。
+        print_exception(bool): 对于某些异常的日志选择是否打印，默认不打印
 
     Returns:
         list(dict): 包含货币金额的列表，其中包括 text、type、offset 三个字段，和工具包中 NER 标准处理格式一致。
@@ -65,9 +66,13 @@ class MoneyExtractor(object):
         self.money_kuai_map_jiao_fen_pattern = re.compile(MONEY_KUAI_MAO_JIAO_FEN_STRING)
         self.non_money_string_list = ['多元', '十分', '百分', '万分']
 
-    def __call__(self, text, with_parsing=True, ret_all=False):
+        self.print_exception = False
+
+    def __call__(self, text, with_parsing=True, ret_all=False, print_exception=False):
         if self.parse_money is None:
             self._prepare()
+
+        self.print_exception = print_exception
 
         candidates_list = self.extract_money_candidates(text)
 
@@ -173,21 +178,23 @@ class MoneyExtractor(object):
 
                     return sub_string, result, offset
                 except (ValueError, Exception):
-                    print(traceback.format_exc())
+                    if self.print_exception:
+                        print(traceback.format_exc())
+
                     continue
 
         return None, None, None
 
     def _grid_search_2(self, money_candidate):
         """ 全面搜索候选货币金额字符串，从前至后，从长至短 """
-        print(money_candidate)
+        # print(money_candidate)
         length = len(money_candidate)
         for i in range(length - 1):  # 控制起始点
             for j in range(length, i, -1):  # 控制终止点
                 try:
                     offset = [i, j]
                     sub_string = money_candidate[i: j]
-                    print(sub_string)
+                    # print(sub_string)
                     # 处理假阳性。检查子串，对某些产生歧义的内容进行过滤。
                     # 原因在于，parse_money 会对某些不符合要求的字符串做正确解析.
                     if not MoneyExtractor._filter(sub_string):
