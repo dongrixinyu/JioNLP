@@ -37,6 +37,8 @@ class TestMoneyExtractor(unittest.TestCase):
              []],
             ['到了次日的凌晨2许时就发现车被盗了，该车价值2000余元',
              [{'text': '2000余元', 'offset': [22, 28], 'type': 'money'}]],
+            ['年末结转和结余10.56亿元。',
+             [{'text': '10.56亿元', 'offset': [7, 14], 'type': 'money'}]],
         ]
 
         for item in money_string_list:
