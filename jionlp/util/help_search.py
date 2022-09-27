@@ -29,9 +29,7 @@ class HelpSearch(object):
 
     """
     def __init__(self):
-        print('# jionlp - `jio.help()` is for searching how to use jio functions.\n'
-              '         - Or browse `https://github.com/dongrixinyu/JioNLP` to get help.\n'
-              '         - Or browse `http://www.jionlp.com` to try online functions.')
+        print('# jionlp - `https://github.com/dongrixinyu/JioNLP` provides detailed instruction.')
         self.function_dict = None
         self.non_function_list = [
             # 辅助工具
