@@ -541,7 +541,7 @@ class TimeParser(object):
             ''.join(['(未来|今后)(的)?', standard_delta_string, '[里内]?']))
 
         self.guoqu_delta2span_pattern = re.compile(
-            ''.join(['((过去)(的)?|近)', standard_delta_string, '[里内]?']))
+            ''.join(['((过去)(的)?|(最)?近)', standard_delta_string, '[里内]?']))
 
         self.guo_delta2span_pattern = re.compile(
             ''.join(['(再)?(过)', standard_delta_string]))

@@ -937,6 +937,9 @@ class TestTimeParser(unittest.TestCase):
              {'type': 'time_span', 'definition': 'blur', 'time': ['2021-03-14 00:00:00', '2021-06-14 01:06:40']}],
             ['近仨月', _ts_1,
              {'type': 'time_span', 'definition': 'blur', 'time': ['2021-03-14 00:00:00', '2021-06-14 01:06:40']}],
+            ['最近10分钟', _ts_1,
+             {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 00:56:40', '2021-06-14 01:06:40']}],
+
             # 特殊时间范围
             ['全天', _ts_1,
              {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 00:00:00', '2021-06-14 23:59:59']}],
