@@ -4,13 +4,20 @@
 # python: /home/ubuntu/anaconda3/bin/python
 # working in the directory with `setup.py` file.
 
-jionlp_version="1.4.14"
+# get the latest jionlp version
+current_dir_path=$(pwd)
+echo "Current directory: $current_dir_path"
 
+jionlp_version=`cat ${current_dir_path}/jionlp/__init__.py | grep -iPo "(?<=(__version__ = \'))([0-9]{1,2}.[0-9]{1,2}.[0-9]{1,2})"`
+echo "jionlp version: ${jionlp_version}"
+
+
+# clean redundant dirs
 if [ -d build ]; then
     rm -rf build
 fi
-if [ -d jiojio.egg-info ]; then
-    rm -rf jiojio.egg-info
+if [ -d jionlp.egg-info ]; then
+    rm -rf jionlp.egg-info
 fi
 
 to_be_deleted=(
@@ -31,7 +38,7 @@ to_be_deleted=(
 for item in ${to_be_deleted[*]};
 do
     if [ -f ./jionlp/dictionary/$item ]; then
-        echo "deleting redundent file: " $item
+        echo "deleting redundant file: " $item
         rm -rf ./jionlp/dictionary/$item
 fi
 done
@@ -39,8 +46,9 @@ done
 # char_distribution.json
 python3 setup.py bdist_wheel --universal
 
+ls -lth ./dist/ | grep ${jionlp_version}
 pip install twine
-twine upload dist/jionlp-${jiojio_version}*whl
+twine upload ./dist/jionlp-${jionlp_version}-py2.py3-none-any.whl
 
 echo "finished!"
 exit 0
