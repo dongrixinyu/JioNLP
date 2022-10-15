@@ -22,6 +22,8 @@ class MotorVehicleLicencePlateParser(object):
     牌号指定规则和历史参考
         https://zh.wikipedia.org/wiki/中华人民共和国民用机动车号牌
 
+    该工具配合 jio.extract_motor_vehicle_licence_plate 共同使用，先抽取，再识别
+
     Args:
         None
 
@@ -30,18 +32,11 @@ class MotorVehicleLicencePlateParser(object):
 
     Examples:
         >>> import jionlp as jio
-        >>> text = '川A25qa9'
-        >>> res = jio.parse_id_card(text)
+        >>> text = '川A·23047B'
+        >>> res = jio.parse_motor_vehicle_licence_plate(text)
         >>> print(res)
 
-        # {'province': '贵州省',
-        #  'city': '贵阳市',
-        #  'county': '云岩区',
-        #  'birth_year': '2017',
-        #  'birth_month': '11',
-        #  'birth_day': '09',
-        #  'gender': '女',
-        #  'check_code': 'x'}
+        # {'car_loc': '川A', 'car_type': 'PEV', 'car_size': 'big'}
 
     """
 

@@ -134,6 +134,7 @@ $ jio_help
 | 功能   | 函数   |描述   |星级   |
 |--------|-------|-------|-------|
 |[**查找帮助**](../../wiki/Gadget-说明文档#user-content-查找帮助) |help|若不知道 JioNLP 有哪些功能，可根据命令行提示键入若干关键词做搜索 | |
+|[**车牌号**解析](../../wiki/Gadget-说明文档#user-content-解析车牌号) |parse_motor_vehicle_licence_plate|给定一个车牌号，对其进行解析 |⭐|
 |[**时间语义解析**](../../wiki/时间语义解析-说明文档#user-content-时间语义解析) |parse_time|给定时间文本，解析其时间语义（时间戳、时长）等 |⭐|
 |[**关键短语抽取**](../../wiki/Gadget-说明文档#user-content-关键短语抽取) |extract_keyphrase|给定一篇文本，抽取其对应关键短语 |⭐|
 |[抽取式**文本摘要**](../../wiki/Gadget-说明文档#user-content-抽取式文本摘要) |extract_summary|给定一篇文本，抽取其对应文摘 | |
@@ -182,6 +183,7 @@ $ jio_help
 |[抽取 **URL**](../../wiki/正则抽取与解析-说明文档#user-content-抽取-url-超链接) |extract_url|抽取 URL 超链接 | |
 |[抽取 **IP**地址](../../wiki/正则抽取与解析-说明文档#user-content-抽取-ip-地址) |extract_ip_address|抽取 IP 地址| |
 |[抽取**括号**中的内容](../../wiki/正则抽取与解析-说明文档#user-content-抽取文本括号信息) |extract_parentheses|抽取括号内容，包括 **{}「」[]【】()（）<>《》** |⭐ |
+|[抽取**车牌号**](../../wiki/正则抽取与解析-说明文档#user-content-抽取车牌号) |extract_motor_vehicle_licence_plate|抽取大陆车牌号信息 | |
 |[删除 **E-mail**](../../wiki/正则抽取与解析-说明文档#user-content-删除文本中的-e-mail) |remove_email|删除文本中的 E-mail 信息 | |
 |[删除 **URL**](../../wiki/正则抽取与解析-说明文档#user-content-删除文本中的-url) |remove_url |删除文本中的 URL 信息| |
 |[删除 **电话号码**](../../wiki/正则抽取与解析-说明文档#user-content-删除电话号码) |remove_phone_number|删除文本中的电话号码 | |

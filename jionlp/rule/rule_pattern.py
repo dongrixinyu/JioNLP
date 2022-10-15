@@ -185,10 +185,11 @@ CHINA_PROVINCE_ALIAS = \
 # ---------------------------------------------------------------------
 # 中国大陆车牌号正则
 MOTOR_VEHICLE_LICENCE_PLATE_PATTERN = \
-    ''.join(['([', CHINA_PROVINCE_ALIAS[3:], ']',
-             '[A-HJ-NP-Za-hj-np-z]',
-             '[·. 　]?',  # 该符号为分隔符
-             '[A-HJ-NP-Za-hj-np-z0-9]{5,6})'])
+    ''.join([r'([', CHINA_PROVINCE_ALIAS[3:], r']',
+             r'[A-HJ-NP-Za-hj-np-z]',
+             r'[·. 　]?',  # 该符号为分隔符
+             r'[A-HJ-NP-Za-hj-np-z0-9]{5,6})',
+             r'(?![\da-zA-Z])'])
 
 # ---------------------------------------------------------------------
 # 人名百家姓
