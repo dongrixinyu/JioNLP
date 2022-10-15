@@ -2,9 +2,9 @@
 # library: jionlp
 # author: dongrixinyu
 # license: Apache License 2.0
-# Email: dongrixinyu.89@163.com
+# email: dongrixinyu.89@163.com
 # github: https://github.com/dongrixinyu/JioNLP
-# description: Preprocessing tool for Chinese NLP
+# description: Preprocessing & Parsing tool for Chinese NLP
 
 
 import re
@@ -84,6 +84,7 @@ class IDCardParser(object):
             # 前六位行政区划全错
             logging.error('the administration code of id card is wrong.')
             return None
+
         gender = '男' if int(id_card[-2]) % 2 else '女'
         check_code = id_card[-1]
         if check_code == 'X':

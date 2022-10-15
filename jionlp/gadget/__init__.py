@@ -2,9 +2,9 @@
 # library: jionlp
 # author: dongrixinyu
 # license: Apache License 2.0
-# Email: dongrixinyu.89@163.com
+# email: dongrixinyu.89@163.com
 # github: https://github.com/dongrixinyu/JioNLP
-# description: Preprocessing tool for Chinese NLP
+# description: Preprocessing & Parsing tool for Chinese NLP
 # website: www.jionlp.com
 
 
@@ -22,9 +22,11 @@ from .pinyin import Pinyin
 from .char_radical import CharRadical
 from .phone_location import PhoneLocation
 from .idiom_solitaire import IdiomSolitaire
+from .motor_vehicle_licence_plate import MotorVehicleLicencePlateParser
 from jionlp.util.fast_loader import FastLoader
 
 
+parse_motor_vehicle_licence_plate = MotorVehicleLicencePlateParser()
 parse_money = MoneyParser()
 money_num2char = MoneyNum2Char()
 parse_id_card = IDCardParser()

@@ -44,6 +44,7 @@ class Extractor(object):
         self.full_angle_pattern = None
         self.chinese_char_pattern = None
         self.chinese_chars_pattern = None
+        self.motor_vehicle_licence_plate_pattern = None
 
     @staticmethod
     def _extract_base(pattern, text, with_offset=False):
@@ -149,7 +150,7 @@ class Extractor(object):
             self.full_angle_pattern = str.maketrans(FULL_ANGLE_ALPHABET, HALF_ANGLE_ALPHABET)
 
         return text.translate(self.full_angle_pattern)
-        
+
     def extract_email(self, text, detail=False):
         """ 提取文本中的 E-mail
 
@@ -180,6 +181,26 @@ class Extractor(object):
                 detail_results.append(item)
             return detail_results
 
+    def extract_motor_vehicle_licence_plate(self, text, detail=False):
+        """ 提取文本中的机动车牌号
+
+        Args:
+            text(str): 字符串文本
+            detail(bool): 是否携带 offset （机动车牌号在文本中的位置信息）
+
+        Returns:
+            list: 机动车牌号信息列表
+
+        """
+        if self.motor_vehicle_licence_plate_pattern is None:
+            self.motor_vehicle_licence_plate_pattern = re.compile(
+                MOTOR_VEHICLE_LICENCE_PLATE_PATTERN)
+
+        text = ''.join(['#', text, '#'])
+        return self._extract_base(
+            self.motor_vehicle_licence_plate_pattern, text,
+            with_offset=detail)
+
     def extract_id_card(self, text, detail=False):
         """ 提取文本中的 ID 身份证号
 
@@ -197,7 +218,7 @@ class Extractor(object):
         text = ''.join(['#', text, '#'])
         return self._extract_base(self.id_card_pattern, text, 
                                   with_offset=detail)
-        
+
     def extract_ip_address(self, text, detail=False):
         """ 提取文本中的 IP 地址
 
@@ -215,7 +236,7 @@ class Extractor(object):
         text = ''.join(['#', text, '#'])
         return self._extract_base(self.ip_address_pattern, text, 
                                   with_offset=detail)
-    
+
     def extract_money(self, text, detail=False):
         """从文本中抽取出金额字符串，可以和 money_standardization 函数配合使用，
         得到数字金额。（TO BE DEPRECATED.）
@@ -247,7 +268,7 @@ class Extractor(object):
                 money_result.append(item.group())
         
         return money_result
-    
+
     def extract_phone_number(self, text, detail=False):
         """从文本中抽取出电话号码
 

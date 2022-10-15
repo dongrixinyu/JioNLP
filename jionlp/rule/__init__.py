@@ -4,7 +4,7 @@
 # license: Apache License 2.0
 # Email: dongrixinyu.89@163.com
 # github: https://github.com/dongrixinyu/JioNLP
-# description: Preprocessing tool for Chinese NLP
+# description: Preprocessing & Parsing tool for Chinese NLP
 # website: http://www.jionlp.com/
 
 
@@ -25,6 +25,7 @@ extract_id_card = extractor.extract_id_card
 extract_qq = extractor.extract_qq
 extract_wechat_id = extractor.extract_wechat_id
 extract_parentheses = extractor.extract_parentheses
+extract_motor_vehicle_licence_plate = extractor.extract_motor_vehicle_licence_plate
 
 remove_email = extractor.remove_email
 remove_url = extractor.remove_url
