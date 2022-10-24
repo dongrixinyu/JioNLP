@@ -714,6 +714,10 @@ class TestTimeParser(unittest.TestCase):
             ['10：13', _ts_1,
              {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-14 10:13:00', '2021-06-14 10:13:59']}],
 
+            # 连续模糊 时
+            ['明天下午七八点', _ts_1,
+             {'type': 'time_span', 'definition': 'blur', 'time': ['2021-06-15 19:00:00', '2021-06-15 20:59:59']}],
+
             # 时、限定性 分
             ['4月26日20时1刻', _ts_1,
              {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-04-26 20:15:00', '2021-04-26 20:15:59']}],

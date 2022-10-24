@@ -475,6 +475,10 @@ class TimeParser(object):
                      bracket(MIN_SEC_STRING + '分'), bracket_absence(MIN_SEC_STRING + '秒'),
                      absence(TIME_POINT_SUFFIX)]))
 
+        # 连续模糊 时
+        self.consecutive_blur_hour_pattern = re.compile(
+            ''.join([absence(BLUR_HOUR_STRING), bracket(CONSECUTIVE_BLUR_HOUR_STRING)]))
+
         # 标准格式`:`分隔时分秒
         self.num_hour_minute_second_pattern = re.compile(
             ''.join([absence(BLUR_HOUR_STRING),
@@ -490,6 +494,7 @@ class TimeParser(object):
             ''.join([absence(BLUR_HOUR_STRING), bracket(HOUR_STRING), r'([123一二三]刻|半)']))
 
         self.single_num_pattern = re.compile(SINGLE_NUM_STRING)
+
         # ----- TIME DELTA -----
         # 对时间段的描述
         # 其中，年、日、秒 容易引起歧义，如 `21年`，指`二十一年` 还是 `2021年`。
@@ -616,11 +621,14 @@ class TimeParser(object):
             self.week_5_pattern, self.day_2_pattern]
 
         # **** 时 ****
-        self.hour_1_pattern = re.compile(
+        self.hour_pattern = re.compile(
             HOUR_STRING.replace('[时点]', '') + r'(?=[时点])')
         self.hour_limitation_pattern = re.compile(BLUR_HOUR_STRING)
+        self.consecutive_hour_pattern = re.compile(
+            CONSECUTIVE_BLUR_HOUR_STRING.replace('[点]', '') + r'(?=[点])')
 
-        self.hour_patterns = [self.hour_1_pattern, self.hour_limitation_pattern]
+        self.hour_patterns = [self.hour_pattern, self.hour_limitation_pattern,
+                              self.consecutive_hour_pattern]
 
         # **** 分 ****
         self.minute_pattern = re.compile(r'(?<=[时点])' + MIN_SEC_STRING + '(?=分)?')
@@ -1673,6 +1681,9 @@ class TimeParser(object):
             [self.minute_delta_point_pattern, self.normalize_minute_delta_point],
             [self.quarter_delta_point_pattern, self.normalize_quarter_delta_point],
             [self.hour_delta_point_pattern, self.normalize_hour_delta_point],
+
+            # TIME_POINT 模糊型
+            [self.consecutive_blur_hour_pattern, self.normalize_consecutive_blur_hour_pattern],
 
             # TIME_POINT 型
             [self.hour_minute_second_pattern, self.normalize_hour_minute_second],
@@ -4870,6 +4881,45 @@ class TimeParser(object):
         time_definition = self._check_blur(time_string, 'accurate')
 
         return time_handler, time_handler, 'time_point', time_definition, day_bias
+
+    def normalize_consecutive_blur_hour_pattern(self, time_string):
+        """ 解析 `连续模糊 时` 时间  
+        
+        如：下午七八点
+        """
+        day_bias = [0, '弱']
+        hour = self.hour_patterns[2].search(time_string)
+        first_time_point = TimePoint()
+        second_time_point = TimePoint()
+
+        if hour:
+            hour_string = hour.group(1)
+            first_hour = int(self._char_num2num(hour_string[0]))
+            second_hour = int(self._char_num2num(hour_string[-1]))
+            hour_limitation = self.hour_patterns[1].search(time_string)
+            if hour_limitation:
+                hour_limit_string = hour_limitation.group()
+                if (5 <= first_hour <= 12) and ('晚' in hour_limit_string or '夜' in hour_limit_string):
+                    first_hour += 12
+                    second_hour += 12  # 注意此时未判断 第二个时间，仅根据第一个进行判断
+                if '中午' in hour_limit_string and first_hour not in [11, 12]:
+                    first_hour += 12
+                    second_hour += 12
+                if '下午' in hour_limit_string and (1 <= first_hour <= 11):
+                    first_hour += 12
+                    second_hour += 12
+            if first_hour == 24:
+                first_hour = 0  # 24 会在 datetime 中报错，即第二天的 0 时
+                second_hour = 1
+                day_bias = [1, '强']
+
+            first_time_point.hour = first_hour
+            second_time_point.hour = second_hour
+
+        first_time_handler = first_time_point.handler()
+        second_time_handler = second_time_point.handler()
+
+        return first_time_handler, second_time_handler, 'time_span', 'blur', day_bias
 
     def normalize_num_hour_minute_second(self, time_string):
         """ 解析 `数字（标准格式）时分秒` 时间 """

@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://pepy.tech/badge/jionlp/month" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.4.22-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.4.23-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -19,7 +19,7 @@
 ### &emsp;&emsp; ——JioNLP：中文 NLP 预处理工具包 A Python Lib for Chinese NLP Preprocessing & Parsing
 ### &emsp;&emsp; ——安装：```pip install jionlp```
 ### &emsp;&emsp; ——[JioNLP在线版](http://www.jionlp.com/) 可快速试用部分功能
-### &emsp;&emsp; ——关注微信公众号 “一个Bug” 可获取最新的 JioNLP 更新，及 NLP 资讯
+### &emsp;&emsp; ——关注微信公众号 “JioNLP” 可获取最新的 JioNLP 更新，及 NLP 资讯
 ### &emsp;&emsp; ——[English version README.md](../../blob/master/README_en.md)
 
 - 做 NLP 任务，需要清洗、过滤语料？用 JioNLP
@@ -282,7 +282,7 @@ $ jio_help
 ![image](../../blob/master/image/payment_code.jpg)
 
 ### 做 NLP不易，欢迎加入自然语言处理 Wechat 交流群
-### 请扫以下码，或wx搜索公众号“一个Bug”，关注并回复【进群】
+### 请扫以下码，或wx搜索公众号JioNLP”，关注并回复【进群】
 ![image](../../blob/master/image/qrcode_for_gh.jpg)
 
 
