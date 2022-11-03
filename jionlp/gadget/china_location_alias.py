@@ -142,6 +142,9 @@ class GetChinaLocationAlias(object):
             else:
                 return county_name.replace('县', '')
 
+        if county_name.endswith('林区'):
+            return county_name.replace('林区', '')
+
         if county_name.endswith('区'):
             if len(county_name) == 2:
                 return county_name
