@@ -62,6 +62,7 @@ class GetChinaLocationAlias(object):
         if city_name.endswith('盟'):
             return city_name.replace('盟', '')
 
+        # 带 `族` 字
         if self.china_minorities_pattern_1 is None:
             self.china_minorities_pattern_1 = re.compile(MINORITIES_IN_CHINA_PATTERN_1)
 
@@ -71,6 +72,7 @@ class GetChinaLocationAlias(object):
             end_offset = matched_res.span()[0]
             return city_name[:end_offset]
 
+        # 不带 `族` 字
         if self.china_minorities_pattern_2 is None:
             self.china_minorities_pattern_2 = re.compile(MINORITIES_IN_CHINA_PATTERN_2)
 
