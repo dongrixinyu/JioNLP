@@ -11,14 +11,15 @@
 import re
 
 from jionlp import logging
-from jionlp.rule.rule_pattern import MINORITIES_IN_CHINA_PATTERN, \
-    CHINA_PROVINCE_SHORT_PATTERN
+from jionlp.rule.rule_pattern import MINORITIES_IN_CHINA_PATTERN_1, \
+    MINORITIES_IN_CHINA_PATTERN_2, CHINA_PROVINCE_SHORT_PATTERN
 
 
 class GetChinaLocationAlias(object):
     def __init__(self):
         self.china_province_short_pattern = None
-        self.china_minorities_pattern = None
+        self.china_minorities_pattern_1 = None
+        self.china_minorities_pattern_2 = None
 
     def get_china_province_alias(self, province_name):
         """ 给定一个省级名称，获取其简称，如，输入“山西省”，返回“山西”。
@@ -61,10 +62,19 @@ class GetChinaLocationAlias(object):
         if city_name.endswith('盟'):
             return city_name.replace('盟', '')
 
-        if self.china_minorities_pattern is None:
-            self.china_minorities_pattern = re.compile(MINORITIES_IN_CHINA_PATTERN)
+        if self.china_minorities_pattern_1 is None:
+            self.china_minorities_pattern_1 = re.compile(MINORITIES_IN_CHINA_PATTERN_1)
 
-        matched_res = self.china_minorities_pattern.search(city_name)
+        matched_res = self.china_minorities_pattern_1.search(city_name)
+        if matched_res:
+            # '德宏傣族景颇族自治州' ，优先匹配第一个 傣族
+            end_offset = matched_res.span()[0]
+            return city_name[:end_offset]
+
+        if self.china_minorities_pattern_2 is None:
+            self.china_minorities_pattern_2 = re.compile(MINORITIES_IN_CHINA_PATTERN_2)
+
+        matched_res = self.china_minorities_pattern_2.search(city_name)
         if matched_res:
             # '德宏傣族景颇族自治州' ，优先匹配第一个 傣族
             end_offset = matched_res.span()[0]
