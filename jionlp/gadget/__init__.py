@@ -23,6 +23,7 @@ from .char_radical import CharRadical
 from .phone_location import PhoneLocation
 from .idiom_solitaire import IdiomSolitaire
 from .motor_vehicle_licence_plate import MotorVehicleLicencePlateParser
+from .china_location_alias import GetChinaLocationAlias
 from jionlp.util.fast_loader import FastLoader
 
 
@@ -47,6 +48,11 @@ lunar_solar_date = LunarSolarDate()
 lunar2solar = lunar_solar_date.to_solar_date
 solar2lunar = lunar_solar_date.to_lunar_date
 parse_time = TimeParser()
+
+get_china_location_alias = GetChinaLocationAlias()
+get_china_province_alias = get_china_location_alias.get_china_province_alias
+get_china_city_alias = get_china_location_alias.get_china_city_alias
+get_china_county_alias = get_china_location_alias.get_china_county_alias
 
 # rule = FastLoader('rule', globals(), 'jionlp.rule')
 del tra_sim_conversion
