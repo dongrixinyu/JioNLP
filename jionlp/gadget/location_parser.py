@@ -2,12 +2,13 @@
 # library: jionlp
 # author: dongrixinyu
 # license: Apache License 2.0
-# Email: dongrixinyu.89@163.com
+# email: dongrixinyu.89@163.com
 # github: https://github.com/dongrixinyu/JioNLP
-# description: Preprocessing tool for Chinese NLP
+# description: Preprocessing & Parsing tool for Chinese NLP
+# website: http://www.jionlp.com
 
-# --------------------------------------------------------------------------------
 
+import re
 import copy
 import collections
 
@@ -67,11 +68,11 @@ class LocationParser(object):
     def __init__(self):
         self.administrative_map_list = None
         self.town_village = False
-        self.town_village_dict = dict()
+        self.town_village_dict = {}
         
     def _mapping(self, china_loc, china_change_loc):
         # 整理行政区划码映射表
-        self.administrative_map_list = list()  # 地址别称
+        self.administrative_map_list = []  # 地址别称
 
         for prov in china_loc:
             if prov.startswith('_'):
@@ -112,7 +113,7 @@ class LocationParser(object):
                         self.town_village_dict.update({key_name: value_dict})
 
         # 将旧有的地名融入 self.administrative_map_list，并建立映射表
-        self.old2new_loc_map = dict()
+        self.old2new_loc_map = {}
 
         for item in china_change_loc:
             self.administrative_map_list.append(
@@ -122,9 +123,12 @@ class LocationParser(object):
                 {''.join([i[0] for i in item['old_loc']]): item['new_loc']})
 
     def _prepare(self):
-        self.municipalities_cities = set([
-            '北京', '上海', '天津', '重庆', '香港', '澳门'])
+        self.municipalities_cities = {'北京', '上海', '天津', '重庆', '香港', '澳门'}
         # '北京市', '上海市', '天津市', '重庆市', '香港特别行政区', '澳门特别行政区'])
+
+        # 处理异常的别名
+        self.loc_alias_string = '【loc_alias】'
+        self.exception_suffix_pattern = re.compile('(【loc_alias】(路|大街|街))')
 
         # 添加中国区划词典
         china_loc = china_location_loader(detail=self.town_village)
@@ -136,17 +140,14 @@ class LocationParser(object):
             self.loc_level_key_list.extend(['乡', '村'])
         self.loc_level_key_dict = dict(
             [(loc_level, None) for loc_level in self.loc_level_key_list])
-        
+
     def get_candidates(self, location_text):
         """ 从地址中获取所有可能涉及到的候选地址 """
-        
-        if self.administrative_map_list is None:
-            self._prepare()
 
-        candidate_admin_list = list()  # 候选列表 
+        candidate_admin_list = []  # 候选列表
         for admin_item in self.administrative_map_list:
             count = 0  # 匹配个数
-            # offset 中的每一个元素，分别指示在地址中的索引，以及全名或别名
+            # offset 中的每一个元素，分别指示在地址中的 “索引”，以及指示 “全名或别名”
             # 索引指在地址中的那个位置出现，优先处理靠左靠前的
             # offset 匹配全名用 0 表示，匹配别名用 1 表示。
             offset_list = [[-1, -1], [-1, -1], [-1, -1]]
@@ -157,6 +158,13 @@ class LocationParser(object):
                 cur_alias = None
                 for alias_idx, name in enumerate(name_item):  # 别名与全名任意匹配一个
                     if name is not None and name in location_text:
+                        # 此时需添加逻辑，若 name 为别名，且之后立即跟了 “路、街” 等字，则需跳过处理。
+                        # 例如：“北海市重庆路其仓11号”，这样的城市名会受到干扰，应当将 “重庆路” 进行过滤
+                        if alias_idx == 1:
+                            exception_alias_flag = self._process_exception_alias(name, location_text)
+                            if not exception_alias_flag:
+                                continue
+
                         match_flag = True
                         cur_name = name
                         cur_alias = alias_idx
@@ -169,22 +177,29 @@ class LocationParser(object):
             if count > 0:
 
                 cur_item = copy.deepcopy(admin_item)
-
-                # 对于某些城市名，需要进行匹配频次删减，原因在于会干扰其它城市名的匹配次数
-                # 例如：“北海市重庆路其仓11号”，这样的城市名会受到干扰
-                if admin_item[2][1] in self.municipalities_cities:
-                    count -= 1
                 cur_item.extend([count, offset_list])
                 candidate_admin_list.append(cur_item)
                 
         return candidate_admin_list
+
+    def _process_exception_alias(self, name, location_text):
+        # 处理一些异常的简称，如 “上海市嘉定区太原路99号” 中的 太原 这个简称
+        location_text = location_text.replace(name, self.loc_alias_string)
+        matched_res = self.exception_suffix_pattern.search(location_text)
+
+        if matched_res is None:
+            # 说明没有 “太原路” 这样的异常别名，可以正常返回
+            return True
+        else:
+            # 有异常别名，需跳过
+            return False
 
     def __call__(self, location_text, town_village=False, change2new=True):
 
         self.town_village = town_village
         if self.administrative_map_list is None:
             self._prepare()
-        if self.town_village and self.town_village_dict == dict():
+        if self.town_village and self.town_village_dict == {}:
             self._prepare()
         
         # 获取文本中的省、市、县三级行政区划

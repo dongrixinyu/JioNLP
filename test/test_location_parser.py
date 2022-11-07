@@ -12,6 +12,10 @@ class TestLocationParser(unittest.TestCase):
         """ test func parse_location """
 
         location_string_list = [
+            ['河北区', True, True,
+             {'province': '天津市', 'city': '天津市', 'county': '河北区',
+              'detail': '', 'full_location': '天津市河北区',
+              'orig_location': '河北区', 'town': None, 'village': None}],
             ['湘潭城塘社区', True, True,
              {'province': '湖南省', 'city': '湘潭市', 'county': None,
               'detail': '城塘社区', 'full_location': '湖南省湘潭市城塘社区',
