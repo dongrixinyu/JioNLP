@@ -2,13 +2,14 @@
 # library: jionlp
 # author: dongrixinyu
 # license: Apache License 2.0
-# Email: dongrixinyu.89@163.com
+# email: dongrixinyu.89@163.com
 # github: https://github.com/dongrixinyu/JioNLP
 # description: Preprocessing tool for Chinese NLP
+# website: http://www.jionlp.com
 
 """
 DESCRIPTION:
-    1、首先基于 pkuseg 工具做分词和词性标注，再使用 tfidf 计算文本的关键词权重，
+    1、首先基于 jiojio 工具做分词和词性标注，再使用 tfidf 计算文本的关键词权重，
     2、关键词提取算法找出碎片化的关键词，然后再根据相邻关键碎片词进行融合，重新计算权重，去除相似词汇。得到的融合的多个关键碎片即为关键短语。
         1、短语的 token 长度不超过 12
         2、短语中不可出现超过1个虚词
@@ -63,7 +64,7 @@ class ChineseKeyPhrasesExtractor(object):
         allow_topic_weight: (bool) 考虑主题突出度，它有助于过滤与主题无关的短语（如日期等），默认为 True
         without_person_name: (bool) 决定是否剔除短语中的人名，默认为 False
         without_location_name: (bool) 决定是否剔除短语中的地名，默认为 False
-        remove_phrases_list: (list) 将某些不想要的短语剔除，使其不出现在最终结果中
+        remove_phrases_list: (list|set) 将某些不想要的短语剔除，使其不出现在最终结果中
         remove_words_list: (list|set) 将某些不想要的词剔除，使包含该词的短语不出现在最终结果中，
             建议选择 set 数据结构，速度更快
         specified_words: (dict) 行业名词:词频，若不为空，则仅返回包含该词的短语
@@ -82,7 +83,7 @@ class ChineseKeyPhrasesExtractor(object):
     def __init__(self, ):
         self.unk_topic_prominence_value = 0.
         
-    def _prepare(self):
+    def _prepare(self, remove_words_list):
         # 词性预处理
         # 词性参考 jiojio.pos_types()
         self.pos_name = set(sorted(list(jiojio.pos_types()['model_type'].keys())))
@@ -102,7 +103,14 @@ class ChineseKeyPhrasesExtractor(object):
         # 加载 idf，计算其 oov 均值
         self.idf_dict = idf_loader()
         self.median_idf = sorted(self.idf_dict.values())[len(self.idf_dict) // 2]
-        jiojio.init(pos_rule=True, pos=True)
+        if remove_words_list is not None:
+            # 将词汇添加入词典中，保证成功抽取。
+            jiojio.init(cws_user_dict=True, pos_rule=True, pos=True)
+            for word in remove_words_list:
+                jiojio.add_word(word)
+
+        else:
+            jiojio.init(pos_rule=True, pos=True)
 
         # 短语长度权重字典，调整绝大多数的短语要位于 2~6 个词之间
         # 根据人工抽取的关键短语结果，短语词长有一个泊松分布，而根据 idf 和 lda 概率的结果，也有一个
@@ -161,7 +169,7 @@ class ChineseKeyPhrasesExtractor(object):
 
         # 初始化加载
         if self.unk_topic_prominence_value == 0.:
-            self._prepare()
+            self._prepare(remove_words_list)
 
         # 配置参数
         if without_location_name:
