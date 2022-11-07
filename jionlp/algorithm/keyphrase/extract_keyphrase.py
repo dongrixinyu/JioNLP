@@ -119,6 +119,8 @@ class ChineseKeyPhrasesExtractor(object):
         
         # 读取停用词文件
         self.stop_words = stopwords_loader()
+        self.stop_words.append('\n')
+        self.stop_words = set(self.stop_words)
         
         # 加载 lda 模型参数
         self._lda_prob_matrix()
@@ -155,7 +157,7 @@ class ChineseKeyPhrasesExtractor(object):
                  without_location_name=False,
                  remove_phrases_list=None,
                  remove_words_list=None,
-                 specified_words=dict(), bias=None):
+                 specified_words={}, bias=None):
 
         # 初始化加载
         if self.unk_topic_prominence_value == 0.:
