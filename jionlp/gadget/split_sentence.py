@@ -2,9 +2,10 @@
 # library: jionlp
 # author: dongrixinyu
 # license: Apache License 2.0
-# Email: dongrixinyu.89@163.com
+# email: dongrixinyu.89@163.com
 # github: https://github.com/dongrixinyu/JioNLP
-# description: Preprocessing tool for Chinese NLP
+# description: Preprocessing & Parsing tool for Chinese NLP
+# website: http://www.jionlp.com
 
 
 import os
@@ -35,13 +36,12 @@ class SplitSentence(object):
         self.puncs_fine = None
         
     def _prepare(self):
-        self.puncs_fine = ['……', '\r\n', '，', '。', ';', '；', '…', '！',
-                           '!', '?', '？', '\r', '\n', '“', '”', '‘', '’',
-                           '：']
-        self.puncs_coarse = ['。', '！', '？', '\n', '“', '”', '‘', '’']
-        self.front_quote_list = ['“', '‘']
-        self.back_quote_list = ['”', '’']
-        
+        self.puncs_fine = {'……', '\r\n', '，', '。', ';', '；', '…', '！', '!',
+                           '?', '？', '\r', '\n', '“', '”', '‘', '’', '：'}
+        self.puncs_coarse = {'。', '！', '？', '\n', '“', '”', '‘', '’'}
+        self.front_quote_list = {'“', '‘'}
+        self.back_quote_list = {'”', '’'}
+
         self.puncs_coarse_ptn = re.compile('([。“”！？\n])')
         self.puncs_fine_ptn = re.compile('([，：。;“”；…！!?？\r\n])')
         
@@ -58,13 +58,13 @@ class SplitSentence(object):
             raise ValueError('The parameter `criterion` must be '
                              '`coarse` or `fine`.')
         
-        final_sentences = list()
-        cur_flag = 0
+        final_sentences = []
         quote_flag = False
         
-        for idx, sen in enumerate(tmp_list):
+        for sen in tmp_list:
             if sen == '':
                 continue
+
             if criterion == 'coarse':
                 if sen in self.puncs_coarse:
                     if len(final_sentences) == 0:  # 即文本起始字符是标点
@@ -81,12 +81,10 @@ class SplitSentence(object):
                             final_sentences.append(sen)
                         else:
                             # 前引号之前无任何终止标点，与前一句合并
-                            final_sentences[-1] = ''.join(
-                                [final_sentences[-1], sen])
+                            final_sentences[-1] = final_sentences[-1] + sen
                         quote_flag = True
                     else:  # 普通,非前引号，则与前一句合并
-                        final_sentences[-1] = ''.join(
-                            [final_sentences[-1], sen])
+                        final_sentences[-1] = final_sentences[-1] + sen
                     continue
                     
             elif criterion == 'fine':
@@ -105,12 +103,10 @@ class SplitSentence(object):
                             final_sentences.append(sen)
                         else:
                             # 前引号之前无任何终止标点，与前一句合并
-                            final_sentences[-1] = ''.join(
-                                [final_sentences[-1], sen])
+                            final_sentences[-1] = final_sentences[-1] + sen
                         quote_flag = True
                     else:  # 普通,非前引号，则与前一句合并
-                        final_sentences[-1] = ''.join(
-                            [final_sentences[-1], sen])
+                        final_sentences[-1] = final_sentences[-1] + sen
                     continue
             
             if len(final_sentences) == 0:  # 起始句且非标点
@@ -118,28 +114,28 @@ class SplitSentence(object):
                 continue
                 
             if quote_flag:  # 当前句子之前有前引号，须与前引号合并
-                final_sentences[-1] = ''.join([final_sentences[-1], sen])
+                final_sentences[-1] = final_sentences[-1] + sen
                 quote_flag = False
             else:
                 if final_sentences[-1][-1] in self.back_quote_list:
                     # 此句之前是后引号，需要考察有无其他终止符，用来判断是否和前句合并
                     if len(final_sentences[-1]) <= 1:
                         # 前句仅一个字符。后引号，则合并
-                        final_sentences[-1] = ''.join([final_sentences[-1], sen])
+                        final_sentences[-1] = final_sentences[-1] + sen
                     else:  # 前句有多个字符，
                         if criterion == 'fine':
                             if final_sentences[-1][-2] in self.puncs_fine:
                                 # 有逗号等，则需要另起一句，该判断不合语文规范，但须考虑此情况
                                 final_sentences.append(sen)
                             else:  # 前句无句号，则需要与前句合并
-                                final_sentences[-1] = ''.join([final_sentences[-1], sen])
+                                final_sentences[-1] = final_sentences[-1] + sen
                             
                         elif criterion == 'coarse':
                             if final_sentences[-1][-2] in self.puncs_coarse:
                                 # 有句号，则需要另起一句
                                 final_sentences.append(sen)
                             else:  # 前句无句号，则需要与前句合并
-                                final_sentences[-1] = ''.join([final_sentences[-1], sen])
+                                final_sentences[-1] = final_sentences[-1] + sen
                 else:
                     final_sentences.append(sen)
                 
@@ -151,3 +147,4 @@ if __name__ == '__main__':
     text = '央视新闻消息，近日，特朗普老友皮尔斯·摩根喊话特朗普：“美国人的生命比你的选举更重要。如果你继续以自己为中心，继续玩弄愚蠢的政治……如果你意识不到自己>的错误，你就做不对”。目前，特朗普已“取关”了这位老友。'
     res = split_sentence(text, criterion='fine')
     print(res)
+
