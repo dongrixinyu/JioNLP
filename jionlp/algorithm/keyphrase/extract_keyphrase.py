@@ -428,6 +428,10 @@ class ChineseKeyPhrasesExtractor(object):
         if candidate_phrase[-1][0] == '时':
             return False
 
+        # 条件七：短语本身不可以完全属于停用词
+        if ''.join([item[0] for item in candidate_phrase]) in self.stop_words:
+            return False
+
         return True
     
     def _strict_candidate_phrases_rules(
@@ -460,6 +464,10 @@ class ChineseKeyPhrasesExtractor(object):
 
         # 条件五：短语的最后一个 token 是 `('时', 'n')`，应当过滤掉
         if candidate_phrase[-1][0] == '时':
+            return False
+
+        # 条件六：短语本身不可以完全属于停用词
+        if ''.join([item[0] for item in candidate_phrase]) in self.stop_words:
             return False
 
         return True
