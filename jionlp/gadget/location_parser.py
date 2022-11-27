@@ -103,7 +103,8 @@ class LocationParser(object):
                         [china_loc[prov][city][county]['_admin_code'], 
                          [prov, china_loc[prov]['_alias']],
                          [city, china_loc[prov][city]['_alias']],
-                         [county, china_loc[prov][city][county]['_alias']],
+                         ['经济技术开发区' if county.endswith('经济技术开发区') else county,
+                          china_loc[prov][city][county]['_alias']],
                          True])
 
                     if self.town_village:  # 补充 self.town_village_list
@@ -169,6 +170,7 @@ class LocationParser(object):
                         cur_name = name
                         cur_alias = alias_idx
                         break
+
                 if match_flag:
                     count += 1
                     offset_list[idx][0] = location_text.index(cur_name)
@@ -219,6 +221,26 @@ class LocationParser(object):
 
         # step 2: 寻找匹配最多的候选地址，然后寻找匹配最靠前的候选地址，作为最终的省市县的判断结果
 
+        # 2.0 去除那些同一个 offset 匹配了多个别名的内容
+        # 如 “湖南省长沙市”，此时将匹配到 “湖南省长沙市长沙县”，这是错误的，应当按全名匹配
+        # 条件是，当同一个 offset 值匹配了两个级别的地名，其中一个是全名，另一个是别名时。按全名操作，删除别名
+        non_same_offset_list = []
+        for item in candidate_admin_list:
+            offset_list = [i[0] for i in item[-1] if i[0] > -1]
+            if len(offset_list) != len(set(offset_list)):  # 说明有重复匹配项
+                the_same_offset = collections.Counter(offset_list).most_common()[0][0]
+                the_same_offset_loc = [i for i in item[-1] if i[0] == the_same_offset]  # 长度必然为 2
+                if the_same_offset_loc[0][1] == 0 and the_same_offset_loc[1][1] == 1:
+                    # 此时说明地址同一个位置的词汇匹配到了不同的全名和别名，
+                    # 其中第一个为高级别的 地名，为省、市，第二个为低级别的，市、县。
+                    # 若匹配到高级别的全名和低级别的别名，则将该 item 丢弃，否则保留
+                    pass
+                else:
+                    non_same_offset_list.append(item)
+            else:
+                non_same_offset_list.append(item)
+
+        candidate_admin_list = non_same_offset_list
         # 2.1 找出文本中匹配数量最多的
         max_matched_num = max([item[-2] for item in candidate_admin_list])
         candidate_admin_list = [item for item in candidate_admin_list
@@ -257,12 +279,28 @@ class LocationParser(object):
         candidate_admin_list = [item for item in candidate_admin_list 
                                 if sum([j[0] for j in item[-1]]) == min_matched_offset]
 
-        # 2.3 优先匹配包含全面的，其次匹配别名，此处将别名的过滤掉
+        # 2.3 优先匹配包含全名的，其次匹配别名，此处将别名的过滤掉，仅保留全名的，如 “海南藏族自治州”，不可匹配到 “海南省”
         full_alias_list = [min([j[1] for j in item[-1] if j[1] > -1]) for item in candidate_admin_list]
         full_alias_min = min(full_alias_list)
         candidate_admin_list = [item for val, item in zip(full_alias_list, candidate_admin_list) if val == full_alias_min]
 
-        # step 3: 县级存在重复名称，计算候选列表中可能重复的县名
+        # 2.4 若全部都匹配别名，则别名获取级别应当越高越好
+        # 如“海南大学”，应当匹配“海南省”，而非“海南藏族自治州”，
+        # 如“西安交通大学”，应当匹配 “西安市”，而非“吉林省通辽市西安区”
+        # 受 2.3 中 变量 full_alias_min 控制，该变量为 0 时，表示有 item 匹配了全名
+        alias_matched_num_list = [
+            len([i[0] for i in item[-1] if i[0] > -1]) for item in candidate_admin_list]
+        # 该变量指示了所有 item 都仅匹配了一个别名
+        max_alias_matched_num = max(alias_matched_num_list)
+        if full_alias_min == 1 and max_alias_matched_num == 1:
+            # 说明全部都是别名，无全名匹配，且只匹配了一个别名
+            # 例如，“西安交通大学”，此时应当尽量匹配省、市，而避免比配市、县
+            candidate_admin_list = sorted(
+                candidate_admin_list,
+                key=lambda item: [idx for idx, i in enumerate(item[-1]) if i[0] != -1][0])
+            print()
+
+        # step 3: 县级存在重复名称，计算候选列表中可能重复的县名，如 “鼓楼区”、“高新区” 等
         county_dup_list = [item[3][item[-1][-1][1]] for item in candidate_admin_list]
         county_dup_list = collections.Counter(county_dup_list).most_common()
         county_dup_list = [item[0] for item in county_dup_list if item[1] > 1]

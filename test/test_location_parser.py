@@ -83,14 +83,30 @@ class TestLocationParser(unittest.TestCase):
               'orig_location': '海南藏族自治州',
               'town': None, 'village': None}
              ],
-
+            # 市、县重名,
+            ['西安交通大学', True, False,
+             {'province': '陕西省', 'city': '西安市', 'county': None, 'detail': '交通大学', 'full_location': '陕西省西安市交通大学',
+              'orig_location': '西安交通大学', 'town': None, 'village': None}
+             ],  # 此例会和 “吉林省通辽市西安区” 混淆
+            ['河北省秦皇岛市经济技术开发区', True, False,
+             {'province': '河北省', 'city': '秦皇岛市', 'county': '经济技术开发区',
+              'detail': '', 'full_location': '河北省秦皇岛市经济技术开发区',
+              'orig_location': '河北省秦皇岛市经济技术开发区',
+              'town': None, 'village': None}
+             ],
+            ['湖南省长沙市', True, False,
+             {'province': '湖南省', 'city': '长沙市', 'county': None,
+              'detail': '', 'full_location': '湖南省长沙市',
+              'orig_location': '湖南省长沙市', 'town': None, 'village': None}
+             ]
         ]
 
         for item in location_string_list:
-            time_res = jio.parse_location(
+            loc_res = jio.parse_location(
                 item[0], town_village=item[1], change2new=item[2])
             print(item[0])
-            self.assertEqual(time_res, item[3])
+            # print(time_res)
+            self.assertEqual(loc_res, item[3])
 
 
 if __name__ == '__main__':
