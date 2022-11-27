@@ -2,9 +2,10 @@
 # library: jionlp
 # author: dongrixinyu
 # license: Apache License 2.0
-# Email: dongrixinyu.89@163.com
+# email: dongrixinyu.89@163.com
 # github: https://github.com/dongrixinyu/JioNLP
 # description: Preprocessing tool for Chinese NLP
+# website: http://www.jionlp.com
 
 
 """
@@ -180,7 +181,7 @@ class LocationRecognizer(object):
             self._prepare()
         
         level_list = ['province', 'city', 'county']
-        candidate_admin_list = list()  # 候选列表 
+        candidate_admin_list = []  # 候选列表
         for admin_item in self.china_administrative_map_list:
             count = 0
             for idx, name_item in enumerate(admin_item):
@@ -218,7 +219,7 @@ class LocationRecognizer(object):
             self._prepare()
             
         level_list = ['country', 'city']
-        candidate_admin_list = list()  # 候选列表 
+        candidate_admin_list = []  # 候选列表
         for admin_item in self.world_administrative_map_list:
             count = 0
             for idx, name_item in enumerate(admin_item):
@@ -392,7 +393,7 @@ class LocationRecognizer(object):
         not_matched_list = copy.deepcopy(location_count)  # 统计未匹配地址
         
         # 中国国内部分
-        china_combine_list = list()  # 将若干中国地名合并
+        china_combine_list = []  # 将若干中国地名合并
         for location, count in location_count.items():
             china_candidates = self.get_china_candidates(location)
             if len(china_candidates) > 0:  # 匹配到地址
@@ -418,10 +419,10 @@ class LocationRecognizer(object):
                 for world_candidate in world_candidates:
                     world_combine_list = self._combine_world_locations(
                         world_combine_list, [world_candidate, count])
-            
+
         foreign_locations = sorted(
             [item[:2] for item in world_combine_list if item[-1]],
-            key=lambda i:i[1], reverse=True)
+            key=lambda i: i[1], reverse=True)
         
         if len(domestic_locations) > 0:
             if top_k == 'default':

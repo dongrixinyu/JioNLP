@@ -183,3 +183,55 @@ class GetChinaLocationAlias(object):
             return county_name[:end_offset]
 
         return None
+
+    def get_china_town_alias(self, town_name):
+        """ 给定一个中国镇级名称，获取其简称，如，输入 “苏店镇”，返回 “苏店” 。
+
+        镇级包括 镇、乡、街道、地区 等
+
+        Args:
+            town_name: 镇级名，一般为全称
+
+        Returns:
+            str: 镇级简称
+
+        """
+        if town_name.endswith('镇'):
+            if len(town_name) == 2:
+                return town_name
+            else:
+                return town_name.replace('镇', '')
+
+        if town_name.endswith('乡'):
+            if len(town_name) == 2:
+                return town_name
+            else:
+                return town_name.replace('乡', '')
+
+        if town_name.endswith('地区'):
+            return town_name.replace('地区', '')
+
+        if town_name.endswith('街道'):
+            return town_name.replace('街道', '')
+
+        # 带 `族` 字，自治县
+        if self.china_minorities_pattern_1 is None:
+            self.china_minorities_pattern_1 = re.compile(MINORITIES_IN_CHINA_PATTERN_1)
+
+        matched_res = self.china_minorities_pattern_1.search(town_name)
+        if matched_res:
+            # '德宏傣族景颇族自治州' ，优先匹配第一个 傣族
+            end_offset = matched_res.span()[0]
+            return town_name[:end_offset]
+
+        # 不带 `族` 字，自治县
+        if self.china_minorities_pattern_2 is None:
+            self.china_minorities_pattern_2 = re.compile(MINORITIES_IN_CHINA_PATTERN_2)
+
+        matched_res = self.china_minorities_pattern_2.search(town_name)
+        if matched_res:
+            # '德宏傣族景颇族自治州' ，优先匹配第一个 傣族
+            end_offset = matched_res.span()[0]
+            return town_name[:end_offset]
+
+        return None
