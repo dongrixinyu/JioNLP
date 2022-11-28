@@ -890,30 +890,3 @@ class Extractor(object):
         chinese_text_list = self.chinese_chars_pattern.findall(text)
 
         return chinese_text_list
-
-    def check_chinese_char(self, text):
-        """ 检查文本中是否包含中文字符
-
-        Args:
-            text(str): 输入的文本
-        Return:
-            bool: 文本中是否包含中文字符
-
-        Examples:
-            >>> import jionlp as jio
-            >>> print(jio.check_chinese_char('【新华社消息】（北京时间）从昨天...'))
-
-            # True
-
-        """
-        if text == '':
-            return False
-
-        if self.chinese_char_pattern is None:
-            self.chinese_char_pattern = re.compile(CHINESE_CHAR_PATTERN)
-
-        if self.chinese_char_pattern.search(text):
-            return True
-
-        return False
-
