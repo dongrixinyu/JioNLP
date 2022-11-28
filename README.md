@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://pepy.tech/badge/jionlp/month" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.4.26-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.4.27-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -29,18 +29,16 @@
 #### 总之，JioNLP 提供 NLP 任务预处理功能，准确、高效、零使用门槛，并提供一步到位的查阅入口。请下拉网页，查阅具体功能信息，并按 Ctrl + F 进行搜索。
 
 
-#### Update 2022-07-03
-## 更新 [**归一化文本函数族**](../../wiki/正则抽取与解析-说明文档#user-content-归一化文本中的-e-mail)
+#### Update 2022-11-028
+## 更新 [**正则判断类函数族**](../../wiki/正则判断类说明文档)
 
-#### 包括归一化电子邮箱名、IP地址、身份证号、URL、电话号码、QQ号等。
-#### jio.replace_email 归一化文本中的 E-mail 信息为<email>
+#### jio.check_any_chinese_char 检查文本中是否包含中文字符
 
 ```
->>> text = '张晨星zcx@gmail.com，现在电子邮件可以带中文了吗？'
->>> res = jionlp.replace_email(text)
->>> print(res)
+>>> import jionlp as jio
+>>> print(jio.check_any_chinese_char('【新华社消息】（北京时间）从昨天...'))
 
-# '张晨星<email>，现在电子邮件可以带中文了吗？'
+# True
 ```
 
 #### Updata 2022-05-26
@@ -198,7 +196,10 @@ $ jio_help
 |[归一化 **IP地址**](../../wiki/正则抽取与解析-说明文档#user-content-归一化文本中的-ip-地址)|replace_ip_address|归一化文本中的 IP 地址为\<ip\> | |
 |[归一化 **身份证号**](../../wiki/正则抽取与解析-说明文档#user-content-归一化文本中的身份证号) |replace_id_card|归一化文本中的身份证信息为\<id\> | |
 |[归一化 **QQ**](../../wiki/正则抽取与解析-说明文档#user-content-归一化文本中的-qq-号) |replace_qq|归一化文本中的 qq 号为\<qq\> | |
-
+|[判断文本是否**包含**中文字符](../../wiki/正则判断类说明文档#user-content-判断字符串中是否包含中文字符) | check_any_chinese_char | 检查文本中是否包含中文字符，若至少包含一个，则返回 True | |
+|[判断文本是否**全部是**中文字符](../../wiki/正则判断类说明文档#user-content-判断字符串中是否全部为中文字符) | check_all_chinese_char | 检查文本中是否全部是中文字符，若全部都是，则返回 True | |
+|[判断文本是否**包含**阿拉伯数字](../../wiki/正则判断类说明文档#user-content-判断字符串中是否包含阿拉伯数字) | check_any_arabic_num | 检查文本中是否包含阿拉伯数字，若至少包含一个，则返回 True | |
+|[判断文本是否**全部是**阿拉伯数字](../../wiki/正则判断类说明文档#user-content-判断字符串中是否全部为阿拉伯数字) | check_all_arabic_num | 检查文本中是否全部是阿拉伯数字，若全部都是，则返回 True | |
 
 ### 4.文件读写工具
 
@@ -214,6 +215,7 @@ $ jio_help
 
 | 功能 | 函数 | 描述 |星级  |
 |-----|-----|------|------|
+|**停用词词典** | jio.stopwords_loader() | 综合了百度、jieba、讯飞等的停用词词典 |  |
 |[**成语**词典](../../wiki/词典加载-说明文档#user-content-加载成语词典) |chinese_idiom_loader|加载成语词典 |⭐|
 |[**歇后语**词典](../../wiki/词典加载-说明文档#user-content-加载歇后语词典) |xiehouyu_loader|加载歇后语词典 |⭐|
 |[**中国地名**词典](../../wiki/词典加载-说明文档#user-content-加载中国省市县地名词典) |china_location_loader|加载中国**省、市、县**三级词典 |⭐|

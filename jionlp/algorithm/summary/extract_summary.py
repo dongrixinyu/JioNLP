@@ -16,7 +16,7 @@ from collections import Counter
 import jiojio
 from jionlp import logging
 from jionlp.rule import clean_text
-from jionlp.rule import check_chinese_char
+from jionlp.rule import check_any_chinese_char
 from jionlp.gadget import split_sentence
 from jionlp.dictionary import stopwords_loader
 from jionlp.dictionary import idf_loader
@@ -122,7 +122,7 @@ class ChineseSummaryExtractor(object):
             sentences_segs_dict = dict()
             counter_segs_list = list()
             for idx, sen in enumerate(sentences_list):
-                if not check_chinese_char(sen):  # 若无中文字符，则略过
+                if not check_any_chinese_char(sen):  # 若无中文字符，则略过
                     continue
 
                 sen_segs = jiojio.cut(sen)

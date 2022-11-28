@@ -106,6 +106,8 @@ class LocationParser(object):
                          ['经济技术开发区' if county.endswith('经济技术开发区') else county,
                           china_loc[prov][city][county]['_alias']],
                          True])
+                    # 这里 “经济技术开发区”，例如 “秦皇岛市经济技术开发区”，
+                    # 容易将市、县级的地址匹配在相同的 offset 上，造成错误
 
                     if self.town_village:  # 补充 self.town_village_list
 

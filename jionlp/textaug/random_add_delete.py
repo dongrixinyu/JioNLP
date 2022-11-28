@@ -9,7 +9,7 @@
 
 import numpy as np
 
-from jionlp.rule import check_chinese_char
+from jionlp.rule import check_any_chinese_char
 from jionlp.dictionary.dictionary_loader import char_distribution_loader
 
 
@@ -62,7 +62,7 @@ class RandomAddDelete(object):
         orig_char_distribution = char_distribution_loader()
         char_distribution = dict()
         for char, distribution in orig_char_distribution.items():
-            is_chinese = check_chinese_char(char)
+            is_chinese = check_any_chinese_char(char)
             # 插入的字符不可以为中文字符
             # 1、此处考虑特殊情况，对一些常见标点、常见字符的分布做删除，因其易干扰结果
             # 2、高频符号出现次数极高，为平衡高频低频的字符，须做分布平滑，采用指数函数

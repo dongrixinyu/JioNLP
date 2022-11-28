@@ -9,7 +9,7 @@
 # website: www.jionlp.com
 """
 
-__version__ = '1.4.26'
+__version__ = '1.4.27'
 
 
 import os
@@ -91,6 +91,7 @@ history = """
 │   | 2022-09-06 | fix extract_money bug                               |   │
 │   | 2022-10-15 | add extract & parse motor vehicle licence plate     |   │
 │   | 2022-11-27 | fix parse_location bug                              |   │
+│   | 2022-11-28 | add check_xxx functions                             |   │
 │                                                                          │
 ╰──────────────────────────────────────────────────────────────────────────╯
 """

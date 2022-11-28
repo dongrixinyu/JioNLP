@@ -9,6 +9,7 @@
 
 
 from .extractor import Extractor
+from .checker import Checker
 
 
 extractor = Extractor()
@@ -38,8 +39,6 @@ remove_html_tag = extractor.remove_html_tag
 remove_exception_char = extractor.remove_exception_char
 remove_redundant_char = extractor.remove_redundant_char
 
-check_chinese_char = extractor.check_chinese_char
-
 replace_email = extractor.replace_email
 replace_url = extractor.replace_url
 replace_phone_number = extractor.replace_phone_number
@@ -48,3 +47,10 @@ replace_id_card = extractor.replace_id_card
 replace_qq = extractor.replace_qq
 
 del extractor
+
+checker = Checker()
+
+check_any_chinese_char = checker.check_any_chinese_char
+check_all_chinese_char = checker.check_all_chinese_char
+check_any_arabic_num = checker.check_any_arabic_num
+check_all_arabic_num = checker.check_all_arabic_num

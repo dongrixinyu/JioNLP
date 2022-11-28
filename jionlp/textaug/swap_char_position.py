@@ -10,7 +10,7 @@
 import random
 import numpy as np
 
-from jionlp.rule import check_chinese_char
+from jionlp.rule import check_any_chinese_char
 
 
 class SwapCharPosition(object):
@@ -53,7 +53,7 @@ class SwapCharPosition(object):
         char_list = list(text)
         for i in range(len(char_list)):
             if np.random.uniform(0, 1) < self.swap_ratio:
-                if not check_chinese_char(char_list[i]):
+                if not check_any_chinese_char(char_list[i]):
                     continue
                 change_i = self._swap_position(char_list, i)
                 # print(i, change_i)
@@ -67,11 +67,11 @@ class SwapCharPosition(object):
         start_pos = 0
         end_pos = -1
         while orig_pos + start_pos > 0 \
-                and check_chinese_char(char_list[orig_pos + start_pos - 1]):
+                and check_any_chinese_char(char_list[orig_pos + start_pos - 1]):
             start_pos -= 1
 
         while orig_pos + end_pos < len(char_list) - 1 \
-                and check_chinese_char(char_list[orig_pos + end_pos + 1]):
+                and check_any_chinese_char(char_list[orig_pos + end_pos + 1]):
             end_pos += 1
         # print(orig_pos + start_pos, orig_pos + end_pos)
 
