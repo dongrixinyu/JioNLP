@@ -2,9 +2,9 @@
 # library: jionlp
 # author: dongrixinyu
 # license: Apache License 2.0
-# Email: dongrixinyu.89@163.com
+# email: dongrixinyu.89@163.com
 # github: https://github.com/dongrixinyu/JioNLP
-# description: Preprocessing tool for Chinese NLP
+# description: Preprocessing & parsing tool for Chinese NLP
 # website: www.jionlp.com
 
 
@@ -29,7 +29,7 @@ class HelpSearch(object):
 
     """
     def __init__(self):
-        print('# jionlp - `https://github.com/dongrixinyu/JioNLP` provides detailed instruction.')
+        print('# jionlp - 微信公众号: JioNLP  Github: `https://github.com/dongrixinyu/JioNLP`.')
         self.function_dict = None
         self.non_function_list = [
             # 辅助工具
