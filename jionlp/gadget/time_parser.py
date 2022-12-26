@@ -269,7 +269,8 @@ class TimeParser(object):
         # `标准数字 年、月、日`：`2016-05-22`、`1987.12-3`
         self.standard_year_month_day_pattern = re.compile(
             r'((17|18|19|20|21)\d{2})[\-./](1[012]|[0]?\d)([\-./](30|31|[012]?\d))?[ \t\u3000\-./]?|'
-            r'(1[012]|[0]?\d)[·\-](30|31|[012]?\d)')
+            r'((17|18|19|20|21)\d{2} (1[012]|[0]?\d) (30|31|[012]?\d))|'
+            r'(1[012]|[0]?\d)[·\-/](30|31|[012]?\d)')
 
         # `标准数字 年`：`2018`
         self.standard_year_pattern = re.compile(r'(17|18|19|20|21)\d{2}')
@@ -611,7 +612,7 @@ class TimeParser(object):
         self.week_3_pattern = re.compile('(上上|上|下下|下|本|这)(一)?(个)?' + WEEK_STRING)
         self.week_4_pattern = re.compile(WEEK_STRING + '[一二三四五六日末天]')
         self.week_5_pattern = re.compile(''.join(['第', WEEK_NUM_STRING, '(个)?', WEEK_STRING]))
-        self.ymd_segs = re.compile(r'[\-.·/]')
+        self.ymd_segs = re.compile(r'[\-.·/ ]')
         self.week_num_pattern = re.compile(WEEK_NUM_STRING)
 
         self.day_patterns = [
@@ -3616,8 +3617,8 @@ class TimeParser(object):
             month_string = month.group()
             if '上' in month_string:
                 if time_base_handler[1] == 1:
-                    first_time_point.year -= 1
-                    second_time_point.year -= 1
+                    first_time_point.year = time_base_handler[0] - 1
+                    second_time_point.year = time_base_handler[0] - 1
                     first_time_point.month = 12
                     second_time_point.month = 12
                 else:
@@ -3625,8 +3626,8 @@ class TimeParser(object):
                     second_time_point.month = time_base_handler[1] - 1
             elif '下' in month_string or '次' in month_string:
                 if time_base_handler[1] == 12:
-                    first_time_point.year += 1
-                    second_time_point.year += 1
+                    first_time_point.year = time_base_handler[0] + 1
+                    second_time_point.year = time_base_handler[0] + 1
                     first_time_point.month = 1
                     second_time_point.month = 1
                 else:
@@ -3644,7 +3645,9 @@ class TimeParser(object):
         return first_time_point, second_time_point
 
     def normalize_limit_month_day(self, time_string):
-        """ 解析 限制月份、日 时间 """
+        """ 解析 限制月份、日 时间
+        下个月5号，上个月 等等
+        """
         day = self.day_patterns[0].search(time_string)
 
         first_time_point = TimePoint()

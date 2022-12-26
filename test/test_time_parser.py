@@ -188,6 +188,8 @@ class TestTimeParser(unittest.TestCase):
 
         time_string_list = [
             # 标准数字 年、月、日、时、分、秒
+            ['2022 11 23', _ts_1,
+             {'type': 'time_point', 'definition': 'accurate', 'time': ['2022-11-23 00:00:00', '2022-11-23 23:59:59']}],
             ['2019/04/19', _ts_1,
              {'type': 'time_point', 'definition': 'accurate', 'time': ['2019-04-19 00:00:00', '2019-04-19 23:59:59']}],
             ['2018-11-29 18:59', _ts_1,
@@ -418,6 +420,8 @@ class TestTimeParser(unittest.TestCase):
              {'type': 'time_span', 'definition': 'accurate', 'time': ['2019-11-28 00:00:00', '2021-05-09 23:59:59']}],
             ['去年春节到元宵节', {'year': 2020},
              {'type': 'time_span', 'definition': 'accurate', 'time': ['2019-02-05 00:00:00', '2019-02-19 23:59:59']}],
+            ['11/3号早上', _ts_1,  # 只强调了 月、日，未强调年，此时可能存在一些异常。
+             {'type': 'time_point', 'definition': 'blur', 'time': ['2021-11-03 06:00:00', '2021-11-03 09:59:59']}],
             ['明年6月之前', _ts_1,
              {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 01:06:40', '2022-06-30 23:59:59']}],
             ['1985到89年9月', {'year': 2020},
