@@ -2,11 +2,12 @@
 # library: jionlp
 # author: dongrixinyu
 # license: Apache License 2.0
-# Email: dongrixinyu.89@163.com
+# email: dongrixinyu.89@163.com
 # github: https://github.com/dongrixinyu/JioNLP
 # description: Preprocessing & Parsing tool for Chinese NLP
 
 
+import collections
 import numpy as np
 
 import jiojio
@@ -86,16 +87,25 @@ class HomophoneSubstitution(object):
                 word_pinyin_dict.update({word_pinyin: {word: info['total_num']}})
 
         # 对于总频次过低，拼音对应词汇数量过少的，予以剔除。
-        self.word_pinyin_dict = dict()
+        self.word_pinyin_dict = {}
         for pinyin, word_dict in word_pinyin_dict.items():
+            if pinyin == '':
+                continue
+
             if len(word_dict) <= 1:  # 拼音对应词汇数量过少
                 continue
 
-            word_keys = [item[0] for item in word_dict.items()]
-            word_values = [item[1] for item in word_dict.items()]
+            # 有些拼音下，对应的词汇字数超过了拼音的限制，此时应当剔除。
+            word_length_list = [len(item[0]) for item in word_dict.items()]
+            correct_length = collections.Counter(word_length_list).most_common()[0][0]
+            word_keys = [item[0] for item in word_dict.items() if len(item[0]) == correct_length]
+            word_values = [item[1] for item in word_dict.items() if len(item[0]) == correct_length]
             total_num = sum(word_values)
+
+            # 最低分辨率是 0.0001，因此选择 10000 词频
             if total_num < 10000:  # 该拼音对应的词汇总频次过低，即非常见词，不予替换
                 continue
+
             word_values = [val / total_num for val in word_values]
             self.word_pinyin_dict.update({pinyin: [word_keys, word_values]})
 
@@ -118,6 +128,7 @@ class HomophoneSubstitution(object):
         if len(segs) > 0:
             if type(segs[0]) is not str:  # 考虑 jiojio 将 pos 加载的情况。
                 segs = [seg[0] for seg in segs]
+
         pinyin_segs = [self.pinyin(seg, formater='detail') for seg in segs]
 
         augmentation_text_list = list()
@@ -138,11 +149,11 @@ class HomophoneSubstitution(object):
         return augmentation_text_list
 
     def _augment_one(self, pinyin_segs, segs, allow_mispronounce=True):
-        selected_segs = list()
+        selected_segs = []
         for pinyin_word, word in zip(pinyin_segs, segs):
             if self.random.random() < self.homo_ratio:
                 # 找到该词的拼音
-                pinyin_list = list()
+                pinyin_list = []
                 for pinyin_char in pinyin_word:
                     # if pinyin_char['consonant'] in self.pinyin_mispronounce:
                     pinyin_list.append(pinyin_char['consonant'])
@@ -194,5 +205,8 @@ class HomophoneSubstitution(object):
                         selected_segs.append(word)
             else:
                 selected_segs.append(word)
-        return ''.join(selected_segs)
+
+        augmented_text = ''.join(selected_segs)
+
+        return augmented_text
 
