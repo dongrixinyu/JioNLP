@@ -94,6 +94,13 @@ class TestLocationParser(unittest.TestCase):
               'orig_location': '河北省秦皇岛市经济技术开发区',
               'town': None, 'village': None}
              ],
+            ['江西南昌市新建区松湖镇江西省南昌市新建区松湖镇松湖中心小学', True, True,
+             {'province': '江西省', 'city': '南昌市', 'county': '新建区',
+              'detail': '松湖镇江西省南昌市新建区松湖镇松湖中心小学',
+              'full_location': '江西省南昌市新建区松湖镇江西省南昌市新建区松湖镇松湖中心小学',
+              'orig_location': '江西南昌市新建区松湖镇江西省南昌市新建区松湖镇松湖中心小学',
+              'town': '松湖镇', 'village': None}
+             ],
             ['湖南省长沙市', True, False,
              {'province': '湖南省', 'city': '长沙市', 'county': None,
               'detail': '', 'full_location': '湖南省长沙市',

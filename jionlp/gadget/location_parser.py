@@ -219,6 +219,7 @@ class LocationParser(object):
                       'orig_location': location_text}
             if self.town_village:
                 result.update({'town': None, 'village': None})
+
             return result
 
         # step 2: 寻找匹配最多的候选地址，然后寻找匹配最靠前的候选地址，作为最终的省市县的判断结果
@@ -247,6 +248,14 @@ class LocationParser(object):
         max_matched_num = max([item[-2] for item in candidate_admin_list])
         candidate_admin_list = [item for item in candidate_admin_list
                                 if item[-2] == max_matched_num]
+
+        # 此时，若仅有一个地址被匹配，则应当直接返回正确的结果
+        if len(candidate_admin_list) == 1:
+            result = self._get_final_res(
+                candidate_admin_list[0], location_text, [],
+                town_village=town_village, change2new=change2new)
+
+            return result
 
         # 2.2 找出匹配位置最靠前的
         candidate_admin_list = sorted(
@@ -309,9 +318,17 @@ class LocationParser(object):
         
         final_admin = candidate_admin_list[0]  # 是所求结果
 
+        result = self._get_final_res(
+            final_admin, location_text, county_dup_list,
+            town_village=town_village, change2new=change2new)
+
+        return result
+
+    def _get_final_res(self, final_admin, location_text, county_dup_list,
+                       town_village=True, change2new=True):
         # step 4: 根据已有的省市县，确定剩余部分为详细地址
         detail_idx = 0
-        
+
         final_prov = None
         final_city = None
         final_county = None
