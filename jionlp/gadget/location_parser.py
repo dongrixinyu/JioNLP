@@ -376,6 +376,7 @@ class LocationParser(object):
                 if muni_city in final_city:
                     match_muni_flag = True
                     break
+
             if not match_muni_flag:
                 admin_part += final_city
         if final_county is not None:
