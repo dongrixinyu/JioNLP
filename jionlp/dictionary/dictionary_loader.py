@@ -80,7 +80,7 @@ def char_distribution_loader():
 
     """
     char_info = read_file_by_line(
-        os.path.join(GRAND_DIR_PATH, 'dictionary', 'char_distribution.json'))
+        os.path.join(GRAND_DIR_PATH, 'dictionary', 'char_distribution.json'),auto_loads_json=True)
 
     char_info_dict = dict()
     total_num = sum([item[1] for item in char_info])
@@ -520,7 +520,7 @@ def word_distribution_loader():
 
     """
     word_info = read_file_by_line(
-        os.path.join(GRAND_DIR_PATH, 'dictionary', 'word_distribution.json'))
+        os.path.join(GRAND_DIR_PATH, 'dictionary', 'word_distribution.json'),auto_loads_json=True)
 
     word_info_dict = dict()
     total_num = sum([item[1] for item in word_info])
