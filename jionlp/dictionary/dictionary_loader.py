@@ -101,9 +101,9 @@ def china_location_loader(detail=False):
             若为 False，则返回 省、市、县区 三级信息
 
     """
-    location_jio = read_file_by_line(
-        os.path.join(GRAND_DIR_PATH, 'dictionary/china_location.txt'),
-        strip=False)
+    location_jio = None
+    with open(os.path.join(GRAND_DIR_PATH, 'dictionary/china_location.txt'), 'r', encoding='utf-8') as f:
+        location_jio = f.readlines()
     
     cur_province = None
     cur_city = None
