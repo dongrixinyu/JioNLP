@@ -116,6 +116,7 @@ def china_location_loader(detail=False):
         if not item.startswith('\t'):  # 省
             if len(item.strip().split('\t')) != 3:
                 continue
+
             province, admin_code, alias_name = item.strip().split('\t')
             cur_province = province
             location_dict.update(

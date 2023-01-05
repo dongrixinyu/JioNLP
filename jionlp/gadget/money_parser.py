@@ -2,7 +2,7 @@
 # library: jionlp
 # author: dongrixinyu
 # license: Apache License 2.0
-# Email: dongrixinyu.89@163.com
+# email: dongrixinyu.89@163.com
 # github: https://github.com/dongrixinyu/JioNLP
 # description: Preprocessing & Parsing tool for Chinese NLP
 # website: www.jionlp.com
@@ -317,7 +317,11 @@ class MoneyParser(object):
                     return unit, money_string
                 else:
                     # 不在首部、尾部，说明尾部还有分、角等
+                    # 若字符串中还不包含 分角毛 等字符，说明这个金额文本有误，如“70000元 2022”
+                    if ('分' not in money_string) and ('角' not in money_string) and ('毛' not in money_string):
+                        raise ValueError(self.type_error.format(money_string))
                     return unit, money_string
+
             elif len(res_list) == 2:
                 if res.span()[0] != 0:
                     raise ValueError(self.type_error.format(money_string))
@@ -325,8 +329,13 @@ class MoneyParser(object):
                 if res_list[1].span()[1] == len(money_string):
                     money_string = self.currency_case_pattern.sub('', money_string)
                     return unit, money_string
+
                 else:
                     # 不在首部、尾部，说明尾部还有分、角等
+                    # 若字符串中还不包含 分角毛 等字符，说明这个金额文本有误，如“70000元 2022”
+                    if ('分' not in money_string) and ('角' not in money_string) and ('毛' not in money_string):
+                        raise ValueError(self.type_error.format(money_string))
+
                     money_string = self.currency_case_pattern.sub('', money_string, 1)
                     return unit, money_string
 
@@ -676,7 +685,7 @@ class MoneyParser(object):
         if standard_money_num is None:
             raise ValueError(self.type_error.format(money_string))
 
-        standard_money_num_list = list()
+        standard_money_num_list = []
         if 'span' in definition:
             if definition == 'blur+span':
                 second_money_num = self._get_second_num(standard_money_num)

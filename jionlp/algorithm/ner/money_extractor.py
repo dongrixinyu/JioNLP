@@ -64,7 +64,7 @@ class MoneyExtractor(object):
         # - 单纯包含 分、角、块，而无其它格式货币的
         # - 特殊词汇如 “多元” 等
         self.money_kuai_map_jiao_fen_pattern = re.compile(MONEY_KUAI_MAO_JIAO_FEN_STRING)
-        self.non_money_string_list = ['多元', '十分', '百分', '万分']
+        self.non_money_string_list = {'多元', '十分', '百分', '万分'}
 
         self.print_exception = False
 
@@ -76,7 +76,7 @@ class MoneyExtractor(object):
 
         candidates_list = self.extract_money_candidates(text)
 
-        money_entity_list = list()
+        money_entity_list = []
         for candidate in candidates_list:
             offset = [0, 0]
             bias = 0
@@ -215,7 +215,7 @@ class MoneyExtractor(object):
         """
         idx_count = 0
         text_length = len(text)
-        money_candidates_list = list()
+        money_candidates_list = []
         while idx_count < text_length:
             matched_res = self.money_string_pattern.search(text[idx_count:])
 
