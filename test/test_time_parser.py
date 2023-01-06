@@ -1040,7 +1040,9 @@ class TestTimeParser(unittest.TestCase):
             ['妇女节', _ts_2,
              {'type': 'time_point', 'definition': 'accurate', 'time': ['2022-03-08 00:00:00', '2022-03-08 23:59:59']}],
             ['下午三点', _ts_2,
-             {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-09-02 15:00:00', '2021-09-02 15:59:59']}]
+             {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-09-02 15:00:00', '2021-09-02 15:59:59']}],
+            ['下午4点', _ts_2,
+             {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-09-01 16:00:00', '2021-09-01 16:59:59']}]
         ]
 
         for item in time_string_list:

@@ -921,7 +921,19 @@ class TimeParser(object):
         else:
             return first_full_time_handler
 
-    def _adjust_underlying_future_time(self, time_string):
+    def _adjust_underlying_future_time(
+            self, time_string, first_full_time_handler, second_full_time_handler):
+        """
+
+        Args:
+            time_string: 时间字符串，进行未来时间扩展
+            first_full_time_handler: 假设不进行未来时间扩展，正常解析的时间起点
+            second_full_time_handler: 假设不进行未来时间扩展，正常解析的时间终点
+
+        Returns:
+            扩展后的未来时间
+        """
+
         # 检查哪些时间字符串可以被扩展为 未来字符串，并将其调节
         ymd_time_patterns = [
             # 时间点型
@@ -977,7 +989,29 @@ class TimeParser(object):
                     time_string = '下' + time_string
 
                 elif matched_unit in ['时', '点']:
-                    time_string = '明天' + time_string
+                    # 此时需要判断 time_base 里的时，和字符串中的时，哪个发生在前，哪个在后。
+                    # 如果 time_base 发生在前，如 [2023, 1, 6, 16, 30, 0], 而时间字符串为 “下午6点”
+                    # 则此时不改变字符串，直接返回即可。
+                    if first_full_time_handler[3] != -1 and self.time_base_handler[3] != -1:  # 小时时间均存在
+                        if first_full_time_handler[3] > self.time_base_handler[3]:  # 在 小时 字段符合不扩增至第二天的条件
+                            pass
+                        elif first_full_time_handler[3] < self.time_base_handler[3]:  # 符合扩增条件
+                            time_string = '明天' + time_string
+                        else:  # 还需比较 分钟
+
+                            if first_full_time_handler[4] != -1 and self.time_base_handler[4] != -1:  # 分钟时间均存在
+                                if first_full_time_handler[4] > self.time_base_handler[4]:  # 在分钟字段不扩增
+                                    pass
+                                elif first_full_time_handler[4] < self.time_base_handler[4]:  # 符合扩增条件
+                                    time_string = '明天' + time_string
+                                else:
+                                    # 暂时不考虑 秒钟 ，此时直接将时间扩增至第二天
+                                    time_string = '明天' + time_string
+                            else:
+                                time_string = '明天' + time_string
+                    else:
+                        # 时间基未指明，因此直接跨到第二天
+                        time_string = '明天' + time_string
                 else:
                     pass
 
@@ -1082,7 +1116,8 @@ class TimeParser(object):
             # 检查 handler，确定是否按 ret_future 未来时间解析
             if self.ret_future:
 
-                future_time_string = self._adjust_underlying_future_time(time_string)
+                future_time_string = self._adjust_underlying_future_time(
+                    time_string, first_full_time_handler, second_full_time_handler)
                 first_full_time_handler, second_full_time_handler, time_type, blur_time = self.parse_time_point(
                     future_time_string, self.time_base_handler)
 
