@@ -105,6 +105,12 @@ class TestLocationParser(unittest.TestCase):
              {'province': '湖南省', 'city': '长沙市', 'county': None,
               'detail': '', 'full_location': '湖南省长沙市',
               'orig_location': '湖南省长沙市', 'town': None, 'village': None}
+             ],
+            ['香港九龙半岛清水湾香港科技大学', False, False,
+             {'province': '香港特别行政区', 'city': '香港', 'county': '九龙城区',
+              'detail': '半岛清水湾香港科技大学',
+              'full_location': '香港特别行政区九龙城区半岛清水湾香港科技大学',
+              'orig_location': '香港九龙半岛清水湾香港科技大学'}
              ]
         ]
 

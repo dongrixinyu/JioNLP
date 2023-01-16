@@ -4,7 +4,7 @@
 # license: Apache License 2.0
 # email: dongrixinyu.89@163.com
 # github: https://github.com/dongrixinyu/JioNLP
-# description: Preprocessing tool for Chinese NLP
+# description: Preprocessing & Parsing tool for Chinese NLP
 # website: http://www.jionlp.com
 
 """
@@ -89,10 +89,10 @@ class ChineseKeyPhrasesExtractor(object):
         self.pos_name = set(sorted(list(jiojio.pos_types()['model_type'].keys())))
         # self.pos_name = set(['a', 'ad', 'an', 'c', 'd', 'f', 'm', 'n', 'nr', 'nr1', 'nrf', 'ns', 'nt',
         #                      'nz', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'vd', 'vi', 'w', 'wx', 'x'])
-        self.pos_exception = set(['u', 'p', 'c', 'y', 'e', 'o', 'w'])
+        self.pos_exception = {'u', 'p', 'c', 'y', 'e', 'o', 'w'}
         self.loose_pos_name = self.pos_name - self.pos_exception
-        self.strict_pos_name = ['a', 'n', 'nr', 'ns', 'nt', 'nx', 'nz',
-                                'ad', 'an', 'vn', 'vd', 'vx']
+        self.strict_pos_name = {'a', 'n', 'nr', 'ns', 'nt', 'nx', 'nz',
+                                'ad', 'an', 'vn', 'vd', 'vx'}
         # 各类词性由 jiojio 转至 pkuseg 的映射
         self.trans_map = {'nr1': 'nr', 'nrf': 'nr', 'vi': 'v', 'wx': 'w', 'x': 'nz'}
 
@@ -179,7 +179,7 @@ class ChineseKeyPhrasesExtractor(object):
                 self.pos_name.remove('ns')
         else:
             if 'ns' not in self.strict_pos_name:
-                self.strict_pos_name.append('ns')
+                self.strict_pos_name.add('ns')
             if 'ns' not in self.pos_name:
                 self.pos_name.add('ns')
 
@@ -190,7 +190,7 @@ class ChineseKeyPhrasesExtractor(object):
                 self.pos_name.remove('nr')
         else:
             if 'nr' not in self.strict_pos_name:
-                self.strict_pos_name.append('nr')
+                self.strict_pos_name.add('nr')
             if 'nr' not in self.pos_name:
                 self.pos_name.add('nr')
 
@@ -200,8 +200,8 @@ class ChineseKeyPhrasesExtractor(object):
         # step1: 分句，使用 jiojio 做分词和词性标注
         sentences_list = split_sentence(text, criterion='fine')
 
-        sentences_segs_list = list()
-        counter_segs_list = list()
+        sentences_segs_list = []
+        counter_segs_list = []
         for sen in sentences_list:
             sen_segs_jio = jiojio.cut(sen)
 
@@ -217,9 +217,9 @@ class ChineseKeyPhrasesExtractor(object):
         freq_dict = dict(freq_counter.most_common())
 
         # step3: 计算每一个词的权重，tfidf 方式
-        sentences_segs_weights_list = list()
+        sentences_segs_weights_list = []
         for sen, sen_segs in zip(sentences_list, sentences_segs_list):
-            sen_segs_weights = list()
+            sen_segs_weights = []
             for word_pos in sen_segs:
                 word, pos = word_pos
                 if pos in self.pos_name:  # 虚词权重为 0
@@ -238,11 +238,13 @@ class ChineseKeyPhrasesExtractor(object):
                                 word, self.median_idf) / total_length
                 else:
                     weight = 0.0
+
                 sen_segs_weights.append(weight)
+
             sentences_segs_weights_list.append(sen_segs_weights)
 
         # step4: 通过一定规则，找到候选短语集合，以及其权重
-        candidate_phrases_dict = dict()
+        candidate_phrases_dict = {}
         for sen_segs, sen_segs_weights in zip(sentences_segs_list, sentences_segs_weights_list):
             sen_length = len(sen_segs)
 
@@ -266,22 +268,6 @@ class ChineseKeyPhrasesExtractor(object):
                     if not rule_flag:
                         continue
 
-                    # 由于 pkuseg 的缺陷，会把一些杂质符号识别为 n、v、adj，故须删除
-                    '''
-                    redundant_flag = False
-                    for item in candidate_phrase:
-                        matched = self.redundant_strict_pattern.search(item[0])
-                        if matched is not None:
-                            redundant_flag = True
-                            break
-                        matched = self.redundant_loose_pattern.search(item[0])
-
-                        if matched is not None and matched.group() == item[0]:
-                            redundant_flag = True
-                            break
-                    if redundant_flag:
-                        continue
-                    # '''
                     # 如果短语中包含了某些不想要的词，则跳过
                     if remove_words_list is not None:
                         unwanted_phrase_flag = False
@@ -346,7 +332,7 @@ class ChineseKeyPhrasesExtractor(object):
             candidate_phrases_dict.items(),
             key=lambda item: len(item[1][0]), reverse=True)
 
-        de_duplication_candidate_phrases_list = list()
+        de_duplication_candidate_phrases_list = []
         for item in candidate_phrases_list:
             sim_ratio = self._mmr_similarity(
                 item, de_duplication_candidate_phrases_list)
@@ -390,7 +376,7 @@ class ChineseKeyPhrasesExtractor(object):
                 sim_ratio = len(common_part) / len(candidate_info)
 
         return sim_ratio
-        
+
     def _loose_candidate_phrases_rules(
             self, candidate_phrase, max_phrase_len=25, min_phrase_len=1,
             func_word_num=1, stop_word_num=0):
@@ -441,7 +427,7 @@ class ChineseKeyPhrasesExtractor(object):
             return False
 
         return True
-    
+
     def _strict_candidate_phrases_rules(
             self, candidate_phrase, max_phrase_len=25, min_phrase_len=1):
         """ 按照严格规则筛选候选短语，严格限制在名词短语 """
@@ -484,9 +470,9 @@ class ChineseKeyPhrasesExtractor(object):
         """ 计算每个词语的主题突出度，并保存在内存 """
         init_prob_distribution = np.array([self.topic_num for i in range(self.topic_num)])
         
-        topic_prominence_dict = dict()
+        topic_prominence_dict = {}
         for word in self.topic_word_weight:
-            conditional_prob_list = list()
+            conditional_prob_list = []
             for i in range(self.topic_num):
                 if str(i) in self.topic_word_weight[word]:
                     conditional_prob_list.append(self.topic_word_weight[word][str(i)])

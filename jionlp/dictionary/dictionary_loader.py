@@ -56,9 +56,9 @@ def quantifiers_loader():
             ... }
     """
     quantifiers_info = read_file_by_line(
-        os.path.join(GRAND_DIR_PATH, 'dictionary', 'quantifiers_stat.txt'))
+        os.path.join(GRAND_DIR_PATH, 'dictionary', 'quantifiers_stat.txt'), auto_loads_json=False)
 
-    quantifiers_info_dict = dict()
+    quantifiers_info_dict = {}
     for item in quantifiers_info:
         quantifier, num, prob = item.strip().split('\t')
         quantifiers_info_dict.update(
@@ -101,8 +101,8 @@ def china_location_loader(detail=False):
             若为 False，则返回 省、市、县区 三级信息
 
     """
-    location_jio = None
-    with open(os.path.join(GRAND_DIR_PATH, 'dictionary/china_location.txt'), 'r', encoding='utf-8') as f:
+    with open(os.path.join(GRAND_DIR_PATH, 'dictionary/china_location.txt'),
+              'r', encoding='utf-8') as f:
         location_jio = f.readlines()
     
     cur_province = None
@@ -110,7 +110,7 @@ def china_location_loader(detail=False):
     cur_county = None
     cur_town = None
     cur_village = None
-    location_dict = dict()
+    location_dict = {}
 
     for item in location_jio:
         if not item.startswith('\t'):  # 省
@@ -176,7 +176,8 @@ def china_location_change_loader():
 
     """
     location_change_jio = read_file_by_line(
-        os.path.join(GRAND_DIR_PATH, 'dictionary/china_location_change.txt'))
+        os.path.join(GRAND_DIR_PATH, 'dictionary/china_location_change.txt'),
+        auto_loads_json=False)
 
     location_change_list = list()
     for line in location_change_jio:
@@ -196,9 +197,10 @@ def china_location_change_loader():
 def world_location_loader():
     """ 加载世界地名词典 world_location.txt """
     content = read_file_by_line(
-        os.path.join(GRAND_DIR_PATH, 'dictionary/world_location.txt'))
+        os.path.join(GRAND_DIR_PATH, 'dictionary/world_location.txt'),
+        auto_loads_json=False)
     
-    result = dict()
+    result = {}
     cur_continent = None
     
     for line in content:
@@ -227,8 +229,9 @@ def world_location_loader():
     
 def stopwords_loader():
     """ 加载停用词典 stopwords.txt """
-    res = read_file_by_line(os.path.join(
-        GRAND_DIR_PATH, 'dictionary/stopwords.txt'))
+    res = read_file_by_line(
+        os.path.join(GRAND_DIR_PATH, 'dictionary/stopwords.txt'),
+        auto_loads_json=False)
     # 一般漏掉了若干转换符号
     res.extend(['', ' ', '\t'])
     return res
@@ -236,8 +239,9 @@ def stopwords_loader():
 
 def negative_words_loader():
     """ 加载否定词典 negative_words.txt """
-    res = read_file_by_line(os.path.join(
-        GRAND_DIR_PATH, 'dictionary/negative_words.txt'))
+    res = read_file_by_line(
+        os.path.join(GRAND_DIR_PATH, 'dictionary/negative_words.txt'),
+        auto_loads_json=False)
     
     return res
 
@@ -261,12 +265,13 @@ def chinese_char_dictionary_loader():
     """
     content = read_file_by_line(
         os.path.join(GRAND_DIR_PATH, 'dictionary',
-                     'chinese_char_dictionary.txt'), strip=False)
+                     'chinese_char_dictionary.txt'),
+        strip=False, auto_loads_json=False)
 
     pinyin_ptn = re.compile('\[[a-zàáāǎòóōǒèéēěìíīǐùúūǔǜǘǖǚǹńňüḿ]{1,8}\]')
     explanation_ptn = re.compile('\d{1,2}\.')
 
-    char_dict = dict()
+    char_dict = {}
     for idx, line in enumerate(content):
         segs = line.split('\t')
 
@@ -278,7 +283,7 @@ def chinese_char_dictionary_loader():
                             if item != '']
         assert len(pinyin_list) == len(explanation_list)
 
-        pinyin_explanation_dict = dict()
+        pinyin_explanation_dict = {}
         for pinyin, explanations in zip(pinyin_list, explanation_list):
             explanations = [ex for ex in explanation_ptn.split(explanations) if ex != '']
             pinyin_explanation_dict.update({pinyin: explanations})
@@ -298,9 +303,10 @@ def chinese_char_dictionary_loader():
 def chinese_idiom_loader():
     """ 加载成语词典 chinese_idiom.txt """
     content = read_file_by_line(
-        os.path.join(GRAND_DIR_PATH, 'dictionary/chinese_idiom.txt'))
+        os.path.join(GRAND_DIR_PATH, 'dictionary/chinese_idiom.txt'),
+        auto_loads_json=False)
     
-    result = dict()
+    result = {}
 
     for line in content:
         item_tup = line.split('\t')
@@ -327,14 +333,15 @@ def chinese_word_dictionary_loader():
     """
     content = read_file_by_line(
         os.path.join(GRAND_DIR_PATH, 'dictionary',
-                     'chinese_word_dictionary.txt'))
-    
-    word_dict = dict()
+                     'chinese_word_dictionary.txt'),
+        auto_loads_json=False)
+
+    word_dict = {}
     for idx, line in enumerate(content):
         segs = line.split('\t')
         assert len(segs) == 2
         word_dict.update({segs[0]: segs[1]})
-        
+
     return word_dict
     
 
@@ -349,7 +356,7 @@ def char_radical_loader():
     偏旁部首、字形结构、四角编码、字形笔画与偏旁组成。"""
 
     char_dict = chinese_char_dictionary_loader()
-    char_radical_dict = dict()
+    char_radical_dict = {}
     for char, item in char_dict.items():
 
         radical = item['radical']
@@ -369,10 +376,11 @@ def char_radical_loader():
     
 def idf_loader():
     """ 加载 idf 文件，属于 tfidf 算法的一部分 """
-    content = read_file_by_line(os.path.join(
-        GRAND_DIR_PATH, 'dictionary', 'idf.txt'))
+    content = read_file_by_line(
+        os.path.join(GRAND_DIR_PATH, 'dictionary', 'idf.txt'),
+        auto_loads_json=False)
     
-    idf_dict = dict()
+    idf_dict = {}
     for item in content:
         word, idf_value = item.split('\t')
         idf_dict.update({word: float(idf_value)})
@@ -383,25 +391,27 @@ def idf_loader():
 def traditional_simplified_loader(file_name):
     """ 加载繁简体转换词典 """
     content = read_file_by_line(os.path.join(
-        GRAND_DIR_PATH, 'dictionary', file_name))
+        GRAND_DIR_PATH, 'dictionary', file_name), auto_loads_json=False)
     
-    map_dict = dict()
+    map_dict = {}
     for item in content:
         key, value = item.split('\t')
         map_dict.update({key: value})
+
     return map_dict
 
 
 def phone_location_loader():
     """ 加载电话号码地址与运营商解析词典 """
     content = read_file_by_line(os.path.join(
-        GRAND_DIR_PATH, 'dictionary', 'phone_location.txt'), strip=False)
+        GRAND_DIR_PATH, 'dictionary', 'phone_location.txt'),
+        strip=False, auto_loads_json=False)
 
     def return_all_num(line):
         """ 返回所有的手机号码中间四位字符串 """
         front, info = line.strip().split('\t')
         num_string_list = info.split(',')
-        result_list = list()
+        result_list = []
 
         for num_string in num_string_list:
             if '-' in num_string:
@@ -415,10 +425,10 @@ def phone_location_loader():
 
         return result_list
 
-    phone_location_dict = dict()
+    phone_location_dict = {}
     cur_location = ''
-    zip_code_location_dict = dict()
-    area_code_location_dict = dict()
+    zip_code_location_dict = {}
+    area_code_location_dict = {}
     for line in content:
         if line.startswith('\t'):
             res = return_all_num(line)
@@ -435,9 +445,9 @@ def phone_location_loader():
     
 def pinyin_phrase_loader():
     content = read_file_by_line(os.path.join(
-        GRAND_DIR_PATH, 'dictionary', 'pinyin_phrase.txt'))
+        GRAND_DIR_PATH, 'dictionary', 'pinyin_phrase.txt'), auto_loads_json=False)
     
-    map_dict = dict()
+    map_dict = {}
     for item in content:
         key, value = item.split('\t')
         value = value.split('/')
@@ -481,9 +491,9 @@ def sentiment_words_loader():
 
     """
     content = read_file_by_line(os.path.join(
-        GRAND_DIR_PATH, 'dictionary', 'sentiment_words.txt'))
+        GRAND_DIR_PATH, 'dictionary', 'sentiment_words.txt'), auto_loads_json=False)
     
-    sentiment_words_dict = dict()
+    sentiment_words_dict = {}
     for item in content:
         key, value = item.split('\t')
         assert len(item.split('\t')) == 2
@@ -523,7 +533,7 @@ def word_distribution_loader():
     word_info = read_file_by_line(
         os.path.join(GRAND_DIR_PATH, 'dictionary', 'word_distribution.json'))
 
-    word_info_dict = dict()
+    word_info_dict = {}
     total_num = sum([item[1] for item in word_info])
     for item in word_info:
         word_info_dict.update(
@@ -541,7 +551,7 @@ def xiehouyu_loader():
     对于此类歇后语，均按不同的表达分为不同的歇后语，方便检索查询
     """
     xiehouyu = read_file_by_line(os.path.join(
-        GRAND_DIR_PATH, 'dictionary', 'xiehouyu.txt'))
+        GRAND_DIR_PATH, 'dictionary', 'xiehouyu.txt'), auto_loads_json=False)
     
     xiehouyu = list(set(xiehouyu))
     xiehouyu = [item.split('\t') for item in xiehouyu]

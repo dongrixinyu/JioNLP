@@ -39,6 +39,10 @@ class TestMoneyParser(unittest.TestCase):
             ['一百三十五块六角七分钱', {'num': '135.67', 'case': '元', 'definition': 'accurate'}],
             ['港币两千九百六十元', {'num': '2960.00', 'case': '港元', 'definition': 'accurate'}],
 
+            # 特殊纯汉字，两个货币单位
+            ['三万元欧元', {'num': '30000.00', 'case': '欧元', 'definition': 'accurate'}],
+            ['9000元日币', {'num': '9000.00', 'case': '日元', 'definition': 'accurate'}],
+
             # 修饰词
             ['约4.287亿美元', {'num': '428700000.00', 'case': '美元', 'definition': 'blur'}],
             ['近700万元', {'num': '7000000.00', 'case': '元', 'definition': 'blur-'}],

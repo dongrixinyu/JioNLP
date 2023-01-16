@@ -1335,7 +1335,7 @@ class TimeParser(object):
                         if has_weekday:
                             time_point_string = time_point_string.split('工作日')[-1]
 
-                        results = list()
+                        results = []
 
                         while len(results) < period_results_num:
                             first_full_time_handler, second_full_time_handler, _, blur_time = self.parse_time_span_point(
@@ -5157,7 +5157,7 @@ class TimeParser(object):
 
     def _char_year2num(self, char_year):
         """ 将 二零一九 年份转化为 2019 """
-        year_list = list()
+        year_list = []
         for char in char_year:
             year_list.append(self.year_char2num_map.get(char, char))
         return ''.join(year_list)
@@ -5218,8 +5218,8 @@ class TimeParser(object):
         :param second_time_handler:
         :return:
         """
-        first_handler = list()
-        second_handler = list()
+        first_handler = []
+        second_handler = []
         if first_time_handler == self.past_time:
             first_time_string = self.past_time
         else:
@@ -5369,7 +5369,7 @@ class TimeParser(object):
         :param handler:
         :return:
         """
-        new_handler = list()
+        new_handler = []
         for idx, i in enumerate(handler):
             if i > -1:
                 new_handler.append(i)

@@ -287,57 +287,72 @@ class MoneyParser(object):
         if len(res_list) == 0:
             return default_unit, money_string  # 默认是人民币元
 
-        elif len(res_list) in [1, 2]:
-            # 即，要么是首词，要么是末尾词
-            res = res_list[0]
-            currency_unit = res.group()
-            # 规定标准的货币类型
-            if currency_unit in self.alias_RMB_case:
-                unit = '元'
-            elif currency_unit in self.alias_HK_case:
-                unit = '港元'
-            elif currency_unit in self.alias_JP_case:
-                unit = '日元'
-            elif currency_unit in self.alias_KR_case:
-                unit = '韩元'
-            elif currency_unit in self.alias_TW_case:
-                unit = '新台币'
-            elif currency_unit in self.alias_AUS_case:
-                unit = '澳元'
-            elif currency_unit in self.alias_USA_case:
-                unit = '美元'
-            else:
-                unit = currency_unit
-
-            # 切去货币类型，保留数额，但不包括 角、分
-            if len(res_list) == 1:
-                if res.span()[1] == len(money_string) or res.span()[0] == 0:
-                    # 货币在首部、或尾部
-                    money_string = self.currency_case_pattern.sub('', money_string)
-                    return unit, money_string
-                else:
-                    # 不在首部、尾部，说明尾部还有分、角等
-                    # 若字符串中还不包含 分角毛 等字符，说明这个金额文本有误，如“70000元 2022”
-                    if ('分' not in money_string) and ('角' not in money_string) and ('毛' not in money_string):
-                        raise ValueError(self.type_error.format(money_string))
-                    return unit, money_string
-
-            elif len(res_list) == 2:
-                if res.span()[0] != 0:
-                    raise ValueError(self.type_error.format(money_string))
-
-                if res_list[1].span()[1] == len(money_string):
+        elif len(res_list) in {1, 2}:
+            # 存在一种特殊情况，即 “三万元欧元”，可以得到 res_list 长度为2，但它其实只属于欧元
+            matched_case = False
+            if len(res_list) == 2:
+                first_res = res_list[0]
+                second_res = res_list[1]
+                if first_res.group() == '元' and (first_res.span()[1] == second_res.span()[0]):
+                    matched_case = True
+                    # 第一个字符是 元，且两个单位相邻，则选取后一个单位作为真正的货币单位
+                    unit = second_res.group()
+                    money_string = money_string.replace('元', '', 1)
                     money_string = self.currency_case_pattern.sub('', money_string)
                     return unit, money_string
 
+            if not matched_case:
+                # 除此之外，它按以下条件进行解析
+                # 即，要么是首词，要么是末尾词
+                res = res_list[0]
+                currency_unit = res.group()
+                # 规定标准的货币类型
+                if currency_unit in self.alias_RMB_case:
+                    unit = '元'
+                elif currency_unit in self.alias_HK_case:
+                    unit = '港元'
+                elif currency_unit in self.alias_JP_case:
+                    unit = '日元'
+                elif currency_unit in self.alias_KR_case:
+                    unit = '韩元'
+                elif currency_unit in self.alias_TW_case:
+                    unit = '新台币'
+                elif currency_unit in self.alias_AUS_case:
+                    unit = '澳元'
+                elif currency_unit in self.alias_USA_case:
+                    unit = '美元'
                 else:
-                    # 不在首部、尾部，说明尾部还有分、角等
-                    # 若字符串中还不包含 分角毛 等字符，说明这个金额文本有误，如“70000元 2022”
-                    if ('分' not in money_string) and ('角' not in money_string) and ('毛' not in money_string):
+                    unit = currency_unit
+
+                # 切去货币类型，保留数额，但不包括 角、分
+                if len(res_list) == 1:
+                    if res.span()[1] == len(money_string) or res.span()[0] == 0:
+                        # 货币在首部、或尾部
+                        money_string = self.currency_case_pattern.sub('', money_string)
+                        return unit, money_string
+                    else:
+                        # 不在首部、尾部，说明尾部还有分、角等
+                        # 若字符串中还不包含 分角毛 等字符，说明这个金额文本有误，如“70000元 2022”
+                        if ('分' not in money_string) and ('角' not in money_string) and ('毛' not in money_string):
+                            raise ValueError(self.type_error.format(money_string))
+                        return unit, money_string
+
+                elif len(res_list) == 2:
+                    if res.span()[0] != 0:
                         raise ValueError(self.type_error.format(money_string))
 
-                    money_string = self.currency_case_pattern.sub('', money_string, 1)
-                    return unit, money_string
+                    if res_list[1].span()[1] == len(money_string):
+                        money_string = self.currency_case_pattern.sub('', money_string)
+                        return unit, money_string
+
+                    else:
+                        # 不在首部、尾部，说明尾部还有分、角等
+                        # 若字符串中还不包含 分角毛 等字符，说明这个金额文本有误，如“70000元 2022”
+                        if ('分' not in money_string) and ('角' not in money_string) and ('毛' not in money_string):
+                            raise ValueError(self.type_error.format(money_string))
+
+                        money_string = self.currency_case_pattern.sub('', money_string, 1)
+                        return unit, money_string
 
         else:
             raise ValueError(self.type_error.format(money_string))
