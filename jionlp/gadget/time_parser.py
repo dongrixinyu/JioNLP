@@ -5,6 +5,7 @@
 # email: dongrixinyu.89@163.com
 # github: https://github.com/dongrixinyu/JioNLP
 # description: Preprocessing & Parsing tool for Chinese NLP
+# website: http://www.jionlp.com
 
 
 """
@@ -77,9 +78,10 @@ import traceback
 
 from jionlp import logging
 from jionlp.util.funcs import bracket, bracket_absence, absence
-from .money_parser import MoneyParser
 from .lunar_solar_date import LunarSolarDate
 from jionlp.rule.rule_pattern import *
+from .time_parser_new.time_utility import TimeUtility
+from .time_parser_new.time_delta import TimeDeltaParser, TimeDelta
 
 
 class TimePoint(object):
@@ -104,26 +106,7 @@ class TimePoint(object):
         self.second = time_handler[5]
 
 
-class TimeDelta(object):
-    def __init__(self):
-        self.year = 0
-        # self.solar_season = 0
-        self.month = 0
-        # self.week = 0
-        self.day = 0
-        self.workday = 0  # 交易日、工作日等
-        self.hour = 0
-        self.minute = 0
-        self.second = 0
-        self.millisecond = 0  # 毫秒
-        self.microsecond = 0  # 微秒
-        self.nanosecond = 0  # 纳秒
-
-        self.infinite = 0  # 无穷大
-        self.zero = 0  # 无穷小
-
-
-class TimeParser(object):
+class TimeParser(TimeUtility):
     """将时间表达式转换为标准的时间，
     分为 time_point, time_span, time_period, time_delta, 后期还包括 time_query, time_virtual,
     分别表示 询问时间，如 “多少个月”，虚拟时间，如 “第十天”。
@@ -178,11 +161,15 @@ class TimeParser(object):
 
     """
     def __init__(self):
+
         self.time_point = None
         self.time_base_handler = None
         self.future_time = None
 
     def _preprocess(self):
+        super(TimeParser, self).__call__()
+        self.time_delta = TimeDeltaParser()
+
         # 20世纪 key值
         _20_century_solar_terms_key = [
             6.11, 20.84, 4.6295, 19.4599, 6.3826, 21.4155, 5.59, 20.888, 6.318, 21.86, 6.5, 22.2,
@@ -223,12 +210,6 @@ class TimeParser(object):
 
         self._20_century_solar_terms = get_solar_terms(_20_century_solar_terms_key)
         self._21_century_solar_terms = get_solar_terms(_21_century_solar_terms_key)
-
-        self.money_parser = MoneyParser()
-
-        self.year_char2num_map = {
-            '零': '0', '〇': '0', '一': '1', '二': '2', '三': '3', '四': '4',
-            '五': '5', '六': '6', '七': '7', '八': '8', '九': '9'}
 
         lunar_solar_date = LunarSolarDate()
         self.lunar2solar = lunar_solar_date.to_solar_date
@@ -712,14 +693,6 @@ class TimeParser(object):
             r'(?!:)[\d一二三四五六七八九十零]{1,2}[月日号点时]?(到|至|——|－－|--|~~|～～|—|－|-|~|～)'
             r'([\d一二三四五六七八九十零]{1,2}[月日号点时]|[\d一二三四五六七八九十零]{2,4}年)')
 
-        # 由于 time_span 格式造成的时间单位缺失的检测
-        # 如：`9~12个月`、 `8——10个星期`
-        self.time_span_delta_compensation = re.compile(
-            r'[\d一二三四五六七八九十百千万零]{1,10}(到|至|——|－－|--|~~|～～|—|－|-|~|～)'
-            r'([\d一二三四五六七八九十百千万零]{1,10}(年|个月|周|(个)?(星期|礼拜)|日|天|(个)?(小时|钟头)|分钟|秒))')
-        self.time_delta_exception_pattern = re.compile(
-            r'(' + bracket(YEAR_STRING) + I + bracket(DAY_STRING) + r')')
-
         # 特殊时间表述
         self.special_time_delta_pattern = re.compile(
             r'(' + SINGLE_NUM_STRING + r'天' + SINGLE_NUM_STRING + '[夜晚]|' + \
@@ -756,61 +729,6 @@ class TimeParser(object):
         else:
             return first_time_string, second_time_string
 
-    def _compensate_delta_string(self, time_string, first_time_string, second_time_string):
-        """ 补全 time_delta 时间字符串缺失部分 """
-        time_compensation = self.time_span_delta_compensation.search(time_string)
-        time_compensation_exception = self.time_delta_exception_pattern.search(time_string)
-        if time_compensation and (time_compensation_exception is None):
-            time_compensation = time_compensation.group()
-
-            # compensate the first
-            if '年' in time_compensation:
-                first_time_string = ''.join([first_time_string, '年'])
-            elif '个月' in time_compensation:
-                first_time_string = ''.join([first_time_string, '个月'])
-            elif '星期' in time_compensation or '周' in time_compensation or '礼拜' in time_compensation:
-                first_time_string = ''.join([first_time_string, '个星期'])
-            elif '日' in time_compensation or '天' in time_compensation:
-                first_time_string = ''.join([first_time_string, '天'])
-            elif '小时' in time_compensation or '钟头' in time_compensation:
-                first_time_string = ''.join([first_time_string, '个小时'])
-            elif '秒' in time_compensation:
-                first_time_string = ''.join([first_time_string, '秒钟'])
-            elif '分' in time_compensation:
-                first_time_string = ''.join([first_time_string, '分钟'])
-
-            return first_time_string, second_time_string
-        else:
-            return first_time_string, second_time_string
-
-    @staticmethod
-    def _compare_handler(first_handler, second_handler):
-        """ 比较两个 handler 的时间先后
-
-        Args:
-            first_handler: 第一个 handler
-            second_handler: 第二个 handler
-
-        Returns:
-            若第一个时间和第二个时间相同，返回 0
-            若第一个时间早于第二个时间，返回 -1
-            若第一个时间晚于第二个时间，返回 1
-        """
-        for f, s in zip(first_handler, second_handler):
-            if f == -1 or f == -1:
-                break
-            if f == s:
-                continue
-            elif f > s:
-                return 1
-            elif f < s:
-                return -1
-        return 0
-
-    @staticmethod
-    def _cleansing(time_string):
-        return time_string.strip()  # .replace(' ', '')
-
     def __call__(self, time_string, time_base=time.time(), time_type=None,
                  ret_type='str', strict=False, virtual_time=False, ret_future=False,
                  period_results_num=None, lunar_date=True):
@@ -837,12 +755,12 @@ class TimeParser(object):
                     'time': period_res}
 
         # 解析 time_delta，未检测到后，按 time_point 与 time_span 解析
-        delta_res = self.parse_time_delta_span(time_string, time_type=time_type)
+        delta_res = self.time_delta.parse_time_delta_span(time_string, time_type=time_type)
         if delta_res is not None:
             return delta_res
 
         # time_base_handler 中必须有 year，否则依然无法确定具体时间
-        legal = TimeParser.check_handler(self.time_base_handler) and (self.time_base_handler[0] != -1)
+        legal = TimeUtility.check_handler(self.time_base_handler) and (self.time_base_handler[0] != -1)
         if not legal:
             raise ValueError('The given time base `{}` is illegal.'.format(time_base))
 
@@ -1048,7 +966,7 @@ class TimeParser(object):
 
                     # 当 time_base 大于 first_full_time_handler，直接赋值，
                     # 否则，定义 second_full_time_handler 为未定义无穷大值
-                    compare_res = TimeParser._compare_handler(first_full_time_handler, self.time_base_handler)
+                    compare_res = TimeUtility._compare_handler(first_full_time_handler, self.time_base_handler)
                     if compare_res >= 0:
                         second_full_time_handler = self.future_time
                     elif compare_res < 0:
@@ -1088,7 +1006,7 @@ class TimeParser(object):
 
                     # 当 time_base 大于 first_full_time_handler，直接赋值，
                     # 否则，定义 second_full_time_handler 为未定义无穷大值
-                    compare_res = TimeParser._compare_handler(
+                    compare_res = TimeUtility._compare_handler(
                         self.time_base_handler, second_full_time_handler)
                     if compare_res >= 0:
                         first_full_time_handler = self.past_time
@@ -1122,58 +1040,6 @@ class TimeParser(object):
                     future_time_string, self.time_base_handler)
 
         return first_full_time_handler, second_full_time_handler, time_type, blur_time
-
-    @staticmethod
-    def _cut_zero_key(dict_obj):
-        # 删除其中值为 0 的 key
-        return dict([item for item in dict_obj.items() if item[1] > 0])
-        # cut_dict = dict()
-        # for unit, num in dict_obj.items():
-        #     if num > 0:
-        #         cut_dict.update({unit: num})
-        # return cut_dict
-
-    def parse_time_delta_span(self, time_string, time_type=None):
-        first_time_string, second_time_string = self.parse_delta_span_2_2_delta(time_string)
-        if first_time_string is not None and second_time_string is not None:
-            time_type = 'time_delta'
-            first_time_string, second_time_string = self._compensate_delta_string(
-                time_string, first_time_string, second_time_string)
-            first_delta_dict, _, _ = self.parse_time_delta(first_time_string, time_type=time_type)
-            second_delta_dict, _, _ = self.parse_time_delta(second_time_string, time_type=time_type)
-
-            if first_delta_dict != dict() and second_delta_dict != dict():
-                return {'type': time_type,
-                        'definition': 'blur',
-                        'time': [first_delta_dict, second_delta_dict]}
-            else:
-                return None
-        else:
-            # 非 time span delta，按 time_delta 解析
-            delta_dict, time_type, blur_time = self.parse_time_delta(time_string, time_type=time_type)
-            if delta_dict != dict():
-                return {'type': 'time_delta',
-                        'definition': blur_time,
-                        'time': delta_dict}
-            else:
-                return None
-
-    def parse_delta_span_2_2_delta(self, time_string):
-        """时间段存在范围型表示，如 `6到9天`，`3个月到3年` 等。 """
-
-        if self.first_delta_span_pattern.search(time_string):
-            first_string = self.first_delta_span_pattern.search(time_string).group()
-        else:
-            first_string = None
-
-        if self.second_1_delta_span_pattern.search(time_string):
-            second_string = self.second_1_delta_span_pattern.search(time_string).group()
-        elif self.second_2_delta_span_pattern.search(time_string):
-            second_string = self.second_2_delta_span_pattern.search(time_string).group()
-        else:
-            second_string = None
-
-        return first_string, second_string
 
     def _seg_or_not_first(self, time_string):
         """ 针对待分解字符串，判定哪种情况须分解，哪种不应当分解
@@ -1425,45 +1291,7 @@ class TimeParser(object):
         else:
             raise ValueError('the given `{}` has no correct time unit.'.format(time_string))
 
-        return TimeParser._cut_zero_key(time_delta.__dict__)
-
-    def parse_time_delta(self, time_string, time_type=None):
-        """判断字符串是否为时间段。
-        解析时间段，若可以解析，返回解析后的结果，若不可解析，则返回 None，跳转到其它类型解析 """
-
-        # time_point pattern & norm_func
-        delta_pattern_norm_funcs = [
-            [self.standard_delta_pattern, self.normalize_standard_time_delta],
-            [self.law_delta_pattern, self.normalize_law_delta],
-            [self.special_time_delta_pattern, self.normalize_special_time_delta],
-        ]
-
-        cur_func = None
-        cur_string = ''
-        for delta_pattern, delta_func in delta_pattern_norm_funcs:
-            delta_string = TimeParser.parse_pattern(time_string, delta_pattern)
-
-            if len(delta_string) > len(cur_string):
-                cur_func = delta_func
-                cur_string = delta_string
-
-            if cur_string == time_string:
-                break
-            else:
-                continue
-
-        if len(cur_string) < len(time_string):
-            return dict(), time_type, 'blur'
-
-        time_delta, time_type, blur_time = \
-            cur_func(time_string, time_type=time_type)
-
-        if type(time_delta) is list:
-            delta_dict = [TimeParser._cut_zero_key(i.__dict__) for i in time_delta]
-        else:
-            delta_dict = TimeParser._cut_zero_key(time_delta.__dict__)
-
-        return delta_dict, time_type, blur_time
+        return TimeUtility._cut_zero_key(time_delta.__dict__)
 
     def normalize_standard_time_delta(self, time_string, time_type=None):
         """解析时间段，并根据 time_type 处理模糊情况 """
@@ -1517,7 +1345,7 @@ class TimeParser(object):
             delta_num = self.delta_num_pattern.search(delta_string)
             if delta_num:
                 delta_num_string = delta_num.group()
-                time_delta = float(self._char_num2num(delta_num_string))
+                time_delta = self._char_num2num(delta_num_string)
             if '半' in time_string:
                 if time_delta > 0:
                     time_delta += 0.5
@@ -1529,91 +1357,6 @@ class TimeParser(object):
                 time_definition = 'blur'
 
         return time_delta, time_definition
-
-    def normalize_special_time_delta(self, time_string, time_type=None):
-        """ 解析特殊的时间字符串 """
-        # (r'(\d天\d夜|\d+个春秋|一年四季|大半[天年个月])')
-        if '天' in time_string and ('夜' in time_string or '晚' in time_string):
-            searched_num = self.single_num_pattern.search(time_string)
-            if searched_num:
-                time_delta = TimeDelta()
-                time_delta.day = self._char_num2num(searched_num.group())
-                return time_delta, 'time_delta', 'accurate'
-
-        elif '春秋' in time_string:
-            searched_num = self.single_num_pattern.search(time_string)
-            if searched_num:
-                time_delta = TimeDelta()
-                time_delta.year = self._char_num2num(searched_num.group())
-                return time_delta, 'time_delta', 'blur'
-
-        elif '一年四季' in time_string:
-            time_delta = TimeDelta()
-            time_delta.year = 1
-            return time_delta, 'time_delta', 'blur'
-
-        elif '大半' in time_string:
-            first_delta = TimeDelta()
-            second_delta = TimeDelta()
-            if '年' in time_string:
-                first_delta.year = 0.5
-                second_delta.year = 0.9
-            elif '月' in time_string:
-                first_delta.month = 0.5
-                second_delta.month = 0.9
-            elif '天' in time_string:
-                first_delta.day = 0.5
-                second_delta.day = 0.9
-            elif '小时' in time_string or '钟头' in time_string:
-                first_delta.hour = 0.5
-                second_delta.hour = 0.9
-            else:
-                raise ValueError('the given `{}` is illegal.'.format(time_string))
-            return [first_delta, second_delta], 'time_delta', 'blur'
-
-        else:
-            raise ValueError('the given `{}` is illegal.'.format(time_string))
-
-    def normalize_law_delta(self, time_string, time_type=None):
-        # 3年以上，7年以下
-
-        if '以上' in time_string and '以下' in time_string:
-            first_string, second_string = time_string.split('以上', 1)
-            first_delta = self._normalize_law_delta_base(first_string)
-            second_delta = self._normalize_law_delta_base(second_string)
-            return [first_delta, second_delta], 'time_delta', 'blur'
-        elif '以上' in time_string:
-            time_delta = self._normalize_law_delta_base(time_string)
-            second_delta = TimeDelta()
-            second_delta.infinite = True
-            return [time_delta, second_delta], 'time_delta', 'blur'
-        elif '以下' in time_string:
-            time_delta = self._normalize_law_delta_base(time_string)
-            first_delta = TimeDelta()
-            first_delta.zero = True
-            return [first_delta, time_delta], 'time_delta', 'blur'
-        else:
-            raise ValueError('the given `{}` is illegal.'.format(time_string))
-
-    def _normalize_law_delta_base(self, time_string):
-        # 3年以上 或 7年以下
-        time_delta = TimeDelta()
-        delta_num = self.delta_num_pattern.search(time_string)
-        if delta_num:
-            delta_num_string = delta_num.group()
-            time_delta_num = float(self._char_num2num(delta_num_string))
-
-            if '年' in time_string:
-                time_delta.year = time_delta_num
-            elif '个月' in time_string:
-                time_delta.month = time_delta_num
-            elif '日' in time_string or '天' in time_string:
-                time_delta.day = time_delta_num
-            else:
-                raise ValueError('the given `{}` is illegal.'.format(time_string))
-            return time_delta
-        else:
-            raise ValueError('the given `{}` is illegal.'.format(time_string))
 
     def _check_blur(self, time_string, time_definition):
         # 若字符串中存在 `左右` 或 `许` 等，说明是 blur，反之返回 None 表示不确定性
@@ -1795,13 +1538,13 @@ class TimeParser(object):
         else:
             raise ValueError('can not parse the string `{}`.'.format(time_string))
 
-        legal = TimeParser.check_handler(first_time_handler)
+        legal = TimeUtility.check_handler(first_time_handler)
         if not legal:
             raise ValueError('The given time string `{}` is illegal.'.format(time_string))
 
-        first_full_time_handler = TimeParser.time_completion(
+        first_full_time_handler = TimeUtility.time_completion(
             first_time_handler, time_base_handler)
-        second_full_time_handler = TimeParser.time_completion(
+        second_full_time_handler = TimeUtility.time_completion(
             second_time_handler, time_base_handler)
 
         # 根据 时分秒信息对 日 做偏移校准
@@ -1819,17 +1562,6 @@ class TimeParser(object):
                                         zip(second_full_time_handler, _second_full_time_handler)]
 
         return first_full_time_handler, second_full_time_handler, time_type, blur_time
-
-    @staticmethod
-    def parse_pattern(time_string, pattern):
-        """ 公共解析函数 """
-        searched_res = pattern.search(time_string)
-        if searched_res:
-            # logging.info(''.join(['matched: ', searched_res.group(),
-            #                       '\torig: ', time_string]))
-            return searched_res.group()
-        else:
-            return ''
 
     def normalize_special_time_span(self, time_string):
         """ 解决特殊时间解析 """
@@ -1931,7 +1663,7 @@ class TimeParser(object):
         if year is not None:
             year_string = year.group(1)
             # 针对汉字年份进行转换
-            year_string = self._char_year2num(year_string)
+            year_string = self.chinese_year_char_2_arabic_year_char(year_string)
 
             # 针对 13年8月，08年6月，三三年 这类日期，补全其年份
             # if month_res is not None or len(year_string) == 2:
@@ -2479,22 +2211,14 @@ class TimeParser(object):
 
         return first_time_handler, second_time_handler, 'time_span', 'accurate'
 
-    @staticmethod
-    def _check_delta_base_conflict(time_delta_dict, time_base_handler):
+    def _check_delta_base_conflict(self, time_delta_dict, time_base_handler):
         # 检测 time_delta 的 dict 与 time_base_handler 的冲突，会导致无法解析
         flag = True
-        if time_delta_dict.get('year', 0) > 0 and time_base_handler[0] == -1:
-            flag = False
-        if time_delta_dict.get('month', 0) > 0 and time_base_handler[1] == -1:
-            flag = False
-        if time_delta_dict.get('day', 0) > 0 and time_base_handler[2] == -1:
-            flag = False
-        if time_delta_dict.get('hour', 0) > 0 and time_base_handler[3] == -1:
-            flag = False
-        if time_delta_dict.get('minute', 0) > 0 and time_base_handler[4] == -1:
-            flag = False
-        if time_delta_dict.get('second', 0) > 0 and time_base_handler[5] == -1:
-            flag = False
+
+        for idx, time_unit_name in enumerate(self.time_unit_names):
+            if time_delta_dict.get(time_unit_name, 0) > 0 and time_base_handler[idx] == -1:
+                flag = False
+                break
 
         if not flag:
             raise ValueError('the given time_base `{}` is illegal'.format(time_base_handler))
@@ -2507,9 +2231,9 @@ class TimeParser(object):
         当 time_delta 位于 时、分、秒等以下时，不会将结果扩展到一小时结束，而是继承 time_base_handler，做到精准的 time_delta
         """
         time_delta, _, blur_time = self.normalize_standard_time_delta(time_string, time_type='time_delta')
-        time_delta_dict = TimeParser._cut_zero_key(time_delta.__dict__)
+        time_delta_dict = TimeUtility._cut_zero_key(time_delta.__dict__)
 
-        TimeParser._check_delta_base_conflict(time_delta_dict, self.time_base_handler)
+        self._check_delta_base_conflict(time_delta_dict, self.time_base_handler)
 
         first_time_handler = self.time_base_handler
 
@@ -2539,9 +2263,9 @@ class TimeParser(object):
         当 time_delta 位于 时、分、秒等以下时，不会将结果扩展到一小时结束，而是继承 time_base_handler，做到精准的 time_delta
         """
         time_delta, _, blur_time = self.normalize_standard_time_delta(time_string, time_type='time_delta')
-        time_delta_dict = TimeParser._cut_zero_key(time_delta.__dict__)
+        time_delta_dict = TimeUtility._cut_zero_key(time_delta.__dict__)
 
-        TimeParser._check_delta_base_conflict(time_delta_dict, self.time_base_handler)
+        self._check_delta_base_conflict(time_delta_dict, self.time_base_handler)
 
         second_time_handler = self.time_base_handler
 
@@ -2571,9 +2295,9 @@ class TimeParser(object):
         当 time_delta 位于 时、分、秒等以下时，不会将结果扩展到一小时结束，而是继承 time_base_handler，做到精准的 time_delta
         """
         time_delta, _, blur_time = self.normalize_standard_time_delta(time_string, time_type='time_delta')
-        time_delta_dict = TimeParser._cut_zero_key(time_delta.__dict__)
+        time_delta_dict = TimeUtility._cut_zero_key(time_delta.__dict__)
 
-        TimeParser._check_delta_base_conflict(time_delta_dict, self.time_base_handler)
+        self._check_delta_base_conflict(time_delta_dict, self.time_base_handler)
 
         second_time_handler = self.future_time
 
@@ -2622,6 +2346,7 @@ class TimeParser(object):
             second_time_handler = cur_time_handler
             time_type = 'time_span'
             definition = 'blur'
+
         elif '前' in time_string:
             cur_datetime = time_base_datetime - datetime.timedelta(seconds=time_second_delta)
             cur_time_handler = TimeParser._convert_time_base2handler(cur_datetime)
@@ -2637,6 +2362,7 @@ class TimeParser(object):
 
             time_type = 'time_point'
             definition = 'accurate'
+
         elif '之后' in time_string or '以后' in time_string:
             cur_datetime = time_base_datetime + datetime.timedelta(seconds=time_second_delta)
             cur_time_handler = TimeParser._convert_time_base2handler(cur_datetime)
@@ -2645,6 +2371,7 @@ class TimeParser(object):
             second_time_handler = self.future_time
             time_type = 'time_span'
             definition = 'blur'
+
         elif '后' in time_string:
 
             cur_datetime = time_base_datetime + datetime.timedelta(seconds=time_second_delta)
@@ -3713,7 +3440,7 @@ class TimeParser(object):
                 first_day = 11
                 second_day = 20
             elif '下旬' in blur_day_string:
-                first_day = 11
+                first_day = 21
                 second_day = -1
             elif '初' in blur_day_string:
                 first_day = 1
@@ -4083,7 +3810,7 @@ class TimeParser(object):
         lunar_time_handler = lunar_time_point.handler()
 
         # 对农历日期的补全
-        lunar_time_handler = TimeParser.time_completion(lunar_time_handler, self.time_base_handler)
+        lunar_time_handler = TimeUtility.time_completion(lunar_time_handler, self.time_base_handler)
         
         if self.lunar_date:
             first_time_handler, second_time_handler = self._convert_lunar2solar(
@@ -4126,7 +3853,7 @@ class TimeParser(object):
         lunar_time_handler = lunar_time_point.handler()
 
         # completion of lunar date
-        lunar_time_handler = TimeParser.time_completion(lunar_time_handler, self.time_base_handler)
+        lunar_time_handler = TimeUtility.time_completion(lunar_time_handler, self.time_base_handler)
 
         first_time_handler, second_time_handler = self._convert_lunar2solar(
             lunar_time_handler, leap_month=leap_month)
@@ -5143,25 +4870,6 @@ class TimeParser(object):
 
         return first_time_handler, second_time_handler, 'time_point', 'blur', day_bias
 
-    def _char_num2num(self, char_num):
-        """ 将 三十一 转换为 31，用于月、日、时、分、秒的汉字转换
-
-        :param char_num:
-        :return:
-        """
-        res_num = self.money_parser(char_num, ret_format='str')
-        if res_num is None:
-            return 0
-        else:
-            return float(res_num[:-1])
-
-    def _char_year2num(self, char_year):
-        """ 将 二零一九 年份转化为 2019 """
-        year_list = []
-        for char in char_year:
-            year_list.append(self.year_char2num_map.get(char, char))
-        return ''.join(year_list)
-
     @staticmethod
     def _year_completion(year_string, time_base_handler):
         """将两位字符串年份补齐至4位年份，
@@ -5192,24 +4900,6 @@ class TimeParser(object):
                 raise ValueError('maybe the `year` can not be parsed.')
         else:
             return year_string
-
-    @staticmethod
-    def time_completion(time_handler, time_base_handler):
-        """根据时间基，补全 time_handler，即把 time_handler 前部 -1 部分补齐
-
-        :param time_handler:
-        :param time_base_handler:
-        :return:
-        """
-        if time_handler in ['inf', '-inf']:
-            return time_handler
-
-        for i in range(len(time_handler)):
-            if time_handler[i] > -1:
-                break
-            time_handler[i] = time_base_handler[i]
-
-        return time_handler
 
     def time_handler2standard_time(self, first_time_handler, second_time_handler):
         """ 将 time handler 转换为标准时间格式字符串
@@ -5293,96 +4983,6 @@ class TimeParser(object):
 
         return first_time_string, second_time_string
 
-    @staticmethod
-    def check_handler(time_handler):
-        """
-        字符串合法校验，形如 [-1, 11, 29, -1, 23, -1] ，即中间部位有未指明时间，为非法时间字符串，
-        左侧未指明时间须根据 base_time 补充完整，右侧未指明时间可省略，或按时间段补全
-        """
-        if time_handler in ['inf', '-inf']:
-            return True
-
-        assert len(time_handler) == 6
-        # 未识别出任何时间串，即全部为 -1：[-1, -1, -1, -1, -1, -1]
-        if set(time_handler) == {-1}:
-            return False
-
-        first = False
-        second = False
-        for i in range(5):
-            if time_handler[i] > -1 and time_handler[i+1] == -1:
-                first = True
-            if time_handler[i] == -1 and time_handler[i+1] > -1:
-                if first:
-                    second = True
-
-        if first and second:
-            return False
-        return True
-
-    @staticmethod
-    def _convert_time_base2handler(time_base):
-        """将 time_base 转换为 handler,"""
-
-        # if type(time_base) is arrow.arrow.Arrow:
-        #     time_base_handler = [
-        #         time_base.year, time_base.month, time_base.day,
-        #         time_base.hour, time_base.minute, time_base.second]
-        if type(time_base) in [float, int]:
-            # 即 timestamp
-            time_array = datetime.datetime.fromtimestamp(time_base)
-            time_base_handler = [
-                time_array.year, time_array.month, time_array.day,
-                time_array.hour, time_array.minute, time_array.second]
-        elif type(time_base) is datetime.datetime:
-            time_base_handler = [
-                time_base.year, time_base.month, time_base.day,
-                time_base.hour, time_base.minute, time_base.second]
-        elif type(time_base) is list:
-            assert len(time_base) <= 6, 'length of time_base must be less than 6.'
-            for i in time_base:
-                assert type(i) is int, 'type of element of time_base must be `int`.'
-            if len(time_base) < 6:
-                time_base.extend([-1 for _ in range(6 - len(time_base))])
-            time_base_handler = time_base
-        elif type(time_base) is dict:
-            time_base_handler = [
-                time_base.get('year', -1), time_base.get('month', -1),
-                time_base.get('day', -1), time_base.get('hour', -1),
-                time_base.get('minute', -1), time_base.get('second', -1)]
-        elif type(time_base) is str:
-            time_array = time.strptime(time_base, "%Y-%m-%d %H:%M:%S")
-            time_base_handler = [
-                time_array.tm_year, time_array.tm_mon, time_array.tm_mday,
-                time_array.tm_hour, time_array.tm_min, time_array.tm_sec]
-        elif time_base is None:
-            time_base_handler = None
-        else:
-            raise ValueError('the given time_base is illegal.')
-
-        return time_base_handler
-
-    @staticmethod
-    def _convert_handler2datetime(handler):
-        """将 time handler 转换为 datetime 类型
-
-        :param handler:
-        :return:
-        """
-        new_handler = []
-        for idx, i in enumerate(handler):
-            if i > -1:
-                new_handler.append(i)
-            else:
-                if idx in [0, 1, 2]:
-                    new_handler.append(1)
-                elif idx in [3, 4, 5]:
-                    new_handler.append(0)
-
-        return datetime.datetime(
-            new_handler[0], new_handler[1], new_handler[2],
-            new_handler[3], new_handler[4], new_handler[5])
-
     def _convert_lunar2solar(self, lunar_time_handler, leap_month):
 
         def string2handler(datetime_obj):
@@ -5435,4 +5035,3 @@ class TimeParser(object):
                 flag_day += special[1]
                 break
         return (solar_terms[solar_term][1]), str(flag_day)
-
