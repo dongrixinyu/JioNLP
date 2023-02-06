@@ -97,14 +97,6 @@ class TimePoint(object):
         return [self.year, self.month, self.day,
                 self.hour, self.minute, self.second]
 
-    def assign(self, time_handler=[-1, -1, -1, -1, -1, -1]):
-        self.year = time_handler[0]
-        self.month = time_handler[1]
-        self.day = time_handler[2]
-        self.hour = time_handler[3]
-        self.minute = time_handler[4]
-        self.second = time_handler[5]
-
 
 class TimeParser(TimeUtility):
     """将时间表达式转换为标准的时间，
