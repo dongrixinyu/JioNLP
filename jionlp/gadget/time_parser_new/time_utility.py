@@ -10,6 +10,7 @@
 import re
 import time
 import datetime
+import traceback
 
 from jionlp.rule.rule_pattern import *
 from ..money_parser import MoneyParser
@@ -61,6 +62,12 @@ class TimeUtility(object):
         self.chinese_num_2_arabic_num = str.maketrans(chinese_num, arabic_num)
 
         self.single_num_pattern = re.compile(SINGLE_NUM_STRING)
+
+        self.big_moon = {1, 3, 5, 7, 8, 10, 12}
+        self.small_moon = {4, 6, 9, 11}
+
+        self.future_time = 'inf'
+        self.past_time = '-inf'
 
         self.money_parser = MoneyParser()
 
@@ -201,3 +208,81 @@ class TimeUtility(object):
     @staticmethod
     def _cleansing(time_string):
         return time_string.strip()  # .replace(' ', '')
+
+    def time_handler2standard_time(self, first_time_handler, second_time_handler):
+        """ 将 time handler 转换为标准时间格式字符串
+        复杂点在于需要控制解析 -1 的情况
+
+        :param first_time_handler:
+        :param second_time_handler:
+        :return:
+        """
+        first_handler = []
+        second_handler = []
+        if first_time_handler == self.past_time:
+            first_time_string = self.past_time
+        else:
+            for idx, f in enumerate(first_time_handler):
+                if f > -1:
+                    first_handler.append(f)
+                elif f == -1:
+                    if idx in [1, 2]:
+                        first_handler.append(1)
+                    elif idx in [3, 4, 5]:
+                        first_handler.append(0)
+                    else:
+                        raise ValueError('first time handler {} illegal.'.format(first_handler))
+                else:
+                    raise ValueError('before Christ {} can not be converted to standard time pattern.'.format(
+                        first_time_handler))
+
+            try:
+                first_time_string = TimeUtility._convert_handler2datetime(first_handler)
+            except Exception:
+                raise ValueError('the given time string is illegal.\n{}'.format(
+                    traceback.format_exc()))
+
+            first_time_string = first_time_string.strftime('%Y-%m-%d %H:%M:%S')
+
+        if second_time_handler == self.future_time:
+            second_time_string = self.future_time
+        else:
+            for idx, s in enumerate(second_time_handler):
+                if s > -1:
+                    second_handler.append(s)
+                elif s == -1:
+                    if idx == 1:
+                        second_handler.append(12)
+                    elif idx == 2:
+                        if second_handler[1] in self.big_moon:
+                            second_handler.append(31)
+                        elif second_handler[1] in self.small_moon:
+                            second_handler.append(30)
+                        else:
+                            if (second_handler[0] % 100 != 0 and second_handler[0] % 4 == 0) \
+                                    or (second_handler[0] % 100 == 0 and second_handler[0] % 400 == 0):
+                                second_handler.append(29)
+                            else:
+                                second_handler.append(28)
+                    elif idx == 3:
+                        second_handler.append(23)
+                    elif idx == 4:
+                        second_handler.append(59)
+                    elif idx == 5:
+                        second_handler.append(59)
+                    else:
+                        raise ValueError('second time handler {} illegal.'.format(second_handler))
+                else:
+                    raise ValueError('before Christ {} can not be converted to standard time pattern.'.format(
+                        second_time_handler))
+
+            try:
+                second_time_string = TimeUtility._convert_handler2datetime(second_handler)
+            except Exception:
+                raise ValueError('the given time string is illegal.\n{}'.format(
+                    traceback.format_exc()))
+
+            second_time_string = second_time_string.strftime('%Y-%m-%d %H:%M:%S')
+
+        return first_time_string, second_time_string
+

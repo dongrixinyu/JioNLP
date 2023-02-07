@@ -97,6 +97,25 @@ class TimePoint(object):
         return [self.year, self.month, self.day,
                 self.hour, self.minute, self.second]
 
+    def __repr__(self):
+        return 'TimePoint: {},{},{}  {},{},{}'.format(
+            self.year, self.month, self.day, self.hour, self.minute, self.second)
+
+    def assign(self, *args):
+        args_num = len(args)
+        if args_num >= 1:
+            self.year = args[0]
+        if args_num >= 2:
+            self.month = args[1]
+        if args_num >= 3:
+            self.day = args[2]
+        if args_num >= 4:
+            self.hour = args[3]
+        if args_num >= 5:
+            self.minute = args[4]
+        if args_num >= 6:
+            self.second = args[5]
+
 
 class TimeParser(TimeUtility):
     """将时间表达式转换为标准的时间，
@@ -206,9 +225,6 @@ class TimeParser(TimeUtility):
         lunar_solar_date = LunarSolarDate()
         self.lunar2solar = lunar_solar_date.to_solar_date
         self.solar2lunar = lunar_solar_date.to_lunar_date
-
-        self.future_time = 'inf'
-        self.past_time = '-inf'
 
         self._preprocess_regular_expression()
 
@@ -1658,7 +1674,6 @@ class TimeParser(TimeUtility):
             year_string = self.chinese_year_char_2_arabic_year_char(year_string)
 
             # 针对 13年8月，08年6月，三三年 这类日期，补全其年份
-            # if month_res is not None or len(year_string) == 2:
             if len(year_string) == 2:
                 year_string = TimeParser._year_completion(
                     year_string, time_base_handler)
@@ -1690,10 +1705,8 @@ class TimeParser(TimeUtility):
                 first_time_base_datetime = time_base_datetime - datetime.timedelta(days=30.417 * 2)
                 second_time_base_datetime = time_base_datetime - datetime.timedelta(days=30.417 * 1)
 
-                first_time_point.month = first_time_base_datetime.month
-                first_time_point.year = first_time_base_datetime.year
-                second_time_point.month = second_time_base_datetime.month
-                second_time_point.year = second_time_base_datetime.year
+                first_time_point.assign(*tuple(first_time_base_datetime.utctimetuple())[:2])
+                second_time_point.assign(*tuple(second_time_base_datetime.utctimetuple())[:2])
 
             elif '天' in time_string:
                 time_base_datetime = TimeParser._convert_handler2datetime(self.time_base_handler)
@@ -1701,12 +1714,9 @@ class TimeParser(TimeUtility):
                 first_time_base_datetime = time_base_datetime - datetime.timedelta(days=7)
                 second_time_base_datetime = time_base_datetime - datetime.timedelta(days=2)
 
-                first_time_point.day = first_time_base_datetime.day
-                first_time_point.month = first_time_base_datetime.month
-                first_time_point.year = first_time_base_datetime.year
-                second_time_point.day = second_time_base_datetime.day
-                second_time_point.month = second_time_base_datetime.month
-                second_time_point.year = second_time_base_datetime.year
+                first_time_point.assign(*tuple(first_time_base_datetime.utctimetuple())[:3])
+                second_time_point.assign(*tuple(second_time_base_datetime.utctimetuple())[:3])
+
             else:
                 raise ValueError('the given string `{}` is illegal.'.format(time_string))
 
@@ -1726,14 +1736,9 @@ class TimeParser(TimeUtility):
                 first_time_base_datetime = time_base_datetime - datetime.timedelta(hours=6)
                 second_time_base_datetime = time_base_datetime - datetime.timedelta(hours=2)
 
-                first_time_point.hour = first_time_base_datetime.hour
-                first_time_point.day = first_time_base_datetime.day
-                first_time_point.month = first_time_base_datetime.month
-                first_time_point.year = first_time_base_datetime.year
-                second_time_point.hour = second_time_base_datetime.hour
-                second_time_point.day = second_time_base_datetime.day
-                second_time_point.month = second_time_base_datetime.month
-                second_time_point.year = second_time_base_datetime.year
+                first_time_point.assign(*tuple(first_time_base_datetime.utctimetuple())[:4])
+                second_time_point.assign(*tuple(second_time_base_datetime.utctimetuple())[:4])
+
             elif '分' in time_string:
                 assert self.time_base_handler[-2] > -1, 'minute must exist.'
 
@@ -1742,16 +1747,8 @@ class TimeParser(TimeUtility):
                 first_time_base_datetime = time_base_datetime - datetime.timedelta(minutes=9)
                 second_time_base_datetime = time_base_datetime - datetime.timedelta(minutes=2)
 
-                first_time_point.minute = first_time_base_datetime.minute
-                first_time_point.hour = first_time_base_datetime.hour
-                first_time_point.day = first_time_base_datetime.day
-                first_time_point.month = first_time_base_datetime.month
-                first_time_point.year = first_time_base_datetime.year
-                second_time_point.minute = second_time_base_datetime.minute
-                second_time_point.hour = second_time_base_datetime.hour
-                second_time_point.day = second_time_base_datetime.day
-                second_time_point.month = second_time_base_datetime.month
-                second_time_point.year = second_time_base_datetime.year
+                first_time_point.assign(*tuple(first_time_base_datetime.utctimetuple())[:5])
+                second_time_point.assign(*tuple(second_time_base_datetime.utctimetuple())[:5])
 
             elif '秒' in time_string:
                 assert self.time_base_handler[-1] > -1, 'second must exist.'
@@ -1761,18 +1758,8 @@ class TimeParser(TimeUtility):
                 first_time_base_datetime = time_base_datetime - datetime.timedelta(seconds=9)
                 second_time_base_datetime = time_base_datetime - datetime.timedelta(seconds=2)
 
-                first_time_point.second = first_time_base_datetime.second
-                first_time_point.minute = first_time_base_datetime.minute
-                first_time_point.hour = first_time_base_datetime.hour
-                first_time_point.day = first_time_base_datetime.day
-                first_time_point.month = first_time_base_datetime.month
-                first_time_point.year = first_time_base_datetime.year
-                second_time_point.second = second_time_base_datetime.second
-                second_time_point.minute = second_time_base_datetime.minute
-                second_time_point.hour = second_time_base_datetime.hour
-                second_time_point.day = second_time_base_datetime.day
-                second_time_point.month = second_time_base_datetime.month
-                second_time_point.year = second_time_base_datetime.year
+                first_time_point.assign(*tuple(first_time_base_datetime.utctimetuple())[:6])
+                second_time_point.assign(*tuple(second_time_base_datetime.utctimetuple())[:6])
 
             else:
                 raise ValueError('the given string `{}` is illegal.'.format(time_string))
@@ -2217,6 +2204,19 @@ class TimeParser(TimeUtility):
 
         return flag
 
+    @staticmethod
+    def _compute_based_on_time_delta(time_base_datetime, time_delta_dict, coefficient=1):
+        # 在时间基(datetime 格式)上加减 time_delta_dict 的时间
+        # coefficient 仅取 1 或 -1，用于控制时间是加，还是减
+        time_base_datetime += datetime.timedelta(days=coefficient * 365 * time_delta_dict.get('year', 0))
+        time_base_datetime += datetime.timedelta(days=coefficient * 30.417 * time_delta_dict.get('month', 0))
+        time_base_datetime += datetime.timedelta(days=coefficient * time_delta_dict.get('day', 0))
+        time_base_datetime += datetime.timedelta(hours=coefficient * time_delta_dict.get('hour', 0))
+        time_base_datetime += datetime.timedelta(minutes=coefficient * time_delta_dict.get('minute', 0))
+        time_base_datetime += datetime.timedelta(seconds=coefficient * time_delta_dict.get('second', 0))
+
+        return time_base_datetime
+
     def normalize_weilai_delta2span(self, time_string):
         """ 解析 未来（三天、48小时等）
         当 time_delta 位于 年、月、天等以上时，会将结果扩展到一日结束，即 time_delta 并不精准
@@ -2231,12 +2231,8 @@ class TimeParser(TimeUtility):
 
         time_base_datetime = TimeParser._convert_handler2datetime(self.time_base_handler)
 
-        time_base_datetime += datetime.timedelta(days=365 * time_delta_dict.get('year', 0))
-        time_base_datetime += datetime.timedelta(days=30.417 * time_delta_dict.get('month', 0))
-        time_base_datetime += datetime.timedelta(days=time_delta_dict.get('day', 0))
-        time_base_datetime += datetime.timedelta(hours=time_delta_dict.get('hour', 0))
-        time_base_datetime += datetime.timedelta(minutes=time_delta_dict.get('minute', 0))
-        time_base_datetime += datetime.timedelta(seconds=time_delta_dict.get('second', 0))
+        time_base_datetime = TimeParser._compute_based_on_time_delta(
+            time_base_datetime, time_delta_dict)
         second_time_handler = TimeParser._convert_time_base2handler(time_base_datetime)
         delta_set = set(time_delta_dict.keys())
         if 'hour' in delta_set or 'minute' in delta_set or 'second' in delta_set:
@@ -2262,13 +2258,9 @@ class TimeParser(TimeUtility):
         second_time_handler = self.time_base_handler
 
         time_base_datetime = TimeParser._convert_handler2datetime(self.time_base_handler)
+        time_base_datetime = TimeParser._compute_based_on_time_delta(
+            time_base_datetime, time_delta_dict, coefficient=-1)
 
-        time_base_datetime += datetime.timedelta(days=-365 * time_delta_dict.get('year', 0))
-        time_base_datetime += datetime.timedelta(days=-30.417 * time_delta_dict.get('month', 0))
-        time_base_datetime += datetime.timedelta(days=-time_delta_dict.get('day', 0))
-        time_base_datetime += datetime.timedelta(hours=-time_delta_dict.get('hour', 0))
-        time_base_datetime += datetime.timedelta(minutes=-time_delta_dict.get('minute', 0))
-        time_base_datetime += datetime.timedelta(seconds=-time_delta_dict.get('second', 0))
         first_time_handler = TimeParser._convert_time_base2handler(time_base_datetime)
         delta_set = set(time_delta_dict.keys())
         if 'hour' in delta_set or 'minute' in delta_set or 'second' in delta_set:
@@ -2294,13 +2286,9 @@ class TimeParser(TimeUtility):
         second_time_handler = self.future_time
 
         time_base_datetime = TimeParser._convert_handler2datetime(self.time_base_handler)
+        time_base_datetime = TimeParser._compute_based_on_time_delta(
+            time_base_datetime, time_delta_dict)
 
-        time_base_datetime += datetime.timedelta(days=365 * time_delta_dict.get('year', 0))
-        time_base_datetime += datetime.timedelta(days=30.417 * time_delta_dict.get('month', 0))
-        time_base_datetime += datetime.timedelta(days=time_delta_dict.get('day', 0))
-        time_base_datetime += datetime.timedelta(hours=time_delta_dict.get('hour', 0))
-        time_base_datetime += datetime.timedelta(minutes=time_delta_dict.get('minute', 0))
-        time_base_datetime += datetime.timedelta(seconds=time_delta_dict.get('second', 0))
         first_time_handler = TimeParser._convert_time_base2handler(time_base_datetime)
         delta_set = set(time_delta_dict.keys())
         if 'hour' in delta_set or 'minute' in delta_set or 'second' in delta_set:
@@ -4892,88 +4880,6 @@ class TimeParser(TimeUtility):
                 raise ValueError('maybe the `year` can not be parsed.')
         else:
             return year_string
-
-    def time_handler2standard_time(self, first_time_handler, second_time_handler):
-        """ 将 time handler 转换为标准时间格式字符串
-
-        :param first_time_handler:
-        :param second_time_handler:
-        :return:
-        """
-        first_handler = []
-        second_handler = []
-        if first_time_handler == self.past_time:
-            first_time_string = self.past_time
-        else:
-            for idx, f in enumerate(first_time_handler):
-                if f > -1:
-                    first_handler.append(f)
-                elif f == -1:
-                    if idx == 1:
-                        first_handler.append(1)
-                    elif idx == 2:
-                        first_handler.append(1)
-                    elif idx == 3:
-                        first_handler.append(0)
-                    elif idx == 4:
-                        first_handler.append(0)
-                    elif idx == 5:
-                        first_handler.append(0)
-                    else:
-                        raise ValueError('first time handler {} illegal.'.format(first_handler))
-                else:
-                    raise ValueError('before Christ {} can not be converted to standard time pattern.'.format(
-                        first_time_handler))
-
-            try:
-                first_time_string = TimeParser._convert_handler2datetime(first_handler)
-            except Exception:
-                raise ValueError('the given time string is illegal.\n{}'.format(
-                    traceback.format_exc()))
-
-            first_time_string = first_time_string.strftime('%Y-%m-%d %H:%M:%S')
-
-        if second_time_handler == self.future_time:
-            second_time_string = self.future_time
-        else:
-            for idx, s in enumerate(second_time_handler):
-                if s > -1:
-                    second_handler.append(s)
-                elif s == -1:
-                    if idx == 1:
-                        second_handler.append(12)
-                    elif idx == 2:
-                        if second_handler[1] in [1, 3, 5, 7, 8, 10, 12]:
-                            second_handler.append(31)
-                        elif second_handler[1] in [4, 6, 9, 11]:
-                            second_handler.append(30)
-                        else:
-                            if (second_handler[0] % 100 != 0 and second_handler[0] % 4 == 0) \
-                                    or (second_handler[0] % 100 == 0 and second_handler[0] % 400 == 0):
-                                second_handler.append(29)
-                            else:
-                                second_handler.append(28)
-                    elif idx == 3:
-                        second_handler.append(23)
-                    elif idx == 4:
-                        second_handler.append(59)
-                    elif idx == 5:
-                        second_handler.append(59)
-                    else:
-                        raise ValueError('second time handler {} illegal.'.format(second_handler))
-                else:
-                    raise ValueError('before Christ {} can not be converted to standard time pattern.'.format(
-                        second_time_handler))
-
-            try:
-                second_time_string = TimeParser._convert_handler2datetime(second_handler)
-            except Exception:
-                raise ValueError('the given time string is illegal.\n{}'.format(
-                    traceback.format_exc()))
-
-            second_time_string = second_time_string.strftime('%Y-%m-%d %H:%M:%S')
-
-        return first_time_string, second_time_string
 
     def _convert_lunar2solar(self, lunar_time_handler, leap_month):
 
