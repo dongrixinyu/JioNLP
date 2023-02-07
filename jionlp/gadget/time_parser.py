@@ -86,12 +86,8 @@ from .time_parser_new.time_delta import TimeDeltaParser, TimeDelta
 
 class TimePoint(object):
     def __init__(self):
-        self.year = -1
-        self.month = -1
-        self.day = -1
-        self.hour = -1
-        self.minute = -1
-        self.second = -1
+        self.year, self.month, self.day = -1, -1, -1
+        self.hour, self.minute, self.second = -1, -1, -1
 
     def handler(self):
         return [self.year, self.month, self.day,
