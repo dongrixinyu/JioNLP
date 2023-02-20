@@ -7,7 +7,6 @@
 # description: Preprocessing & Parsing tool for Chinese NLP
 # website: http://www.jionlp.com
 
-
 """
 TODO:
     2、时间段的解析中的问题：
@@ -224,6 +223,18 @@ class TimeParser(TimeUtility):
 
         self._preprocess_regular_expression()
 
+        # 依次是，模糊时间词，first_time_point.hour, second_time_point.hour
+        self.blur_time_info_map = [
+            [['清晨'], 5, 7], [['清早'], 5, 8],
+            [['早上', '早晨', '一早', '一大早'], 6, 9],
+            [['黎明'], 4, 6], [['白天'], 6, 18], [['上午'], 7, 11],
+            [['中午'], 12, 13], [['午后'], 13, 14],
+            [['下午'], 13, 17], [['傍晚'], 17, 18],
+            [['晚', '晚上'], 18, 23], [['晚间', '夜间', '夜里'], 20, 23], [['深夜'], 23, 23],
+            [['上半夜', '前半夜'], 0, 2], [['下半夜', '后半夜'], 2, 4],
+            [['半夜', '凌晨'], 0, 4], [['午夜'], 0, 0]
+        ]
+
         self.string_strict = False
 
     def _preprocess_regular_expression(self):
@@ -269,11 +280,11 @@ class TimeParser(TimeUtility):
 
         # `年、季度`：`2018年前三季度`
         self.year_solar_season_pattern = re.compile(
-            ''.join([bracket_absence(YEAR_STRING), r'(([第前后头]?[一二三四1-4两]|首)(个)?季度[初中末]?)']))
+            ''.join([bracket_absence(YEAR_STRING), r'(([第前后头Qq]?[一二三四1-4两]|首)(个)?季度[初中末]?)']))
 
         # `限定年、季度`：`2018年前三季度`
         self.limit_year_solar_season_pattern = re.compile(
-            ''.join([bracket(LIMIT_YEAR_STRING), r'(([第前后头]?[一二三四1-4两]|首)(个)?季度[初中末]?)']))
+            ''.join([bracket(LIMIT_YEAR_STRING), r'(([第前后头Qq]?[一二三四1-4两]|首)(个)?季度[初中末]?)']))
 
         # `限定季度`：`上季度`
         self.limit_solar_season_pattern = re.compile(r'([上下](个)?|本|这)季度[初中末]?')
@@ -577,7 +588,7 @@ class TimeParser(TimeUtility):
         self.month_num_pattern = re.compile(MONTH_NUM_STRING)  # 1~12
         self.span_month_pattern = re.compile('([第前后头]([一二两三四五六七八九十]|十[一二]|[1-9]|1[012])|首)(个)?月(份)?')
         self.solar_season_pattern = re.compile(
-            '((([第前后头][一二三四1-4两]|首)(个)?|[一二三四1-4两])季度[初中末]?)')
+            '((([第前后头Qq][一二三四1-4两]|首)(个)?|[一二三四1-4])季度[初中末]?)')
         self.blur_month_pattern = re.compile(BLUR_MONTH_STRING)
         self.lunar_month_pattern = re.compile(bracket(LUNAR_MONTH_STRING[:-1]) + '(?=月)')
 
@@ -1827,130 +1838,59 @@ class TimeParser(TimeUtility):
             raise ValueError('the `month` of time_base `{}` is undefined.'.format(
                 self.time_base_handler))
 
+        infos = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12]]
+        spans = ['初', '中', '末']
+
         if '上' in time_string:
-            if self.time_base_handler[1] in [1, 2, 3]:
-                first_time_point.year = self.time_base_handler[0] - 1
-                second_time_point.year = self.time_base_handler[0] - 1
-                if '初' in time_string:
-                    first_time_point.month = 10
-                    second_time_point.month = 10
-                elif '中' in time_string:
-                    first_time_point.month = 11
-                    second_time_point.month = 11
-                elif '末' in time_string:
-                    first_time_point.month = 12
-                    second_time_point.month = 12
-                else:
-                    first_time_point.month = 10
-                    second_time_point.month = 12
-            elif self.time_base_handler[1] in [4, 5, 6]:
-                if '初' in time_string:
-                    first_time_point.month = 1
-                    second_time_point.month = 1
-                elif '中' in time_string:
-                    first_time_point.month = 2
-                    second_time_point.month = 2
-                elif '末' in time_string:
-                    first_time_point.month = 3
-                    second_time_point.month = 3
-                else:
-                    first_time_point.month = 1
-                    second_time_point.month = 3
-            elif self.time_base_handler[1] in [7, 8, 9]:
-                if '初' in time_string:
-                    first_time_point.month = 4
-                    second_time_point.month = 4
-                elif '中' in time_string:
-                    first_time_point.month = 5
-                    second_time_point.month = 5
-                elif '末' in time_string:
-                    first_time_point.month = 6
-                    second_time_point.month = 6
-                else:
-                    first_time_point.month = 4
-                    second_time_point.month = 6
-            elif self.time_base_handler[1] in [10, 11, 12]:
-                if '初' in time_string:
-                    first_time_point.month = 7
-                    second_time_point.month = 7
-                elif '中' in time_string:
-                    first_time_point.month = 8
-                    second_time_point.month = 8
-                elif '末' in time_string:
-                    first_time_point.month = 9
-                    second_time_point.month = 9
-                else:
-                    first_time_point.month = 7
-                    second_time_point.month = 9
+            for idx, item in enumerate(infos):
+                if self.time_base_handler[1] in item:
+
+                    match_span_flag = False
+                    for i, span in enumerate(spans):
+                        if span in time_string:
+                            first_time_point.month = item[i] - 3
+                            second_time_point.month = item[i] - 3
+                            match_span_flag = True
+                            break
+                    if not match_span_flag:
+                        first_time_point.month = item[0] - 3
+                        second_time_point.month = item[2] - 3
+
+                    if idx == 0:
+                        # 第一个季度时，需要找到上一年度
+                        first_time_point.year = self.time_base_handler[0] - 1
+                        second_time_point.year = self.time_base_handler[0] - 1
+                        # 月份的超出 1 导致需要不同的取值
+                        first_time_point.month += 12
+                        second_time_point.month += 12
 
         elif '下' in time_string:
-            if self.time_base_handler[1] in [1, 2, 3]:
-                if '初' in time_string:
-                    first_time_point.month = 4
-                    second_time_point.month = 4
-                elif '中' in time_string:
-                    first_time_point.month = 5
-                    second_time_point.month = 5
-                elif '末' in time_string:
-                    first_time_point.month = 6
-                    second_time_point.month = 6
-                else:
-                    first_time_point.month = 4
-                    second_time_point.month = 6
-            elif self.time_base_handler[1] in [4, 5, 6]:
-                if '初' in time_string:
-                    first_time_point.month = 7
-                    second_time_point.month = 7
-                elif '中' in time_string:
-                    first_time_point.month = 8
-                    second_time_point.month = 8
-                elif '末' in time_string:
-                    first_time_point.month = 9
-                    second_time_point.month = 9
-                else:
-                    first_time_point.month = 7
-                    second_time_point.month = 9
-            elif self.time_base_handler[1] in [7, 8, 9]:
-                if '初' in time_string:
-                    first_time_point.month = 10
-                    second_time_point.month = 10
-                elif '中' in time_string:
-                    first_time_point.month = 11
-                    second_time_point.month = 11
-                elif '末' in time_string:
-                    first_time_point.month = 12
-                    second_time_point.month = 12
-                else:
-                    first_time_point.month = 10
-                    second_time_point.month = 12
-            elif self.time_base_handler[1] in [10, 11, 12]:
-                first_time_point.year = self.time_base_handler[0] + 1
-                second_time_point.year = self.time_base_handler[0] + 1
-                if '初' in time_string:
-                    first_time_point.month = 1
-                    second_time_point.month = 1
-                elif '中' in time_string:
-                    first_time_point.month = 2
-                    second_time_point.month = 2
-                elif '末' in time_string:
-                    first_time_point.month = 3
-                    second_time_point.month = 3
-                else:
-                    first_time_point.month = 1
-                    second_time_point.month = 3
+            for idx, item in enumerate(infos):
+                if self.time_base_handler[1] in item:
+                    match_span_flag = False
+                    for i, span in enumerate(spans):
+                        if span in time_string:
+                            first_time_point.month = item[i] + 3
+                            second_time_point.month = item[i] + 3
+                            match_span_flag = True
+                            break
+                    if not match_span_flag:
+                        first_time_point.month = item[0] + 3
+                        second_time_point.month = item[2] + 3
+
+                    if idx == 3:
+                        # 第四个季度时，需要找到下一年度
+                        first_time_point.year = self.time_base_handler[0] + 1
+                        second_time_point.year = self.time_base_handler[0] + 1
+                        # 月份的超出12 导致需要不同的取值
+                        first_time_point.month -= 12
+                        second_time_point.month -= 12
+
         elif '这' in time_string or '本' in time_string:
-            if self.time_base_handler[1] in [1, 2, 3]:
-                first_time_point.month = 1
-                second_time_point.month = 3
-            elif self.time_base_handler[1] in [4, 5, 6]:
-                first_time_point.month = 4
-                second_time_point.month = 6
-            elif self.time_base_handler[1] in [7, 8, 9]:
-                first_time_point.month = 7
-                second_time_point.month = 9
-            elif self.time_base_handler[1] in [10, 11, 12]:
-                first_time_point.month = 10
-                second_time_point.month = 12
+            for item in infos:
+                if self.time_base_handler[1] in item:
+                    first_time_point.month = item[0]
+                    second_time_point.month = item[2]
 
         else:
             raise ValueError('the given `{}` is illegal.'.format(time_string))
@@ -3847,10 +3787,15 @@ class TimeParser(TimeUtility):
             time_point.year = year
 
         if _24st:
+            # 首先要确定年份，不可以为 -1，否则造成公历、农历转换错误。
+            if time_point.year == -1:
+                time_point.year = self.time_base_handler[0]
+
             _24st_string = _24st.group()
             month_string, day_string = self._parse_solar_terms(time_point.year, _24st_string)
             time_point.month = int(month_string)
             time_point.day = int(day_string)
+
             if _24st_string in ['小寒', '大寒']:
                 time_point.year += 1
 
@@ -3914,19 +3859,17 @@ class TimeParser(TimeUtility):
 
         if season is not None:
             solar_season = season.group()
-            if '春' in solar_season:
-                first_month, first_day = self._parse_solar_terms(first_time_point.year, '立春')
-                second_month, second_day = self._parse_solar_terms(first_time_point.year, '立夏')
-            elif '夏' in solar_season:
-                first_month, first_day = self._parse_solar_terms(first_time_point.year, '立夏')
-                second_month, second_day = self._parse_solar_terms(first_time_point.year, '立秋')
-            elif '秋' in solar_season:
-                first_month, first_day = self._parse_solar_terms(first_time_point.year, '立秋')
-                second_month, second_day = self._parse_solar_terms(first_time_point.year, '立冬')
-            elif '冬' in solar_season:
-                first_month, first_day = self._parse_solar_terms(first_time_point.year, '立冬')
-                second_month, second_day = self._parse_solar_terms(first_time_point.year, '立春')
-                second_time_point.year += 1
+
+            four_season_string = '春夏秋冬春'
+            for idx, item in enumerate(four_season_string):
+                if idx != 4:
+                    if item in solar_season:
+                        first_month, first_day = self._parse_solar_terms(first_time_point.year, '立' + item)
+                        second_month, second_day = self._parse_solar_terms(
+                            first_time_point.year, '立' + four_season_string[idx + 1])
+                        if idx == 3:
+                            second_time_point.year += 1
+                        break
             else:
                 raise ValueError('the season string {} is illegal.'.format(time_string))
 
@@ -4032,22 +3975,14 @@ class TimeParser(TimeUtility):
 
         if week_day:
             week_day_string = week_day.group()
-            if '一' in week_day_string:
-                target_day = compute_week_day(time_base_datetime, 0)
-            elif '二' in week_day_string:
-                target_day = compute_week_day(time_base_datetime, 1)
-            elif '三' in week_day_string:
-                target_day = compute_week_day(time_base_datetime, 2)
-            elif '四' in week_day_string:
-                target_day = compute_week_day(time_base_datetime, 3)
-            elif '五' in week_day_string:
-                target_day = compute_week_day(time_base_datetime, 4)
-            elif '六' in week_day_string:
-                target_day = compute_week_day(time_base_datetime, 5)
-            elif '天' in week_day_string or '末' in week_day_string or '日' in week_day_string:
-                target_day = compute_week_day(time_base_datetime, 6)
+
+            trans = ['一二三四五六天末日', [0, 1, 2, 3, 4, 5, 6, 6, 6]]
+            for c, i in zip(trans[0], trans[1]):
+                if c in week_day_string:
+                    target_day = compute_week_day(time_base_datetime, i)
+                    break
             else:
-                raise ValueError
+                raise ValueError('`星期{}` is illegal.'.format(week_day_string))
 
         time_handler = TimeParser._convert_time_base2handler(target_day)
         time_point = TimePoint()
@@ -4235,20 +4170,11 @@ class TimeParser(TimeUtility):
 
                 return cur_day
 
-            if '一' in week_day_string:
-                target_day = compute_week_day(time_base_datetime, 0)
-            elif '二' in week_day_string:
-                target_day = compute_week_day(time_base_datetime, 1)
-            elif '三' in week_day_string:
-                target_day = compute_week_day(time_base_datetime, 2)
-            elif '四' in week_day_string:
-                target_day = compute_week_day(time_base_datetime, 3)
-            elif '五' in week_day_string:
-                target_day = compute_week_day(time_base_datetime, 4)
-            elif '六' in week_day_string:
-                target_day = compute_week_day(time_base_datetime, 5)
-            elif '天' in week_day_string or '末' in week_day_string or '日' in week_day_string:
-                target_day = compute_week_day(time_base_datetime, 6)
+            trans = ['一二三四五六天末日', [0, 1, 2, 3, 4, 5, 6, 6, 6]]
+            for c, i in zip(trans[0], trans[1]):
+                if c in week_day_string:
+                    target_day = compute_week_day(time_base_datetime, i)
+                    break
             else:
                 raise ValueError('`星期{}` is illegal.'.format(week_day_string))
 
@@ -4356,6 +4282,7 @@ class TimeParser(TimeUtility):
 
         if time_point.day < 0:
             raise ValueError('The given time string `{}` is illegal.'.format(time_string))
+
 
         time_handler = time_point.handler()
 
@@ -4780,65 +4707,11 @@ class TimeParser(TimeUtility):
 
         if hour:
             hour_string = hour.group()
-
-            if hour_string == '清晨':
-                first_time_point.hour = 5
-                second_time_point.hour = 7
-            elif hour_string == '清早':
-                first_time_point.hour = 5
-                second_time_point.hour = 8
-            elif hour_string in ['早上', '早晨', '一早', '一大早']:
-                first_time_point.hour = 6
-                second_time_point.hour = 9
-            elif hour_string == '黎明':
-                first_time_point.hour = 4
-                second_time_point.hour = 6
-            elif hour_string == '白天':
-                first_time_point.hour = 6
-                second_time_point.hour = 18
-            elif hour_string == '上午':
-                first_time_point.hour = 7
-                second_time_point.hour = 11
-            elif hour_string == '中午':
-                first_time_point.hour = 12
-                second_time_point.hour = 13
-            elif hour_string == '午后':
-                first_time_point.hour = 13
-                second_time_point.hour = 14
-            elif hour_string == '下午':
-                first_time_point.hour = 13
-                second_time_point.hour = 17
-            elif hour_string == '傍晚':
-                first_time_point.hour = 13
-                second_time_point.hour = 17
-            elif hour_string == '晚':
-                first_time_point.hour = 18
-                second_time_point.hour = 23
-            elif hour_string == '晚上':
-                first_time_point.hour = 18
-                second_time_point.hour = 23
-            elif hour_string in ['晚间', '夜间', '夜里']:
-                first_time_point.hour = 20
-                second_time_point.hour = 23
-            elif hour_string == '深夜':
-                first_time_point.hour = 23
-                second_time_point.hour = 23
-            elif hour_string in ['上半夜', '前半夜']:
-                first_time_point.hour = 0
-                second_time_point.hour = 2
-            elif hour_string in ['下半夜', '后半夜']:
-                first_time_point.hour = 2
-                second_time_point.hour = 4
-            elif hour_string == '半夜':
-                first_time_point.hour = 0
-                second_time_point.hour = 4
-            elif hour_string == '凌晨':
-                first_time_point.hour = 0
-                second_time_point.hour = 4
-            elif hour_string == '午夜':
-                first_time_point.hour = 0
-                second_time_point.hour = 0
-            else:
+            for item in self.blur_time_info_map:
+                if hour_string in item[0]:
+                    first_time_point.hour = item[1]
+                    second_time_point.hour = item[2]
+            if first_time_point.hour == -1:
                 raise ValueError('the given string `{}` is illegal'.format(time_string))
 
         first_time_handler = first_time_point.handler()

@@ -279,6 +279,6 @@ if __name__ == '__main__':
     ls = LunarSolarDate()
     res = ls.to_lunar_date(datetime(1989, 10, 22))
     print(res)
-    res = ls.to_solar_date(1989, 9, 23, False)
+    res = ls.to_solar_date(2023, 4, 5, False)
     print(type(res))
 
