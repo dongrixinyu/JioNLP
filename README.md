@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://pepy.tech/badge/jionlp/month" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.4.35-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.4.36-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -29,6 +29,20 @@
 #### 总之，JioNLP 提供 NLP 任务预处理功能，准确、高效、零使用门槛，并提供一步到位的查阅入口。请下拉网页，查阅具体功能信息，并按 Ctrl + F 进行搜索。
 
 [**ChatGPT面前，JioNLP-工具的价值在何处？**](../../wiki/ChatGPT面前，JioNLP-工具的价值在何处？)
+
+#### Update 2023-02-21
+## 添加 Byte-level BPE 算法[**Byte-level BPE**](../../wiki/BPE算法说明文档)
+
+- 目前仅实现了 Byte-level BPE 算法中 Byte-level 部分
+```
+>>> import jionlp as jio
+>>> res = jio.bpe.byte_level_bpe.encode('メトロ')
+>>> res = jio.bpe.byte_level_bpe.decode('ãĥ¡ãĥĪdsãĥŃ')
+# 'メトdsロ'
+>>> res = jio.bpe.byte_level_bpe.decode('ãĥ¡ãĥĪãdsĥŃ')
+# 'メト�ds��'
+```
+
 
 #### Update 2022-11-28
 ## 更新 [**正则判断类函数族**](../../wiki/正则判断类说明文档)
@@ -216,6 +230,7 @@ $ jio_help
 
 | 功能 | 函数 | 描述 |星级  |
 |-----|-----|------|------|
+|[**Byte-level BPE**](../../wiki/BPE算法说明文档) | jio.bpe.byte_level_bpe |Byte-level-BPE 算法|⭐|
 |**停用词词典** | jio.stopwords_loader() | 综合了百度、jieba、讯飞等的停用词词典 |  |
 |[**成语**词典](../../wiki/词典加载-说明文档#user-content-加载成语词典) |chinese_idiom_loader|加载成语词典 |⭐|
 |[**歇后语**词典](../../wiki/词典加载-说明文档#user-content-加载歇后语词典) |xiehouyu_loader|加载歇后语词典 |⭐|

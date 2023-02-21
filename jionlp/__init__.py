@@ -8,7 +8,7 @@
 # website: www.jionlp.com
 
 
-__version__ = '1.4.35'
+__version__ = '1.4.36'
 
 
 import os

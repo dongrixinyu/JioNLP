@@ -8,12 +8,6 @@
 # website: http://www.jionlp.com
 
 
-from . import cws
-from . import pos
-from . import ner
-from . import keyphrase
-from . import sentiment
-from . import summary
-from . import text_classification
-from . import new_word
-from . import bpe
+from .encoder_decoder import ByteLevelBPE
+
+byte_level_bpe = ByteLevelBPE()
