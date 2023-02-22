@@ -179,7 +179,6 @@ class LocationParser(object):
                     offset_list[idx][1] = cur_alias
             
             if count > 0:
-
                 cur_item = copy.deepcopy(admin_item)
                 cur_item.extend([count, offset_list])
                 candidate_admin_list.append(cur_item)
@@ -309,7 +308,6 @@ class LocationParser(object):
             candidate_admin_list = sorted(
                 candidate_admin_list,
                 key=lambda item: [idx for idx, i in enumerate(item[-1]) if i[0] != -1][0])
-            print()
 
         # step 3: 县级存在重复名称，计算候选列表中可能重复的县名，如 “鼓楼区”、“高新区” 等
         county_dup_list = [item[3][item[-1][-1][1]] for item in candidate_admin_list]
