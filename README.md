@@ -16,20 +16,17 @@
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
 
-### &emsp;&emsp; ——JioNLP：中文 NLP 预处理工具包 A Python Lib for Chinese NLP Preprocessing & Parsing
-### &emsp;&emsp; ——安装：```pip install jionlp```
-### &emsp;&emsp; ——[JioNLP在线版](http://www.jionlp.com/) 可快速试用部分功能
-### &emsp;&emsp; ——关注微信公众号 “JioNLP” 可获取最新的 JioNLP 更新，及 NLP 资讯
-### &emsp;&emsp; ——[English version README.md](../../blob/master/README_en.md)
+#### &emsp;&emsp; JioNLP：中文 NLP 预处理工具包 A Python Lib for Chinese NLP Preprocessing & Parsing
+#### &emsp;&emsp; 安装：```pip install jionlp```
+- JioNLP 是一个面向 NLP 开发者的工具包，提供 NLP 任务预处理、解析功能，准确、高效、零使用门槛。请下拉网页，查阅具体功能信息，并按 **Ctrl+F** 进行搜索。
+- [JioNLP在线版](http://www.jionlp.com/) 可快速试用部分功能。关注同名**微信公众号** JioNLP 可获取最新的 NLP 资讯，数据资源。
+- [English version README.md](../../blob/master/README_en.md)
 
-- 做 NLP 任务，需要清洗、过滤语料？用 JioNLP
-- 做 NLP 任务，需要做信息抽取？用 JioNLP
-- 做 NLP 任务，需要数据增强？用 JioNLP
-- 做 NLP 任务，需要给模型添加偏旁、拼音、词典、繁体转换信息？用 JioNLP
-#### 总之，JioNLP 提供 NLP 任务预处理功能，准确、高效、零使用门槛，并提供一步到位的查阅入口。请下拉网页，查阅具体功能信息，并按 Ctrl + F 进行搜索。
 
-[**ChatGPT面前，JioNLP-工具的价值在何处？**](../../wiki/ChatGPT面前，JioNLP-工具的价值在何处？)
-
+  - [**ChatGPT面前，JioNLP-工具的价值在何处？**](../../wiki/ChatGPT面前，JioNLP-工具的价值在何处？)
+  - [**ChatGPT这么强，会影响NLPer的就业环境吗？**](https://zhuanlan.zhihu.com/p/605673596)
+  - [**一文读懂ChatGPT模型原理**](https://zhuanlan.zhihu.com/p/589621442)
+  
 #### Update 2023-02-21
 ## 添加 Byte-level BPE 算法[**Byte-level BPE**](../../wiki/BPE算法说明文档)
 
