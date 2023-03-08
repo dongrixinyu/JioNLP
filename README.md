@@ -16,7 +16,7 @@
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
 
-#### &emsp;&emsp; JioNLP：中文 NLP 预处理工具包 A Python Lib for Chinese NLP Preprocessing & Parsing
+#### &emsp;&emsp; JioNLP：中文 NLP 预处理、解析工具包 A Python Lib for Chinese NLP Preprocessing & Parsing
 #### &emsp;&emsp; 安装：```pip install jionlp```
 - JioNLP 是一个面向 **NLP 开发者**的工具包，提供 NLP 任务预处理、解析功能，准确、高效、零使用门槛。请下拉本网页，查阅具体功能信息，并按 **Ctrl+F** 进行搜索。[**JioNLP在线版**](http://www.jionlp.com/) 可快速试用部分功能。关注同名**微信公众号** JioNLP 可获取最新的 NLP 资讯，数据资源。
 
@@ -297,7 +297,7 @@ $ jio_help
 ### 请扫以下码，或wx搜索公众号JioNLP”，关注并回复【进群】
 <p align="center">
     <a alt="jionlp logo">
-        <img src="../../blob/master/image/qrcode_for_gh.jpg" style="width:300px;height:300px">
+        <img src="../../blob/master/image/qrcode_for_gh.jpg" style="width:200px;height:200px">
     </a>
 </p>
 
