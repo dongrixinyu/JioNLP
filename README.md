@@ -18,9 +18,7 @@
 
 #### &emsp;&emsp; JioNLP：中文 NLP 预处理工具包 A Python Lib for Chinese NLP Preprocessing & Parsing
 #### &emsp;&emsp; 安装：```pip install jionlp```
-- JioNLP 是一个面向 NLP 开发者的工具包，提供 NLP 任务预处理、解析功能，准确、高效、零使用门槛。请下拉网页，查阅具体功能信息，并按 **Ctrl+F** 进行搜索。
-- [JioNLP在线版](http://www.jionlp.com/) 可快速试用部分功能。关注同名**微信公众号** JioNLP 可获取最新的 NLP 资讯，数据资源。
-- [English version README.md](../../blob/master/README_en.md)
+- JioNLP 是一个面向 **NLP 开发者**的工具包，提供 NLP 任务预处理、解析功能，准确、高效、零使用门槛。请下拉本网页，查阅具体功能信息，并按 **Ctrl+F** 进行搜索。[**JioNLP在线版**](http://www.jionlp.com/) 可快速试用部分功能。关注同名**微信公众号** JioNLP 可获取最新的 NLP 资讯，数据资源。
 
 
   - [**ChatGPT面前，JioNLP-工具的价值在何处？**](../../wiki/ChatGPT面前，JioNLP-工具的价值在何处？)
@@ -30,7 +28,7 @@
 #### Update 2023-02-21
 ## 添加 Byte-level BPE 算法[**Byte-level BPE**](../../wiki/BPE算法说明文档)
 
-- 目前仅实现了 Byte-level BPE 算法中 Byte-level 部分
+- 基于字节的 BPE 算法，适用于多语言token编码，目前仅实现了 Byte-level BPE 算法中 Byte-level 部分
 ```
 >>> import jionlp as jio
 >>> res = jio.bpe.byte_level_bpe.encode('メトロ')
@@ -39,7 +37,6 @@
 >>> res = jio.bpe.byte_level_bpe.decode('ãĥ¡ãĥĪãdsĥŃ')
 # 'メト�ds��'
 ```
-
 
 #### Update 2022-11-28
 ## 更新 [**正则判断类函数族**](../../wiki/正则判断类说明文档)
