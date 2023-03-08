@@ -24,9 +24,8 @@
   - [**ChatGPT面前，JioNLP-工具的价值在何处？**](../../wiki/ChatGPT面前，JioNLP-工具的价值在何处？)
   - [**ChatGPT这么强，会影响NLPer的就业环境吗？**](https://zhuanlan.zhihu.com/p/605673596)
   - [**一文读懂ChatGPT模型原理**](https://zhuanlan.zhihu.com/p/589621442)
-  
-#### Update 2023-02-21
-## 添加 Byte-level BPE 算法[**Byte-level BPE**](../../wiki/BPE算法说明文档)
+
+### 2023-02-21 添加 Byte-level BPE 算法[**Byte-level BPE**](../../wiki/BPE算法说明文档)
 
 - 基于字节的 BPE 算法，适用于多语言token编码，目前仅实现了 Byte-level BPE 算法中 Byte-level 部分
 ```
@@ -38,8 +37,7 @@
 # 'メト�ds��'
 ```
 
-#### Update 2022-11-28
-## 更新 [**正则判断类函数族**](../../wiki/正则判断类说明文档)
+### 2022-11-28 更新 [**正则判断类函数族**](../../wiki/正则判断类说明文档)
 
 #### jio.check_any_chinese_char 检查文本中是否包含中文字符
 
@@ -50,8 +48,7 @@
 # True
 ```
 
-#### Updata 2022-05-26
-## 更新 [**关键短语抽取**](../../wiki/Gadget-说明文档#user-content-关键短语抽取) 
+### 2022-05-26 更新 [**关键短语抽取**](../../wiki/Gadget-说明文档#user-content-关键短语抽取) 
 
 #### jio.keyphrase.extract_keyphrase 对一篇文本关键短语抽取
 ```
@@ -68,8 +65,7 @@
 - [JioNLP源站-关键短语抽取](http://www.jionlp.com/jionlp_online/extract_keyphrase)
 
 
-#### Update 2022-07-02
-## 更新 [时间语义解析](../../wiki/时间语义解析-说明文档#user-content-时间语义解析)
+### 2022-07-02 更新 [时间语义解析](../../wiki/时间语义解析-说明文档#user-content-时间语义解析)
 
 #### jio.parse_time 给定时间字符串，解析其为时间戳、时长等。
 
@@ -291,7 +287,11 @@ $ jio_help
 ### 或者扫码请作者喝杯咖啡 (●'◡'●)，开源项目完全用爱发电，谢谢啦！推荐优先使用【支付宝】 ~~
 - 感谢[致谢](../../wiki/致谢篇)名单中赞助的小伙伴们，你们的打赏让我更有动力
 
-![image](../../blob/master/image/payment_code.jpg)
+<p align="center">
+    <a alt="jionlp logo">
+        <img src="../../blob/master/image/payment_code.jpg" style="width:500px;height:280px">
+    </a>
+</p>
 
 ### 做 NLP不易，欢迎加入自然语言处理 Wechat 交流群
 ### 请扫以下码，或wx搜索公众号JioNLP”，关注并回复【进群】
