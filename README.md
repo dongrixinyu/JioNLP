@@ -289,12 +289,16 @@ $ jio_help
 
 <p align="center">
     <a alt="jionlp logo">
-        <img src="../../blob/master/image/payment_code.jpg" style="width:500px;height:330px">
+        <img src="../../blob/master/image/payment_code.jpg" style="width:500px;height:380px">
     </a>
 </p>
 
 ### 做 NLP不易，欢迎加入自然语言处理 Wechat 交流群
 ### 请扫以下码，或wx搜索公众号JioNLP”，关注并回复【进群】
-![image](../../blob/master/image/qrcode_for_gh.jpg)
+<p align="center">
+    <a alt="jionlp logo">
+        <img src="../../blob/master/image/qrcode_for_gh.jpg" style="width:300px;height:300px">
+    </a>
+</p>
 
 
