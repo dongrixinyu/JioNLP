@@ -289,7 +289,7 @@ $ jio_help
 
 <p align="center">
     <a alt="jionlp logo">
-        <img src="../../blob/master/image/payment_code.jpg" style="width:500px;height:280px">
+        <img src="../../blob/master/image/payment_code.jpg" style="width:500px;height:330px">
     </a>
 </p>
 
