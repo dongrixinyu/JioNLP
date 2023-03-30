@@ -122,8 +122,9 @@ class LocationParser(object):
             self.administrative_map_list.append(
                 ['000000', item['old_loc'][0], item['old_loc'][1],
                  item['old_loc'][2], False])
+
             self.old2new_loc_map.update(
-                {''.join([i[0] for i in item['old_loc']]): item['new_loc']})
+                {''.join([i[0] for i in item['old_loc'] if i[0] is not None]): item['new_loc']})
 
     def _prepare(self):
         self.municipalities_cities = {'北京', '上海', '天津', '重庆', '香港', '澳门'}

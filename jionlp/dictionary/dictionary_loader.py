@@ -179,16 +179,27 @@ def china_location_change_loader():
         os.path.join(GRAND_DIR_PATH, 'dictionary/china_location_change.txt'),
         auto_loads_json=False)
 
-    location_change_list = list()
+    location_change_list = []
     for line in location_change_jio:
         location_change_dict = dict()
         line_seg = line.split('=>')
         orig_line_seg = line_seg[0].split('\t')
         new_line_seg = line_seg[1].split('\t')
-        location_change_dict.update(
-            {'date': orig_line_seg[0], 'department': orig_line_seg[1],
-             'old_loc': [orig_line_seg[2: 4], orig_line_seg[4: 6], orig_line_seg[6: 8]],
-             'new_loc': new_line_seg})
+
+        if len(orig_line_seg) == 8:  # 县一级
+            location_change_dict.update(
+                {'date': orig_line_seg[0], 'department': orig_line_seg[1],
+                 'old_loc': [orig_line_seg[2: 4], orig_line_seg[4: 6], orig_line_seg[6: 8]],
+                 'new_loc': new_line_seg})
+
+        elif len(orig_line_seg) == 6:  # 市一级，主要是 襄樊市 => 襄阳市
+            assert len(new_line_seg) == 2, 'error with line `{}`'.format(line)
+
+            location_change_dict.update(
+                {'date': orig_line_seg[0], 'department': orig_line_seg[1],
+                 'old_loc': [orig_line_seg[2: 4], orig_line_seg[4: 6], [None, None]],
+                 'new_loc': [new_line_seg[0], new_line_seg[1], None]})
+
         location_change_list.append(location_change_dict)
 
     return location_change_list

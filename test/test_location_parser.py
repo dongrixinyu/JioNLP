@@ -12,6 +12,15 @@ class TestLocationParser(unittest.TestCase):
         """ test func parse_location """
 
         location_string_list = [
+            ['柳州地区忻城县', False, True,
+             {'province': '广西壮族自治区', 'city': '来宾市', 'county': '忻城县', 'detail': '', 'full_location': '广西壮族自治区来宾市忻城县',
+              'orig_location': '柳州地区忻城县'}
+             ],
+            ['湖北省襄樊市小水街222号', False, True,
+             {'province': '湖北省', 'city': '襄阳市', 'county': None,
+              'detail': '小水街222号', 'full_location': '湖北省襄阳市小水街222号',
+              'orig_location': '湖北省襄樊市小水街222号'}
+             ],
             ['河北区', True, True,
              {'province': '天津市', 'city': '天津市', 'county': '河北区',
               'detail': '', 'full_location': '天津市河北区',
