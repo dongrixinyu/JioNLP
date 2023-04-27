@@ -45,6 +45,7 @@ replace_phone_number = extractor.replace_phone_number
 replace_ip_address = extractor.replace_ip_address
 replace_id_card = extractor.replace_id_card
 replace_qq = extractor.replace_qq
+replace_chinese = extractor.replace_chinese
 
 del extractor
 
