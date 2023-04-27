@@ -798,7 +798,7 @@ class Extractor(object):
         Args:
             text(str): 字符串文本
             strict(bool): QQ 号容易与其他数字混淆，因此选择严格规则或宽松规则
-            token(str): 替换 QQ 的 token，默认为 `<url>`，与预训练模型保持一致
+            token(str): 替换 QQ 的 token，默认为 `<qq>`，与预训练模型保持一致
 
         Returns:
             str: 替换 QQ 为归一化 token 后的文本
