@@ -490,7 +490,7 @@ class Extractor(object):
         """
         if self.email_pattern is None:
             self.email_pattern = re.compile(EMAIL_PATTERN)
-            self.email_prefix_pattern = re.compile(EMAIL_PREFIX_PATTERN)
+            self.email_prefix_pattern = re.compile(EMAIL_PREFIX_PATTERN, re.I)
 
         text = ''.join(['#', text, '#'])
         if not delete_prefix:
@@ -632,11 +632,11 @@ class Extractor(object):
         """
         if self.cell_phone_pattern is None:
             self.cell_phone_pattern = re.compile(CELL_PHONE_PATTERN)
-            self.phone_prefix_pattern = re.compile(PHONE_PREFIX_PATTERN)
+            self.phone_prefix_pattern = re.compile(PHONE_PREFIX_PATTERN, re.I)
 
         if self.landline_phone_pattern is None:
             self.landline_phone_pattern = re.compile(LANDLINE_PHONE_PATTERN)
-            self.phone_prefix_pattern = re.compile(PHONE_PREFIX_PATTERN)
+            self.phone_prefix_pattern = re.compile(PHONE_PREFIX_PATTERN, re.I)
         
         text = ''.join(['#', text, '#'])
 
@@ -725,7 +725,7 @@ class Extractor(object):
         """
         if self.email_pattern is None:
             self.email_pattern = re.compile(EMAIL_PATTERN)
-            self.email_prefix_pattern = re.compile(EMAIL_PREFIX_PATTERN)
+            self.email_prefix_pattern = re.compile(EMAIL_PREFIX_PATTERN, re.I)
 
         text = ''.join(['#', text, '#'])
 
@@ -783,7 +783,7 @@ class Extractor(object):
 
         if self.landline_phone_pattern is None:
             self.landline_phone_pattern = re.compile(LANDLINE_PHONE_PATTERN)
-            self.phone_prefix_pattern = re.compile(PHONE_PREFIX_PATTERN)
+            self.phone_prefix_pattern = re.compile(PHONE_PREFIX_PATTERN, re.I)
 
         text = ''.join(['#', text, '#'])
 
