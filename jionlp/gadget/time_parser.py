@@ -236,6 +236,8 @@ class TimeParser(TimeUtility):
         ]
 
         self.string_strict = False
+        self.ymd_pattern_norm_funcs = None
+        self.hms_pattern_norm_funcs = None
 
     def _preprocess_regular_expression(self):
         # 未来时间扩展 单元基，合并或分开是个问题
@@ -1396,103 +1398,105 @@ class TimeParser(TimeUtility):
         # 此处，时间点字符串不一定为 time point 类型，仅仅依据显式 `从……到……` 的正则匹配得到的字符串
         """
         # time_point pattern & norm_func
-        ymd_pattern_norm_funcs = [
-            # 枚举日期型
-            [self.enum_day_pattern, self.normalize_enum_day_pattern],
+        if self.ymd_pattern_norm_funcs is None:
+            self.ymd_pattern_norm_funcs = [
+                # 枚举日期型
+                [self.enum_day_pattern, self.normalize_enum_day_pattern],
 
-            # 超模糊型
-            [self.super_blur_two_ymd_pattern, self.normalize_super_blur_two_ymd],
+                # 超模糊型
+                [self.super_blur_two_ymd_pattern, self.normalize_super_blur_two_ymd],
 
-            # 时间点型
-            [self.standard_year_month_day_pattern, self.normalize_standard_year_month_day],
-            [self.year_24st_pattern, self.normalize_year_24st],
-            [self.limit_year_lunar_season_pattern, self.normalize_limit_year_lunar_season],
-            [self.year_lunar_season_pattern, self.normalize_year_lunar_season],
-            [self.limit_year_month_blur_day_pattern, self.normalize_limit_year_month_blur_day],
-            [self.year_month_blur_day_pattern, self.normalize_year_month_blur_day],
-            [self.limit_year_solar_season_pattern, self.normalize_limit_year_solar_season],
-            [self.limit_solar_season_pattern, self.normalize_limit_solar_season],
-            [self.year_solar_season_pattern, self.normalize_year_solar_season],
-            [self.limit_year_week_pattern, self.normalize_limit_year_week],
-            [self.year_week_pattern, self.normalize_year_week],
-            [self.limit_week_pattern, self.normalize_limit_week],
-            [self.standard_week_day_pattern, self.normalize_standard_week_day],
-            [self.blur_week_pattern, self.normalize_blur_week],
-            [self.limit_year_blur_month_pattern, self.normalize_limit_year_blur_month],
-            [self.limit_month_blur_day_pattern, self.normalize_limit_month_blur_day],
-            [self.limit_month_day_pattern, self.normalize_limit_month_day],
-            [self.limit_month_pattern, self.normalize_limit_month],
-            [self.year_blur_month_pattern, self.normalize_year_blur_month],
-            [self.century_year_pattern, self.normalize_century_year],
-            [self.limit_year_span_month_pattern, self.normalize_limit_year_span_month],
-            [self.year_span_month_pattern, self.normalize_year_span_month],
+                # 时间点型
+                [self.standard_year_month_day_pattern, self.normalize_standard_year_month_day],
+                [self.year_24st_pattern, self.normalize_year_24st],
+                [self.limit_year_lunar_season_pattern, self.normalize_limit_year_lunar_season],
+                [self.year_lunar_season_pattern, self.normalize_year_lunar_season],
+                [self.limit_year_month_blur_day_pattern, self.normalize_limit_year_month_blur_day],
+                [self.year_month_blur_day_pattern, self.normalize_year_month_blur_day],
+                [self.limit_year_solar_season_pattern, self.normalize_limit_year_solar_season],
+                [self.limit_solar_season_pattern, self.normalize_limit_solar_season],
+                [self.year_solar_season_pattern, self.normalize_year_solar_season],
+                [self.limit_year_week_pattern, self.normalize_limit_year_week],
+                [self.year_week_pattern, self.normalize_year_week],
+                [self.limit_week_pattern, self.normalize_limit_week],
+                [self.standard_week_day_pattern, self.normalize_standard_week_day],
+                [self.blur_week_pattern, self.normalize_blur_week],
+                [self.limit_year_blur_month_pattern, self.normalize_limit_year_blur_month],
+                [self.limit_month_blur_day_pattern, self.normalize_limit_month_blur_day],
+                [self.limit_month_day_pattern, self.normalize_limit_month_day],
+                [self.limit_month_pattern, self.normalize_limit_month],
+                [self.year_blur_month_pattern, self.normalize_year_blur_month],
+                [self.century_year_pattern, self.normalize_century_year],
+                [self.limit_year_span_month_pattern, self.normalize_limit_year_span_month],
+                [self.year_span_month_pattern, self.normalize_year_span_month],
 
-            [self.year_order_delta_point_pattern, self.normalize_year_order_delta_point],
-            [self.day_order_delta_point_pattern, self.normalize_day_order_delta_point],
+                [self.year_order_delta_point_pattern, self.normalize_year_order_delta_point],
+                [self.day_order_delta_point_pattern, self.normalize_day_order_delta_point],
 
-            # time delta 2 span group
-            [self.weilai_delta2span_pattern, self.normalize_weilai_delta2span],
-            [self.guoqu_delta2span_pattern, self.normalize_guoqu_delta2span],
-            [self.guo_delta2span_pattern, self.normalize_guo_delta2span],
+                # time delta 2 span group
+                [self.weilai_delta2span_pattern, self.normalize_weilai_delta2span],
+                [self.guoqu_delta2span_pattern, self.normalize_guoqu_delta2span],
+                [self.guo_delta2span_pattern, self.normalize_guo_delta2span],
 
-            # time delta 2 point group
-            [self.workday_delta_point_pattern, self.normalize_workday_delta_point],
-            [self.day_delta_point_pattern, self.normalize_day_delta_point],
-            [self.week_delta_point_pattern, self.normalize_week_delta_point],
-            [self.month_delta_point_pattern, self.normalize_month_delta_point],
-            [self.solar_season_delta_point_pattern, self.normalize_solar_season_delta_point],
-            [self.year_delta_point_pattern, self.normalize_year_delta_point],  # 与 blur year 有重复
+                # time delta 2 point group
+                [self.workday_delta_point_pattern, self.normalize_workday_delta_point],
+                [self.day_delta_point_pattern, self.normalize_day_delta_point],
+                [self.week_delta_point_pattern, self.normalize_week_delta_point],
+                [self.month_delta_point_pattern, self.normalize_month_delta_point],
+                [self.solar_season_delta_point_pattern, self.normalize_solar_season_delta_point],
+                [self.year_delta_point_pattern, self.normalize_year_delta_point],  # 与 blur year 有重复
 
-            # festival group
-            [self.limit_year_fixed_solar_festival_pattern, self.normalize_limit_year_fixed_solar_festival],
-            # 调整了 self.year_fixed_solar_festival_pattern 位置，避免出现 “今天十一点半” 字符串中 “十一” 被识别为节日
-            # 该正则与 self.limit_day_pattern 相矛盾
-            # [self.year_fixed_solar_festival_pattern, self.normalize_year_fixed_solar_festival],
-            [self.limit_year_fixed_lunar_festival_pattern, self.normalize_limit_year_fixed_lunar_festival],
-            [self.year_fixed_lunar_festival_pattern, self.normalize_year_fixed_lunar_festival],
-            [self.limit_year_regular_solar_festival_pattern, self.normalize_limit_year_regular_solar_festival],
-            [self.year_regular_solar_festival_pattern, self.normalize_year_regular_solar_festival],
+                # festival group
+                [self.limit_year_fixed_solar_festival_pattern, self.normalize_limit_year_fixed_solar_festival],
+                # 调整了 self.year_fixed_solar_festival_pattern 位置，避免出现 “今天十一点半” 字符串中 “十一” 被识别为节日
+                # 该正则与 self.limit_day_pattern 相矛盾
+                # [self.year_fixed_solar_festival_pattern, self.normalize_year_fixed_solar_festival],
+                [self.limit_year_fixed_lunar_festival_pattern, self.normalize_limit_year_fixed_lunar_festival],
+                [self.year_fixed_lunar_festival_pattern, self.normalize_year_fixed_lunar_festival],
+                [self.limit_year_regular_solar_festival_pattern, self.normalize_limit_year_regular_solar_festival],
+                [self.year_regular_solar_festival_pattern, self.normalize_year_regular_solar_festival],
 
-            [self.lunar_limit_year_month_day_pattern, self.normalize_lunar_limit_year_month_day],
-            [self.limit_year_month_day_pattern, self.normalize_limit_year_month_day],
-            [self.blur_year_pattern, self.normalize_blur_year],
-            [self.limit_day_pattern, self.normalize_limit_day],
-            [self.year_fixed_solar_festival_pattern, self.normalize_year_fixed_solar_festival],
-            [self.lunar_year_month_day_pattern, self.normalize_lunar_year_month_day],
-            [self.year_month_day_pattern, self.normalize_year_month_day],
-            [self.standard_year_pattern, self.normalize_standard_year],
+                [self.lunar_limit_year_month_day_pattern, self.normalize_lunar_limit_year_month_day],
+                [self.limit_year_month_day_pattern, self.normalize_limit_year_month_day],
+                [self.blur_year_pattern, self.normalize_blur_year],
+                [self.limit_day_pattern, self.normalize_limit_day],
+                [self.year_fixed_solar_festival_pattern, self.normalize_year_fixed_solar_festival],
+                [self.lunar_year_month_day_pattern, self.normalize_lunar_year_month_day],
+                [self.year_month_day_pattern, self.normalize_year_month_day],
+                [self.standard_year_pattern, self.normalize_standard_year],
 
-            # special patterns
-            [self.special_time_span_pattern, self.normalize_special_time_span],
-        ]
+                # special patterns
+                [self.special_time_span_pattern, self.normalize_special_time_span],
+            ]
 
-        hms_pattern_norm_funcs = [
-            # 超模糊型
-            [self.super_blur_two_hms_pattern, self.normalize_super_blur_two_hms],
+        if self.hms_pattern_norm_funcs is None:
+            self.hms_pattern_norm_funcs = [
+                # 超模糊型
+                [self.super_blur_two_hms_pattern, self.normalize_super_blur_two_hms],
 
-            # TIME_DELTA 转换型
-            [self.second_delta_point_pattern, self.normalize_second_delta_point],
-            [self.minute_delta_point_pattern, self.normalize_minute_delta_point],
-            [self.quarter_delta_point_pattern, self.normalize_quarter_delta_point],
-            [self.hour_delta_point_pattern, self.normalize_hour_delta_point],
+                # TIME_DELTA 转换型
+                [self.second_delta_point_pattern, self.normalize_second_delta_point],
+                [self.minute_delta_point_pattern, self.normalize_minute_delta_point],
+                [self.quarter_delta_point_pattern, self.normalize_quarter_delta_point],
+                [self.hour_delta_point_pattern, self.normalize_hour_delta_point],
 
-            # TIME_POINT 模糊型
-            [self.consecutive_blur_hour_pattern, self.normalize_consecutive_blur_hour_pattern],
+                # TIME_POINT 模糊型
+                [self.consecutive_blur_hour_pattern, self.normalize_consecutive_blur_hour_pattern],
 
-            # TIME_POINT 型
-            [self.hour_minute_second_pattern, self.normalize_hour_minute_second],
-            [self.num_hour_minute_second_pattern, self.normalize_num_hour_minute_second],
-            [self.hour_limit_minute_pattern, self.normalize_hour_limit_minute],
-            [self.blur_hour_pattern, self.normalize_blur_hour],
+                # TIME_POINT 型
+                [self.hour_minute_second_pattern, self.normalize_hour_minute_second],
+                [self.num_hour_minute_second_pattern, self.normalize_num_hour_minute_second],
+                [self.hour_limit_minute_pattern, self.normalize_hour_limit_minute],
+                [self.blur_hour_pattern, self.normalize_blur_hour],
 
-        ]
+            ]
 
         cur_ymd_func, cur_hms_func = None, None
         cur_ymd_string, cur_hms_string = '', ''
         break_flag = False
-        for ymd_pattern, ymd_func in ymd_pattern_norm_funcs:
+        for ymd_pattern, ymd_func in self.ymd_pattern_norm_funcs:
             ymd_string = TimeParser.parse_pattern(time_string, ymd_pattern)
-            for (hms_pattern, hms_func) in hms_pattern_norm_funcs:
+            for (hms_pattern, hms_func) in self.hms_pattern_norm_funcs:
                 hms_string = TimeParser.parse_pattern(time_string, hms_pattern)
 
                 if len(ymd_string) + len(hms_string) > len(cur_ymd_string) + len(cur_hms_string):
@@ -4604,7 +4608,8 @@ class TimeParser(TimeUtility):
                 h += 12
             if '中午' in h_string and h not in [11, 12]:
                 h += 12
-            if '下午' in h_string and (1 <= h <= 6):
+            if '下午' in h_string and (1 <= h <= 11):
+                # 狭义定义下午为 1~6 点，但存在`今天下午8点`的说法，因此扩展至 1~11 点
                 h += 12
             return h
 
