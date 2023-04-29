@@ -516,7 +516,7 @@ class Extractor(object):
                 else:
                     final_text_list.append(text[item[1]+1: clean_prefix_offsets[idx + 1][0]+1])
 
-            text = ''.join(final_text_list)
+            text = ''.join(final_text_list) if len(final_text_list) > 0 else text
             text = self.email_pattern.sub('', text)
 
         return text[1:-1]
@@ -666,7 +666,7 @@ class Extractor(object):
                 else:
                     final_text_list.append(text[item[1]+1: clean_prefix_offsets[idx + 1][0]+1])
 
-            text = ''.join(final_text_list)
+            text = ''.join(final_text_list) if len(final_text_list) > 0 else text
             text = self.cell_phone_pattern.sub('', text)
             text = self.landline_phone_pattern.sub('', text)
 
