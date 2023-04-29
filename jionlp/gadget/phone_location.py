@@ -42,7 +42,7 @@ class PhoneLocation(object):
     Examples:
         >>> import jionlp as jio
         >>> text = '联系电话：13288568202. (021)32830431'
-        >>> num_list = jio.extract_phone_number(text)
+        >>> num_list = jio.extract_phone_number(text, detail=True)
         >>> print(num_list)
         >>> res = [jio.phone_location(item['text']) for item in num_list]
         >>> print(res)
