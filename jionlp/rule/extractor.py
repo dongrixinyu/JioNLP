@@ -174,7 +174,7 @@ class Extractor(object):
             if self.email_domain_pattern is None:
                 self.email_domain_pattern = re.compile(EMAIL_DOMAIN_PATTERN)
                 
-            detail_results = list()
+            detail_results = []
             for item in results:
                 domain_name = self.email_domain_pattern.search(item['text']).group(1)
                 item.update({'domain_name': domain_name})
@@ -260,7 +260,7 @@ class Extractor(object):
         if self.money_pattern is None:
             self.money_pattern = re.compile(MONEY_PATTERN)
             
-        money_result = list()
+        money_result = []
         for item in self.money_pattern.finditer(text):
             if detail:
                 money_result.append({'text': item.group(), 'offset': list(item.span())})
@@ -295,7 +295,7 @@ class Extractor(object):
         if not detail:
             return cell_results + landline_results
         else:
-            detail_results = list()
+            detail_results = []
             for item in cell_results:
                 item.update({'type': 'cell_phone'})
                 detail_results.append(item)
@@ -332,7 +332,7 @@ class Extractor(object):
             if match_flag:
                 return tmp_res
             else:
-                return list()
+                return []
 
     def extract_wechat_id(self, text, detail=False, strict=True):
         """从文本中抽取出 微信号 号码
@@ -365,7 +365,7 @@ class Extractor(object):
         else:
             # 将无法匹配 微信号 字符的 微信号 删除
             # 注意该规则未经充分的数据验证，仅凭启发式规则定义而成。
-            final_res = list()
+            final_res = []
             for item in tmp_res:
                 end_offset = item['offset'][0]
                 start_offset = max(0, end_offset - 8)  # 此处的考察范围 8 为一个默认值
@@ -450,9 +450,9 @@ class Extractor(object):
             self.parentheses_dict = parentheses_dict
             self.extract_parentheses_pattern = extract_pattern
 
-        content_list = list()
-        parentheses_list = list()
-        idx_list = list()
+        content_list = []
+        parentheses_list = []
+        idx_list = []
         finditer = self.extract_parentheses_pattern.finditer(text)
         for i in finditer:
             idx = i.start()
@@ -506,7 +506,7 @@ class Extractor(object):
             clean_prefix_offsets = [
                 item['offset'] for item in prefix_results if item['offset'][1] in offset_list]
 
-            final_text_list = list()
+            final_text_list = []
             for idx, item in enumerate(clean_prefix_offsets):
                 if idx == 0:
                     final_text_list.append(text[0: item[0]+1])
@@ -656,7 +656,7 @@ class Extractor(object):
             clean_prefix_offsets = [
                 item['offset'] for item in prefix_results if item['offset'][1] in offset_list]
 
-            final_text_list = list()
+            final_text_list = []
             for idx, item in enumerate(clean_prefix_offsets):
                 if idx == 0:
                     final_text_list.append(text[0: item[0]+1])
@@ -836,7 +836,7 @@ class Extractor(object):
         return self.url_pattern.sub(token, text)[1:-1]
 
     def replace_chinese(self, text, substitute=r' '):
-        """ 删除文本中的所有中文字符串
+        """ 替换文本中的所有中文字符串为空格，默认为空格，可以自定义指定目标字符。
 
         Args:
             text(str): 输入的文本
