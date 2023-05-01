@@ -31,6 +31,7 @@ from .dictionary_loader import traditional_simplified_loader
 from .dictionary_loader import word_distribution_loader
 from .dictionary_loader import world_location_loader
 from .dictionary_loader import xiehouyu_loader
+from .dictionary_loader import llm_test_dataset_loader
 
 
 DICTIONARY_DESCRIPTION = {
@@ -41,6 +42,7 @@ DICTIONARY_DESCRIPTION = {
     'chinese_idiom.txt': '中国成语词典，包含成语词条、释义、出处来源、汉语拼音、例句（多数成语无）、在 100 万文本中的出现次数，默认平滑次数为 1。',
     'chinese_word_dictionary.txt': '新华词典，词典中包含 20 万余词汇，分别包括词汇和释义',
     'landline_phone_area_code.txt': '固定电话区号对照表，用于定位区号的归属地',
+    'jionlp_LLM_test_1.0.json': 'LLM 评测数据集',
     'negative_words.txt': '常用否定词汇词典',
     'phone_location.txt': '电话号码归属地词典',
     'phrase_pinyin.txt': '包含多音字的词汇和短语的注音词典',

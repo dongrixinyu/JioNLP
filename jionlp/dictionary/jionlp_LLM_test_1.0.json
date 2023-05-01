@@ -1,0 +1,62 @@
+{"question_type": "【知识问答】【医学】", "correct_answer": "A、B、C", "question": "多选题，下列属于蛋白质激酶偶联受体介导的信号转导通路有：A、MAPK通路，B、JAK-STAT通路，C、PI3K通路，D、经典核受体通路。正确答案是："}
+{"question_type": "【知识问答】【医学】", "correct_answer": "C", "question": "以下哪个是糖尿病的常见症状？A. 胸痛，B. 呼吸急促，C. 增加口渴，D. 关节疼痛"}
+{"question_type": "【知识问答】【计算机】", "correct_answer": "A", "question": "计算机网络中防火墙的作用是什么？A. 防止未经授权的网络访问，B. 提高网络速度和性能，C. 提供远程访问网络的功能"}
+{"question_type": "【知识问答】【计算机】", "correct_answer": "C、D", "question": "多选题，在计算机科学中，下列哪些算法是NP完全问题？A. Dijkstra算法，B. Floyd-Warshall算法，C. Traveling Salesman问题，D. 最大流问题，E. 快速排序算法"}
+{"question_type": "【知识问答】【通信】", "correct_answer": "B、C、D、E", "question": "多选题，在数字通信系统中，下列哪些参数可以影响误码率？A. 信道带宽，B. 调制方式，C. 信噪比，D. 发射功率，E. 接收机灵敏度"}
+{"question_type": "【知识问答】【通信】", "correct_answer": "D", "question": "在数字通信系统中，下列哪种调制方式具有更高的频带利用率？A. BPSK调制，B. QPSK调制，C. 16QAM调制，D. 64QAM调制"}
+{"question_type": "【知识问答】【机械】", "correct_answer": "D", "question": "在机械传动系统中，下列哪种联轴器适用于两轴心距离较远的情况？A. 齿形联轴器，B. 弹性联轴器，C.聚氨酯联轴器，D. 万向节联轴器"}
+{"question_type": "【知识问答】【机械】", "correct_answer": "D", "question": "在设计一个齿轮传动系统时，下列哪个参数对于确定齿轮的强度和寿命是至关重要的？A. 齿轮的模数，B. 齿轮的压力角，C. 齿轮的齿数，D. 齿轮的材料"}
+{"question_type": "【知识问答】【电力】", "correct_answer": "A", "question": "光伏发电系统中，下列哪种元器件可以将直流电转换为交流电？A. 逆变器，B. 变压器，C. 整流器，D. 电容器"}
+{"question_type": "【知识问答】【电力】", "correct_answer": "D", "question": "在三相交流电路中，下列哪个参数可以用来计算电路的功率因数？A. 电压，B. 电流，C. 电阻，D. 相位角"}
+{"question_type": "【知识问答】【数学】", "correct_answer": "C", "question": "设函数f(x)在区间\\[0,1]上连续，且满足f(0)=f(1)=0，f(x)在(0,1)内具有二阶导数，则下列哪个不等式成立？A. ∫\\[0,1] f(x)dx ≤ 1/2 ∫\\[0,1] f''(x)dxB. ∫\\[0,1] f(x)dx ≤ 1/8 ∫\\[0,1] f''(x)dxC. ∫\\[0,1] f(x)dx ≤ 1/4 ∫\\[0,1] f''(x)dxD. ∫\\[0,1] f(x)dx ≤ 1/6 ∫\\[0,1] f''(x)dx"}
+{"question_type": "【知识问答】【数学】", "correct_answer": "D", "question": "如果a+b=5，a-b=3，那么a的值是多少？A. 1，B. 2，C. 3，D. 4"}
+{"question_type": "【知识问答】【物理】", "correct_answer": "D", "question": "一个物体在水中静止，它的浮力大小等于：A. 物体的重量，B. 物体的体积，C.物体在水中排开的水的体积，D. 物体在水中排开的水的重量"}
+{"question_type": "【知识问答】【物理】", "correct_answer": "B", "question": "在一个星系中，有两个质量相等的恒星，它们的距离为10光年。如果它们的引力相互作用，那么它们之间的引力大小是多少？A. 1.5 x 10^28 N，B. 3.0 x 10^28 N，C. 4.5 x 10^28 N，D. 6.0 x 10^28 N"}
+{"question_type": "【知识问答】【化学】", "correct_answer": "B", "question": "在一次化学反应中，有一个物质的摩尔质量为60 g/mol，另一个物质的摩尔质量为90 g/mol。如果它们的化学计量比为2:3，那么它们反应时的摩尔比是多少？A. 2:3， B. 3:2， C. 4:3， D. 3:4"}
+{"question_type": "【知识问答】【化学】", "correct_answer": "C", "question": "在一次化学实验中，一种物质被加入到水中，产生了氢氧化物离子（OH^-）和氢离子（H^+）。如果实验中加入的物质是一种酸性物质，那么它的化学式可能是什么？A. NaOH，B. HCl，C.CH3COOH，D. CaCO3"}
+{"question_type": "【知识问答】【生物】", "correct_answer": "A", "question": "哪种细胞结构是负责合成蛋白质的？A. 核糖体，B. 核膜，C. 线粒体，D. 液泡"}
+{"question_type": "【知识问答】【生物】", "correct_answer": "C", "question": "在哺乳动物中，哪种细胞类型可以通过克隆技术产生完全相同的个体？A.神经元，B. 血细胞，C. 卵细胞，D. 肌肉细胞"}
+{"question_type": "【知识问答】【法律】", "correct_answer": "A", "question": "在美国宪法中，哪个修正案保障了公民的言论自由？A. 第一修正案，B. 第二修正案，C. 第四修正案，D. 第五修正案"}
+{"question_type": "【知识问答】【法律】", "correct_answer": "B", "question": "在国际法中，哪个条约规定了难民的权利和保护？A. 《联合国宪章》，B. 《日内瓦难民公约》，C. 《联合国人权宣言》，D. 《联合国海洋法公约》"}
+{"question_type": "【知识问答】【新闻】", "correct_answer": "D", "question": "在哪个国家的哪个城市，于2019年举行了一场规模空前的环保示威活动？A. 巴黎，法国，B. 伦敦，英国，C. 悉尼，澳大利亚，D. 纽约，美国"}
+{"question_type": "【知识问答】【新闻】", "correct_answer": "C", "question": "在传播学中，哪个理论主张媒介对受众的影响是有限的，而受众的个体差异和社会环境对其反应起着更大的作用？A. 传染病模型，B. 社会认知理论，C. 媒介依存理论，D. 一般行为模式理论"}
+{"question_type": "【知识问答】【地理】", "correct_answer": "B", "question": "下列哪个国家的岛屿数量最少？A.日本、B.英国、C.菲律宾、D.印度尼西亚"}
+{"question_type": "【知识问答】【地理】", "correct_answer": "无正确答案", "question": "以下哪些城市是世界上海拔超过5000米的城市？A. 拉萨，B. 布宜诺斯艾利斯，C. 金沙萨，D. 喀布尔，E. 基什那乔夫斯克"}
+{"question_type": "【知识问答】【文学】", "correct_answer": "D", "question": "下列哪个人物形象不曾出现在小说《红楼梦》中，A、尤夫人，B、智能，C、薛宝琴，D、智慧"}
+{"question_type": "【知识问答】【文学】", "correct_answer": "A、B、C", "question": "多选题，以下哪些作品是中国古代文学名著？A、《桃花扇》B、《西游记》C、《三国演义》D、《甄嬛传》E、《围城》"}
+{"question_type": "【知识问答】【经济】", "correct_answer": "C", "question": "在经济学中，以下哪个概念描述了市场上的需求和供给达到平衡时的价格和数量？A、垄断，B、弹性，C、均衡，D、通货膨胀"}
+{"question_type": "【知识问答】【经济】", "correct_answer": "A", "question": "以下哪个金融工具通常被用于保护投资组合免受市场波动的影响？A、期权B、期货，C、股票，D、债券"}
+{"question_type": "【知识问答】【历史】", "correct_answer": "A", "question": "以下哪位奥斯曼帝国的君主被称为“征服者”？A、穆罕默德二世，B、穆拉德一世，C、塞利姆一世，D、奥斯曼一世"}
+{"question_type": "【知识问答】【历史】", "correct_answer": "A", "question": "二战期间，以下哪个国家没有参战？A、瑞士，B、苏联，C、法国，D、日本"}
+{"question_type": "【知识问答】【编程】", "correct_answer": "B", "question": "Python 解释器的 C api 中，Py_ssize_t 对应 C 的哪种数据类型？A、float \*，B、long int，C、const char，D、char"}
+{"question_type": "【知识问答】【编程】", "correct_answer": "B", "question": "哪种不属于 vue 当中的指令和它的用法？ A、v-if：判断是否隐藏；B、v-property：数据绑定对应属性；C、v-bind\\:class：绑定一个属性；D、v-model：实现双向绑定"}
+{"question_type": "【生活常识】", "correct_answer": "A", "question": "以下哪种食品最容易引起食物中毒？A、生鱼片，B、熟鸡肉，C、煮熟的蔬菜，D、烤面包"}
+{"question_type": "【生活常识】", "correct_answer": "C", "question": "在高速公路上行驶时，以下哪种情况是违法的？A、驾驶员抽烟B、车辆速度达到80km/hC、车辆在应急车道上行驶D、驾驶员频繁鸣笛"}
+{"question_type": "【生活常识】", "correct_answer": "C", "question": "以下哪种情况可能会导致室内空气污染？A、经常开窗通风，B、使用环保清洁剂，C、抽烟，D、室内养植绿植"}
+{"question_type": "【生活常识】", "correct_answer": "D", "question": "以下哪种情况不适合穿高跟鞋？A、参加晚宴，B、逛商场购物，C、长时间站立，D、进行户外运动"}
+{"question_type": "【生活常识】", "correct_answer": "A", "question": "以下哪种情况不适合进行剧烈运动？A、饭后半小时，B、早上起床后，C、晚上睡前，D、下午休息时间"}
+{"question_type": "【生活常识】", "correct_answer": "C", "question": "以下哪种情况不符合正确的手卫生习惯？A、用肥皂和流动水洗手B、使用免洗手消毒液C、定期做手部按摩D、在公共场所使用公共洗手间"}
+{"question_type": "【生活常识】", "correct_answer": "A", "question": "以下哪种消费行为是可取的？A、在超市购买打折商品存放在家中备用B、在网上购物时只看价格不看质量和口碑C、在商场购物时只关注品牌而不考虑实际需求D、在餐厅就餐时点菜时为了面子点过多"}
+{"question_type": "【生活常识】", "correct_answer": "D", "question": "以下哪种旅行行为是恰当的？A、在旅游景点随意乱扔垃圾B、在公共场所大声喧哗影响他人C、在景区随意触摸、破坏文物古迹D、在旅途中留意个人安全和财产安全"}
+{"question_type": "【生活常识】", "correct_answer": "C", "question": "以下哪种做饭行为是恰当的？A、在炒菜时使用过多的油B、在烹饪时不注意食材的新鲜度和卫生C、在烹饪时注意食材的搭配和营养均衡D、在烹饪时不注意厨房的清洁和卫生"}
+{"question_type": "【生活常识】", "correct_answer": "B", "question": "以下哪种行为是不利于家庭和谐的？A、家庭成员之间互相尊重、理解和支持B、家庭成员之间经常争吵、冷战和相互攻击C、家庭成员之间相互信任、包容和宽容D、家庭成员之间经常协作行动、经常沟通和交流"}
+{"question_type": "【语言表达】", "correct_answer": "B", "question": "很多朋友都向往专业相机而又碍于它过高的价格，不得不______。填入划横线部分最恰当的一项是（）。A. 望其项背；B. 望洋兴叹；C. 望梅止渴；D. 望尘莫及"}
+{"question_type": "【语言表达】", "correct_answer": "C", "question": "蚂蚁是所有动物中最爱寻衅和好战的物种，尤其是以肉食为主的“狩猎蚁”。“狩猎蚁”的外交政策是永无休止的侵犯、武力争夺地盘，以及尽其所能地消灭邻近群体。由于其数量庞大，所以打起仗来，常常争得你死我活，场面十分壮观。特别是在食物短缺时，与其他群体的冲突则会达到高潮。早春时节，当群体开始发育的时期，“狩猎蚁”还会袭击其他种类的蚂蚁，争斗的结果总是以“狩猎蚁”的胜利而告终。这段话直接支持这样一种观点，即( )。A.狭路相逢勇者胜B.枪杆子里面出政权C.弱肉强食，适者生存D.进攻是最有效的防守"}
+{"question_type": "【语言表达】", "correct_answer": "B", "question": "从清朝初期至新中国成立之前，由于自然灾害、战乱等原因，迫于生计2000万山东人相继踏上了地域辽阔、资源丰富的关东大地。电视连续剧《闯关东》是一部表现了山东百姓迫于生存闯荡东北的历史传奇故事。通过朱开山一家闯关东的经历,浓缩了从1904年至1931年“九·一八”爆发的历史,通过对一个普通人家闯荡历程的追踪,完成一个小业到大业、小人物到大英雄的塑造,讴歌自强不息、艰苦奋斗、勤劳勇敢、百折不挠的民族精神。这部剧深深写透了民族的魂魄，抓住了民族的品格。这段文字主要说明( )。A.朱开山一家跌宕起伏的命运抓住了观众B.作品把“家族史”和“社会史”很好的融合在一起C.以百年传奇故事映照中华民族精神D.闯关东人身上所体现出来的山东精神"}
+{"question_type": "【语言表达】", "correct_answer": "A", "question": "Can you can a can as a canner can can a can? which of the meaning of word can does not exist in this sentence?A、名词，背罐工；B、动词，背负；C、名词，罐子；D、助动词，能"}
+{"question_type": "【语言表达】", "correct_answer": "B", "question": "渔业资源恢复是一个复杂而缓慢的过程，需要_______的努力，如坚决减少捕捞力量、科学发展增殖渔业和加强栖息地保护与修复等。_______生态系统水平的适应性对策，强化资源管理与养护，依然是下一步渔业资源恢复的重点工作。依次填入画横线部分最恰当的一项是：A.锲而不舍 追求B.坚韧不拔 制定C.坚持不懈 借鉴D.有条不紊 研究"}
+{"question_type": "【逻辑推理】", "correct_answer": "B", "question": "某仓库失窃，四个保管员因涉嫌而被传讯。四人的供述如下：甲：我们四人都没作案；乙：我们中有人作案；丙：乙和丁至少有一人没作案；丁：我没作案。如果四人中有两人说的是真话，有两人说的是假话，则以下哪项断定成立?(    )A．说真话的是甲和丁B．说真话的是乙和丙C．说真话的是甲和丙D．说真话的是乙和丁"}
+{"question_type": "【逻辑推理】", "correct_answer": "D", "question": "一本小说要畅销，必须有可读性；一本小说，只有深刻触及社会的敏感点，才能有可读性；而一个作者如果不深人生活，他的作品就不可能深刻触及社会的敏感点。以下哪项结论可以从题干的断定中推出?(    )I．一个畅销小说的作者，不可能不深入生活。Ⅱ．一本不触及社会敏感点的小说，不可能畅销。Ⅲ．一本不具有可读性的小说的作者，一定没有深入生活。A．只有I        B．只有Ⅱ        C只有Ⅲ            D．只有I和Ⅱ"}
+{"question_type": "【逻辑推理】", "correct_answer": "D", "question": "世界乒乓球锦标赛男子团体赛的决赛前，S国的教练在排兵布阵，他的想法是：如果4号队员的竞技状态好，并且伤势已经痊愈，那么让4号队员出场，只有4号队员不能出场时才派6号队员出场。如果决赛时6号队员出场，则以下哪一项肯定为真?(    )A．4号队员伤势比较重\\B．4号队员的竞技状态不好\\C．6号队员没有受伤D．如果4号队员伤已痊愈，那么他的竞技状态不好"}
+{"question_type": "【逻辑推理】", "correct_answer": "C", "question": "寻找数字规律，空格处应该填写哪个数字？0,1,3,8,22,63,( )A、183；B、184；C、185；D、186"}
+{"question_type": "【逻辑推理】", "correct_answer": "无正确答案，信息不充分", "question": "The table above shows the number of consecutive nights that each of five families stayed at a certain hotel during a 14-night period. If the Liu family’s stay did not overlap with the Benton family’s stay, which of the 14 nights could be a night on which only one of the five families stayed at the hotel?A. The 3rd B. The 5th C. The 6th D. The 8th E. The 10th"}
+{"question_type": "【文本写作】", "question": "请编写一篇新闻，时间：2022年9月18日地点：日本东京人物：部分日本民众，环保主义者原因：日本核废水排放造成海洋渔业受影响经过：环保主义者到日本政府机构大楼抗议结果：造成交通堵塞，并未取得结果。要求，清晰，简洁，加入一些细节，标题简洁醒目，内容保持客观，不带主观立场，500字左右。"}
+{"question_type": "【文本写作】", "question": "编写一段代码 python，利用gevent 实现一个 restful http 服务，功能是返回当前的时间，不能是时间戳，要以标准时间格式返回，url为 `/get_current_time`。添加必要的注释。"}
+{"question_type": "【文本写作】", "question": "讲述一下《水浒传》中，武松、西门庆、武大郎、潘金莲、王婆等人之间发生的故事，要精炼故事过程，但保留精彩的情节。尽量不要枯草乏味。"}
+{"question_type": "【文本写作】", "question": "什么是结构化发行额度"}
+{"question_type": "【文本写作】", "question": "根据中国古典诗词，给孩子起个名字，男孩，五行缺水，姓李。要求：避免起一些过于大众化的名字，如“子轩”、“梓萱”等。给出10个选项。"}
+{"question_type": "【文本写作】", "question": "请不间断重复15遍“爱不爱我”。"}
+{"question_type": "【文本写作】", "question": "写一个广告脚本，介绍一款名为康元饮的中老年人饮品。要求讲清产品功能，要吸引人们的注意，独创性，字数200字。"}
+{"question_type": "【文本写作】", "question": "今年“五一”假期铁路运输期限为4月27日至5月4日，共8天。来自中国铁路北京局集团公司(简称“中国铁路北京局”)的消息，4月27日，中国铁路北京局共计发送旅客111.48万人，其中北京地区发送旅客57.5万人(北京站发送7.79万人、北京西站发送16.45万人、北京南站发送18.77万人、北京北站1.58万人、清河站2.17万、北京朝阳站4.89万人、北京丰台站4.57万人)。4月28日，中国铁路北京局预计发送旅客130万人，其中北京地区预计发送旅客68.54万人。中国铁路北京局结合假期运输特点，全力提升旅客乘车的舒适度。各次高铁列车针对互联网订餐订单量激增的实际情况，合理安排配送人员，做好列车配送服务，保障好出行旅客的网络订餐。运行中结合旅客实际需求，从列车环境、服务、用餐等方面提供多元化服务，部分列车还配有儿童读物和拼图，满足不同旅客的需求。北京站在候车大厅西侧明显位置，设置“医疗服务”室，配备诊疗床、AED除颤仪等基础急救设备，为旅客提供寻医问药服务。北京西站针对年纪太大无法久坐、手术后无法坐立的旅客提供可躺式座椅。北京南站4月27日至5月4日全面开启地下换乘层京沪高铁、京津城际4个快速进站厅，每日开关时间根据现场客流情况动态延长调整。北京北站启用地上地下进站口，“德馨”服务组推出便民服务车，关口前移，提升旅客出行体验。清河站全面启用南落客和西进站口，全面满足地铁、公交、出租车、私家车等多种交通方式接驳的旅客乘车。抽取出文中的关键短语（5个），并回答4月27日北京哪个火车站发送旅客人次最多？北京铁路局采取哪些措施提升服务水平？"}
+{"question_type": "【机器翻译】", "question": "(1) we downloaded and filtered a version of CommonCrawl based on similarity to a range of high-quality referencecorpora, (2) we performed fuzzy deduplication at the document level, within and across datasets, to prevent redundancyand preserve the integrity of our held-out validation set as an accurate measure of overfitting, and (3) we also addedknown high-quality reference corpora to the training mix to augment CommonCrawl and increase its diversity. 翻译成中文"}
+{"question_type": "【机器翻译】", "question": "将于2023年8月17日和18日在印度古吉拉特邦甘地讷格尔市举行首届世卫组织传统医学全球峰会。全球峰会将与二十国集团卫生部长级会议同时举行，推动各国对传统医学做出政治承诺和采取循证行动。传统医学手段是全球各地无数民众解决健康和福祉需求的首选办法。全球峰会将由世界卫生组织（世卫组织）和印度政府（2023年二十国集团主席）联袂主办。它将为传统医学工作者、使用者、社区、国家决策者、国际组织、学术界、私营部门和民间社团等利益攸关方提供平台，供其分享关于传统医学对健康和可持续发展贡献的最佳做法和重大证据、数据和创新举措。翻译上文为英文。"}

@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://pepy.tech/badge/jionlp/month" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.4.38-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.4.39-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -24,6 +24,17 @@
   - [**ChatGPT面前，JioNLP-工具的价值在何处？**](../../wiki/ChatGPT面前，JioNLP-工具的价值在何处？)
   - [**ChatGPT这么强，会影响NLPer的就业环境吗？**](https://zhuanlan.zhihu.com/p/605673596)
   - [**一文读懂ChatGPT模型原理**](https://zhuanlan.zhihu.com/p/589621442)
+
+
+### 2023-05-01 添加[大语言模型 LLM 评测数据集](https://github.com/dongrixinyu/JioNLP/wiki/LLM%E8%AF%84%E6%B5%8B%E6%95%B0%E6%8D%AE%E9%9B%86)
+- LLM 各个厂家都在做自研，都声称对标 ChatGPT，那就出一份数据集，测试一下各家模型效果究竟如何？
+- 主要针对中文，覆盖语言模型能力的各个方面。
+- **评测结果**可关注**公众号JioNLP**，查阅具体各家评测截图pdf。
+```
+>>> import jionlp as jio
+>>> llm_test = jio.llm_test_dataset_loader()
+>>> print(llm_test[15])
+```
 
 ### 2023-02-21 添加 Byte-level BPE 算法[**Byte-level BPE**](../../wiki/BPE算法说明文档)
 
@@ -47,23 +58,6 @@
 
 # True
 ```
-
-### 2022-05-26 更新 [**关键短语抽取**](../../wiki/Gadget-说明文档#user-content-关键短语抽取) 
-
-#### jio.keyphrase.extract_keyphrase 对一篇文本关键短语抽取
-```
->>> import jionlp as jio
->>> text = '浑水创始人：七月开始调查贝壳，因为“好得难以置信” 2021年12月16日，做空机构浑水在社交媒体上公开表示，正在做空美股上市公司贝壳...'
-
->>> keyphrases = jio.keyphrase.extract_keyphrase(text)
->>> print(keyphrases)
->>> print(jio.keyphrase.extract_keyphrase.__doc__)
-
-# ['浑水创始人', '开始调查贝壳', '做空机构浑水', '美股上市公司贝壳', '美国证监会']
-
-```
-- [JioNLP源站-关键短语抽取](http://www.jionlp.com/jionlp_online/extract_keyphrase)
-
 
 ### 2022-07-02 更新 [时间语义解析](../../wiki/时间语义解析-说明文档#user-content-时间语义解析)
 
@@ -220,6 +214,7 @@ $ jio_help
 
 | 功能 | 函数 | 描述 |星级  |
 |-----|-----|------|------|
+|[大语言模型 LLM 评测数据集](https://github.com/dongrixinyu/JioNLP/wiki/LLM%E8%AF%84%E6%B5%8B%E6%95%B0%E6%8D%AE%E9%9B%86)|jio.llm_test_dataset_loader | LLM 评测数据集 |⭐|
 |[**Byte-level BPE**](../../wiki/BPE算法说明文档) | jio.bpe.byte_level_bpe |Byte-level-BPE 算法|⭐|
 |**停用词词典** | jio.stopwords_loader() | 综合了百度、jieba、讯飞等的停用词词典 |  |
 |[**成语**词典](../../wiki/词典加载-说明文档#user-content-加载成语词典) |chinese_idiom_loader|加载成语词典 |⭐|

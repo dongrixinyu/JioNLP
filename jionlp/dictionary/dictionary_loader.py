@@ -569,3 +569,19 @@ def xiehouyu_loader():
 
     return xiehouyu
 
+
+def llm_test_dataset_loader():
+    """ 加载 llm 评测数据集，满分 100 分，每一条为一条评测题目
+    客观题均为选择题，有正确答案，每一道 1 分
+    主观题仅有问题，无标准答案。除机器翻译外，每一道 5 分，机器翻译每道 4 分。
+    数据集说明参考：https://github.com/dongrixinyu/JioNLP/wiki/LLM%E8%AF%84%E6%B5%8B%E6%95%B0%E6%8D%AE%E9%9B%86
+
+    Examples:
+        >>> import jionlp as jio
+        >>> llm_test = jio.llm_test_dataset_loader()
+        >>> print(llm_test[15])
+
+    """
+    llm_test = read_file_by_line(os.path.join(GRAND_DIR_PATH, 'dictionary', 'jionlp_LLM_test_1.0.json'))
+
+    return llm_test
