@@ -146,10 +146,11 @@ MONEY_PATTERN_4 = CHINESE_MONEY_PATTERN + '(块)' + '(' + CHI_N + '[角|毛])(' 
 # 数字+汉字单位格式 9300万元  1.2万元  9佰元
 MONEY_PATTERN_5 = r'(\d{1,4}(\.\d{0,4})?' + CHI_U + CURRENCY_CASE + ')'
 
-surname_prefix = '(?<!张)(?<!李)(?<!王)'
-MONEY_PATTERN = surname_prefix + '(' + '|'.join(
+not_money_prefix = '(?<!张)(?<!李)(?<!王)'
+not_money_suffix = '(?!砖)'
+MONEY_PATTERN = not_money_prefix + '(' + '|'.join(
     [MONEY_PATTERN_1, MONEY_PATTERN_2,
-     MONEY_PATTERN_3, MONEY_PATTERN_4, MONEY_PATTERN_5]) + ')'
+     MONEY_PATTERN_3, MONEY_PATTERN_4, MONEY_PATTERN_5]) + ')' + not_money_suffix
 
 # ---------------------------------------------------------------------
 # 中文括号，用于提取括号内容，或删除
