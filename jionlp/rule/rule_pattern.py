@@ -146,11 +146,19 @@ MONEY_PATTERN_4 = CHINESE_MONEY_PATTERN + '(块)' + '(' + CHI_N + '[角|毛])(' 
 # 数字+汉字单位格式 9300万元  1.2万元  9佰元
 MONEY_PATTERN_5 = r'(\d{1,4}(\.\d{0,4})?' + CHI_U + CURRENCY_CASE + ')'
 
-not_money_prefix = '(?<!张)(?<!李)(?<!王)'
-not_money_suffix = '(?!砖)'
-MONEY_PATTERN = not_money_prefix + '(' + '|'.join(
+# TODO: not_money_predix 此种方式过于 tricky，并不太适用于抽取金额。且有些金额文本具有歧义，
+#  应当给用户自定义窗口，自行控制输入输出
+# not_money_prefix = '(?<!张)(?<!李)(?<!王)'
+not_money_suffix = '(?!砖)'  # 避免“3块砖” 进入金额计算
+
+# MONEY_PATTERN = not_money_prefix + '(' + '|'.join(
+#     [MONEY_PATTERN_1, MONEY_PATTERN_2,
+#      MONEY_PATTERN_3, MONEY_PATTERN_4, MONEY_PATTERN_5]) + ')' + not_money_suffix
+
+MONEY_PATTERN = '(' + '|'.join(
     [MONEY_PATTERN_1, MONEY_PATTERN_2,
      MONEY_PATTERN_3, MONEY_PATTERN_4, MONEY_PATTERN_5]) + ')' + not_money_suffix
+
 
 # ---------------------------------------------------------------------
 # 中文括号，用于提取括号内容，或删除
