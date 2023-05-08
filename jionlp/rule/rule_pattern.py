@@ -44,7 +44,7 @@ EMAIL_PATTERN = r'(?<=[^0-9a-zA-Z.\-])' \
 EMAIL_DOMAIN_PATTERN = r'(?<=@)([0-9a-zA-Z]+)(?=\.)'
 
 # 抽取邮箱的前缀，一般为：`email: 32e8u9u@gmail.com`，用于删除前缀
-EMAIL_PREFIX_PATTERN = r'((e(\-|—| |_)?mail|(电子)?邮箱)(地址)?[:：\t \u3000]*)' \
+EMAIL_PREFIX_PATTERN = r'((e(\-|—| |_)?mail|(电子)?邮[箱件])(地址)?[:：\t \u3000]*)' \
                        r'(?=[^:： \t\u3000])'
 
 # ---------------------------------------------------------------------
@@ -106,7 +106,7 @@ IP_ADDRESS_PATTERN = ''.join(
 # 地名表达式
 # 除中国地名表外，还有大量的地名未进行识别，采用正则匹配。然而仍然有一些特例：
 # “城”字结尾的名词有不少房地产楼盘
-LOCATION_CONTINENT_PATTERN = '(亚|欧|非|北美|中(南)?美|南美|拉丁美|南极|大洋)洲'  # 大洲
+LOCATION_CONTINENT_PATTERN = '(亚|欧|非|(中)?(北|南)?美|拉丁美|南极|大洋)洲'  # 大洲
 LOCATION_OCEAN_PATTERN = '(东|西|南|北)?(太平|大西|印度|北冰)洋'  # 大洋
 LOCATION_INTER_REGION_PATTERN = '((东|西|南|北|中|东南|中北)亚|(东|西|南|北|中)欧|(东|西|北)非|拉美|北美|南美|(中|近|远)东)'  # 国际区域名词
 LOCATION_KEYWORDS_PATTERN = CHINESE_CHAR_PATTERN + '+[县市镇村区山州路河城湖岛港江省湾乡街庄堡国寺桥溪岭海郡]'  # 尾缀词地名
@@ -125,7 +125,7 @@ LOCATION_PATTERN = '^(' + '|'.join(
 # ((\d[,.\d]*|[一二三四五六七八九十壹贰叁肆伍陆柒捌玖拾两零][一二三四五六七八九十壹贰叁肆伍陆柒捌玖拾两〇O零百千万亿佰仟]*?)分)?'
 
 # 存在一定的错误金额字符串依然能够解析并通过的情况
-CHINESE_NUM = '[一二三四五六七八九壹贰叁弎仨肆伍陆柒捌玖俩两零]'  # 金额数字
+CHINESE_NUM = '[一二三四五六七八九壹弌贰弍叁弎仨肆伍陆柒捌玖俩两零]'  # 金额数字
 CHINESE_UNIT = '[〇O零十百千万亿兆拾佰仟萬億]'  # 金额数字单位
 CURRENCY_CASE = r'(块(钱)?(人民币)?|元((人民|港|日|澳|韩|(新)?台)币)?|(人民|港|日|澳|韩|(新)?台)币|圆(整)?|' \
                 r'(美|港|澳门|日|韩|缅|马|新加坡|欧|加|新西兰|澳|澳大利亚)元|美(金|刀)|英镑|马克|法郎|卢布|泰铢)'
@@ -138,7 +138,7 @@ MONEY_PATTERN_1 = r'((\d{1,3}([,，]\d{1,3})*(\.\d{0,2})?)' + CURRENCY_CASE + ')
 # 纯数字格式 340000.0元
 MONEY_PATTERN_2 = r'((\d{1,12}(\.\d{0,2})?)' + CURRENCY_CASE + ')'
 # 中文金额格式 一万二千三百四十五
-CHINESE_MONEY_PATTERN = ''.join(['(((', CHI_N, '?', CHI_U, '{1,2})*', CHI_N, '?)'])
+CHINESE_MONEY_PATTERN = ''.join(['((((', CHI_N, "?", CHI_U, '{1,2})+', CHI_N, '?)|((', CHI_N, "?", CHI_U, '{1,2})*', CHI_N, '))'])
 # 正式文本中文金额格式 一万二千三百四十五元
 MONEY_PATTERN_3 = CHINESE_MONEY_PATTERN + CURRENCY_CASE + '(' + CHI_N + '[角|毛])?(' + CHI_N + '分)?)'
 # 口语文本中文金额格式 “三十五块八毛”，但不允许 “三十五块” 或 “三十五块八” 出现：有歧义
@@ -146,9 +146,11 @@ MONEY_PATTERN_4 = CHINESE_MONEY_PATTERN + '(块)' + '(' + CHI_N + '[角|毛])(' 
 # 数字+汉字单位格式 9300万元  1.2万元  9佰元
 MONEY_PATTERN_5 = r'(\d{1,4}(\.\d{0,4})?' + CHI_U + CURRENCY_CASE + ')'
 
-MONEY_PATTERN = '(' + '|'.join(
+not_money_prefix = '(?<!张)(?<!李)(?<!王)'
+not_money_suffix = '(?!砖)'
+MONEY_PATTERN = not_money_prefix + '(' + '|'.join(
     [MONEY_PATTERN_1, MONEY_PATTERN_2,
-     MONEY_PATTERN_3, MONEY_PATTERN_4, MONEY_PATTERN_5]) + ')'
+     MONEY_PATTERN_3, MONEY_PATTERN_4, MONEY_PATTERN_5]) + ')' + not_money_suffix
 
 # ---------------------------------------------------------------------
 # 中文括号，用于提取括号内容，或删除
@@ -444,7 +446,7 @@ MONEY_PLUS_STRING = r'(至少(要)?|逾|高于|上|(超)?过|超|以上)'
 
 MONEY_NUM_MIDDLE_STRING = r'[,， ]'
 # 用于检测字符串是否有误，直接报错
-MONEY_NUM_STRING = r'^[ \.多个数几百佰k千仟w万萬亿十拾兆〇O0-9零０-９一二两三四五六七八九壹贰俩叁弎仨肆伍陆柒捌玖]+$'
+MONEY_NUM_STRING = r'^[ \.多个数几百佰k千仟w万萬亿十拾兆〇O0-9零０-９一二两三四五六七八九壹弌贰弍俩叁弎仨肆伍陆柒捌玖]+$'
 
 MONEY_KUAI_MAO_JIAO_FEN_STRING = r'[分角毛块]'
 MONEY_PREFIX_CASE_STRING = r'(港币|人民币|(新)?台币)'
@@ -465,7 +467,7 @@ MONEY_CHAR_STRING = r'(?!(余|多|分|角|不|块|〇))' \
                     r'以上|以下|左右|上下|港币|人民币|(新)?台币|(分|角|毛|块|元)钱?|(人民|港|日|澳|(新)?台)币|圆(整)?|英镑|' \
                     r'美(金|分|刀)|马克|法郎|卢布|泰铢|元((人民|港|日|澳|韩|(新)?台)币)?|(美|港|澳门|日|韩|缅|马|新加坡|欧|' \
                     r'加|加拿大|新西兰|澳|澳大利亚)元|(越(南)?)盾|雷亚尔|' \
-                    r'[分角毛块 \.\,\-\~—－～，余多个数几百佰k千仟w万萬亿十拾兆〇O0-9零０-９一二两三四五六七八九壹贰俩叁弎仨肆伍陆柒捌玖\(\)（）不含])+'
+                    r'[分角毛块 \.\,\-\~—－～，余多个数几百佰k千仟w万萬亿十拾兆〇O0-9零０-９一二两三四五六七八九壹弌贰弍俩叁弎仨肆伍陆柒捌玖\(\)（）不含])+'
 
 # MONEY_EXCEPTION_STRING = r'(\d+[\-\~—－～]\d+[\-\~—－～]\d+|)'
 
