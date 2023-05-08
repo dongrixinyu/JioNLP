@@ -245,6 +245,7 @@ def stopwords_loader():
         auto_loads_json=False)
     # 一般漏掉了若干转换符号
     res.extend(['', ' ', '\t'])
+    res = list(set(res))
     return res
 
 
