@@ -4,11 +4,13 @@
 # license: Apache License 2.0
 # Email: dongrixinyu.89@163.com
 # github: https://github.com/dongrixinyu/JioNLP
-# description: Preprocessing tool for Chinese NLP
-
+# description: Preprocessing & Parsing tool for Chinese NLP
+# website: www.jionlp.com
 
 import re
 import traceback
+
+import jiojio
 
 from jionlp.rule.rule_pattern import MONEY_PREFIX_STRING, \
     MONEY_KUAI_MAO_JIAO_FEN_STRING, MONEY_PREFIX_CASE_STRING, \
@@ -25,6 +27,9 @@ class MoneyExtractor(object):
         ret_all(bool): 某些货币金额表达，在大多数情况下并非表达货币金额，如 “几分” 之于 “他有几分不友善”，默认按绝大概率处理，
             即不返回此类伪货币金额表达，该参数默认为 False；若希望返回所有抽取到的货币金额表达，须将该参数置 True。
         print_exception(bool): 对于某些异常的日志选择是否打印，默认不打印
+        use_jiojio(bool): 用于使用分词工具判定金额边界的异常。把货币金额短语当作一个 实体，
+            则，实体的边界应当和分词的边界一致，若不一致说明该金额实体存在异常，如“赔偿李四人民币50元。”
+            其中 “李四” 是人名，所以抽取出 “四人民币” 则是存在异常的，不可以解析成为 “4.00元”。
 
     Returns:
         list(dict): 包含货币金额的列表，其中包括 text、type、offset 三个字段，和工具包中 NER 标准处理格式一致。
@@ -39,6 +44,7 @@ class MoneyExtractor(object):
     """
     def __init__(self):
         self.parse_money = None
+        self.use_jiojio = False  # 用于使用分词工具判定金额边界的异常。
 
     def _prepare(self):
         self.parse_money = MoneyParser()
@@ -68,13 +74,30 @@ class MoneyExtractor(object):
 
         self.print_exception = False
 
-    def __call__(self, text, with_parsing=True, ret_all=False, print_exception=False):
+    def __call__(self, text, with_parsing=True, ret_all=False,
+                 print_exception=False, use_jiojio=False):
+        # init use_jiojio to check the validity of money phrase
+        if self.use_jiojio is False and use_jiojio is True:
+            jiojio.init()
+            self.use_jiojio = True
+        else:
+            self.use_jiojio = use_jiojio
+
         if self.parse_money is None:
             self._prepare()
 
         self.print_exception = print_exception
 
         candidates_list = self.extract_money_candidates(text)
+
+        seg_offset_set = None
+        if self.use_jiojio:
+            seg_res = jiojio.cut(text)
+            seg_offset_set = {0}
+            cur_offset = 0
+            for seg in seg_res:
+                seg_offset_set.add(cur_offset + len(seg))
+                cur_offset += len(seg)
 
         money_entity_list = []
         for candidate in candidates_list:
@@ -92,6 +115,15 @@ class MoneyExtractor(object):
                     if (true_string in self.non_money_string_list) and (not ret_all):
                         bias += offset[1]
                         continue
+
+                    # rule 2: 某些字符串本身可以理解为货币金额，但和上下文产生歧义
+                    # 若金额实体的边界和分词边界产生冲突，则抛弃该实体。
+                    if self.use_jiojio:
+                        entity_offset = [
+                            candidate['offset'][0] + bias + offset[0],
+                            candidate['offset'][0] + bias + offset[1]]
+                        if entity_offset[0] not in seg_offset_set or entity_offset[1] not in seg_offset_set:
+                            continue
 
                     if with_parsing:
                         money_entity_list.append(
