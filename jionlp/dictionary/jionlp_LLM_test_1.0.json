@@ -28,7 +28,7 @@
 {"question_type": "【知识问答】【经济】", "correct_answer": "A", "question": "以下哪个金融工具通常被用于保护投资组合免受市场波动的影响？A、期权B、期货，C、股票，D、债券"}
 {"question_type": "【知识问答】【历史】", "correct_answer": "A", "question": "以下哪位奥斯曼帝国的君主被称为“征服者”？A、穆罕默德二世，B、穆拉德一世，C、塞利姆一世，D、奥斯曼一世"}
 {"question_type": "【知识问答】【历史】", "correct_answer": "A", "question": "二战期间，以下哪个国家没有参战？A、瑞士，B、苏联，C、法国，D、日本"}
-{"question_type": "【知识问答】【编程】", "correct_answer": "B", "question": "Python 解释器的 C api 中，Py_ssize_t 对应 C 的哪种数据类型？A、float \*，B、long int，C、const char，D、char"}
+{"question_type": "【知识问答】【编程】", "correct_answer": "B", "question": "Python 解释器的 C api 中，Py_ssize_t 对应 C 的哪种数据类型？A、float *，B、long int，C、const char，D、char"}
 {"question_type": "【知识问答】【编程】", "correct_answer": "B", "question": "哪种不属于 vue 当中的指令和它的用法？ A、v-if：判断是否隐藏；B、v-property：数据绑定对应属性；C、v-bind\\:class：绑定一个属性；D、v-model：实现双向绑定"}
 {"question_type": "【生活常识】", "correct_answer": "A", "question": "以下哪种食品最容易引起食物中毒？A、生鱼片，B、熟鸡肉，C、煮熟的蔬菜，D、烤面包"}
 {"question_type": "【生活常识】", "correct_answer": "C", "question": "在高速公路上行驶时，以下哪种情况是违法的？A、驾驶员抽烟B、车辆速度达到80km/hC、车辆在应急车道上行驶D、驾驶员频繁鸣笛"}
