@@ -138,13 +138,14 @@ MONEY_PATTERN_1 = r'((\d{1,3}([,，]\d{1,3})*(\.\d{0,2})?)' + CURRENCY_CASE + ')
 # 纯数字格式 340000.0元
 MONEY_PATTERN_2 = r'((\d{1,12}(\.\d{0,2})?)' + CURRENCY_CASE + ')'
 # 中文金额格式 一万二千三百四十五
-CHINESE_MONEY_PATTERN = ''.join(['((((', CHI_N, "?", CHI_U, '{1,2})+', CHI_N, '?)|((', CHI_N, "?", CHI_U, '{1,2})*', CHI_N, '))'])
+CHINESE_MONEY_PATTERN = ''.join(
+    ['((((', CHI_N, "?", CHI_U, '{1,2})+', CHI_N, '?)|((', CHI_N, "?", CHI_U, '{1,2})*', CHI_N, '))'])
 # 正式文本中文金额格式 一万二千三百四十五元
 MONEY_PATTERN_3 = CHINESE_MONEY_PATTERN + CURRENCY_CASE + '(' + CHI_N + '[角|毛])?(' + CHI_N + '分)?)'
 # 口语文本中文金额格式 “三十五块八毛”，但不允许 “三十五块” 或 “三十五块八” 出现：有歧义
 MONEY_PATTERN_4 = CHINESE_MONEY_PATTERN + '(块)' + '(' + CHI_N + '[角|毛])(' + CHI_N + '分)?)'
 # 数字+汉字单位格式 9300万元  1.2万元  9佰元
-MONEY_PATTERN_5 = r'(\d{1,4}(\.\d{0,4})?' + CHI_U + CURRENCY_CASE + ')'
+MONEY_PATTERN_5 = r'(\d{1,4}(\.\d{0,14})?' + CHI_U + CURRENCY_CASE + ')'
 
 # TODO: not_money_predix 此种方式过于 tricky，并不太适用于抽取金额。且有些金额文本具有歧义，
 #  应当给用户自定义窗口，自行控制输入输出

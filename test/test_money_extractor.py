@@ -39,6 +39,8 @@ class TestMoneyExtractor(unittest.TestCase):
              [{'text': '2000余元', 'offset': [22, 28], 'type': 'money'}]],
             ['年末结转和结余10.56亿元。',
              [{'text': '10.56亿元', 'offset': [7, 14], 'type': 'money'}]],
+            ['花费了47.264287亿元简直是太破费了。',
+             [{'text': '47.264287亿元', 'offset': [3, 14], 'type': 'money'}]],
         ]
 
         for item in money_string_list:
