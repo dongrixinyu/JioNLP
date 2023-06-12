@@ -1,2 +1,3 @@
 include jionlp/dictionary/*
+include jionlp/dictionary/jionlp_LLM_test/*
 include jionlp/algorithm/keyphrase/*
