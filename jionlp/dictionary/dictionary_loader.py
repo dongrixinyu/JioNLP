@@ -2,9 +2,9 @@
 # library: jionlp
 # author: dongrixinyu
 # license: Apache License 2.0
-# Email: dongrixinyu.89@163.com
+# email: dongrixinyu.89@163.com
 # github: https://github.com/dongrixinyu/JioNLP
-# description: Preprocessing tool for Chinese NLP
+# description: Preprocessing & Parsing tool for Chinese NLP
 
 
 import os
@@ -571,11 +571,14 @@ def xiehouyu_loader():
     return xiehouyu
 
 
-def llm_test_dataset_loader():
+def llm_test_dataset_loader(version=None):
     """ 加载 llm 评测数据集，满分 100 分，每一条为一条评测题目
     客观题均为选择题，有正确答案，每一道 1 分
     主观题仅有问题，无标准答案。除机器翻译外，每一道 5 分，机器翻译每道 4 分。
     数据集说明参考：https://github.com/dongrixinyu/JioNLP/wiki/LLM%E8%AF%84%E6%B5%8B%E6%95%B0%E6%8D%AE%E9%9B%86
+
+    Args:
+        version: 测试题集的版本号，1.0，1.1 等，默认为 None，即最高版本测试题集。
 
     Examples:
         >>> import jionlp as jio
@@ -583,6 +586,15 @@ def llm_test_dataset_loader():
         >>> print(llm_test[15])
 
     """
-    llm_test = read_file_by_line(os.path.join(GRAND_DIR_PATH, 'dictionary', 'jionlp_LLM_test_1.0.json'))
+    if version is None:
+        version = '1.1'
+
+    logging.info('LLM test dataset version: {}'.format(version))
+
+    llm_test = read_file_by_line(
+        os.path.join(GRAND_DIR_PATH,
+                     'dictionary',
+                     'jionlp_LLM_test',
+                     'jionlp_LLM_test_{}.json'.format(version)))
 
     return llm_test
