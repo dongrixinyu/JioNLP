@@ -2,9 +2,9 @@
 # library: jionlp
 # author: dongrixinyu
 # license: Apache License 2.0
-# Email: dongrixinyu.89@163.com
+# email: dongrixinyu.89@163.com
 # github: https://github.com/dongrixinyu/JioNLP
-# description: Preprocessing tool for Chinese NLP
+# description: Preprocessing & Parsing tool for Chinese NLP
 # website: http://www.jionlp.com
 
 
@@ -141,7 +141,7 @@ class Extractor(object):
             text = self.remove_phone_number(text, delete_prefix=delete_prefix)
 
         return text
-        
+
     def convert_full2half(self, text):
         """ 将全角字符转换为半角字符
         其中分为空格字符和非空格字符
@@ -236,38 +236,6 @@ class Extractor(object):
         text = ''.join(['#', text, '#'])
         return self._extract_base(self.ip_address_pattern, text, 
                                   with_offset=detail)
-
-    def extract_money(self, text, detail=False):
-        """从文本中抽取出金额字符串，可以和 money_standardization 函数配合使用，
-        得到数字金额。（TO BE DEPRECATED.）
-
-        Args:
-            text(str): 字符串文本
-            detail(bool): 返回字符串的详细信息 offset，默认为 False
-
-        Returns:
-            list: 货币金额列表
-
-        Examples:
-            >>> import jionlp as jio
-            >>> money_result = jio.extract_money(
-                    '张三赔偿李四人民币车费601,293.11元，工厂费一万二千三百四十五元,利息9佰日元，打印费十块钱。张三人民币、给王五十元、五十元、人民币、元、两万元、3块钱、3块砖。')
-            >>> print(money_result)
-
-            # ['601,293.11元', '一万二千三百四十五元', '9佰日元', '十块钱', '十元', '五十元', '两万元', '3块钱']
-
-        """
-        if self.money_pattern is None:
-            self.money_pattern = re.compile(MONEY_PATTERN)
-            
-        money_result = []
-        for item in self.money_pattern.finditer(text):
-            if detail:
-                money_result.append({'text': item.group(), 'offset': list(item.span())})
-            else:
-                money_result.append(item.group())
-        
-        return money_result
 
     def extract_phone_number(self, text, detail=False):
         """从文本中抽取出电话号码
@@ -397,19 +365,6 @@ class Extractor(object):
         
         return self._extract_base(self.url_pattern, text, 
                                   with_offset=detail)
-
-    '''
-    def _extract_parentheses(self, text, parentheses=PARENTHESES_PATTERN):
-        # 额外分支 Ghs 提供的方法
-        if self.extract_parentheses_pattern is None or self.parentheses_pattern != parentheses:
-            import regex as reg
-            self.parentheses_pattern = parentheses
-            parentheses_per = zip(self.parentheses_pattern[:-1], self.parentheses_pattern[1:])
-            self.extract_parentheses_pattern = f"(?:{'|'.join('{left}([^{left}{right}]*){right}'.format(left=reg.escape(f), right=reg.escape(e)) for f, e in parentheses_per)})"
-
-        return [{'context': [j for j in i.groups() if j][0], 'offset': i.span(), 'origin': i.group()}
-                for i in reg.compile(self.extract_parentheses_pattern).finditer(text)]
-    '''
 
     def extract_parentheses(self, text, parentheses=PARENTHESES_PATTERN, detail=False):
         """ 提取文本中的括号及括号内内容，当有括号嵌套时，提取每一对

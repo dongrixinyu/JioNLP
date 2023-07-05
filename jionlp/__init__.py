@@ -8,7 +8,7 @@
 # website: www.jionlp.com
 
 
-__version__ = '1.4.41'
+__version__ = '1.5.1'
 
 
 import os
@@ -93,6 +93,7 @@ history = """
 │   | 2022-11-28 | add check_xxx functions                             |   │
 │   | 2023-01-05 | fix parse_money bug & dict loader bug               |   │
 │   | 2023-05-01 | add llm test dataset                                |   │
+│   | 2023-07-05 | add clean html & update to 1.5.*                    |   │
 │                                                                          │
 ╰──────────────────────────────────────────────────────────────────────────╯
 """

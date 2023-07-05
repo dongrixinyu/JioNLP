@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://pepy.tech/badge/jionlp/month" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.4.41-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.5.1-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -20,10 +20,21 @@
 #### &emsp;&emsp; 安装：```pip install jionlp```
 - JioNLP 是一个面向 **NLP 开发者**的工具包，提供 NLP 任务预处理、解析功能，准确、高效、零使用门槛。请下拉本网页，查阅具体功能信息，并按 **Ctrl+F** 进行搜索。[**JioNLP在线版**](http://www.jionlp.com/) 可快速试用部分功能。关注同名**微信公众号** JioNLP 可获取最新的 NLP 资讯，数据资源。
 
-
   - [**ChatGPT面前，JioNLP-工具的价值在何处？**](../../wiki/ChatGPT面前，JioNLP-工具的价值在何处？)
   - [**ChatGPT这么强，会影响NLPer的就业环境吗？**](https://zhuanlan.zhihu.com/p/605673596)
   - [**一文读懂ChatGPT模型原理**](https://zhuanlan.zhihu.com/p/589621442)
+
+
+### 2023-07-03 添加[清洗 html 文本]()
+
+- 对于爬虫 html 格式文本的统一化清洗方法，得到的文本数据可用于语言模型预训练。
+- 当然，由于不同网页 html 文本差异极大，针对特定数据还需要特殊的清洗方法，需要在本方法基础上进一步修正和改进。
+```
+>>> import jionlp as jio
+>>> html_text = '<html><body>....</body></html>'
+>>> res = jio.clean_html(html_text)
+>>> print(res)
+```
 
 
 ### 2023-05-01 添加[大语言模型 LLM 评测数据集](https://github.com/dongrixinyu/JioNLP/wiki/LLM%E8%AF%84%E6%B5%8B%E6%95%B0%E6%8D%AE%E9%9B%86)
@@ -58,41 +69,6 @@
 
 # True
 ```
-
-### 2022-07-02 更新 [时间语义解析](../../wiki/时间语义解析-说明文档#user-content-时间语义解析)
-
-#### jio.parse_time 给定时间字符串，解析其为时间戳、时长等。
-
-``` python
-import time
-import jionlp as jio
-res = jio.parse_time('今年9月', time_base={'year': 2021})
-res = jio.parse_time('零三年元宵节晚上8点半', time_base=time.time())
-res = jio.parse_time('一万个小时')
-res = jio.parse_time('100天之后', time.time())
-res = jio.parse_time('四月十三', lunar_date=False)
-res = jio.parse_time('每周五下午4点', time.time(), period_results_num=2)
-print(res)
-
-# {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-09-01 00:00:00', '2021-09-30 23:59:59']}
-# {'type': 'time_point', 'definition': 'accurate', 'time': ['2003-02-15 20:30:00', '2003-02-15 20:30:59']}
-# {'type': 'time_delta', 'definition': 'accurate', 'time': {'hour': 10000.0}}
-# {'type': 'time_span', 'definition': 'blur', 'time': ['2021-10-22 00:00:00', 'inf']}
-# {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'day': 7}, 
-# {'type': 'time_point', 'definition': 'accurate', 'time': ['2022-04-13 00:00:00', '2022-04-13 23:59:59']}
-#  'point': {'time': [['2021-07-16 16:00:00', '2021-07-16 16:59:59'],
-#                     ['2021-07-23 16:00:00', '2021-07-23 16:59:59']], 'string': '周五下午4点'}}}
-
-```
-
-- 目前支持年月日、时分秒、星期、季节、季度、节日、农历、时间范围、时间段、时间周期、模糊时间代词等解析。
-- 支持对未来时间优先选择，参数为`ret_future(bool)`。
-- [关于**时间语义解析**](../../wiki/时间语义解析-说明文档)
-- 目前支持的所有 [测试用例](../../blob/master/test/test_time_parser.py)
-
-#### 完整示例
-[JioNLP源站-时间抽取与解析](http://www.jionlp.com/jionlp_online/extract_time)
-
 
 ## 安装 Installation
 

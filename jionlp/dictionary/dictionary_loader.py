@@ -589,6 +589,9 @@ def llm_test_dataset_loader(version=None):
     if version is None:
         version = '1.1'
 
+    version_list = ['1.0', '1.1']
+    if version not in version_list:
+        raise ValueError('The given `version` parameter is wrong.')
     logging.info('LLM test dataset version: {}'.format(version))
 
     llm_test = read_file_by_line(
