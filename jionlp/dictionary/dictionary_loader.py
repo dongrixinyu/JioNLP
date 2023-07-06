@@ -9,6 +9,7 @@
 
 import os
 import re
+import json
 import math
 
 from jionlp import logging
@@ -23,7 +24,8 @@ __all__ = ['char_distribution_loader', 'char_radical_loader',
            'china_location_change_loader', 'china_location_loader',
            'chinese_char_dictionary_loader',
            'chinese_idiom_loader', 'chinese_word_dictionary_loader',
-           'idf_loader', 'negative_words_loader',
+           'html_entities_dictionary_loader',
+           'idf_loader', 'llm_test_dataset_loader', 'negative_words_loader',
            'phone_location_loader',
            'pinyin_char_loader', 'pinyin_phrase_loader',
            'pornography_loader',
@@ -601,3 +603,18 @@ def llm_test_dataset_loader(version=None):
                      'jionlp_LLM_test_{}.json'.format(version)))
 
     return llm_test
+
+
+def html_entities_dictionary_loader():
+    """ load html entities dictionary.
+
+    Returns: dict map
+
+    """
+    html_entities_file_path = os.path.join(
+        GRAND_DIR_PATH, 'dictionary', 'html_entities.json')
+
+    with open(html_entities_file_path, 'r', encoding='utf-8') as fw:
+        html_entities_dict = json.load(fw)
+
+    return html_entities_dict

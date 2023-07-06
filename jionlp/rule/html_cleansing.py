@@ -10,6 +10,7 @@
 
 import re
 
+from jionlp.dictionary import html_entities_dictionary_loader
 from .html_rule_pattern import *
 
 
@@ -25,6 +26,8 @@ class CleanHTML(object):
         self.table_tag_pattern = re.compile(TABLE_TAG_PATTERN)
         self.unordered_list_tag_pattern = re.compile(UNORDERED_LIST_TAG_PATTERN)
         self.ordered_list_tag_pattern = re.compile(ORDERED_LIST_TAG_PATTERN)
+        self.footer_tag_pattern = re.compile(FOOTER_TAG_PATTERN)
+        self.navigation_tag_pattern = re.compile(NAVIGATION_TAG_PATTERN)
 
         self.meta_tag_pattern = re.compile(META_TAG_PATTERN)
         self.comment_tag_pattern = re.compile(COMMENT_TAG_PATTERN)
@@ -37,6 +40,14 @@ class CleanHTML(object):
         self.content_attr_pattern = re.compile(CONTENT_ATTR_PATTERN)
 
         self.add_new_line_pattern = re.compile(ADD_NEW_LINE_PATTERN)
+
+        self.html_entities_dict = {}
+        tmp_html_entities_dict = html_entities_dictionary_loader()
+        for key, val in tmp_html_entities_dict.items():
+            self.html_entities_dict.update({key: val['characters']})
+            for num in val['codepoints']:
+                cp_key = '&#{};'.format(num)
+                self.html_entities_dict.update({cp_key: val['characters']})
 
     def __call__(self, orig_html_text):
         """ 清洗 html 爬虫文本，为具有完整语义的正文文本。
@@ -59,6 +70,8 @@ class CleanHTML(object):
         html_text, _ = self.table_tag_pattern.subn('', html_text)
         html_text, _ = self.ordered_list_tag_pattern.subn('', html_text)
         html_text, _ = self.unordered_list_tag_pattern.subn('', html_text)
+        html_text, _ = self.footer_tag_pattern.subn('', html_text)
+        # html_text, _ = self.navigation_tag_pattern.subn('', html_text)
 
         html_text, _ = self.meta_tag_pattern.subn('', html_text)
         html_text, _ = self.comment_tag_pattern.subn('', html_text)
@@ -70,6 +83,11 @@ class CleanHTML(object):
         html_text = self.add_new_line_pattern.sub(r'\n\1', html_text)
 
         content, _ = self.html_tag_pattern.subn('', html_text)
+
+        # 替换 html entity
+        for key, val in self.html_entities_dict.items():
+            content = content.replace(key, val)
+
         # 清除其中多余的 符号。
         content, _ = self.tab_new_line_pattern.subn('\n\n', content)
         print(html_text)
