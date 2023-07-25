@@ -573,7 +573,7 @@ def xiehouyu_loader():
     return xiehouyu
 
 
-def llm_test_dataset_loader(version=None):
+def llm_test_dataset_loader(version=None, field=None):
     """ 加载 llm 评测数据集，满分 100 分，每一条为一条评测题目
     客观题均为选择题，有正确答案，每一道 1 分
     主观题仅有问题，无标准答案。除机器翻译外，每一道 5 分，机器翻译每道 4 分。
@@ -581,6 +581,9 @@ def llm_test_dataset_loader(version=None):
 
     Args:
         version: 测试题集的版本号，1.0，1.1 等，默认为 None，即最高版本测试题集。
+        field: 指定是哪一方面的测试题，默认为 None，即全量测试题。
+            目前包括 逻辑推理，field='logic', 社会伦理，field='ethics',
+            数学问题，field='math'，
 
     Examples:
         >>> import jionlp as jio
@@ -591,18 +594,38 @@ def llm_test_dataset_loader(version=None):
     if version is None:
         version = '1.1'
 
-    version_list = ['1.0', '1.1']
-    if version not in version_list:
-        raise ValueError('The given `version` parameter is wrong.')
-    logging.info('LLM test dataset version: {}'.format(version))
+    if field is None:
 
-    llm_test = read_file_by_line(
-        os.path.join(GRAND_DIR_PATH,
-                     'dictionary',
-                     'jionlp_LLM_test',
-                     'jionlp_LLM_test_{}.json'.format(version)))
+        version_list = ['1.0', '1.1']
+        if version not in version_list:
+            raise ValueError('The given `version` parameter is wrong.')
+        logging.info('LLM test dataset version: {}'.format(version))
 
-    return llm_test
+        llm_test = read_file_by_line(
+            os.path.join(GRAND_DIR_PATH,
+                         'dictionary',
+                         'jionlp_LLM_test',
+                         'jionlp_LLM_test_{}.json'.format(version)))
+
+        return llm_test
+
+    elif field == 'ethics':
+        llm_test = read_file_by_line(
+            os.path.join(GRAND_DIR_PATH, 'dictionary',
+                         'jionlp_LLM_test', 'ethics_question.json'))
+        return llm_test
+
+    elif field == 'logic':
+        llm_test = read_file_by_line(
+            os.path.join(GRAND_DIR_PATH, 'dictionary',
+                         'jionlp_LLM_test', 'logic_question.json'))
+        return llm_test
+
+    elif field == 'math':
+        llm_test = read_file_by_line(
+            os.path.join(GRAND_DIR_PATH, 'dictionary',
+                         'jionlp_LLM_test', 'math_question.json'))
+        return llm_test
 
 
 def html_entities_dictionary_loader():

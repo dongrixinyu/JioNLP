@@ -9,7 +9,7 @@
 {"score": 1, "question_type": "【知识问答】【电力】", "correct_answer": "A", "question": "光伏发电系统中，下列哪种元器件可以将直流电转换为交流电？A. 逆变器，B. 变压器，C. 整流器，D. 电容器"}
 {"score": 1, "question_type": "【知识问答】【电力】", "correct_answer": "D", "question": "在三相交流电路中，下列哪个参数可以用来计算电路的功率因数？A. 电压，B. 电流，C. 电阻，D. 相位角"}
 {"score": 1, "question_type": "【知识问答】【数学】", "correct_answer": "A", "question": "假设 A,B 为 n阶矩阵，记r(X)为矩阵 X 的秩，(X,Y)表示分块矩阵，则（）\n在求解的过程中，要给出推理过程，一步一步进行推导。\nA. r(A,AB)=r(A)\nB. r(A,BA)=r(A)\nC. r(A,B)=max{r(A),r(B)}\nD. r(A,B)=r(A^T,B^T)"}
-{"score": 1, "question_type": "【知识问答】【数学】", "correct_answer": "D", "question": "如果a+b=5，a-b=3，那么a的值是多少？A. 1，B. 2，C. 3，D. 4"}
+{"score": 1, "question_type": "【知识问答】【数学】", "correct_answer": "D", "question": "如果a+b=5，a-b=3，那么a的值是多少？在求解过程中，要根据方程求解方法，一步一步进行推导。\nA. 1，B. 2，C. 3，D. 4"}
 {"score": 1, "question_type": "【知识问答】【物理】", "correct_answer": "D", "question": "一个物体在水中静止，它的浮力大小等于：A. 物体的重量，B. 物体的体积，C.物体在水中排开的水的体积，D. 物体在水中排开的水的重量"}
 {"score": 1, "question_type": "【知识问答】【物理】", "correct_answer": "B", "question": "在一个星系中，有两个质量相等的恒星，它们的距离为10光年。如果它们的引力相互作用，那么它们之间的引力大小是多少？\n\n在求解的过程中，要给出推理过程，一步一步进行计算求解。\n\nA. 1.5 x 10^28 N，B. 3.0 x 10^28 N，C. 4.5 x 10^28 N，D. 6.0 x 10^28 N"}
 {"score": 1, "question_type": "【知识问答】【化学】", "correct_answer": "A", "question": "若室温时，pH=b的氨水与 pH=a 的盐酸等体积混合，恰好完全反应，则该氨水的电高度可表示为：\n在求解的过程中，要给出推理过程，一步一步进行推导。\n\nA. 10^{a+b-12}%， B. 10^{a+b-14}%， C. 10^{12-a-b}%， D. 10^{14-a-b}%"}

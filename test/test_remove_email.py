@@ -14,6 +14,8 @@ class TestRemoveEmail(unittest.TestCase):
         email_text_list = [
             ['Beihang University E-mail 给她打电话啊 Email:  dongrixinyu.89@163.com ， 中国ffewfqr23.f@gmail.com。',
              'Beihang University E-mail 给她打电话啊  ， 中国。'],
+            ['xxx@xxx.COM.................................................',
+             '.................................................'],
         ]
 
         for item in email_text_list:

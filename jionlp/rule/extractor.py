@@ -447,12 +447,12 @@ class Extractor(object):
             self.email_pattern = re.compile(EMAIL_PATTERN)
             self.email_prefix_pattern = re.compile(EMAIL_PREFIX_PATTERN, re.I)
 
-        text = ''.join(['#', text, '#'])
+        text = ''.join(['龥', text, '龥'])
         if not delete_prefix:
             text = self.email_pattern.sub('', text)
             return text[1:-1]
-        else:
 
+        else:
             results = self._extract_base(self.email_pattern, text, with_offset=True)
             prefix_results = self._extract_base(self.email_prefix_pattern, text, with_offset=True)
 

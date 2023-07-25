@@ -2,9 +2,9 @@
 # library: jionlp
 # author: dongrixinyu
 # license: Apache License 2.0
-# Email: dongrixinyu.89@163.com
+# email: dongrixinyu.89@163.com
 # github: https://github.com/dongrixinyu/JioNLP
-# description: Preprocessing tool for Chinese NLP
+# description: Preprocessing & Parsing tool for Chinese NLP
 
 
 from jionlp.util.funcs import absence
@@ -37,9 +37,12 @@ LANDLINE_PHONE_AREA_CODE_PATTERN = r'(0\d{2,3})[\)） —-]'
 # ---------------------------------------------------------------------
 # 电子邮箱
 # 邮箱中，允许中文等字符存在。但是，中文字符、#、* 会对结果造成较大干扰故忽略
-EMAIL_PATTERN = r'(?<=[^0-9a-zA-Z.\-])' \
-                r'([a-zA-Z0-9_.-]+@[a-zA-Z0-9_.-]+(?:\.[a-zA-Z0-9_.-]+)*\.[a-zA-Z0-9]{2,6})' \
-                r'(?=[^0-9a-zA-Z.\-])'
+#  - 大写和小写拉丁字母A到Z和a到z
+#  - 数字0到9
+#  - 特殊字符!#$%&'*+-/=?^_`{|}~
+EMAIL_PATTERN = r'(?<=[^0-9a-zA-Z\!\#\$\%\&\'\*\+\-\/\=\?\^\_\`\{\|\}\~\-])' \
+                r'([a-zA-Z0-9_.-]+@[a-zA-Z0-9_.-]+(?:\.[a-zA-Z0-9]+)*\.[a-zA-Z0-9]{2,6})' \
+                r'(?=[^0-9a-zA-Z\!\#\$\%\&\'\*\+\-\/\=\?\^\_\`\{\|\}\~\-])'
 # 抽取邮箱的域名
 EMAIL_DOMAIN_PATTERN = r'(?<=@)([0-9a-zA-Z]+)(?=\.)'
 
