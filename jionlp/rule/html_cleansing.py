@@ -9,6 +9,7 @@
 
 
 import re
+import html
 
 from jionlp.dictionary import html_entities_dictionary_loader
 from .html_rule_pattern import *
@@ -39,9 +40,9 @@ class CleanHTML(object):
 
         self.div_attr_remove_list = [
             'menu', 'nav',
-            'header', 'footer',
-            'archive', 'bloglist', 'blog-list',
-            'sidebar', 'side-bar',
+            'header', 'footer', 'after-content',
+            'archive', 'bloglist', 'blog-list', 'catalog',
+            'sidebar', 'side-bar', 'side-content',
             'cookie']
 
         self.html_tag_pattern = re.compile(HTML_TAG_PATTERN)
@@ -61,6 +62,8 @@ class CleanHTML(object):
             for num in val['codepoints']:
                 cp_key = '&#{};'.format(num)
                 self.html_entities_dict.update({cp_key: val['characters']})
+        self.html_entities_dict = dict(sorted(
+            self.html_entities_dict.items(), reverse=True))
 
     def __call__(self, orig_html_text):
         """ 清洗 html 爬虫文本，为具有完整语义的正文文本。
@@ -108,8 +111,7 @@ class CleanHTML(object):
         content, _ = self.html_tag_pattern.subn('', html_text)
 
         # 替换 html entity
-        for key, val in self.html_entities_dict.items():
-            content = content.replace(key, val)
+        content = html.unescape(content)
 
         # 清除其中多余的 符号。
         # content, _ = self.tab_new_line_pattern.subn('\n\n', content)
