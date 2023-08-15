@@ -41,7 +41,7 @@ HTML_TAG_STRICT_PATTERN = \
     '</([a-z]{1,8}|[A-Z]{1,8}|h[1-6])>|' \
     '<![endif]-->)'
 
-HTML_TAG_PATTERN = '<(.|\n)*?>'
+HTML_TAG_PATTERN = '</?[^<>\u4E00-\u9FA5，。；！？、“”‘’（）—《》…●\d/][^<>]*>'
 
 ADD_NEW_LINE_PATTERN = r'(</p>|</h1>|</h2>|</h3>|</h4>|</h5>)'
 
