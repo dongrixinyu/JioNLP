@@ -612,19 +612,19 @@ def llm_test_dataset_loader(version=None, field=None):
     elif field == 'ethics':
         llm_test = read_file_by_line(
             os.path.join(GRAND_DIR_PATH, 'dictionary',
-                         'jionlp_LLM_test', 'ethics_question.json'))
+                         'jionlp_LLM_test', 'jionlp_ethics_question.json'))
         return llm_test
 
     elif field == 'logic':
         llm_test = read_file_by_line(
             os.path.join(GRAND_DIR_PATH, 'dictionary',
-                         'jionlp_LLM_test', 'logic_question.json'))
+                         'jionlp_LLM_test', 'jionlp_logic_question.json'))
         return llm_test
 
     elif field == 'math':
         llm_test = read_file_by_line(
             os.path.join(GRAND_DIR_PATH, 'dictionary',
-                         'jionlp_LLM_test', 'math_question.json'))
+                         'jionlp_LLM_test', 'jionlp_math_question.json'))
         return llm_test
 
 

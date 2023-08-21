@@ -16,6 +16,8 @@ from jionlp.util.funcs import absence
 DIV_TAG_START_PATTERN = '(<(div|DIV)[^<>]*>)'
 DIV_TAG_END_PATTERN = '(</(div|DIV)>)'
 
+PARAGRAPH_TAG_PATTERN = '(<p(>|\s(.|\n)*?>)(.|\n)*?</p>|<P(>|\s(.|\n)*?>)(.|\n)*?</P>)'
+
 
 SCRIPT_TAG_PATTERN = '(<script(.|\n)*?>(.|\n)*?</script>|<SCRIPT(.|\n)*?>(.|\n)*?</SCRIPT>)'
 STYLE_TAG_PATTERN = '(<style(.|\n)*?>(.|\n)*?</style>|<STYLE(.|\n)*?>(.|\n)*?</STYLE>)'

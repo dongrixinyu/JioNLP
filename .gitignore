@@ -3,6 +3,7 @@ __pycache__/
 .idea/
 *.py[cod]
 *$py.class
+math_question/
 
 china_location.txt
 chinese_char_dictionary.txt
