@@ -14,7 +14,7 @@ from jionlp.util.funcs import absence
 # 手机号码
 CELL_PHONE_PATTERN = r'(?<=[^\d])(((\+86)?([- ])?)?((1[3-9][0-9]))([- ])?\d{4}([- ])?\d{4})(?=[^\d])'
 # 该规则用于抽取与判定手机号的归属地，即抽取前三位、中间4位
-CELL_PHONE_CHECK_PATTERN = r'((1[3-9][0-9]))([- ])?\d{4}([- ])?\d{4}'
+CELL_PHONE_CHECK_PATTERN = r'(?<=[^\d])(((1[3-9][0-9]))([- ])?\d{4}([- ])?\d{4})'
 
 # 手机|电话 号码前缀，例如：`Tel: 18902437922`，用于删除前缀
 PHONE_PREFIX_PATTERN = r'((tel(ephone)?|cell(phone)?|phone|' \
