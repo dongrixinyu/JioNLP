@@ -26,6 +26,8 @@ class TestTimeExtractor(unittest.TestCase):
             ['根据财税2016 36号文', [{'text': '2016', 'offset': [4, 8], 'type': 'time_span'}]],
             ['他在10月22出生', [{'text': '10月22', 'offset': [2, 7], 'type': 'time_point'}]],
             ['1月3至2月10', [{'text': '1月3至2月10', 'offset': [0, 8], 'type': 'time_span'}]],
+            ['二十一', []],
+            ['二十七点三', []],
         ]
 
         for item in text_string_list:

@@ -84,7 +84,7 @@ class TimeExtractor(object):
             '一点', '0时', '一日', '黎明', '十分', '百分', '万分']
         # 一点也不大方、一日之计在于晨、黎明主演电影、
 
-        self.num_pattern = re.compile(r'[０-９0-9]')
+        self.num_pattern = re.compile(r'[０-９0-9一二三四五六七八九十百千万]')
         self.four_num_year_pattern = re.compile(r'^[\d]{4}$')
         self.unit_pattern = re.compile(r'(多)?[万亿元]')  # 四数字后接单位，说明非年份
 
