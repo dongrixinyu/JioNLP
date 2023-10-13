@@ -165,7 +165,7 @@ class Extractor(object):
         if self.email_pattern is None:
             self.email_pattern = re.compile(EMAIL_PATTERN)
             
-        text = ''.join(['#', text, '#'])
+        text = ''.join(['龥', text, '龥'])
         results = self._extract_base(self.email_pattern, text, 
                                      with_offset=detail)
         if not detail:
