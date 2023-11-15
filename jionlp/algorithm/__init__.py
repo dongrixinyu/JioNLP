@@ -17,3 +17,4 @@ from . import summary
 from . import text_classification
 from . import new_word
 from . import bpe
+from . import mellm
