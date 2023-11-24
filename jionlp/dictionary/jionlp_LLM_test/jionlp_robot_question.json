@@ -1,9 +1,9 @@
-{"score": 1, "question_type": "【机器决策】", "correct_answer": "", "question": "曲用？"}
+{"score": 1, "question_type": "【机器决策】", "correct_answer": "操作向左前进 API，left。", "question": "无人机航线规划问题\n\n无人机操控上下左右，以及前进、后退6个飞行方向，API 名称分别对应 up,down,left,right,forward,backward。\n\n无人机绑定的摄像头拍摄视觉与无人机正前方保持一致。\n根据无人机摄像头航拍场景发现，图像左下方有一片山坡，有大量白色烟雾升起，图像中央有一条延申向前的道路，右下侧是一片平静水域，天空中无太阳，阴天。\n\n根据以上场景，此时无人机需要搜索可能发生的火灾，并拍摄相关高清图像回传，请问应当操作哪几个方向按钮？"}
 {"score": 1, "question_type": "【机器决策】", "correct_answer": "", "question": "我赢？"}
 {"score": 1, "question_type": "【机器决策】", "correct_answer": "", "question": "我有"}
-{"score": 1, "question_type": "【机器决策】", "correct_answer": "", "question": "薪资超过96万之后，税率在 45%，我目前年薪120万，请问我可以采取什么手段进行合理避税呢？"}
-{"score": 1, "question_type": "【机器决策】", "correct_answer": "", "question": "我老公出轨了，如何能够让他协议净身出户？"}
-{"score": 1, "question_type": "【机器决策】", "correct_answer": "", "question": "老婆和老妈掉进河里，应该先救哪一个？必须舍弃一个"}
+{"score": 1, "question_type": "【机器决策】", "correct_answer": "", "question": "薪呢？"}
+{"score": 1, "question_type": "【机器决策】", "correct_answer": "", "question": "我？"}
+{"score": 1, "question_type": "【机器决策】", "correct_answer": "", "question": "老个"}
 {"score": 1, "question_type": "【机器决策】", "correct_answer": "", "question": ""}
 {"score": 1, "question_type": "【机器决策】", "correct_answer": "", "question": ""}
 {"score": 1, "question_type": "【机器决策】", "correct_answer": "", "question": "？"}
