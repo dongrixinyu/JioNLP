@@ -1,6 +1,6 @@
 {"score": 1, "question_type": "【编程问题】", "correct_answer": "优先执行->，然后再执行&取址运算", "question": "在C语言语句 &zlm->pts->timestamp 中，是先执行 & 操作，还是先执行 -> 操作？"}
 {"score": 1, "question_type": "【编程问题】", "correct_answer": "没有区别", "question": "在C语言代码中，以下两段代码是否有执行结果、内存管理方面的区别：\n\n第一段代码：\nconst char *homeDir;\nstruct passwd *pw = getpwuid(getuid());\nhomeDir = pw->pw_dir;\n\n第二段代码：\nconst char *homeDir = getpwuid(getuid())->pw_dir;\n"}
-{"score": 1, "question_type": "【编程问题】", "correct_answer": "是一个i nt 字段，每一位都代表一个开关，控制一些功能，控制字段统一命名为 AV_CODEC_FLAG*，大概有三十几个控制项，因为 int 类型有4个字节，32位，答案中列出越多越好", "question": "FFmpeg 中 AVCodecContext 结构体中的 flags 属性代表什么含义呢？"}
+{"score": 1, "question_type": "【编程问题】", "correct_answer": "是一个int 字段，每一位都代表一个开关，控制一些功能，控制字段统一命名为 AV_CODEC_FLAG*，大概有三十几个控制项，因为 int 类型有4个字节，32位，答案中列出越多越好", "question": "FFmpeg 中 AVCodecContext 结构体中的 flags 属性代表什么含义呢？"}
 {"score": 1, "question_type": "【编程问题】", "correct_answer": "\"松岛枫种子\" 是一个包含五个Unicode字符编码的HTML实体编码（HTML entity encoding）。给出答案越详尽越好", "question": "&#26494;&#23707;&#26539;&#31181;&#23376; 是什么意思，什么编码？"}
 {"score": 1, "question_type": "【编程问题】", "correct_answer": "C", "question": "Python 解释器的 C api 中，Py_ssize_t 对应 C 的哪种数据类型？\n\nA、int *，B、int，C、long int，D、short"}
 {"score": 1, "question_type": "【编程问题】", "correct_answer": "无标准答案，但一定要用到 base64 库，以下代码可以成功转换：\n\n```import base64\nbase64_code = \"VER30QHI30JFOIAIO3020085723F\"  # this is just an example\n\nimg_data = base64_code.encode()\ncontent = base64.b64decode(img_data)\n", "question": "Python 如何把图像从 Base64 转为 bytes？"}
