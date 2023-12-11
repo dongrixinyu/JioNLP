@@ -151,6 +151,7 @@ class MELLM(object):
         self.self_grading = self_grading
         self.stop_criteria = stop_criteria
         self.max_epoch = max_epoch
+        self.average_score_granularity = 4  # or 2
 
     def answer_questions(self):
         """let llm answer questions from the given exam.
@@ -275,7 +276,19 @@ class MELLM(object):
                 for idx, _ in enumerate(self.exam_questions):
                     self.grading_matrix[llm][_llm][idx] = self.llm_answers_to_norm_grades[llm][_llm][idx]
 
-    def run(self, grading_matrix):
+    def run(self, grading_matrix, grading_error_count):
+        """
+
+        Args:
+            grading_matrix: numpy ndarray with shape like (len(llm_names), len(llm_names), len(exam_questions))
+            grading_error_count: this is a table counting how many times of error grading response of each model
+                e.g. model llama2 told me it can not give a correct grading score to one question.
+                    model ernie told me it graded a response of 11 score but the maximum score of this question is 3.
+                All these cases mean llm grade wrongly, thus causing `grading_error_count` increasing.
+
+        Returns:
+
+        """
         self.grading_matrix = grading_matrix
 
         epoch_num = 0
@@ -292,7 +305,10 @@ class MELLM(object):
                     average_result = self.grading_matrix[:, _idx_llm, idx_question]
                     average_result = np.dot(self.weight_matrix, average_result)
                     # this may be changed
-                    average_result = round(average_result * 2) / 2
+                    # for round(average_result * 2) / 2,
+                    # if you set to 2, then the scores will be with granularity of 0.5
+                    # if you set to 4, then the granularity will be 0.25
+                    average_result = round(average_result * self.average_score_granularity) / self.average_score_granularity
                     self.llm_average_scores[_idx_llm][idx_question] = average_result
 
             # compute total_score
@@ -303,10 +319,13 @@ class MELLM(object):
             for idx_llm in range(self.llm_num):
                 diff = self.grading_matrix[idx_llm] - self.llm_average_scores
 
-                self.llm_variance[idx_llm] = (diff * diff).sum()
+                variance = (diff * diff).sum()
+                variance = variance / (1 - grading_error_count[idx_llm] / (self.question_num * self.llm_num))
+                self.llm_variance[idx_llm] = variance
 
-            # update weight
+                # update weight
             weight_matrix_1 = (1 / self.llm_variance) / (1 / self.llm_variance).sum()
+            print(weight_matrix_1)
             # the llm with poorest performance does not grade other models.
             weight_matrix_2 = self.total_score - self.total_score.min()
             weight_matrix_2 = weight_matrix_2 / weight_matrix_2.sum()
@@ -324,7 +343,7 @@ class MELLM(object):
             logging.info('\t{:<20s}{:<5s}\t{:s}'.format(
                 'MODEL_NAME', 'SCORE', 'WEIGHT'))
             for idx, llm in enumerate(self.llm_names):
-                logging.info('\t{:<20s}{:.1f}\t{:.3f}'.format(
+                logging.info('\t{:<20s}{:.1f}\t{:>6.1%}'.format(
                     llm, self.total_score[idx], self.weight_matrix[idx]))
 
             print()
