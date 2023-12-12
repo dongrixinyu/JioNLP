@@ -27,10 +27,11 @@
 
 ### 2023-12-12 Add [MELLM](https://zhuanlan.zhihu.com/p/666001842)
 
-- **MELLM**, short for **Mutual Evaluation of Large Language Models**, is an automatic evaluation algorithm of LLMs without human supervision.    
-- MELLM has been tested effectively on several LLMs and datasets [test results and analysis](https://zhuanlan.zhihu.com/p/671636095). You can use the code below to take a try. 
+- **MELLM**, short for **Mutual Evaluation of Large Language Models**, is an automatic evaluation algorithm of LLMs without human supervision. MELLM has been tested effectively on several LLMs and datasets [test results and analysis](https://zhuanlan.zhihu.com/p/671636095). You can use the code below to take a try. 
 
-- you can use the example to do your test. If you encounter any error, read the [test_mellm.py](https://github.com/dongrixinyu/JioNLP/blob/master/test/test_mellm.py) to download `*.json` file.
+- you can use the example to do your test. 
+- before running this code, you should download `norm_score.json` and `max_score.json` from [test data](https://pan.baidu.com/s/18Ufx51v05gyVkBoCo8fupw) with password `jmbo`.
+- If you encounter any error, read the [test_mellm.py](https://github.com/dongrixinyu/JioNLP/blob/master/test/test_mellm.py) to download `*.json` file.
 ```
 $ git clone https://github.com/dongrixinyu/JioNLP
 $ cd JioNLP/test/
