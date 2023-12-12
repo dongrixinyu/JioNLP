@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://pepy.tech/badge/jionlp/month" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.5.5-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.5.6-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -25,15 +25,16 @@
   - [**一文读懂ChatGPT模型原理**](https://zhuanlan.zhihu.com/p/589621442)
 
 
-### 2023-07-03 添加[清洗 html 文本]()
+### 2023-12-12 Add [MELLM](https://zhuanlan.zhihu.com/p/666001842)
 
-- 对于爬虫 html 格式文本的统一化清洗方法，得到的文本数据可用于语言模型预训练。
-- 当然，由于不同网页 html 文本差异极大，针对特定数据还需要特殊的清洗方法，需要在本方法基础上进一步修正和改进。
+- MELLM, short for Mutual Evaluation of Large Language Models, is an automatic evaluation algorithm without human supervision.    
+- MELLM has been tested effectively on several LLMs and datasets. You can use the code below to take a try. 
+
+- you can use the example to do your test. If you encounter any error, read the [test_mellm.py](https://github.com/dongrixinyu/JioNLP/master/test/test_mellm.py) to download `*.json` file.
 ```
->>> import jionlp as jio
->>> html_text = '<html><body>....</body></html>'
->>> res = jio.clean_html(html_text)
->>> print(res)
+$ git clone https://github.com/dongrixinyu/JioNLP
+$ cd JioNLP/test/
+$ python test_mellm.py
 ```
 
 
