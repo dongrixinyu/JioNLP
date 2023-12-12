@@ -27,9 +27,7 @@
 
 ### 2023-12-12 Add [MELLM](https://zhuanlan.zhihu.com/p/666001842)
 
-- **MELLM**, short for **Mutual Evaluation of Large Language Models**, is an automatic evaluation algorithm of LLMs without human supervision. MELLM has been tested effectively on several LLMs and datasets [test results and analysis](https://zhuanlan.zhihu.com/p/671636095). You can use the code below to take a try. 
-
-- you can use the example to do your test. 
+- **MELLM**, short for **Mutual Evaluation of Large Language Models**, is an automatic evaluation algorithm of LLMs without human supervision. MELLM has been tested effectively on several LLMs and datasets [test results and analysis](https://zhuanlan.zhihu.com/p/671636095). You can use the example code below to take a try. 
 - before running this code, you should download `norm_score.json` and `max_score.json` from [test data](https://pan.baidu.com/s/18Ufx51v05gyVkBoCo8fupw) with password `jmbo`.
 - If you encounter any error, read the [test_mellm.py](https://github.com/dongrixinyu/JioNLP/blob/master/test/test_mellm.py) to download `*.json` file.
 ```
@@ -39,13 +37,15 @@ $ python test_mellm.py
 ```
 
 
-### 2023-06-022 添加[大语言模型 LLM 评测数据集](https://github.com/dongrixinyu/JioNLP/wiki/LLM%E8%AF%84%E6%B5%8B%E6%95%B0%E6%8D%AE%E9%9B%86)
+### 2023-06-22 添加[大语言模型 LLM 评测数据集](https://github.com/dongrixinyu/JioNLP/wiki/LLM%E8%AF%84%E6%B5%8B%E6%95%B0%E6%8D%AE%E9%9B%86)
 - JioNLP 提供了一套 LLM 的测试数据集，并应用 MELLM 算法完成了自动评测。
 - **评测结果**可关注**公众号JioNLP**，查阅具体各家评测截图pdf。
 ```
 >>> import jionlp as jio
->>> llm_test = jio.llm_test_dataset_loader()
+>>> llm_test = jio.llm_test_dataset_loader(version='1.1')
 >>> print(llm_test[15])
+>>> llm_test = jio.llm_test_dataset_loader(field='math')
+>>> print(llm_test[5])
 ```
 
 ### 2022-11-28 更新 [**正则判断类函数族**](../../wiki/正则判断类说明文档)
