@@ -88,7 +88,7 @@ The highest score is {score}, grading granularity is 0.5:
 
 """
 
-NORMALIZE_GRADING_CHINESE_PROMPT_SCORING = """我将给你一段评委老师对一个考生所回答问题的评价：
+NORMALIZE_GRADING_CHINESE_PROMPT_SCORING = """我将给你一段文字，是一个评委老师对一个考生所回答问题的评价：
 
 ```
 {grading_result}

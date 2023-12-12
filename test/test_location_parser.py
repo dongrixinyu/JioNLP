@@ -21,6 +21,11 @@ class TestLocationParser(unittest.TestCase):
               'detail': '小水街222号', 'full_location': '湖北省襄阳市小水街222号',
               'orig_location': '湖北省襄樊市小水街222号'}
              ],
+            ['老河口市天气', True, True,
+             {'province': '湖北省', 'city': '襄阳市', 'county': '老河口市',
+              'detail': '天气', 'full_location': '湖北省襄阳市老河口市天气',
+              'orig_location': '老河口市天气', 'town': None, 'village': None}
+             ],
             ['河北区', True, True,
              {'province': '天津市', 'city': '天津市', 'county': '河北区',
               'detail': '', 'full_location': '天津市河北区',
