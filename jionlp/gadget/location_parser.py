@@ -459,11 +459,8 @@ class LocationParser(object):
 
 
 if __name__ == '__main__':
-    import json
-    
     lp = LocationParser()
     loc = '成都是西部大开发先锋城市。'
     res = lp(loc)
-    print(json.dumps(res, ensure_ascii=False, 
-                     indent=4, separators=(',', ':')))
+    print(res)
 
