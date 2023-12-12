@@ -312,6 +312,7 @@ class LocationParser(object):
 
         # step 3: 去除重复地名
         # step 3.1: 某些地名会同时匹配到老地名和新地名，此时需要保留新地名，去除旧地名
+        # 该情况下，不需要考虑 change2new 参数，直接合入新地址
         new_candidate_admin_list = []
         for item in candidate_admin_list:
             if item[0] == '000000':
