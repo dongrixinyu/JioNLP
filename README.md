@@ -27,10 +27,10 @@
 
 ### 2023-12-12 Add [MELLM](https://zhuanlan.zhihu.com/p/666001842)
 
-- MELLM, short for Mutual Evaluation of Large Language Models, is an automatic evaluation algorithm without human supervision.    
-- MELLM has been tested effectively on several LLMs and datasets. You can use the code below to take a try. 
+- **MELLM**, short for **Mutual Evaluation of Large Language Models**, is an automatic evaluation algorithm of LLMs without human supervision.    
+- MELLM has been tested effectively on several LLMs and datasets [test results and analysis](https://zhuanlan.zhihu.com/p/671636095). You can use the code below to take a try. 
 
-- you can use the example to do your test. If you encounter any error, read the [test_mellm.py](https://github.com/dongrixinyu/JioNLP/master/test/test_mellm.py) to download `*.json` file.
+- you can use the example to do your test. If you encounter any error, read the [test_mellm.py](https://github.com/dongrixinyu/JioNLP/blob/master/test/test_mellm.py) to download `*.json` file.
 ```
 $ git clone https://github.com/dongrixinyu/JioNLP
 $ cd JioNLP/test/
@@ -38,26 +38,13 @@ $ python test_mellm.py
 ```
 
 
-### 2023-05-01 添加[大语言模型 LLM 评测数据集](https://github.com/dongrixinyu/JioNLP/wiki/LLM%E8%AF%84%E6%B5%8B%E6%95%B0%E6%8D%AE%E9%9B%86)
-- LLM 各个厂家都在做自研，都声称对标 ChatGPT，那就出一份数据集，测试一下各家模型效果究竟如何？
-- 主要针对中文，覆盖语言模型能力的各个方面。
+### 2023-06-022 添加[大语言模型 LLM 评测数据集](https://github.com/dongrixinyu/JioNLP/wiki/LLM%E8%AF%84%E6%B5%8B%E6%95%B0%E6%8D%AE%E9%9B%86)
+- JioNLP 提供了一套 LLM 的测试数据集，并应用 MELLM 算法完成了自动评测。
 - **评测结果**可关注**公众号JioNLP**，查阅具体各家评测截图pdf。
 ```
 >>> import jionlp as jio
 >>> llm_test = jio.llm_test_dataset_loader()
 >>> print(llm_test[15])
-```
-
-### 2023-02-21 添加 Byte-level BPE 算法[**Byte-level BPE**](../../wiki/BPE算法说明文档)
-
-- 基于字节的 BPE 算法，适用于多语言token编码，目前仅实现了 Byte-level BPE 算法中 Byte-level 部分
-```
->>> import jionlp as jio
->>> res = jio.bpe.byte_level_bpe.encode('メトロ')
->>> res = jio.bpe.byte_level_bpe.decode('ãĥ¡ãĥĪdsãĥŃ')
-# 'メトdsロ'
->>> res = jio.bpe.byte_level_bpe.decode('ãĥ¡ãĥĪãdsĥŃ')
-# 'メト�ds��'
 ```
 
 ### 2022-11-28 更新 [**正则判断类函数族**](../../wiki/正则判断类说明文档)
