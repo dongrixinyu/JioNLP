@@ -327,10 +327,11 @@ class LocationParser(object):
 
                     has_new_loc_flag = False
                     for _item in candidate_admin_list:
-                        if new_loc[0] == _item[1][0] and new_loc[1] == _item[2][0] and new_loc[2] == _item[3][0]:
-                            # 说明候选地址集里已有新地址，删除旧地址
-                            has_new_loc_flag = True
-                            break
+                        if _item[0] != '000000':
+                            if new_loc[0] == _item[1][0] and new_loc[1] == _item[2][0] and new_loc[2] == _item[3][0]:
+                                # 说明候选地址集里已有新地址，删除旧地址
+                                has_new_loc_flag = True
+                                break
                     if not has_new_loc_flag:
                         new_candidate_admin_list.append(item)
 
