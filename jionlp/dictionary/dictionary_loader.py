@@ -626,7 +626,11 @@ def llm_test_dataset_loader(version=None, field=None):
             os.path.join(GRAND_DIR_PATH, 'dictionary',
                          'jionlp_LLM_test', 'jionlp_math_question.json'))
         return llm_test
-
+    elif field == 'coding':
+        llm_test = read_file_by_line(
+            os.path.join(GRAND_DIR_PATH, 'dictionary',
+                         'jionlp_LLM_test', 'jionlp_coding_question.json'))
+        return llm_test
 
 def html_entities_dictionary_loader():
     """ load html entities dictionary.
