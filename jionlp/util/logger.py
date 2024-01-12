@@ -2,10 +2,10 @@
 # library: jionlp
 # author: dongrixinyu
 # license: Apache License 2.0
-# Email: dongrixinyu.89@163.com
+# email: dongrixinyu.89@163.com
 # github: https://github.com/dongrixinyu/JioNLP
-# description: Preprocessing tool for Chinese NLP
-# website: www.jionlp.com/
+# description: Preprocessing & Parsing tool for Chinese NLP
+# website: www.jionlp.com
 
 
 import os
@@ -41,7 +41,7 @@ def _refresh_logger(logger):
     return logger
 
 
-def set_logger(level='INFO', log_dir_name='.jionlp_logs'):
+def set_logger(level='INFO', log_dir_name='.cache/jionlp_logs'):
     """ jionlp 日志打印
 
     Args:

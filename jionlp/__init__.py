@@ -95,6 +95,7 @@ history = """
 │   | 2023-05-01 | add llm test dataset                                |   │
 │   | 2023-07-05 | add clean html & update to 1.5.*                    |   │
 │   | 2023-12-12 | add MELLM algorithm to evaluate LLMs                |   │
+│   | 2024-01-12 | fix set_logger bug                                  |   │
 │                                                                          │
 ╰──────────────────────────────────────────────────────────────────────────╯
 """
