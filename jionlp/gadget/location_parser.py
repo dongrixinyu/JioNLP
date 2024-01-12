@@ -310,7 +310,39 @@ class LocationParser(object):
                 candidate_admin_list,
                 key=lambda item: [idx for idx, i in enumerate(item[-1]) if i[0] != -1][0])
 
-        # step 3: 县级存在重复名称，计算候选列表中可能重复的县名，如 “鼓楼区”、“高新区” 等
+        # step 3: 去除重复地名
+        # step 3.1: 某些地名会同时匹配到老地名和新地名，此时需要保留新地名，去除旧地名
+        # 该情况下，不需要考虑 change2new 参数，直接合入新地址
+        new_candidate_admin_list = []
+        for item in candidate_admin_list:
+            if item[0] == '000000':
+                # 找到老地址映射的新地址
+                if item[1][0] is None or item[2][0] is None or item[3][0] is None:
+                    new_candidate_admin_list.append(item)
+                    continue
+
+                loc_key = item[1][0] + item[2][0] + item[3][0]
+                if loc_key in self.old2new_loc_map:
+                    new_loc = self.old2new_loc_map[loc_key]
+
+                    has_new_loc_flag = False
+                    for _item in candidate_admin_list:
+                        if _item[0] != '000000':
+                            if new_loc[0] == _item[1][0] and new_loc[1] == _item[2][0] and new_loc[2] == _item[3][0]:
+                                # 说明候选地址集里已有新地址，删除旧地址
+                                has_new_loc_flag = True
+                                break
+                    if not has_new_loc_flag:
+                        new_candidate_admin_list.append(item)
+
+                else:
+                    new_candidate_admin_list.append(item)
+            else:
+                new_candidate_admin_list.append(item)
+
+        candidate_admin_list = new_candidate_admin_list
+
+        # step 3.2: 县级存在重复名称，计算候选列表中可能重复的县名，如 “鼓楼区”、“高新区” 等
         county_dup_list = [item[3][item[-1][-1][1]] for item in candidate_admin_list]
         county_dup_list = collections.Counter(county_dup_list).most_common()
         county_dup_list = [item[0] for item in county_dup_list if item[1] > 1]
@@ -428,11 +460,8 @@ class LocationParser(object):
 
 
 if __name__ == '__main__':
-    import json
-    
     lp = LocationParser()
     loc = '成都是西部大开发先锋城市。'
     res = lp(loc)
-    print(json.dumps(res, ensure_ascii=False, 
-                     indent=4, separators=(',', ':')))
+    print(res)
 

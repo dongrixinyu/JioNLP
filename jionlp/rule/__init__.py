@@ -8,6 +8,7 @@
 # website: http://www.jionlp.com/
 
 
+from .prompt import *
 from .extractor import Extractor
 from .checker import Checker
 from .html_cleansing import CleanHTML

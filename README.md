@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://pepy.tech/badge/jionlp/month" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.5.5-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.5.6-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -25,38 +25,27 @@
   - [**一文读懂ChatGPT模型原理**](https://zhuanlan.zhihu.com/p/589621442)
 
 
-### 2023-07-03 添加[清洗 html 文本]()
+### 2023-12-12 Add [MELLM](https://zhuanlan.zhihu.com/p/666001842)
 
-- 对于爬虫 html 格式文本的统一化清洗方法，得到的文本数据可用于语言模型预训练。
-- 当然，由于不同网页 html 文本差异极大，针对特定数据还需要特殊的清洗方法，需要在本方法基础上进一步修正和改进。
+- **MELLM**, short for **Mutual Evaluation of Large Language Models**, is an automatic evaluation algorithm of LLMs without human supervision. MELLM has been tested effectively on several LLMs and datasets [test results and analysis](https://zhuanlan.zhihu.com/p/671636095). You can use the example code below to take a try. 
+- before running this code, you should download `norm_score.json` and `max_score.json` from [test data](https://pan.baidu.com/s/18Ufx51v05gyVkBoCo8fupw) with password `jmbo`.
+- If you encounter any error, read the [test_mellm.py](https://github.com/dongrixinyu/JioNLP/blob/master/test/test_mellm.py) to download `*.json` file.
 ```
->>> import jionlp as jio
->>> html_text = '<html><body>....</body></html>'
->>> res = jio.clean_html(html_text)
->>> print(res)
+$ git clone https://github.com/dongrixinyu/JioNLP
+$ cd JioNLP/test/
+$ python test_mellm.py
 ```
 
 
-### 2023-05-01 添加[大语言模型 LLM 评测数据集](https://github.com/dongrixinyu/JioNLP/wiki/LLM%E8%AF%84%E6%B5%8B%E6%95%B0%E6%8D%AE%E9%9B%86)
-- LLM 各个厂家都在做自研，都声称对标 ChatGPT，那就出一份数据集，测试一下各家模型效果究竟如何？
-- 主要针对中文，覆盖语言模型能力的各个方面。
+### 2023-06-22 添加[大语言模型 LLM 评测数据集](https://github.com/dongrixinyu/JioNLP/wiki/LLM%E8%AF%84%E6%B5%8B%E6%95%B0%E6%8D%AE%E9%9B%86)
+- JioNLP 提供了一套 LLM 的测试数据集，并应用 MELLM 算法完成了自动评测。
 - **评测结果**可关注**公众号JioNLP**，查阅具体各家评测截图pdf。
 ```
 >>> import jionlp as jio
->>> llm_test = jio.llm_test_dataset_loader()
+>>> llm_test = jio.llm_test_dataset_loader(version='1.1')
 >>> print(llm_test[15])
-```
-
-### 2023-02-21 添加 Byte-level BPE 算法[**Byte-level BPE**](../../wiki/BPE算法说明文档)
-
-- 基于字节的 BPE 算法，适用于多语言token编码，目前仅实现了 Byte-level BPE 算法中 Byte-level 部分
-```
->>> import jionlp as jio
->>> res = jio.bpe.byte_level_bpe.encode('メトロ')
->>> res = jio.bpe.byte_level_bpe.decode('ãĥ¡ãĥĪdsãĥŃ')
-# 'メトdsロ'
->>> res = jio.bpe.byte_level_bpe.decode('ãĥ¡ãĥĪãdsĥŃ')
-# 'メト�ds��'
+>>> llm_test = jio.llm_test_dataset_loader(field='math')
+>>> print(llm_test[5])
 ```
 
 ### 2022-11-28 更新 [**正则判断类函数族**](../../wiki/正则判断类说明文档)

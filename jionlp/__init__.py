@@ -8,7 +8,7 @@
 # website: www.jionlp.com
 
 
-__version__ = '1.5.5'
+__version__ = '1.5.6'
 
 
 import os
@@ -17,7 +17,7 @@ from jionlp.util.logger import set_logger
 from jionlp.util.zip_file import unzip_file, UNZIP_FILE_LIST
 
 
-logging = set_logger(level='INFO', log_dir_name='.jionlp_logs')
+logging = set_logger(level='INFO', log_dir_name='.cache/jionlp_logs')
 
 # unzip dictionary files
 DIR_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -94,6 +94,7 @@ history = """
 │   | 2023-01-05 | fix parse_money bug & dict loader bug               |   │
 │   | 2023-05-01 | add llm test dataset                                |   │
 │   | 2023-07-05 | add clean html & update to 1.5.*                    |   │
+│   | 2023-12-12 | add MELLM algorithm to evaluate LLMs                |   │
 │                                                                          │
 ╰──────────────────────────────────────────────────────────────────────────╯
 """
