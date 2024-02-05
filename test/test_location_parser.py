@@ -125,7 +125,15 @@ class TestLocationParser(unittest.TestCase):
               'detail': '半岛清水湾香港科技大学',
               'full_location': '香港特别行政区九龙城区半岛清水湾香港科技大学',
               'orig_location': '香港九龙半岛清水湾香港科技大学'}
-             ]
+             ],
+            ['莱芜', False, False,
+             {'province': '山东省',
+              'city': '济南市',
+              'county': '莱芜区',
+              'detail': '',
+              'full_location': '山东省济南市莱芜区',
+              'orig_location': '莱芜'}
+            ]
         ]
 
         for item in location_string_list:
