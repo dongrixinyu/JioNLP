@@ -22,7 +22,7 @@ import re
 import time
 
 from jionlp.rule.rule_pattern import TIME_CHAR_STRING, \
-    FAKE_POSITIVE_START_STRING, FAKE_POSITIVE_END_STRING
+    FAKE_POSITIVE_START_STRING, FAKE_POSITIVE_END_STRING, FAKE_POSITIVE_TIME_PATTERN
 from jionlp.rule import extract_parentheses, remove_parentheses
 from jionlp.gadget.time_parser import TimeParser
 
@@ -74,6 +74,7 @@ class TimeExtractor(object):
     def _prepare(self):
         self.parse_time = TimeParser()
         self.time_string_pattern = re.compile(TIME_CHAR_STRING)  # 该正则存在假阴风险
+        self.fake_positive_time_pattern = re.compile(FAKE_POSITIVE_TIME_PATTERN)
 
         self.fake_positive_start_pattern = re.compile(FAKE_POSITIVE_START_STRING)
         self.fake_positive_end_pattern = re.compile(FAKE_POSITIVE_END_STRING)
@@ -256,6 +257,9 @@ class TimeExtractor(object):
             matched_res = self.time_string_pattern.search(text[idx_count:])
             # print(matched_res)
             if matched_res is not None:
+                if self.fake_positive_time_pattern.search(matched_res.group()) is not None:
+                    idx_count += matched_res.span()[1]
+                    continue
                 if len(matched_res.group()) > 1:
                     time_candidates_list.append(
                         {'time_candidate': matched_res.group(),
