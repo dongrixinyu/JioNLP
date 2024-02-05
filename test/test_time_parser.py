@@ -471,6 +471,8 @@ class TestTimeParser(unittest.TestCase):
              {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 01:06:40', '2035-12-31 23:59:59']}],
             ['今晚八点以后', _ts_1,
              {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 20:00:00', 'inf']}],
+            ['晚上十一点钟到晚上十二点', _ts_1,
+             {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 23:00:00', '2021-06-15 00:00:00']}],
 
             # 残缺型 ……至……
             ['1月3至2月10', _ts_1,
@@ -699,6 +701,12 @@ class TestTimeParser(unittest.TestCase):
             # 当设定 strict 参数时会报错
             ['十一点半', _ts_1,
              {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-14 11:30:00', '2021-06-14 11:30:59']}],
+            ['晚上十一点', _ts_1,
+             {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-14 23:00:00', '2021-06-14 23:59:59']}],
+            ['晚上十一点钟', _ts_1,
+             {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-14 23:00:00', '2021-06-14 23:59:59']}],
+            ['晚上十一点整', _ts_1,
+             {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-14 23:00:00', '2021-06-14 23:59:59']}],
 
             # 时分秒 标准格式按 `:` 区隔
             ['上月30号12:37', _ts_1,
