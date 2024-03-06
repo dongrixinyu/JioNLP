@@ -104,3 +104,20 @@ NORMALIZE_GRADING_CHINESE_PROMPT_SCORING = """我将给你一段文字，是一�
 分数请以 json 格式告诉我，字段名为 `score`，不要返回除 json 以外的其它信息。
 
 """
+
+
+NORMALIZE_GRADING_CHINESE_PROMPT_SCORING = """I will give you a piece of text which is an evaluation by an evaluator on a test taker's answer:
+
+```
+{grading_result}
+```
+
+The full score for this question is {score} points. Based on the above evaluation, please tell me how many points the evaluator gave to the result?
+
+Note:
+- If the text does not explicitly state the score, then tell me what score the evaluator is most likely to have given.
+- If the content of the evaluation does not match the score given, such as giving a high score for a wrong answer or a highest score despite flaws, then tell me the correct score based on the content of the evaluation.
+- If the evaluation refuses to rate or the scoring preamble is inconsistent with the postscript and the logic is poor, then score -1 point.
+- Please tell me the score in JSON format, with the only field name being `score`, and do not return redundant information except JSON.
+
+"""

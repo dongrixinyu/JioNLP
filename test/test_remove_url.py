@@ -16,6 +16,8 @@ class TestRemoveUrl(unittest.TestCase):
              '抖音知识分享  复制Ci鏈接，打开Dou音搜索，直接观看視頻'],
             ['抖音知识分享https://v.douyin.com/RtKFFah/复制Ci鏈接，打开Dou音搜索，直接观看視頻',
              '抖音知识分享复制Ci鏈接，打开Dou音搜索，直接观看視頻'],
+            ['这是一个链接https://fb.watch/o2JPlWrxYr/?mibextid=cr9u03"',
+             '这是一个链接"']
         ]
 
         for item in url_text_list:
