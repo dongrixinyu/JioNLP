@@ -33,7 +33,6 @@ TODO unresolved:
     7、36天5小时30分后  => 多单位 time_delta to time_span
     8、晚上8点到上午10点之间
     9、明天下午3点至8点  => 自动将 8点识别为晚上 8点
-    本月第2周
     前个礼拜 => 上个，而非 上上个，与前天不同
     36天5小时30分后
     2021.2.1.24：00
@@ -422,6 +421,26 @@ class TimeParser(TimeUtility):
         self.limit_week_pattern = re.compile(
             ''.join([bracket(MONTH_STRING), '(的)?',
                      '第[1-5一二三四五](个)?', WEEK_STRING, '[一二三四五六日末天]']))
+
+        # 年、月、第n个星期
+        self.year_month_week_pattern = re.compile(
+            ''.join([bracket(YEAR_STRING), bracket(MONTH_STRING), '的?',
+                     '第[1-5一二三四五](个)?', WEEK_STRING]))
+
+        # 限定年、月、第n个星期
+        self.limit_year_month_week_pattern = re.compile(
+            ''.join([bracket(LIMIT_YEAR_STRING), bracket(MONTH_STRING), '的?',
+                     '第[1-5一二三四五](个)?', WEEK_STRING]))
+
+        # 月、第n个星期
+        self.month_week_pattern = re.compile(
+            ''.join([bracket(MONTH_STRING), '(的)?',
+                     '第[1-5一二三四五](个)?', WEEK_STRING]))
+
+        # 限定月、第n个星期
+        self.limit_month_week_pattern = re.compile(
+            ''.join([bracket(LIMIT_MONTH_STRING), '(的)?',
+                     '第[1-5一二三四五](个)?', WEEK_STRING]))
 
         # 年、第n个星期
         self.year_week_pattern = re.compile(
@@ -1416,6 +1435,10 @@ class TimeParser(TimeUtility):
                 [self.limit_year_solar_season_pattern, self.normalize_limit_year_solar_season],
                 [self.limit_solar_season_pattern, self.normalize_limit_solar_season],
                 [self.year_solar_season_pattern, self.normalize_year_solar_season],
+                [self.limit_month_week_pattern, self.normalize_limit_month_week],
+                [self.month_week_pattern, self.normalize_month_week],
+                [self.year_month_week_pattern, self.normalize_year_month_week],
+                [self.limit_year_month_week_pattern, self.normalize_limit_year_month_week],
                 [self.limit_year_week_pattern, self.normalize_limit_year_week],
                 [self.year_week_pattern, self.normalize_year_week],
                 [self.limit_week_pattern, self.normalize_limit_week],
@@ -4193,6 +4216,145 @@ class TimeParser(TimeUtility):
             raise ValueError('th given string `{}` is illegal.'.format(time_string))
 
         return time_handler, time_handler, 'time_point', 'accurate'
+
+    def _normalize_month_order_week(self, time_string, first_point_month, first_point_year=None):
+        """ 解析 `第 N 个星期` 时间 """
+        week_res = self.day_patterns[9].search(time_string)
+        if week_res:
+            week_res = week_res.group()
+            week_order_num = self.week_num_pattern.search(week_res)
+            week_order_num = int(self._char_num2num(week_order_num.group()))
+            day_offset = week_order_num * 7
+            if first_point_year is not None:
+                first_day = datetime.datetime(first_point_year, first_point_month, 1)
+            else:
+                first_day = datetime.datetime(self.time_base_handler[0], first_point_month, 1)
+            first_day_weekday = int(first_day.strftime("%w"))
+            if first_day_weekday == 1:
+                pass
+            elif first_day_weekday == 0:
+                day_offset += 1
+            else:
+                day_offset += 7 + 1 - first_day_weekday
+
+            first_point_day = first_day + datetime.timedelta(days=day_offset - 7)
+            second_point_day = first_day + datetime.timedelta(days=day_offset - 1)
+
+            if first_point_day.month != first_point_month:
+                raise ValueError('the given string `{}` is illegal.'.format(time_string))
+        else:
+            raise ValueError('the given string `{}` is illegal.'.format(time_string))
+
+        return first_point_day, second_point_day
+
+    def normalize_month_week(self, time_string):
+        """ 解析 `2月第 N 个星期` 时间 """
+        first_time_point = TimePoint()
+        second_time_point = TimePoint()
+
+        month = self.month_patterns[0].search(time_string)
+
+        if month:
+            month_num = self.month_num_pattern.search(month.group())
+            month_num = int(self._char_num2num(month_num.group()))
+            first_time_point.month = month_num
+            second_time_point.month = month_num
+        else:
+            raise ValueError('month string is not in `{}`.'.format(time_string))
+
+        first_point_day, second_point_day = self._normalize_month_order_week(
+            time_string, first_time_point.month)
+
+        first_time_point.month = first_point_day.month
+        first_time_point.day = first_point_day.day
+        second_time_point.year = second_point_day.year  # 12 月第四周有可能导致年份加一
+        second_time_point.month = second_point_day.month
+        second_time_point.day = second_point_day.day
+
+        first_time_handler = first_time_point.handler()
+        second_time_handler = second_time_point.handler()
+
+        return first_time_handler, second_time_handler, 'time_span', 'accurate'
+
+    def normalize_limit_month_week(self, time_string):
+        """ 解析 `限定月 第 N 个星期` 时间 """
+        first_time_point = TimePoint()
+        second_time_point = TimePoint()
+
+        first_time_point, second_time_point = self._normalize_limit_month(
+            time_string, self.time_base_handler, first_time_point, second_time_point)
+
+        first_point_day, second_point_day = self._normalize_month_order_week(
+            time_string, first_time_point.month)
+
+        first_time_point.month = first_point_day.month
+        first_time_point.day = first_point_day.day
+        second_time_point.year = second_point_day.year  # 12 月第四周有可能导致年份加一
+        second_time_point.month = second_point_day.month
+        second_time_point.day = second_point_day.day
+
+        first_time_handler = first_time_point.handler()
+        second_time_handler = second_time_point.handler()
+
+        return first_time_handler, second_time_handler, 'time_span', 'accurate'
+
+    def normalize_year_month_week(self, time_string):
+        """ 解析 `2021年2月第 N 个星期` 时间 """
+        first_time_point = TimePoint()
+        second_time_point = TimePoint()
+
+        year = self._normalize_year(time_string, self.time_base_handler)
+        if year is not None:
+            first_time_point.year = year
+            second_time_point.year = year
+
+        month = self.month_patterns[0].search(time_string)
+        if month:
+            month_string = int(self._char_num2num(month.group(1)))
+            first_time_point.month = month_string
+            second_time_point.month = month_string
+
+        first_point_day, second_point_day = self._normalize_month_order_week(
+            time_string, first_time_point.month, first_time_point.year)
+
+        first_time_point.month = first_point_day.month
+        first_time_point.day = first_point_day.day
+        second_time_point.year = second_point_day.year
+        second_time_point.month = second_point_day.month
+        second_time_point.day = second_point_day.day
+
+        first_time_handler = first_time_point.handler()
+        second_time_handler = second_time_point.handler()
+
+        return first_time_handler, second_time_handler, 'time_span', 'accurate'
+
+    def normalize_limit_year_month_week(self, time_string):
+        """ 解析 `限定年 2月第 N 个星期` 时间 """
+        first_time_point = TimePoint()
+        second_time_point = TimePoint()
+
+        first_time_point.year, second_time_point.year = self._normalize_limit_year(
+            time_string, self.time_base_handler)
+
+        month = self.month_patterns[0].search(time_string)
+        if month:
+            month_string = int(self._char_num2num(month.group(1)))
+            first_time_point.month = month_string
+            second_time_point.month = month_string
+
+        first_point_day, second_point_day = self._normalize_month_order_week(
+            time_string, first_time_point.month, first_time_point.year)
+
+        first_time_point.month = first_point_day.month
+        first_time_point.day = first_point_day.day
+        second_time_point.year = second_point_day.year
+        second_time_point.month = second_point_day.month
+        second_time_point.day = second_point_day.day
+
+        first_time_handler = first_time_point.handler()
+        second_time_handler = second_time_point.handler()
+
+        return first_time_handler, second_time_handler, 'time_span', 'accurate'
 
     def _normalize_year_order_week(self, time_string, first_point_year):
         # 找到 一年中的 第 N 个星期
