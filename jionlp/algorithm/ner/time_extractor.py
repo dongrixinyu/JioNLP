@@ -155,7 +155,8 @@ class TimeExtractor(object):
             return False
 
         if self.fake_positive_end_pattern.search(sub_string[-1]):
-            return False
+            if sub_string[-2:] not in ['夏至', '冬至']:
+                return False
 
         if len(sub_string) != len(sub_string.strip()):
             return False

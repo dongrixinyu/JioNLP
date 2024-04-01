@@ -535,6 +535,8 @@ class TestTimeParser(unittest.TestCase):
              {'type': 'time_point', 'definition': 'accurate', 'time': ['2022-01-03 00:00:00', '2022-01-31 23:59:59']}],
 
             # 年、节气
+            ['2024年冬至', time.time(),
+             {'type': 'time_point', 'definition': 'accurate', 'time': ['2024-12-21 00:00:00', '2024-12-21 23:59:59']}],
             ['2017年大寒', time.time(),
              {'type': 'time_point', 'definition': 'accurate', 'time': ['2018-01-20 00:00:00', '2018-01-20 23:59:59']}],
             ['20年小寒', time.time(),

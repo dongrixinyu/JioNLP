@@ -1123,7 +1123,10 @@ class TimeParser(TimeUtility):
         elif self.first_2_span_pattern.search(time_string):
             first_res = self.first_2_span_pattern.search(time_string)
         elif self.first_3_span_pattern.search(time_string):
-            first_res = self.first_3_span_pattern.search(time_string)
+            if time_string[-2:] in ['夏至', '冬至']:
+                first_res = None
+            else:
+                first_res = self.first_3_span_pattern.search(time_string)
         elif self.first_4_span_pattern.search(time_string) and '前后' not in time_string:
             first_res = self.first_4_span_pattern.search(time_string)
         elif self.first_5_span_pattern.search(time_string) and '前后' not in time_string:
