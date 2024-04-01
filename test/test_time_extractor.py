@@ -37,6 +37,7 @@ class TestTimeExtractor(unittest.TestCase):
             ['调高二十四点五度', []],
             ['调高24点5度', []],
             ['升高10点五度', []],
+            ['是一个十一点的事', [{'text': '十一点', 'offset': [3, 6], 'type': 'time_point'}]]
         ]
 
         for item in text_string_list:
