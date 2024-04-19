@@ -179,7 +179,9 @@ class TimeExtractor(object):
     def grid_search(self, time_candidate, time_base=time.time(),
                     ret_type='str', ret_future=False, period_results_num=None):
         """ 全面搜索候选时间字符串，从长至短，较优 """
-        length = len(time_candidate)
+        length = min(len(time_candidate), 35)  # 默认时间字符串的最大长度是 40，
+        # test_time_parser 之中，时间字符串的最大长度为 33.
+
         for i in range(length):  # 控制总长，若想控制单字符的串也被返回考察，此时改为 length + 1
             for j in range(i):  # 控制偏移
                 try:

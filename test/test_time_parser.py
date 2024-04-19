@@ -328,37 +328,37 @@ class TestTimeParser(unittest.TestCase):
 
             # 限定月、第 N 个星期
             ['本月第2周', _ts_1,
-             {'type': 'time_span', 'definition': 'blur', 'time': ['2021-06-14 00:00:00', '2021-06-20 23:59:59']}],
+             {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 00:00:00', '2021-06-20 23:59:59']}],
             ['当月第三周', _ts_1,
-             {'type': 'time_span', 'definition': 'blur', 'time': ['2021-06-21 00:00:00', '2021-06-27 23:59:59']}],
+             {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-21 00:00:00', '2021-06-27 23:59:59']}],
             ['下月第四周', _ts_1,
-             {'type': 'time_span', 'definition': 'blur', 'time': ['2021-07-26 00:00:00', '2021-08-01 23:59:59']}],
+             {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-07-26 00:00:00', '2021-08-01 23:59:59']}],
             ['上月第一周', _ts_1,
-             {'type': 'time_span', 'definition': 'blur', 'time': ['2021-05-03 00:00:00', '2021-05-09 23:59:59']}],
+             {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-05-03 00:00:00', '2021-05-09 23:59:59']}],
 
             # 月、第 N 个星期
             ['2月份第二周', _ts_1,
-             {'type': 'time_span', 'definition': 'blur', 'time': ['2021-02-08 00:00:00', '2021-02-14 23:59:59']}],
+             {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-02-08 00:00:00', '2021-02-14 23:59:59']}],
             ['3月第三周', _ts_1,
-             {'type': 'time_span', 'definition': 'blur', 'time': ['2021-03-15 00:00:00', '2021-03-21 23:59:59']}],
+             {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-03-15 00:00:00', '2021-03-21 23:59:59']}],
             ['四月第4周', _ts_1,
-             {'type': 'time_span', 'definition': 'blur', 'time': ['2021-04-26 00:00:00', '2021-05-02 23:59:59']}],
+             {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-04-26 00:00:00', '2021-05-02 23:59:59']}],
             ['五月第一周', _ts_1,
-             {'type': 'time_span', 'definition': 'blur', 'time': ['2021-05-03 00:00:00', '2021-05-09 23:59:59']}],
+             {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-05-03 00:00:00', '2021-05-09 23:59:59']}],
 
             # 年、月、第 N 个星期
             ['2023年三月的第二周', _ts_1,
-             {'type': 'time_span', 'definition': 'blur', 'time': ['2023-03-13 00:00:00', '2023-03-19 23:59:59']}],
+             {'type': 'time_span', 'definition': 'accurate', 'time': ['2023-03-13 00:00:00', '2023-03-19 23:59:59']}],
             ['二零二零年五月第一周', _ts_1,
-             {'type': 'time_span', 'definition': 'blur', 'time': ['2020-05-04 00:00:00', '2020-05-10 23:59:59']}],
+             {'type': 'time_span', 'definition': 'accurate', 'time': ['2020-05-04 00:00:00', '2020-05-10 23:59:59']}],
 
             # 限定年、月、第 N 个星期
             ['去年十二月第一周', _ts_1,
-             {'type': 'time_span', 'definition': 'blur', 'time': ['2020-12-07 00:00:00', '2020-12-13 23:59:59']}],
+             {'type': 'time_span', 'definition': 'accurate', 'time': ['2020-12-07 00:00:00', '2020-12-13 23:59:59']}],
             ['今年三月第三周', _ts_1,
-             {'type': 'time_span', 'definition': 'blur', 'time': ['2021-03-15 00:00:00', '2021-03-21 23:59:59']}],
+             {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-03-15 00:00:00', '2021-03-21 23:59:59']}],
             ['明年七月第2周', _ts_1,
-             {'type': 'time_span', 'definition': 'blur', 'time': ['2022-07-11 00:00:00', '2022-07-17 23:59:59']}],
+             {'type': 'time_span', 'definition': 'accurate', 'time': ['2022-07-11 00:00:00', '2022-07-17 23:59:59']}],
 
             # 世纪、年代
             ['18世纪', _ts_1,
@@ -1069,10 +1069,11 @@ class TestTimeParser(unittest.TestCase):
 
         ]
 
+        print(max([len(item[0]) for item in time_string_list]))
         for item in time_string_list:
             time_res = jio.parse_time(item[0], time_base=item[1])  # , strict=True)
             print(item[0])
-            self.assertEqual(time_res, item[2])
+            self.assertEqual(time_res, item[2], item[0])
 
         # 未来时间参数扩展
         time_string_list = [
@@ -1096,8 +1097,7 @@ class TestTimeParser(unittest.TestCase):
 
         for item in time_string_list:
             time_res = jio.parse_time(item[0], time_base=item[1], ret_future=True)  # , strict=True)
-            print(item[0])
-            self.assertEqual(time_res, item[2])
+            self.assertEqual(time_res, item[2], item[0])
 
         # 时间周期的解析
         time_string_list = [
