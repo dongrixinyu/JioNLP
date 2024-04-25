@@ -1517,13 +1517,27 @@ class TimeParser(TimeUtility):
 
             ]
 
+        ymd_string_list = []
+        for ymd_pattern, ymd_func in self.ymd_pattern_norm_funcs:
+            ymd_string = TimeParser.parse_pattern(time_string, ymd_pattern)
+            ymd_string_list.append(ymd_string)
+
+        hms_string_list = []
+        for hms_pattern, hms_func in self.hms_pattern_norm_funcs:
+            hms_string = TimeParser.parse_pattern(time_string, hms_pattern)
+            hms_string_list.append(hms_string)
+
         cur_ymd_func, cur_hms_func = None, None
         cur_ymd_string, cur_hms_string = '', ''
         break_flag = False
-        for ymd_pattern, ymd_func in self.ymd_pattern_norm_funcs:
-            ymd_string = TimeParser.parse_pattern(time_string, ymd_pattern)
-            for (hms_pattern, hms_func) in self.hms_pattern_norm_funcs:
-                hms_string = TimeParser.parse_pattern(time_string, hms_pattern)
+        # for ymd_pattern, ymd_func in self.ymd_pattern_norm_funcs:
+        #     ymd_string = TimeParser.parse_pattern(time_string, ymd_pattern)
+        #     for (hms_pattern, hms_func) in self.hms_pattern_norm_funcs:
+        #         hms_string = TimeParser.parse_pattern(time_string, hms_pattern)
+        for _ymd_string, (ymd_pattern, ymd_func) in zip(ymd_string_list, self.ymd_pattern_norm_funcs):
+            ymd_string = _ymd_string
+            for _hmd_string, (hms_pattern, hms_func) in zip(hms_string_list, self.hms_pattern_norm_funcs):
+                hms_string = _hmd_string
 
                 if len(ymd_string) + len(hms_string) > len(cur_ymd_string) + len(cur_hms_string):
                     cur_hms_func = hms_func
