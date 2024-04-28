@@ -37,7 +37,10 @@ class TestTimeExtractor(unittest.TestCase):
             ['调高二十四点五度', []],
             ['调高24点5度', []],
             ['升高10点五度', []],
-            ['是一个十一点的事', [{'text': '十一点', 'offset': [3, 6], 'type': 'time_point'}]]
+            ['是一个十一点的事', [{'text': '十一点', 'offset': [3, 6], 'type': 'time_point'}]],
+            ['下下下周一', [{'text': '下下下周一', 'offset': [0, 5], 'type': 'time_point'}]],
+            ['上上个月五号', [{'text': '上上个月五号', 'offset': [0, 6], 'type': 'time_point'}]],
+            ['下下个季度', [{'text': '下下个季度', 'offset': [0, 5], 'type': 'time_span'}]],
         ]
 
         for item in text_string_list:
