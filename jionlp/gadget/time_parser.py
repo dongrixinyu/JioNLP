@@ -564,7 +564,7 @@ class TimeParser(TimeUtility):
             ''.join(['(未来|今后)(的)?', standard_delta_string, '[里内]?']))
 
         self.guoqu_delta2span_pattern = re.compile(
-            ''.join(['((过去)(的)?|(最)?近)', standard_delta_string, '[里内]?']))
+            ''.join(['((过去)(的)?|(最)?近|([之提]?前))', standard_delta_string, '[里内]?']))
 
         self.guo_delta2span_pattern = re.compile(
             ''.join(['(再)?(过)', standard_delta_string]))
@@ -1523,7 +1523,7 @@ class TimeParser(TimeUtility):
         ymd_empty_string_flag = False
         for ymd_pattern, ymd_func in self.ymd_pattern_norm_funcs:
             ymd_string = TimeParser.parse_pattern(time_string, ymd_pattern)
-            
+
             if ymd_string != '':
                 ymd_string_list.append(ymd_string)
                 ymd_func_list.append([ymd_pattern, ymd_func])
@@ -1539,7 +1539,7 @@ class TimeParser(TimeUtility):
         hms_empty_string_flag = False
         for hms_pattern, hms_func in self.hms_pattern_norm_funcs:
             hms_string = TimeParser.parse_pattern(time_string, hms_pattern)
-            
+
             if hms_string != '':
                 hms_string_list.append(hms_string)
                 hms_func_list.append([hms_pattern, hms_func])
@@ -3794,7 +3794,7 @@ class TimeParser(TimeUtility):
 
         # 对农历日期的补全
         lunar_time_handler = TimeUtility.time_completion(lunar_time_handler, self.time_base_handler)
-        
+
         if self.lunar_date:
             first_time_handler, second_time_handler = self._convert_lunar2solar(
                 lunar_time_handler, leap_month=leap_month)
