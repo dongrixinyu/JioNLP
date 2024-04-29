@@ -13,7 +13,8 @@ class TestLocationParser(unittest.TestCase):
 
         location_string_list = [
             ['柳州地区忻城县', False, True,
-             {'province': '广西壮族自治区', 'city': '来宾市', 'county': '忻城县', 'detail': '', 'full_location': '广西壮族自治区来宾市忻城县',
+             {'province': '广西壮族自治区', 'city': '来宾市', 'county': '忻城县', 'detail': '',
+              'full_location': '广西壮族自治区来宾市忻城县',
               'orig_location': '柳州地区忻城县'}
              ],
             ['湖北省襄樊市小水街222号', False, True,
@@ -99,7 +100,8 @@ class TestLocationParser(unittest.TestCase):
              ],
             # 市、县重名,
             ['西安交通大学', True, False,
-             {'province': '陕西省', 'city': '西安市', 'county': None, 'detail': '交通大学', 'full_location': '陕西省西安市交通大学',
+             {'province': '陕西省', 'city': '西安市', 'county': None, 'detail': '交通大学',
+              'full_location': '陕西省西安市交通大学',
               'orig_location': '西安交通大学', 'town': None, 'village': None}
              ],  # 此例会和 “吉林省通辽市西安区” 混淆
             ['河北省秦皇岛市经济技术开发区', True, False,
@@ -133,7 +135,16 @@ class TestLocationParser(unittest.TestCase):
               'detail': '',
               'full_location': '山东省济南市莱芜区',
               'orig_location': '莱芜'}
-            ]
+             ],
+            # 新津区新旧地名简称都是新津
+            ['成都市新津县金华镇清云北路2号（四川新津工业园）', False, False,
+             {'province': '四川省',
+              'city': '成都市',
+              'county': '新津区',
+              'detail': '金华镇清云北路2号（四川新津工业园）',
+              'full_location': '四川省成都市新津区金华镇清云北路2号（四川新津工业园）',
+              'orig_location': '成都市新津县金华镇清云北路2号（四川新津工业园）'}
+             ]
         ]
 
         for item in location_string_list:
@@ -145,11 +156,9 @@ class TestLocationParser(unittest.TestCase):
 
 
 if __name__ == '__main__':
-
     suite = unittest.TestSuite()
     test_location_parser = [TestLocationParser('test_location_parser')]
     suite.addTests(test_location_parser)
 
     runner = unittest.TextTestRunner(verbosity=1)
     runner.run(suite)
-

@@ -249,6 +249,13 @@ class LocationParser(object):
         candidate_admin_list = [item for item in candidate_admin_list
                                 if item[-2] == max_matched_num]
 
+        # 对于有些新旧地名简称相同，且省市县不按靠前的位置依次排开的，删除旧地名
+        # 这种情况下，candidate_admin_list包含2个行政区划且offset中地址的 “索引”相同
+        if len(candidate_admin_list) == 2:
+            if [i[0] for i in candidate_admin_list[0][-1]] == [i[0] for i in candidate_admin_list[1][-1]]:
+                # 删除旧地名
+                candidate_admin_list = [item for item in candidate_admin_list if item[4] is True]
+
         # 此时，若仅有一个地址被匹配，则应当直接返回正确的结果
         if len(candidate_admin_list) == 1:
             result = self._get_final_res(
