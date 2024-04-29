@@ -1929,18 +1929,11 @@ class TimeParser(TimeUtility):
                     first_time_point.year = self.time_base_handler[0] + year_gap
                     second_time_point.year = self.time_base_handler[0] + year_gap
 
-                    # if idx == 0:
-                    #     # 第一个季度时，需要找到上一年度
-                    #     first_time_point.year = self.time_base_handler[0] - 1
-                    #     second_time_point.year = self.time_base_handler[0] - 1
-                    #     # 月份的超出 1 导致需要不同的取值
-                    #     first_time_point.month += 12
-                    #     second_time_point.month += 12
-
         elif '下' in time_string:
             season_count = time_string.count('下')
             for idx, item in enumerate(infos):
-                season_month_idx = idx + season_count % 4
+                # 确保 season_month_idx < 4
+                season_month_idx = idx + season_count % 4 - 4
                 year_gap = (idx + season_count) // 4
                 if self.time_base_handler[1] in item:
                     match_span_flag = False
@@ -1956,14 +1949,6 @@ class TimeParser(TimeUtility):
 
                     first_time_point.year = self.time_base_handler[0] + year_gap
                     second_time_point.year = self.time_base_handler[0] + year_gap
-
-                    # if idx == 3:
-                    #     # 第四个季度时，需要找到下一年度
-                    #     first_time_point.year = self.time_base_handler[0] + 1
-                    #     second_time_point.year = self.time_base_handler[0] + 1
-                    #     # 月份的超出12 导致需要不同的取值
-                    #     first_time_point.month -= 12
-                    #     second_time_point.month -= 12
 
         elif '这' in time_string or '本' in time_string:
             for item in infos:
@@ -3383,7 +3368,8 @@ class TimeParser(TimeUtility):
                     first_time_point.month = time_base_handler[1] - month_count
                     second_time_point.month = time_base_handler[1] - month_count
             elif '下' in month_string or '次' in month_string:
-                month_count = month_string.count('下')
+                # 当 month_string 不包含`上`但包含`次`时， month_string = 1
+                month_count = month_string.count('下') or 1
                 if time_base_handler[1] == 12:
                     first_time_point.year = time_base_handler[0] + 1
                     second_time_point.year = time_base_handler[0] + 1
