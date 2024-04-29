@@ -11,15 +11,16 @@
     <a alt="Downloads">
         <img src="https://pepy.tech/badge/jionlp/month" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.5.11-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.5.12-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
 
 #### &emsp;&emsp; JioNLP：中文 NLP 预处理、解析工具包 A Python Lib for Chinese NLP Preprocessing & Parsing
 #### &emsp;&emsp; 安装：```pip install jionlp```
-- JioNLP 是一个面向 **NLP 开发者**的工具包，提供 NLP 任务预处理、解析功能，准确、高效、零使用门槛。请下拉本网页，查阅具体功能信息，并按 **Ctrl+F** 进行搜索。[**JioNLP在线版**](http://www.jionlp.com/) 可快速试用部分功能。关注同名**微信公众号** JioNLP 可获取最新的 NLP 资讯，数据资源。
+- JioNLP 是一个面向 **NLP 开发者**的工具包，提供 NLP 任务预处理、解析功能，准确、高效、零使用门槛。请下拉本网页，查阅具体功能信息，并按 **Ctrl+F** 进行搜索。[**JioNLP在线版**](http://www.jionlp.com/) 可快速试用部分功能。关注同名**微信公众号 JioNLP** 可获取最新的 AI 资讯，数据资源。
 
+  - [**AI似乎在向着奇怪的方向飞奔**](https://mp.weixin.qq.com/s/cXktu3BDUee-s2L8Z0wXYA)
   - [**ChatGPT面前，JioNLP-工具的价值在何处？**](../../wiki/ChatGPT面前，JioNLP-工具的价值在何处？)
   - [**ChatGPT这么强，会影响NLPer的就业环境吗？**](https://zhuanlan.zhihu.com/p/605673596)
   - [**一文读懂ChatGPT模型原理**](https://zhuanlan.zhihu.com/p/589621442)
