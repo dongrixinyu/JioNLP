@@ -288,7 +288,7 @@ class TimeParser(TimeUtility):
             ''.join([bracket(LIMIT_YEAR_STRING), r'(([第前后头Qq]?[一二三四1-4两]|首)(个)?季度[初中末]?)']))
 
         # `限定季度`：`上季度`
-        self.limit_solar_season_pattern = re.compile(r'([上下](个)?|本|这)季度[初中末]?')
+        self.limit_solar_season_pattern = re.compile(r'([上下]+(个)?|本|这)季度[初中末]?')
 
         # `年、范围月`：`2018年前三个月`
         self.year_span_month_pattern = re.compile(
@@ -409,13 +409,13 @@ class TimeParser(TimeUtility):
 
         # 星期 （一般不与年月相关联）
         self.standard_week_day_pattern = re.compile(
-            '(上上|上|下下|下|本|这)?(一)?(个)?(周)?' + WEEK_STRING + '[一二三四五六日末天]')
+            '(上+|下+|本|这)?(一)?(个)?(周)?' + WEEK_STRING + '[一二三四五六日末天]')
 
         # 星期前后推算
         self.blur_week_pattern = re.compile(
             '[前后]' + WEEK_NUM_STRING + '(个)?' + WEEK_STRING + I +
             WEEK_NUM_STRING + '(个)?' + WEEK_STRING + '(之)?[前后]' + I +
-            '(上上|上|下下|下|本|这)?(一)?(个)?' + WEEK_STRING)
+            '(上+|下+|本|这)?(一)?(个)?' + WEEK_STRING)
 
         # 月、第n个星期k
         self.limit_week_pattern = re.compile(
@@ -626,7 +626,7 @@ class TimeParser(TimeUtility):
 
         self.week_1_pattern = re.compile('[前后][一二两三四五六七八九1-9](个)?' + WEEK_STRING)
         self.week_2_pattern = re.compile('[一两三四五六七八九1-9](个)?' + WEEK_STRING + '(之)?[前后]')
-        self.week_3_pattern = re.compile('(上上|上|下下|下|本|这)(一)?(个)?' + WEEK_STRING)
+        self.week_3_pattern = re.compile('(上+|下+|本|这)(一)?(个)?' + WEEK_STRING)
         self.week_4_pattern = re.compile(WEEK_STRING + '[一二三四五六日末天]')
         self.week_5_pattern = re.compile(''.join(['第', WEEK_NUM_STRING, '(个)?', WEEK_STRING]))
         self.ymd_segs = re.compile(r'[\-.·/ ]')
@@ -1909,49 +1909,61 @@ class TimeParser(TimeUtility):
         spans = ['初', '中', '末']
 
         if '上' in time_string:
+            season_count = time_string.count('上')
             for idx, item in enumerate(infos):
                 if self.time_base_handler[1] in item:
+                    season_month_idx = idx - season_count % 4
+                    year_gap = (idx - season_count) // 4
 
                     match_span_flag = False
                     for i, span in enumerate(spans):
                         if span in time_string:
-                            first_time_point.month = item[i] - 3
-                            second_time_point.month = item[i] - 3
+                            first_time_point.month = infos[season_month_idx][i]
+                            second_time_point.month = infos[season_month_idx][i]
                             match_span_flag = True
                             break
                     if not match_span_flag:
-                        first_time_point.month = item[0] - 3
-                        second_time_point.month = item[2] - 3
+                        first_time_point.month = infos[season_month_idx][0]
+                        second_time_point.month = infos[season_month_idx][2]
 
-                    if idx == 0:
-                        # 第一个季度时，需要找到上一年度
-                        first_time_point.year = self.time_base_handler[0] - 1
-                        second_time_point.year = self.time_base_handler[0] - 1
-                        # 月份的超出 1 导致需要不同的取值
-                        first_time_point.month += 12
-                        second_time_point.month += 12
+                    first_time_point.year = self.time_base_handler[0] + year_gap
+                    second_time_point.year = self.time_base_handler[0] + year_gap
+
+                    # if idx == 0:
+                    #     # 第一个季度时，需要找到上一年度
+                    #     first_time_point.year = self.time_base_handler[0] - 1
+                    #     second_time_point.year = self.time_base_handler[0] - 1
+                    #     # 月份的超出 1 导致需要不同的取值
+                    #     first_time_point.month += 12
+                    #     second_time_point.month += 12
 
         elif '下' in time_string:
+            season_count = time_string.count('下')
             for idx, item in enumerate(infos):
+                season_month_idx = idx + season_count % 4
+                year_gap = (idx + season_count) // 4
                 if self.time_base_handler[1] in item:
                     match_span_flag = False
                     for i, span in enumerate(spans):
                         if span in time_string:
-                            first_time_point.month = item[i] + 3
-                            second_time_point.month = item[i] + 3
+                            first_time_point.month = infos[season_month_idx][i]
+                            second_time_point.month = infos[season_month_idx][i]
                             match_span_flag = True
                             break
                     if not match_span_flag:
-                        first_time_point.month = item[0] + 3
-                        second_time_point.month = item[2] + 3
+                        first_time_point.month = infos[season_month_idx][0]
+                        second_time_point.month = infos[season_month_idx][2]
 
-                    if idx == 3:
-                        # 第四个季度时，需要找到下一年度
-                        first_time_point.year = self.time_base_handler[0] + 1
-                        second_time_point.year = self.time_base_handler[0] + 1
-                        # 月份的超出12 导致需要不同的取值
-                        first_time_point.month -= 12
-                        second_time_point.month -= 12
+                    first_time_point.year = self.time_base_handler[0] + year_gap
+                    second_time_point.year = self.time_base_handler[0] + year_gap
+
+                    # if idx == 3:
+                    #     # 第四个季度时，需要找到下一年度
+                    #     first_time_point.year = self.time_base_handler[0] + 1
+                    #     second_time_point.year = self.time_base_handler[0] + 1
+                    #     # 月份的超出12 导致需要不同的取值
+                    #     first_time_point.month -= 12
+                    #     second_time_point.month -= 12
 
         elif '这' in time_string or '本' in time_string:
             for item in infos:
@@ -3361,23 +3373,25 @@ class TimeParser(TimeUtility):
         if month is not None:
             month_string = month.group()
             if '上' in month_string:
+                month_count = month_string.count('上')
                 if time_base_handler[1] == 1:
                     first_time_point.year = time_base_handler[0] - 1
                     second_time_point.year = time_base_handler[0] - 1
-                    first_time_point.month = 12
-                    second_time_point.month = 12
+                    first_time_point.month = 12 - (month_count - 1)
+                    second_time_point.month = 12 - (month_count - 1)
                 else:
-                    first_time_point.month = time_base_handler[1] - 1
-                    second_time_point.month = time_base_handler[1] - 1
+                    first_time_point.month = time_base_handler[1] - month_count
+                    second_time_point.month = time_base_handler[1] - month_count
             elif '下' in month_string or '次' in month_string:
+                month_count = month_string.count('下')
                 if time_base_handler[1] == 12:
                     first_time_point.year = time_base_handler[0] + 1
                     second_time_point.year = time_base_handler[0] + 1
-                    first_time_point.month = 1
-                    second_time_point.month = 1
+                    first_time_point.month = month_count
+                    second_time_point.month = month_count
                 else:
-                    first_time_point.month = time_base_handler[1] + 1
-                    second_time_point.month = time_base_handler[1] + 1
+                    first_time_point.month = time_base_handler[1] + month_count
+                    second_time_point.month = time_base_handler[1] + month_count
             elif '同' in month_string or '本' in month_string or '当' in month_string or '这' in month_string:
                 first_time_point.month = time_base_handler[1]
                 second_time_point.month = time_base_handler[1]
@@ -4008,14 +4022,12 @@ class TimeParser(TimeUtility):
 
         if week:
             week_string = week.group()
-            if '上上' in week_string:
-                time_base_datetime -= (one_week + one_week)
-            elif '下下' in week_string:
-                time_base_datetime += (one_week + one_week)
-            elif '上' in week_string:
-                time_base_datetime -= one_week
+            if '上' in week_string:
+                week_count = week_string.count('上')
+                time_base_datetime -= one_week * week_count
             elif '下' in week_string:
-                time_base_datetime += one_week
+                week_count = week_string.count('下')
+                time_base_datetime += one_week * week_count
             elif '本' in week_string or '这' in week_string:
                 pass
             else:
