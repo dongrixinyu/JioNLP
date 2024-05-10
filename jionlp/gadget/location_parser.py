@@ -156,7 +156,7 @@ class LocationParser(object):
             # offset 匹配全名用 0 表示，匹配别名用 1 表示。
             offset_list = [[-1, -1], [-1, -1], [-1, -1]]
 
-            for idx, name_item in enumerate(admin_item[1: -1]):
+            for idx, name_item in enumerate(admin_item[1: 4]):
                 match_flag = False
                 cur_name = None
                 cur_alias = None
@@ -180,10 +180,19 @@ class LocationParser(object):
                     offset_list[idx][1] = cur_alias
             
             if count > 0:
-                cur_item = copy.deepcopy(admin_item)
-                cur_item.extend([count, offset_list])
-                candidate_admin_list.append(cur_item)
-                
+                # cur_item = copy.deepcopy(admin_item)
+                # cur_item.extend([count, offset_list])
+                # candidate_admin_list.append(cur_item)
+                if len(admin_item) == 5:
+                    admin_item.extend([count, offset_list])
+                    candidate_admin_list.append(admin_item)
+                elif len(admin_item) == 7:
+                    admin_item[-2] = count
+                    admin_item[-1] = offset_list
+                    candidate_admin_list.append(admin_item)
+                else:
+                    raise ValueError('length of admin_item is wrong!')
+
         return candidate_admin_list
 
     def _process_exception_alias(self, name, location_text):
