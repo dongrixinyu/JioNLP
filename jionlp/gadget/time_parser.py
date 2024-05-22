@@ -269,6 +269,10 @@ class TimeParser(TimeUtility):
             r'((17|18|19|20|21)\d{2} (1[012]|[0]?\d) (30|31|[012]?\d))|'
             r'(1[012]|[0]?\d)[·\-/](30|31|[012]?\d)')
 
+        # 无分隔符的8位 时间年、月、日： `20031204`
+        self.standard_2_year_month_day_pattern = re.compile(
+            r'((18|19|20)\d{2})(1[012]|0\d)(3[01]|[012]\d)')
+
         # `标准数字 年`：`2018`
         self.standard_year_pattern = re.compile(r'(17|18|19|20|21)\d{2}')
 
@@ -1430,6 +1434,7 @@ class TimeParser(TimeUtility):
 
                 # 时间点型
                 [self.standard_year_month_day_pattern, self.normalize_standard_year_month_day],
+                [self.standard_2_year_month_day_pattern, self.normalize_standard_2_year_month_day],
                 [self.year_24st_pattern, self.normalize_year_24st],
                 [self.limit_year_lunar_season_pattern, self.normalize_limit_year_lunar_season],
                 [self.year_lunar_season_pattern, self.normalize_year_lunar_season],
@@ -1725,6 +1730,18 @@ class TimeParser(TimeUtility):
         time_point.year = int(year)
         time_point.month = int(month)
         time_point.day = int(day)
+
+        time_handler = time_point.handler()
+
+        return time_handler, time_handler, 'time_point', 'accurate'
+
+    def normalize_standard_2_year_month_day(self, time_string):
+        """ 解析 标准数字 年月日（标准） 时间 """
+        # 如 `20180209`，8位，应当按照时间来做解析
+        time_point = TimePoint()
+        time_point.year = int(time_string[:4])
+        time_point.month = int(time_string[4:6])
+        time_point.day = int(time_string[6:])
 
         time_handler = time_point.handler()
 

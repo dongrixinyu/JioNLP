@@ -187,6 +187,8 @@ class TestTimeParser(unittest.TestCase):
 
         time_string_list = [
             # 标准数字 年、月、日、时、分、秒
+            ['20240307', _ts_1,
+             {'type': 'time_point', 'definition': 'accurate', 'time': ['2024-03-07 00:00:00', '2024-03-07 23:59:59']}],
             ['2022 11 23', _ts_1,
              {'type': 'time_point', 'definition': 'accurate', 'time': ['2022-11-23 00:00:00', '2022-11-23 23:59:59']}],
             ['2019/04/19', _ts_1,
@@ -1038,11 +1040,8 @@ class TestTimeParser(unittest.TestCase):
                 'time': ['2021-05-09 00:00:00', '2021-05-09 23:59:59'], 'string': '母亲节'}}}],
             ['每天晚上8点', _ts_1, {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'day': 1}, 'point': {
                 'time': ['2021-06-14 20:00:00', '2021-06-14 20:59:59'], 'string': '晚上8点'}}}],
-            ['每个星期天早上9点一刻', _ts_1, {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'day': 7},
-                                                                                              'point': {'time': [
-                                                                                                  '2021-06-20 09:15:00',
-                                                                                                  '2021-06-20 09:15:59'],
-                                                                                                        'string': '周天早上9点一刻'}}}],
+            ['每个星期天早上9点一刻', _ts_1, {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'day': 7}, 'point': {
+                'time': ['2021-06-20 09:15:00', '2021-06-20 09:15:59'], 'string': '周天早上9点一刻'}}}],
             ['每隔200秒', _ts_1,
              {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'second': 200.0}, 'point': None}}],
             ['每年秋天', _ts_1, {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'year': 1}, 'point': {

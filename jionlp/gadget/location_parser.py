@@ -9,7 +9,7 @@
 
 
 import re
-import copy
+# import copy
 import collections
 
 from jionlp.dictionary.dictionary_loader import china_location_loader,\
@@ -72,6 +72,9 @@ class LocationParser(object):
         
     def _mapping(self, china_loc, china_change_loc):
         # 整理行政区划码映射表
+        # TODO:
+        # 整个功能最耗时部分是 get_candidate 中的三重循环，因此，为加速，应当将
+        # self.administrative_map_list 这里的 list 改为 dict，其中，又涉及到诸多信息，这里暂留坑。
         self.administrative_map_list = []  # 地址别称
 
         for prov in china_loc:
@@ -259,10 +262,14 @@ class LocationParser(object):
                                 if item[-2] == max_matched_num]
 
         # 对于有些新旧地名简称相同，且省市县不按靠前的位置依次排开的，删除旧地名
-        # 这种情况下，candidate_admin_list包含2个行政区划且offset中地址的 “索引”相同
         if len(candidate_admin_list) == 2:
+            # 1. 这种情况下，candidate_admin_list包含2个行政区划且offset中地址的 “索引”相同
+            # 索引名完全相同
             if [i[0] for i in candidate_admin_list[0][-1]] == [i[0] for i in candidate_admin_list[1][-1]]:
                 # 删除旧地名
+                candidate_admin_list = [item for item in candidate_admin_list if item[4] is True]
+            # 2. 别名完全相同。
+            elif [i[1] for i in candidate_admin_list[0][1:4]] == [i[1] for i in candidate_admin_list[1][1:4]]:
                 candidate_admin_list = [item for item in candidate_admin_list if item[4] is True]
 
         # 此时，若仅有一个地址被匹配，则应当直接返回正确的结果
