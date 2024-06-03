@@ -24,7 +24,7 @@
   - [**ChatGPT面前，JioNLP-工具的价值在何处？**](../../wiki/ChatGPT面前，JioNLP-工具的价值在何处？)
   - [**ChatGPT这么强，会影响NLPer的就业环境吗？**](https://zhuanlan.zhihu.com/p/605673596)
   - [**一文读懂ChatGPT模型原理**](https://zhuanlan.zhihu.com/p/589621442)
-  - [**花了三周，我又更新了一版开源软件 ffio**](https://zhuanlan.zhihu.com/p/678141936)
+  - [**花了三周，我又更新了一版开源软件 ffio**](https://zhuanlan.zhihu.com/p/678141936) => [FFIO链接](https://github.com/dongrixinyu/ffio)
 
 ### 2023-12-12 Add [MELLM](https://zhuanlan.zhihu.com/p/666001842)
 
@@ -49,16 +49,6 @@ $ python test_mellm.py
 >>> print(llm_test[5])
 ```
 
-### 2022-11-28 更新 [**正则判断类函数族**](../../wiki/正则判断类说明文档)
-
-#### jio.check_any_chinese_char 检查文本中是否包含中文字符
-
-```
->>> import jionlp as jio
->>> print(jio.check_any_chinese_char('【新华社消息】（北京时间）从昨天...'))
-
-# True
-```
 
 ## 安装 Installation
 
@@ -80,14 +70,10 @@ $ pip install jionlp
 ```
 >>> import jionlp as jio
 >>> print(jio.__version__)  # 查看 jionlp 的版本
->>> jio.help()  # 输入关键词搜索工具包是否包含某功能，如输入“回译”
 >>> dir(jio)
 >>> print(jio.extract_parentheses.__doc__)
 ```
-- 在 Linux 系统，可使用以下命令做搜索：
-```
-$ jio_help
-```
+
 
 - **星级⭐**代表优质特色功能
 ### 1.小工具集 Gadgets
