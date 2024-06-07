@@ -106,7 +106,7 @@ NORMALIZE_GRADING_CHINESE_PROMPT_SCORING = """我将给你一段文字，是一�
 """
 
 
-NORMALIZE_GRADING_CHINESE_PROMPT_SCORING = """I will give you a piece of text which is an evaluation by an evaluator on a test taker's answer:
+NORMALIZE_GRADING_ENGLISH_PROMPT_SCORING = """I will give you a piece of text which is an evaluation by an evaluator on a test taker's answer:
 
 ```
 {grading_result}
