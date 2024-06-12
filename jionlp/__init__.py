@@ -8,7 +8,7 @@
 # website: www.jionlp.com
 
 
-__version__ = '1.5.14'
+__version__ = '1.5.15'
 
 
 import os
@@ -96,6 +96,7 @@ history = """
 │   | 2023-07-05 | add clean html & update to 1.5.*                    |   │
 │   | 2023-12-12 | add MELLM algorithm to evaluate LLMs                |   │
 │   | 2024-01-12 | fix set_logger bug                                  |   │
+│   | 2024-06-12 | add llm_test_1.2 & fix clean_text bug               |   │
 │                                                                          │
 ╰──────────────────────────────────────────────────────────────────────────╯
 """
