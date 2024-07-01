@@ -347,10 +347,10 @@ class MELLM(object):
             self.last_weight_matrix = self.weight_matrix
 
             logging.info('the total score and weight for every model:')
-            logging.info('\t{:<20s}{:<5s}\t{:s}'.format(
+            logging.info('\t{:<35s}{:<5s}\t{:s}'.format(
                 'MODEL_NAME', 'SCORE', 'WEIGHT'))
             for idx, llm in enumerate(self.llm_names):
-                logging.info('\t{:<20s}{:.1f}\t{:>6.1%}'.format(
+                logging.info('\t{:<35s}{:>.1f}\t{:>6.1%}'.format(
                     llm, self.total_score[idx], self.weight_matrix[idx]))
 
             print()
