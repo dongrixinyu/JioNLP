@@ -11,7 +11,7 @@
     <a alt="Downloads">
         <img src="https://pepy.tech/badge/jionlp/month" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.5.12-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.5.15-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -20,11 +20,12 @@
 #### &emsp;&emsp; 安装：```pip install jionlp```
 - JioNLP 是一个面向 **NLP 开发者**的工具包，提供 NLP 任务预处理、解析功能，准确、高效、零使用门槛。请下拉本网页，查阅具体功能信息，并按 **Ctrl+F** 进行搜索。[**JioNLP在线版**](http://www.jionlp.com/) 可快速试用部分功能。关注同名**微信公众号 JioNLP** 可获取最新的 AI 资讯，数据资源。
 
+  - [**你为什么不相信 LLM 模型评测：深入评测 LLM 接口**](https://mp.weixin.qq.com/s/8PoFz6mUD1AzKthGyO4cyA)
   - [**AI似乎在向着奇怪的方向飞奔**](https://mp.weixin.qq.com/s/cXktu3BDUee-s2L8Z0wXYA)
   - [**ChatGPT面前，JioNLP-工具的价值在何处？**](../../wiki/ChatGPT面前，JioNLP-工具的价值在何处？)
   - [**ChatGPT这么强，会影响NLPer的就业环境吗？**](https://zhuanlan.zhihu.com/p/605673596)
   - [**一文读懂ChatGPT模型原理**](https://zhuanlan.zhihu.com/p/589621442)
-  - [**花了三周，我又更新了一版开源软件 ffio**](https://zhuanlan.zhihu.com/p/678141936)
+  - [**花了三周，我又更新了一版开源软件 ffio**](https://zhuanlan.zhihu.com/p/678141936) => [**FFIO链接**](https://github.com/dongrixinyu/ffio)
 
 ### 2023-12-12 Add [MELLM](https://zhuanlan.zhihu.com/p/666001842)
 
@@ -49,16 +50,6 @@ $ python test_mellm.py
 >>> print(llm_test[5])
 ```
 
-### 2022-11-28 更新 [**正则判断类函数族**](../../wiki/正则判断类说明文档)
-
-#### jio.check_any_chinese_char 检查文本中是否包含中文字符
-
-```
->>> import jionlp as jio
->>> print(jio.check_any_chinese_char('【新华社消息】（北京时间）从昨天...'))
-
-# True
-```
 
 ## 安装 Installation
 
@@ -80,14 +71,10 @@ $ pip install jionlp
 ```
 >>> import jionlp as jio
 >>> print(jio.__version__)  # 查看 jionlp 的版本
->>> jio.help()  # 输入关键词搜索工具包是否包含某功能，如输入“回译”
 >>> dir(jio)
 >>> print(jio.extract_parentheses.__doc__)
 ```
-- 在 Linux 系统，可使用以下命令做搜索：
-```
-$ jio_help
-```
+
 
 - **星级⭐**代表优质特色功能
 ### 1.小工具集 Gadgets

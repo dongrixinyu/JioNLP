@@ -152,7 +152,7 @@ class TestLocationParser(unittest.TestCase):
                 item[0], town_village=item[1], change2new=item[2])
             print(item[0])
             # print(time_res)
-            self.assertEqual(loc_res, item[3])
+            self.assertEqual(loc_res, item[3], "{}".format(item[0]))
 
 
 if __name__ == '__main__':

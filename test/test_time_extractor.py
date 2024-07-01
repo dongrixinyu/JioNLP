@@ -37,6 +37,8 @@ class TestTimeExtractor(unittest.TestCase):
             ['调高二十四点五度', []],
             ['调高24点5度', []],
             ['升高10点五度', []],
+            ['查询202403073计划', []],
+            ['查询20240307计划', [{'text': '20240307', 'offset': [2, 10], 'type': 'time_point'}]],
             ['是一个十一点的事', [{'text': '十一点', 'offset': [3, 6], 'type': 'time_point'}]],
             ['下下下周一', [{'text': '下下下周一', 'offset': [0, 5], 'type': 'time_point'}]],
             ['上上个月五号', [{'text': '上上个月五号', 'offset': [0, 6], 'type': 'time_point'}]],
