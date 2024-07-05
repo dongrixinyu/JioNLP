@@ -78,6 +78,11 @@ class TestLocationParser(unittest.TestCase):
               'detail': '山禾路2号',
               'full_location': '山西省长治市潞州区山禾路2号',
               'orig_location': '山西长治潞州区山禾路2号'}],
+            ['青海西宁', False, False,
+             {'province': '青海省', 'city': '西宁市', 'county': None,
+              'detail': '', 'full_location': '青海省西宁市',
+              'orig_location': '青海西宁'}
+             ],
             ['东兴市北仑大道59号', True, False,
              {'province': '广西壮族自治区', 'city': '防城港市', 'county': '东兴市',
               'detail': '北仑大道59号',

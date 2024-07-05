@@ -181,7 +181,23 @@ class LocationParser(object):
                     count += 1
                     offset_list[idx][0] = location_text.index(cur_name)
                     offset_list[idx][1] = cur_alias
-            
+
+                    # 两条匹配，相差一个字符位置，说明匹配错误，
+                    # 如 “青海西宁”，容易匹配“海西”，是错误的。
+                    if idx == 1 and (offset_list[idx-1][0] >= 0):
+                        if offset_list[idx][0] - offset_list[idx-1][0] == 1:
+                            count = 0
+                            break
+                    if idx == 2:
+                        if offset_list[idx-1][0] >= 0:
+                            if offset_list[idx][0] - offset_list[idx-1][0] == 1:
+                                count = 0
+                                break
+                        if offset_list[idx-2][0] >= 0:
+                            if offset_list[idx][0] - offset_list[idx-2][0] == 1:
+                                count = 0
+                                break
+
             if count > 0:
                 # cur_item = copy.deepcopy(admin_item)
                 # cur_item.extend([count, offset_list])

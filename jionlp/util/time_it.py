@@ -2,9 +2,10 @@
 # library: jionlp
 # author: dongrixinyu
 # license: Apache License 2.0
-# Email: dongrixinyu.89@163.com
+# email: dongrixinyu.89@163.com
 # github: https://github.com/dongrixinyu/JioNLP
-# description: Preprocessing tool for Chinese NLP
+# description: Preprocessing & Parsing tool for Chinese NLP
+# website: www.jionlp.com
 
 
 import time
@@ -33,7 +34,8 @@ class TimeIt(object):
         self.no_print = no_print
         self.name = name if name is not None else 'None'
         self.unit = unit
-        assert self.unit in ['s', 'ms'], '时间单位仅限于`秒`和`毫秒`'
+        assert self.unit in ['s', 'ms'], \
+            'The unit of time must be seconds (`s`) or milliseconds (`ms`)'
         
     def __enter__(self):
         self.start_time = time.time()

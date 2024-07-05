@@ -367,7 +367,7 @@ MONTH_STRING = MONTH_NUM_STRING + r'月(份)?'
 MONTH_NUM_STRING = MONTH_NUM_STRING[:-2] + r'两])'  # 1~12 order month num
 BLUR_MONTH_STRING = r'(初|[一]开年|伊始|末|尾|终|底|[上下]半年|[暑寒][假期]|[前中后]期)'
 LUNAR_MONTH_STRING = r'(闰)?([正一二三四五六七八九十冬腊]|十[一二]|[1-9]|1[012])月'
-LIMIT_MONTH_STRING = r'([下上]((一)?个)?|同|本|当|次|(这((一)?个)?))月'
+LIMIT_MONTH_STRING = r'((下(下)?|上(上)?)((一)?个)?|同|本|当|次|(这((一)?个)?))月'
 SELF_EVI_LUNAR_MONTH_STRING = r'((闰)?[正冬腊]|闰([一二三四五六七八九十]|十[一二]|[1-9]|1[012]))月'
 
 # 周
