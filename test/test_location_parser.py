@@ -149,7 +149,21 @@ class TestLocationParser(unittest.TestCase):
               'detail': '金华镇清云北路2号（四川新津工业园）',
               'full_location': '四川省成都市新津区金华镇清云北路2号（四川新津工业园）',
               'orig_location': '成都市新津县金华镇清云北路2号（四川新津工业园）'}
-             ]
+             ],
+            ['青岛市市南区香港中路18号', False, False,
+             {'province': '山东省',
+              'city': '青岛市',
+              'county': '市南区',
+              'detail': '香港中路18号',
+              'full_location': '山东省青岛市市南区香港中路18号',
+              'orig_location': '青岛市市南区香港中路18号'}],
+            ['石首市笔架山办事处建设路香港城西街', False, False,
+             {'province': '湖北省',
+              'city': '荆州市',
+              'county': '石首市',
+              'detail': '笔架山办事处建设路香港城西街',
+              'full_location': '湖北省荆州市石首市笔架山办事处建设路香港城西街',
+              'orig_location': '石首市笔架山办事处建设路香港城西街'}]
         ]
 
         for item in location_string_list:

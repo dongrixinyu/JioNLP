@@ -202,6 +202,8 @@ class LocationParser(object):
                 # cur_item = copy.deepcopy(admin_item)
                 # cur_item.extend([count, offset_list])
                 # candidate_admin_list.append(cur_item)
+                if admin_item[1][1] in self.municipalities_cities and admin_item[1][1] in location_text:
+                    count -= 1
                 if len(admin_item) == 5:
                     admin_item.extend([count, offset_list])
                     candidate_admin_list.append(admin_item)
