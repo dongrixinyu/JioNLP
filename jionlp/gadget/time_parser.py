@@ -362,6 +362,8 @@ class TimeParser(TimeUtility):
                 bracket(SELF_EVI_LUNAR_MONTH_STRING), absence(LUNAR_SOLAR_DAY_STRING), I,
 
                 # 强制标明农历，原因在于农历和公历的混淆，非常复杂
+                bracket(LUNAR_YEAR_STRING), LU, bracket(LUNAR_MONTH_STRING), bracket(DAY_STRING), I,  # 2018年农历8月23号
+
                 LU, bracket(LUNAR_YEAR_STRING), bracket(LUNAR_MONTH_STRING), I,  # 农历二零一二年九月
                 bracket(LUNAR_YEAR_STRING), LU, bracket(LUNAR_MONTH_STRING), I,  # 二零一二年农历九月
 
@@ -3781,6 +3783,11 @@ class TimeParser(TimeUtility):
         """ 解析 农历年、月、日 时间 """
         lunar_month = self.month_patterns[4].search(time_string)
         lunar_day = self.day_patterns[1].search(time_string)
+        use_lunar_day = True
+        if lunar_day is None:
+            lunar_day = self.day_patterns[0].search(time_string)
+            if lunar_day is not None:
+                use_lunar_day = False
 
         lunar_time_point = TimePoint()
 
@@ -3800,10 +3807,15 @@ class TimeParser(TimeUtility):
             lunar_time_point.month = lunar_month_string
 
         if lunar_day:
-            lunar_day_string = lunar_day.group(0)
-            lunar_day_string = lunar_day_string\
-                .replace('初', '').replace('廿', '二十')
-            lunar_day_string = int(self._char_num2num(lunar_day_string))
+            if use_lunar_day:
+                lunar_day_string = lunar_day.group(0)
+                lunar_day_string = lunar_day_string\
+                    .replace('初', '').replace('廿', '二十')
+                lunar_day_string = int(self._char_num2num(lunar_day_string))
+
+            else:
+                lunar_day_string = lunar_day.group(1)
+                lunar_day_string = int(self._char_num2num(lunar_day_string))
 
             lunar_time_point.day = lunar_day_string
 

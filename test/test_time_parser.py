@@ -532,6 +532,8 @@ class TestTimeParser(unittest.TestCase):
              {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-09-10 00:00:00', '2021-09-13 23:59:59']}],
 
             # 农历年、月、日
+            ['1991年农历8月23号', _ts_1,
+             {'type': 'time_point', 'definition': 'accurate', 'time': ['1991-09-30 00:00:00', '1991-09-30 23:59:59']}],
             ['二零一二年农历正月十五', _ts_1,
              {'type': 'time_point', 'definition': 'accurate', 'time': ['2012-02-06 00:00:00', '2012-02-06 23:59:59']}],
             ['阴历二〇二一年六月', _ts_1,
