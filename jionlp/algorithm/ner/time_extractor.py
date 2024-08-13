@@ -72,7 +72,6 @@ class TimeExtractor(object):
         self.parse_time = None
 
     def _prepare(self):
-        self.parse_time = TimeParser()
         self.time_string_pattern = re.compile(TIME_CHAR_STRING)  # 该正则存在假阴风险
         self.fake_positive_time_pattern = re.compile(FAKE_POSITIVE_TIME_PATTERN)
 
@@ -90,6 +89,8 @@ class TimeExtractor(object):
         self.unit_pattern = re.compile(r'(多)?[万亿元]')  # 四数字后接单位，说明非年份
 
         self.single_char_time = set(['春', '夏', '秋', '冬'])
+
+        self.parse_time = TimeParser()
 
     def __call__(self, text, time_base=time.time(), with_parsing=True, ret_all=False,
                  ret_type='str', ret_future=False, period_results_num=None):
