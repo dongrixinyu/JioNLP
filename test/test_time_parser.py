@@ -1097,6 +1097,7 @@ class TestTimeParser(unittest.TestCase):
         ]
 
         for item in time_string_list:
+            print(item[0])
             time_res = jio.parse_time(item[0], time_base=item[1], ret_future=True)  # , strict=True)
             self.assertEqual(time_res, item[2], item[0])
 

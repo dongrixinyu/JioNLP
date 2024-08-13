@@ -286,3 +286,19 @@ class TimeUtility(object):
 
         return first_time_string, second_time_string
 
+    def map_time_unit(self, destination_time_handler, source_time_handler, unit=None):
+        """代码中有大量的时间的赋值，很啰嗦，因此制此函数方便函数的映射赋值
+
+        我们约定，destination_time_handler 和 source_time_handler
+        都具备 year\month\day\hour\minite\second 等属性，
+
+        函数即根据 source 的指定属性赋值在  destination 上面。
+        """
+        if unit is None:
+            return destination_time_handler
+
+        for u in unit:
+            value = getattr(source_time_handler, u)
+            setattr(destination_time_handler, u, value)
+
+        return destination_time_handler

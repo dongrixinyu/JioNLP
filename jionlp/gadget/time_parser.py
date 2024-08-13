@@ -1886,10 +1886,7 @@ class TimeParser(TimeUtility):
             first_time_point.day = min(day_list)
             second_time_point.day = max(day_list)
 
-        first_time_handler = first_time_point.handler()
-        second_time_handler = second_time_point.handler()
-
-        return first_time_handler, second_time_handler, 'time_span', 'accurate'
+        return first_time_point.handler(), second_time_point.handler(), 'time_span', 'accurate'
 
     def normalize_year_month_day(self, time_string):
         """ 解析 年月日（标准） 时间 """
@@ -1978,10 +1975,7 @@ class TimeParser(TimeUtility):
         else:
             raise ValueError('the given `{}` is illegal.'.format(time_string))
 
-        first_time_handler = first_time_point.handler()
-        second_time_handler = second_time_point.handler()
-
-        return first_time_handler, second_time_handler, 'time_span', 'accurate'
+        return first_time_point.handler(), second_time_point.handler(), 'time_span', 'accurate'
 
     def _normalize_solar_season(self, time_string):
         """ 解析 `(第)? 三 (个)?季度 (末)?` 等"""
@@ -2125,10 +2119,7 @@ class TimeParser(TimeUtility):
 
         first_time_point.month, second_time_point.month = self._normalize_solar_season(time_string)
 
-        first_time_handler = first_time_point.handler()
-        second_time_handler = second_time_point.handler()
-
-        return first_time_handler, second_time_handler, 'time_span', 'accurate'
+        return first_time_point.handler(), second_time_point.handler(), 'time_span', 'accurate'
 
     def normalize_year_solar_season(self, time_string):
         """ 解析 年/季度(公历) 时间 """
@@ -2143,10 +2134,7 @@ class TimeParser(TimeUtility):
 
         first_time_point.month, second_time_point.month = self._normalize_solar_season(time_string)
 
-        first_time_handler = first_time_point.handler()
-        second_time_handler = second_time_point.handler()
-
-        return first_time_handler, second_time_handler, 'time_span', 'accurate'
+        return first_time_point.handler(), second_time_point.handler(), 'time_span', 'accurate'
 
     def _normalize_span_month(self, time_string):
         month = self.month_patterns[3].search(time_string)
@@ -2187,10 +2175,7 @@ class TimeParser(TimeUtility):
 
         first_time_point.month, second_time_point.month = self._normalize_span_month(time_string)
 
-        first_time_handler = first_time_point.handler()
-        second_time_handler = second_time_point.handler()
-
-        return first_time_handler, second_time_handler, 'time_span', 'accurate'
+        return first_time_point.handler(), second_time_point.handler(), 'time_span', 'accurate'
 
     def normalize_year_span_month(self, time_string):
         """ 解析 年/前n个月 时间 """
@@ -2204,10 +2189,7 @@ class TimeParser(TimeUtility):
 
         first_time_point.month, second_time_point.month = self._normalize_span_month(time_string)
 
-        first_time_handler = first_time_point.handler()
-        second_time_handler = second_time_point.handler()
-
-        return first_time_handler, second_time_handler, 'time_span', 'accurate'
+        return first_time_point.handler(), second_time_point.handler(), 'time_span', 'accurate'
 
     def _check_delta_base_conflict(self, time_delta_dict, time_base_handler):
         # 检测 time_delta 的 dict 与 time_base_handler 的冲突，会导致无法解析
@@ -3238,10 +3220,8 @@ class TimeParser(TimeUtility):
 
         first_time_point.year = self.time_base_handler[0] + time_delta_num - 1
         second_time_point.year = self.time_base_handler[0] + time_delta_num - 1
-        first_time_handler = first_time_point.handler()
-        second_time_handler = second_time_point.handler()
 
-        return first_time_handler, second_time_handler, 'time_span', 'blur'
+        return first_time_point.handler(), second_time_point.handler(), 'time_span', 'blur'
 
     def normalize_day_order_delta_point(self, time_string):
         # 第三年
@@ -3257,10 +3237,8 @@ class TimeParser(TimeUtility):
 
         first_time_point.day = self.time_base_handler[2] + time_delta_num - 1
         second_time_point.day = self.time_base_handler[2] + time_delta_num - 1
-        first_time_handler = first_time_point.handler()
-        second_time_handler = second_time_point.handler()
 
-        return first_time_handler, second_time_handler, 'time_span', 'accurate'
+        return first_time_point.handler(), second_time_point.handler(), 'time_span', 'accurate'
 
     def _normalize_blur_month(self, time_string):
         month = self.month_patterns[2].search(time_string)
@@ -3316,10 +3294,7 @@ class TimeParser(TimeUtility):
 
         first_time_point.month, second_time_point.month = self._normalize_blur_month(time_string)
 
-        first_time_handler = first_time_point.handler()
-        second_time_handler = second_time_point.handler()
-
-        return first_time_handler, second_time_handler, 'time_span', 'blur'
+        return first_time_point.handler(), second_time_point.handler(), 'time_span', 'blur'
 
     def _normalize_limit_year(self, time_string, time_base_handler):
         """ 处理 limit_year """
@@ -3366,10 +3341,7 @@ class TimeParser(TimeUtility):
 
         first_time_point.month, second_time_point.month = self._normalize_blur_month(time_string)
 
-        first_time_handler = first_time_point.handler()
-        second_time_handler = second_time_point.handler()
-
-        return first_time_handler, second_time_handler, 'time_span', 'blur'
+        return first_time_point.handler(), second_time_point.handler(), 'time_span', 'blur'
 
     def _normalize_limit_month(self, time_string, time_base_handler,
                                first_time_point, second_time_point):
@@ -3425,11 +3397,8 @@ class TimeParser(TimeUtility):
             first_time_point.day = day
             second_time_point.day = day
 
-        first_time_handler = first_time_point.handler()
-        second_time_handler = second_time_point.handler()
-
-        return first_time_handler, second_time_handler, 'time_point',\
-            'blur' if first_time_handler[2] < 0 else 'accurate'
+        return first_time_point.handler(), second_time_point.handler(), 'time_point',\
+            'blur' if first_time_point.handler()[2] < 0 else 'accurate'
 
     def _normalize_blur_day(self, time_string, first_time_point, second_time_point):
         blur_day = self.day_patterns[4].search(time_string)
@@ -3474,11 +3443,8 @@ class TimeParser(TimeUtility):
         first_time_point, second_time_point = self._normalize_blur_day(
             time_string, first_time_point, second_time_point)
 
-        first_time_handler = first_time_point.handler()
-        second_time_handler = second_time_point.handler()
-
-        return first_time_handler, second_time_handler, 'time_point',\
-            'blur' if first_time_handler[2] < 0 else 'accurate'
+        return first_time_point.handler(), second_time_point.handler(), 'time_point',\
+            'blur' if first_time_point.handler()[2] < 0 else 'accurate'
 
     def normalize_limit_month(self, time_string):
         """ 解析 限制月份 时间 """
@@ -3491,8 +3457,8 @@ class TimeParser(TimeUtility):
         first_time_handler = first_time_point.handler()
         second_time_handler = second_time_point.handler()
 
-        return first_time_handler, second_time_handler, 'time_point',\
-            'blur' if first_time_handler[2] < 0 else 'accurate'
+        return first_time_point.handler(), second_time_point.handler(), 'time_point',\
+            'blur' if first_time_point.handler()[2] < 0 else 'accurate'
 
     def normalize_century_year(self, time_string):
         """ 解析 世纪、年 时间 """
@@ -3576,10 +3542,7 @@ class TimeParser(TimeUtility):
         first_time_point.year = first_year
         second_time_point.year = second_year
 
-        first_time_handler = first_time_point.handler()
-        second_time_handler = second_time_point.handler()
-
-        return first_time_handler, second_time_handler, 'time_span', 'blur'
+        return first_time_point.handler(), second_time_point.handler(), 'time_span', 'blur'
 
     def normalize_limit_year_month_day(self, time_string):
         """ 解析 限定年、月、日 时间 """
@@ -3598,11 +3561,9 @@ class TimeParser(TimeUtility):
             time_point.day = int(self._char_num2num(day.group(1)))
             time_type = 'time_point'
 
-        time_handler = time_point.handler()
-
         time_definition = self._check_blur(time_string, 'accurate')
 
-        return time_handler, time_handler, time_type, time_definition
+        return time_point.handler(), time_point.handler(), time_type, time_definition
 
     def normalize_blur_year(self, time_string):
         """ 解析 模糊年 时间 """
@@ -3774,10 +3735,7 @@ class TimeParser(TimeUtility):
         first_time_point.month = first_month
         second_time_point.month = second_month
 
-        first_time_handler = first_time_point.handler()
-        second_time_handler = second_time_point.handler()
-
-        return first_time_handler, second_time_handler, 'time_span', 'blur'
+        return first_time_point.handler(), second_time_point.handler(), 'time_span', 'blur'
 
     def normalize_lunar_year_month_day(self, time_string):
         """ 解析 农历年、月、日 时间 """
@@ -3937,10 +3895,7 @@ class TimeParser(TimeUtility):
             first_time_point.day = int(first_day)
             second_time_point.day = int(second_day) - 1
 
-        first_time_handler = first_time_point.handler()
-        second_time_handler = second_time_point.handler()
-
-        return first_time_handler, second_time_handler, 'time_span', 'accurate'
+        return first_time_point.handler(), second_time_point.handler(), 'time_span', 'accurate'
 
     def normalize_limit_year_lunar_season(self, time_string):
         """ 解析 限定年/季节(农历) 时间 :return:
@@ -3974,10 +3929,7 @@ class TimeParser(TimeUtility):
             first_time_point.day = int(first_day)
             second_time_point.day = int(second_day) - 1
 
-        first_time_handler = first_time_point.handler()
-        second_time_handler = second_time_point.handler()
-
-        return first_time_handler, second_time_handler, 'time_span', 'accurate'
+        return first_time_point.handler(), second_time_point.handler(), 'time_span', 'accurate'
 
     def normalize_year_month_blur_day(self, time_string):
         """ 解析 `年、月、模糊 日` 时间 """
@@ -3998,10 +3950,7 @@ class TimeParser(TimeUtility):
         first_time_point, second_time_point = self._normalize_blur_day(
             time_string, first_time_point, second_time_point)
 
-        first_time_handler = first_time_point.handler()
-        second_time_handler = second_time_point.handler()
-
-        return first_time_handler, second_time_handler, 'time_span', 'blur'
+        return first_time_point.handler(), second_time_point.handler(), 'time_span', 'blur'
 
     def normalize_limit_year_month_blur_day(self, time_string):
         """ 解析 `年、月、模糊 日` 时间 """
@@ -4021,10 +3970,7 @@ class TimeParser(TimeUtility):
         first_time_point, second_time_point = self._normalize_blur_day(
             time_string, first_time_point, second_time_point)
 
-        first_time_handler = first_time_point.handler()
-        second_time_handler = second_time_point.handler()
-
-        return first_time_handler, second_time_handler, 'time_span', 'blur'
+        return first_time_point.handler(), second_time_point.handler(), 'time_span', 'blur'
 
     def normalize_standard_week_day(self, time_string):
         """ 解析 `标准星期 N` 时间 """
@@ -4048,32 +3994,13 @@ class TimeParser(TimeUtility):
             else:
                 pass  # 即为本周
 
-        def compute_week_day(cur_day, target_week_day):
-            """ 同一个星期内，获取目标星期 N 日期
-            cur_day: datetime obj
-            target_week_day: int (0-6)
-            """
-            one_day = datetime.timedelta(days=1)
-            cur_week_day = cur_day.weekday()
-            delta = cur_week_day - target_week_day
-            if delta == 0:
-                return cur_day
-            elif delta > 0:
-                for _ in range(delta):
-                    cur_day -= one_day
-            elif delta < 0:
-                for _ in range(abs(delta)):
-                    cur_day += one_day
-
-            return cur_day
-
         if week_day:
             week_day_string = week_day.group()
 
             trans = ['一二三四五六天末日', [0, 1, 2, 3, 4, 5, 6, 6, 6]]
             for c, i in zip(trans[0], trans[1]):
                 if c in week_day_string:
-                    target_day = compute_week_day(time_base_datetime, i)
+                    target_day = TimeParser.compute_week_day(time_base_datetime, i, flag=False)
                     break
             else:
                 raise ValueError('`星期{}` is illegal.'.format(week_day_string))
@@ -4083,9 +4010,8 @@ class TimeParser(TimeUtility):
         time_point.year = time_handler[0]
         time_point.month = time_handler[1]
         time_point.day = time_handler[2]
-        time_handler = time_point.handler()
 
-        return time_handler, time_handler, 'time_point', 'accurate'
+        return time_point.handler(), time_point.handler(), 'time_point', 'accurate'
 
     def normalize_blur_week(self, time_string):
         """ 解析 `前后 N 星期` 时间 """
@@ -4096,25 +4022,6 @@ class TimeParser(TimeUtility):
         one_week = datetime.timedelta(days=7)
         time_base_datetime = TimeParser._convert_handler2datetime(
             self.time_base_handler)
-
-        def compute_week_day(cur_day, target_week_day):
-            """ 同一个星期内，获取目标星期 N 日期
-            cur_day: datetime obj
-            target_week_day: int (0-6)
-            """
-            one_day = datetime.timedelta(days=1)
-            cur_week_day = cur_day.weekday()
-            delta = cur_week_day - target_week_day
-            if delta == 0:
-                return cur_day
-            elif delta > 0:
-                for _ in range(delta):
-                    cur_day -= one_day
-            elif delta < 0:
-                for _ in range(abs(delta)):
-                    cur_day += one_day
-
-            return cur_day
 
         first_time_point = TimePoint()
         second_time_point = TimePoint()
@@ -4130,20 +4037,15 @@ class TimeParser(TimeUtility):
             if '前' in week_string:
                 for _ in range(week_num):
                     time_base_datetime -= one_week
-                first_time_datetime = compute_week_day(time_base_datetime, 0)
-                first_time_point.year = first_time_datetime.year
-                first_time_point.month = first_time_datetime.month
-                first_time_point.day = first_time_datetime.day
+                first_time_datetime = TimeParser.compute_week_day(time_base_datetime, 0, flag=False)
+                self.map_time_unit(first_time_point, first_time_datetime, unit=['year', 'month', 'day'])
                 first_time_handler = first_time_point.handler()
                 second_time_handler = self.time_base_handler
             elif '后' in week_string:
                 for _ in range(week_num):
                     time_base_datetime += one_week
-                second_time_datetime = compute_week_day(time_base_datetime, 6)
-
-                second_time_point.year = second_time_datetime.year
-                second_time_point.month = second_time_datetime.month
-                second_time_point.day = second_time_datetime.day
+                second_time_datetime = TimeParser.compute_week_day(time_base_datetime, 6, flag=False)
+                self.map_time_unit(second_time_point, second_time_datetime, unit=['year', 'month', 'day'])
                 second_time_handler = second_time_point.handler()
                 first_time_handler = self.time_base_handler
             else:
@@ -4168,16 +4070,12 @@ class TimeParser(TimeUtility):
             else:
                 raise ValueError('the time string `{}` is illegal.'.format(time_string))
 
-            first_time_datetime = compute_week_day(time_base_datetime, 0)
-            first_time_point.year = first_time_datetime.year
-            first_time_point.month = first_time_datetime.month
-            first_time_point.day = first_time_datetime.day
+            first_time_datetime = TimeParser.compute_week_day(time_base_datetime, 0, flag=False)
+            self.map_time_unit(first_time_point, first_time_datetime, unit=['year', 'month', 'day'])
             first_time_handler = first_time_point.handler()
 
-            second_time_datetime = compute_week_day(time_base_datetime, 6)
-            second_time_point.year = second_time_datetime.year
-            second_time_point.month = second_time_datetime.month
-            second_time_point.day = second_time_datetime.day
+            second_time_datetime = TimeParser.compute_week_day(time_base_datetime, 6, flag=False)
+            self.map_time_unit(second_time_point, second_time_datetime, unit=['year', 'month', 'day'])
             second_time_handler = second_time_point.handler()
 
         elif week_3:
@@ -4195,16 +4093,12 @@ class TimeParser(TimeUtility):
             else:
                 pass  # 即为本周
 
-            first_time_datetime = compute_week_day(time_base_datetime, 0)
-            first_time_point.year = first_time_datetime.year
-            first_time_point.month = first_time_datetime.month
-            first_time_point.day = first_time_datetime.day
+            first_time_datetime = TimeParser.compute_week_day(time_base_datetime, 0, flag=False)
+            self.map_time_unit(first_time_point, first_time_datetime, unit=['year', 'month', 'day'])
             first_time_handler = first_time_point.handler()
 
-            second_time_datetime = compute_week_day(time_base_datetime, 6)
-            second_time_point.year = second_time_datetime.year
-            second_time_point.month = second_time_datetime.month
-            second_time_point.day = second_time_datetime.day
+            second_time_datetime = TimeParser.compute_week_day(time_base_datetime, 6, flag=False)
+            self.map_time_unit(second_time_point, second_time_datetime, unit=['year', 'month', 'day'])
             second_time_handler = second_time_point.handler()
 
         else:
@@ -4212,6 +4106,32 @@ class TimeParser(TimeUtility):
                 traceback.format_exc()))
 
         return first_time_handler, second_time_handler, 'time_point', 'blur'
+
+    @staticmethod
+    def compute_week_day(cur_day, target_week_day, flag=True):
+        """ 从1 号开始计算，向后寻找对应的星期 N
+        cur_day: datetime obj
+        target_week_day: int (0-6)
+        flag: 指示向前还是向后寻找， flag 为 True，向前寻找，否则在之前寻找
+        """
+        one_day = datetime.timedelta(days=1)
+        cur_week_day = cur_day.weekday()
+        delta = cur_week_day - target_week_day
+
+        if delta == 0:
+            return cur_day
+        elif delta > 0:
+            if flag:
+                for _ in range(7 - delta):
+                    cur_day += one_day
+            else:
+                for _ in range(delta):
+                    cur_day -= one_day
+        elif delta < 0:
+            for _ in range(abs(delta)):
+                cur_day += one_day
+
+        return cur_day
 
     def normalize_limit_week(self, time_string):
         """ 解析 `M月的第 N 个星期` 时间 """
@@ -4245,29 +4165,10 @@ class TimeParser(TimeUtility):
             time_base_datetime = TimeParser._convert_handler2datetime(
                 [time_point.year, time_point.month, 1, 0, 0, 0])
 
-            def compute_week_day(cur_day, target_week_day):
-                """ 从1 号开始计算，向后寻找对应的星期 N
-                cur_day: datetime obj
-                target_week_day: int (0-6)
-                """
-                one_day = datetime.timedelta(days=1)
-                cur_week_day = cur_day.weekday()
-                delta = cur_week_day - target_week_day
-                if delta == 0:
-                    return cur_day
-                elif delta > 0:
-                    for _ in range(7 - delta):
-                        cur_day += one_day
-                elif delta < 0:
-                    for _ in range(abs(delta)):
-                        cur_day += one_day
-
-                return cur_day
-
             trans = ['一二三四五六天末日', [0, 1, 2, 3, 4, 5, 6, 6, 6]]
             for c, i in zip(trans[0], trans[1]):
                 if c in week_day_string:
-                    target_day = compute_week_day(time_base_datetime, i)
+                    target_day = TimeParser.compute_week_day(time_base_datetime, i, flag=True)
                     break
             else:
                 raise ValueError('`星期{}` is illegal.'.format(week_day_string))
@@ -4278,11 +4179,10 @@ class TimeParser(TimeUtility):
 
             time_handler = TimeParser._convert_time_base2handler(target_day)
             time_point.day = time_handler[2]
-            time_handler = time_point.handler()
         else:
             raise ValueError('th given string `{}` is illegal.'.format(time_string))
 
-        return time_handler, time_handler, 'time_point', 'accurate'
+        return time_point.handler(), time_point.handler(), 'time_point', 'accurate'
 
     def _normalize_month_order_week(self, time_string, first_point_month, first_point_year=None):
         """ 解析 `第 N 个星期` 时间 """
@@ -4332,16 +4232,11 @@ class TimeParser(TimeUtility):
         first_point_day, second_point_day = self._normalize_month_order_week(
             time_string, first_time_point.month)
 
-        first_time_point.month = first_point_day.month
-        first_time_point.day = first_point_day.day
-        second_time_point.year = second_point_day.year  # 12 月第四周有可能导致年份加一
-        second_time_point.month = second_point_day.month
-        second_time_point.day = second_point_day.day
+        self.map_time_unit(first_time_point, first_point_day, unit=['month', 'day'])
+        # 12 月第四周有可能导致年份加一
+        self.map_time_unit(second_time_point, second_point_day, unit=['year', 'month', 'day'])
 
-        first_time_handler = first_time_point.handler()
-        second_time_handler = second_time_point.handler()
-
-        return first_time_handler, second_time_handler, 'time_span', 'accurate'
+        return first_time_point.handler(), second_time_point.handler(), 'time_span', 'accurate'
 
     def normalize_limit_month_week(self, time_string):
         """ 解析 `限定月 第 N 个星期` 时间 """
@@ -4354,16 +4249,11 @@ class TimeParser(TimeUtility):
         first_point_day, second_point_day = self._normalize_month_order_week(
             time_string, first_time_point.month)
 
-        first_time_point.month = first_point_day.month
-        first_time_point.day = first_point_day.day
-        second_time_point.year = second_point_day.year  # 12 月第四周有可能导致年份加一
-        second_time_point.month = second_point_day.month
-        second_time_point.day = second_point_day.day
+        self.map_time_unit(first_time_point, first_point_day, unit=['month', 'day'])
+        # 12 月第四周有可能导致年份加一
+        self.map_time_unit(second_time_point, second_point_day, unit=['year', 'month', 'day'])
 
-        first_time_handler = first_time_point.handler()
-        second_time_handler = second_time_point.handler()
-
-        return first_time_handler, second_time_handler, 'time_span', 'accurate'
+        return first_time_point.handler(), second_time_point.handler(), 'time_span', 'accurate'
 
     def normalize_year_month_week(self, time_string):
         """ 解析 `2021年2月第 N 个星期` 时间 """
@@ -4384,16 +4274,10 @@ class TimeParser(TimeUtility):
         first_point_day, second_point_day = self._normalize_month_order_week(
             time_string, first_time_point.month, first_time_point.year)
 
-        first_time_point.month = first_point_day.month
-        first_time_point.day = first_point_day.day
-        second_time_point.year = second_point_day.year
-        second_time_point.month = second_point_day.month
-        second_time_point.day = second_point_day.day
+        self.map_time_unit(first_time_point, first_point_day, unit=['month', 'day'])
+        self.map_time_unit(second_time_point, second_point_day, unit=['year', 'month', 'day'])
 
-        first_time_handler = first_time_point.handler()
-        second_time_handler = second_time_point.handler()
-
-        return first_time_handler, second_time_handler, 'time_span', 'accurate'
+        return first_time_point.handler(), second_time_point.handler(), 'time_span', 'accurate'
 
     def normalize_limit_year_month_week(self, time_string):
         """ 解析 `限定年 2月第 N 个星期` 时间 """
@@ -4412,16 +4296,10 @@ class TimeParser(TimeUtility):
         first_point_day, second_point_day = self._normalize_month_order_week(
             time_string, first_time_point.month, first_time_point.year)
 
-        first_time_point.month = first_point_day.month
-        first_time_point.day = first_point_day.day
-        second_time_point.year = second_point_day.year
-        second_time_point.month = second_point_day.month
-        second_time_point.day = second_point_day.day
+        self.map_time_unit(first_time_point, first_point_day, unit=['month', 'day'])
+        self.map_time_unit(second_time_point, second_point_day, unit=['year', 'month', 'day'])
 
-        first_time_handler = first_time_point.handler()
-        second_time_handler = second_time_point.handler()
-
-        return first_time_handler, second_time_handler, 'time_span', 'accurate'
+        return first_time_point.handler(), second_time_point.handler(), 'time_span', 'accurate'
 
     def _normalize_year_order_week(self, time_string, first_point_year):
         # 找到 一年中的 第 N 个星期
@@ -4466,16 +4344,10 @@ class TimeParser(TimeUtility):
         first_point_day, second_point_day = self._normalize_year_order_week(
             time_string, first_time_point.year)
 
-        first_time_point.month = first_point_day.month
-        first_time_point.day = first_point_day.day
-        second_time_point.year = second_point_day.year
-        second_time_point.month = second_point_day.month
-        second_time_point.day = second_point_day.day
+        self.map_time_unit(first_time_point, first_point_day, unit=['month', 'day'])
+        self.map_time_unit(second_time_point, second_point_day, unit=['year', 'month', 'day'])
 
-        first_time_handler = first_time_point.handler()
-        second_time_handler = second_time_point.handler()
-
-        return first_time_handler, second_time_handler, 'time_span', 'accurate'
+        return first_time_point.handler(), second_time_point.handler(), 'time_span', 'accurate'
 
     def normalize_limit_year_week(self, time_string):
         """ 解析 `限定年 第 N 个星期` 时间 """
@@ -4488,16 +4360,10 @@ class TimeParser(TimeUtility):
         first_point_day, second_point_day = self._normalize_year_order_week(
             time_string, first_time_point.year)
 
-        first_time_point.month = first_point_day.month
-        first_time_point.day = first_point_day.day
-        second_time_point.year = second_point_day.year
-        second_time_point.month = second_point_day.month
-        second_time_point.day = second_point_day.day
+        self.map_time_unit(first_time_point, first_point_day, unit=['month', 'day'])
+        self.map_time_unit(second_time_point, second_point_day, unit=['year', 'month', 'day'])
 
-        first_time_handler = first_time_point.handler()
-        second_time_handler = second_time_point.handler()
-
-        return first_time_handler, second_time_handler, 'time_span', 'accurate'
+        return first_time_point.handler(), second_time_point.handler(), 'time_span', 'accurate'
 
     def normalize_year_fixed_solar_festival(self, time_string):
         """ 解析 `公历固定节日` 时间 """
@@ -4516,10 +4382,7 @@ class TimeParser(TimeUtility):
         if time_point.day < 0:
             raise ValueError('The given time string `{}` is illegal.'.format(time_string))
 
-
-        time_handler = time_point.handler()
-
-        return time_handler, time_handler, 'time_point', 'accurate'
+        return time_point.handler(), time_point.handler(), 'time_point', 'accurate'
 
     def normalize_limit_year_fixed_solar_festival(self, time_string):
         """ 解析 `限定年 公历固定节日` 时间 """
@@ -4538,9 +4401,7 @@ class TimeParser(TimeUtility):
         if time_point.day < 0:
             raise ValueError('The given time string `{}` is illegal.'.format(time_string))
 
-        time_handler = time_point.handler()
-
-        return time_handler, time_handler, 'time_point', 'accurate'
+        return time_point.handler(), time_point.handler(), 'time_point', 'accurate'
 
     def normalize_year_fixed_lunar_festival(self, time_string):
         """ 解析 `农历固定节日` 时间 """
@@ -4562,9 +4423,7 @@ class TimeParser(TimeUtility):
         if time_point.day < 0:
             raise ValueError('The given time string `{}` is illegal.'.format(time_string))
 
-        time_handler = time_point.handler()
-
-        return time_handler, time_handler, 'time_point', 'accurate'
+        return time_point.handler(), time_point.handler(), 'time_point', 'accurate'
 
     def normalize_limit_year_fixed_lunar_festival(self, time_string):
         """ 解析 `限定年 农历固定节日` 时间 """
@@ -4586,10 +4445,8 @@ class TimeParser(TimeUtility):
         if time_point.day < 0:
             raise ValueError('The given time string `{}` is illegal.'.format(time_string))
 
-        time_handler = time_point.handler()
-
         time_definition = self._check_blur(time_string, 'accurate')
-        return time_handler, time_handler, 'time_point', time_definition
+        return time_point.handler(), time_point.handler(), 'time_point', time_definition
 
     def normalize_year_regular_solar_festival(self, time_string):
         """ 解析 `农历规律节日` 时间 """
@@ -4609,26 +4466,8 @@ class TimeParser(TimeUtility):
                 time_base_datetime = TimeParser._convert_handler2datetime(
                     [time_point.year, time_point.month, 1, 0, 0, 0])
 
-                def compute_week_day(cur_day, target_week_day):
-                    """ 从1 号开始计算，向后寻找对应的星期 N
-                    cur_day: datetime obj
-                    target_week_day: int (0-6)
-                    """
-                    one_day = datetime.timedelta(days=1)
-                    cur_week_day = cur_day.weekday()
-                    delta = cur_week_day - target_week_day
-                    if delta == 0:
-                        return cur_day
-                    elif delta > 0:
-                        for _ in range(7 - delta):
-                            cur_day += one_day
-                    elif delta < 0:
-                        for _ in range(abs(delta)):
-                            cur_day += one_day
-
-                    return cur_day
-
-                target_day = compute_week_day(time_base_datetime, week_day - 1)
+                target_day = TimeParser.compute_week_day(
+                    time_base_datetime, week_day - 1, flag=True)
 
                 # 向后推周
                 for i in range(week_order_num - 1):
@@ -4641,9 +4480,7 @@ class TimeParser(TimeUtility):
         if time_point.day < 0:
             raise ValueError('The given time string `{}` is illegal.'.format(time_string))
 
-        time_handler = time_point.handler()
-
-        return time_handler, time_handler, 'time_point', 'accurate'
+        return time_point.handler(), time_point.handler(), 'time_point', 'accurate'
 
     def normalize_limit_year_regular_solar_festival(self, time_string):
         """ 解析 `限定年 农历规律节日` 时间 """
@@ -4662,26 +4499,8 @@ class TimeParser(TimeUtility):
                 time_base_datetime = TimeParser._convert_handler2datetime(
                     [time_point.year, time_point.month, 1, 0, 0, 0])
 
-                def compute_week_day(cur_day, target_week_day):
-                    """ 从1 号开始计算，向后寻找对应的星期 N
-                    cur_day: datetime obj
-                    target_week_day: int (0-6)
-                    """
-                    one_day = datetime.timedelta(days=1)
-                    cur_week_day = cur_day.weekday()
-                    delta = cur_week_day - target_week_day
-                    if delta == 0:
-                        return cur_day
-                    elif delta > 0:
-                        for _ in range(7 - delta):
-                            cur_day += one_day
-                    elif delta < 0:
-                        for _ in range(abs(delta)):
-                            cur_day += one_day
-
-                    return cur_day
-
-                target_day = compute_week_day(time_base_datetime, week_day - 1)
+                target_day = TimeParser.compute_week_day(
+                    time_base_datetime, week_day - 1, flag=True)
 
                 # 向后推周
                 for i in range(week_order_num - 1):
@@ -4694,9 +4513,7 @@ class TimeParser(TimeUtility):
         if time_point.day < 0:
             raise ValueError('The given time string `{}` is illegal.'.format(time_string))
 
-        time_handler = time_point.handler()
-
-        return time_handler, time_handler, 'time_point', 'accurate'
+        return time_point.handler(), time_point.handler(), 'time_point', 'accurate'
 
     def normalize_limit_day(self, time_string):
         """ 解析限定性 `日` 时间 """
@@ -4728,18 +4545,14 @@ class TimeParser(TimeUtility):
             else:
                 raise ValueError('The given time string `{}` is illegal.'.format(time_string))
 
-            time_point.day = time_base_datetime.day
-            time_point.month = time_base_datetime.month
-            time_point.year = time_base_datetime.year
+            self.map_time_unit(time_point, time_base_datetime, unit=['year', 'month', 'day'])
         else:
             time_point.day = self.time_base_handler[2]
 
         if time_point.day < 0:
             raise ValueError('The given base time `{}` is illegal.'.format(self.time_base_handler))
 
-        time_handler = time_point.handler()
-
-        return time_handler, time_handler, 'time_point', 'accurate'
+        return time_point.handler(), time_point.handler(), 'time_point', 'accurate'
 
     def normalize_hour_minute_second(self, time_string):
         """ 解析 `时分秒` 时间 """
@@ -4777,11 +4590,9 @@ class TimeParser(TimeUtility):
             second_string = second.group(1)
             time_point.second = int(self._char_num2num(second_string))
 
-        time_handler = time_point.handler()
-
         time_definition = self._check_blur(time_string, 'accurate')
 
-        return time_handler, time_handler, 'time_point', time_definition, day_bias
+        return time_point.handler(), time_point.handler(), 'time_point', time_definition, day_bias
 
     def normalize_consecutive_blur_hour_pattern(self, time_string):
         """ 解析 `连续模糊 时` 时间  
@@ -4817,10 +4628,7 @@ class TimeParser(TimeUtility):
             first_time_point.hour = first_hour
             second_time_point.hour = second_hour
 
-        first_time_handler = first_time_point.handler()
-        second_time_handler = second_time_point.handler()
-
-        return first_time_handler, second_time_handler, 'time_span', 'blur', day_bias
+        return first_time_point.handler(), second_time_point.handler(), 'time_span', 'blur', day_bias
 
     def normalize_num_hour_minute_second(self, time_string):
         """ 解析 `数字（标准格式）时分秒` 时间 """
@@ -4873,11 +4681,9 @@ class TimeParser(TimeUtility):
         time_point.minute = int(minute)
         time_point.second = int(second)
 
-        time_handler = time_point.handler()
-
         time_definition = self._check_blur(time_string, 'accurate')
 
-        return time_handler, time_handler, 'time_point', time_definition, day_bias
+        return time_point.handler(), time_point.handler(), 'time_point', time_definition, day_bias
 
     def normalize_hour_limit_minute(self, time_string):
         """ 解析 `时（限定性）分` 时间 """
@@ -4926,10 +4732,8 @@ class TimeParser(TimeUtility):
             else:
                 raise ValueError('the given string `{}` is illegal.'.format(time_string))
 
-        time_handler = time_point.handler()
-
         time_definition = self._check_blur(time_string, 'accurate')
-        return time_handler, time_handler, 'time_point', time_definition, day_bias
+        return time_point.handler(), time_point.handler(), 'time_point', time_definition, day_bias
 
     def normalize_blur_hour(self, time_string):
         """ 解析 `模糊 时段` 时间 """
@@ -4948,10 +4752,7 @@ class TimeParser(TimeUtility):
             if first_time_point.hour == -1:
                 raise ValueError('the given string `{}` is illegal'.format(time_string))
 
-        first_time_handler = first_time_point.handler()
-        second_time_handler = second_time_point.handler()
-
-        return first_time_handler, second_time_handler, 'time_point', 'blur', day_bias
+        return first_time_point.handler(), second_time_point.handler(), 'time_point', 'blur', day_bias
 
     @staticmethod
     def _year_completion(year_string, time_base_handler):
@@ -5010,8 +4811,8 @@ class TimeParser(TimeUtility):
             solar_time_handler = self.lunar2solar(
                 lunar_time_handler[0], lunar_time_handler[1],
                 lunar_time_handler[2], leap_month)
-            return string2handler(solar_time_handler),\
-                string2handler(solar_time_handler)
+            handler = string2handler(solar_time_handler)
+            return handler, handler
 
     def _parse_solar_terms(self, year, solar_term):
         """解析24节气
