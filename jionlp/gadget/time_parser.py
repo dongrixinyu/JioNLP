@@ -1137,6 +1137,9 @@ class TimeParser(TimeUtility):
         time_string = time_string.replace('䶵', '-').strip()
         return time_string
 
+    def _time_point(self):
+        return TimePoint(), TimePoint()
+
     def parse_span_2_2_point(self, time_string):
         """检测时间字符串，并将其分解为两个 time_point """
         # 处理层级分割的 临时做法，后续还需优化
@@ -1653,10 +1656,10 @@ class TimeParser(TimeUtility):
         return first_full_time_handler, second_full_time_handler, time_type, blur_time
 
     def normalize_special_time_span(self, time_string):
-        """ 解决特殊时间解析 """
-        # r'(今明两[天年]|全[天月年])'
-        first_time_point = TimePoint()
-        second_time_point = TimePoint()
+        """ 解决特殊时间解析
+        # r'(今明两[天年]|全[天月年])'"""
+        first_time_point, second_time_point = self._time_point()
+
         if '今明' in time_string:
             if '年' in time_string:
                 first_time_point.year = self.time_base_handler[0]
@@ -1778,8 +1781,7 @@ class TimeParser(TimeUtility):
     def normalize_super_blur_two_ymd(self, time_string):
         """ 超模糊正则，在中文中，以 前两天、过两年等表达的并非真正的 2年，而是模糊数，
         相当于 前几周，前几天"""
-        first_time_point = TimePoint()
-        second_time_point = TimePoint()
+        first_time_point, second_time_point = self._time_point()
         if '前' in time_string:
             if '年' in time_string:
                 first_time_point.year = self.time_base_handler[0] - 5
@@ -1818,8 +1820,7 @@ class TimeParser(TimeUtility):
     def normalize_super_blur_two_hms(self, time_string):
         """ 超模糊正则，在中文中，以 前两分钟、过两个小时等表达的并非真正的 2 分钟，而是模糊数，
         相当于 前几分钟，前几秒"""
-        first_time_point = TimePoint()
-        second_time_point = TimePoint()
+        first_time_point, second_time_point = self._time_point()
         if '前' in time_string:
             if '小时' in time_string or '钟头' in time_string:
                 assert self.time_base_handler[-3] > -1, 'hour must exist.'
@@ -1868,8 +1869,7 @@ class TimeParser(TimeUtility):
         month = self.month_patterns[0].search(time_string)
         day_list = self.day_patterns[0].findall(time_string)
 
-        first_time_point = TimePoint()
-        second_time_point = TimePoint()
+        first_time_point, second_time_point = self._time_point()
 
         year = self._normalize_year(time_string, self.time_base_handler)
         if year is not None:
@@ -1914,8 +1914,7 @@ class TimeParser(TimeUtility):
 
     def normalize_limit_solar_season(self, time_string):
         """ 解析限定 季度 """
-        first_time_point = TimePoint()
-        second_time_point = TimePoint()
+        first_time_point, second_time_point = self._time_point()
 
         if self.time_base_handler[1] == -1 or self.time_base_handler[1] > 12:
             raise ValueError('the `month` of time_base `{}` is undefined.'.format(
@@ -2111,9 +2110,7 @@ class TimeParser(TimeUtility):
 
     def normalize_limit_year_solar_season(self, time_string):
         """ 解析 限定年/季度(公历) 时间 """
-        first_time_point = TimePoint()
-        second_time_point = TimePoint()
-
+        first_time_point, second_time_point = self._time_point()
         first_time_point.year, second_time_point.year = self._normalize_limit_year(
             time_string, self.time_base_handler)
 
@@ -2123,10 +2120,7 @@ class TimeParser(TimeUtility):
 
     def normalize_year_solar_season(self, time_string):
         """ 解析 年/季度(公历) 时间 """
-
-        first_time_point = TimePoint()
-        second_time_point = TimePoint()
-
+        first_time_point, second_time_point = self._time_point()
         year = self._normalize_year(time_string, self.time_base_handler)
         if year is not None:
             first_time_point.year = year
@@ -2167,9 +2161,7 @@ class TimeParser(TimeUtility):
 
     def normalize_limit_year_span_month(self, time_string):
         """ 解析 限定年/前n个月 时间 """
-        first_time_point = TimePoint()
-        second_time_point = TimePoint()
-
+        first_time_point, second_time_point = self._time_point()
         first_time_point.year, second_time_point.year = self._normalize_limit_year(
             time_string, self.time_base_handler)
 
@@ -2179,9 +2171,7 @@ class TimeParser(TimeUtility):
 
     def normalize_year_span_month(self, time_string):
         """ 解析 年/前n个月 时间 """
-        first_time_point = TimePoint()
-        second_time_point = TimePoint()
-
+        first_time_point, second_time_point = self._time_point()
         year = self._normalize_year(time_string, self.time_base_handler)
         if year is not None:
             first_time_point.year = year
@@ -3208,9 +3198,7 @@ class TimeParser(TimeUtility):
 
     def normalize_year_order_delta_point(self, time_string):
         # 第三年
-        first_time_point = TimePoint()
-        second_time_point = TimePoint()
-
+        first_time_point, second_time_point = self._time_point()
         delta_num = self.delta_num_pattern.search(time_string)
         if delta_num:
             delta_num_string = delta_num.group()
@@ -3224,10 +3212,7 @@ class TimeParser(TimeUtility):
         return first_time_point.handler(), second_time_point.handler(), 'time_span', 'blur'
 
     def normalize_day_order_delta_point(self, time_string):
-        # 第三年
-        first_time_point = TimePoint()
-        second_time_point = TimePoint()
-
+        first_time_point, second_time_point = self._time_point()
         delta_num = self.delta_num_pattern.search(time_string)
         if delta_num:
             delta_num_string = delta_num.group()
@@ -3284,9 +3269,7 @@ class TimeParser(TimeUtility):
 
     def normalize_year_blur_month(self, time_string):
         """ 解析 年/模糊月份 时间 """
-        first_time_point = TimePoint()
-        second_time_point = TimePoint()
-
+        first_time_point, second_time_point = self._time_point()
         year = self._normalize_year(time_string, self.time_base_handler)
         if year is not None:
             first_time_point.year = year
@@ -3333,9 +3316,7 @@ class TimeParser(TimeUtility):
 
     def normalize_limit_year_blur_month(self, time_string):
         """ 解析 限制年/模糊月份 时间 """
-        first_time_point = TimePoint()
-        second_time_point = TimePoint()
-
+        first_time_point, second_time_point = self._time_point()
         first_time_point.year, second_time_point.year = self._normalize_limit_year(
             time_string, self.time_base_handler)
 
@@ -3386,9 +3367,7 @@ class TimeParser(TimeUtility):
         """
         day = self.day_patterns[0].search(time_string)
 
-        first_time_point = TimePoint()
-        second_time_point = TimePoint()
-
+        first_time_point, second_time_point = self._time_point()
         first_time_point, second_time_point = self._normalize_limit_month(
             time_string, self.time_base_handler, first_time_point, second_time_point)
 
@@ -3434,9 +3413,7 @@ class TimeParser(TimeUtility):
 
     def normalize_limit_month_blur_day(self, time_string):
         """ 解析 限制月份、模糊日 时间 """
-        first_time_point = TimePoint()
-        second_time_point = TimePoint()
-
+        first_time_point, second_time_point = self._time_point()
         first_time_point, second_time_point = self._normalize_limit_month(
             time_string, self.time_base_handler, first_time_point, second_time_point)
 
@@ -3448,9 +3425,7 @@ class TimeParser(TimeUtility):
 
     def normalize_limit_month(self, time_string):
         """ 解析 限制月份 时间 """
-        first_time_point = TimePoint()
-        second_time_point = TimePoint()
-
+        first_time_point, second_time_point = self._time_point()
         first_time_point, second_time_point = self._normalize_limit_month(
             time_string, self.time_base_handler, first_time_point, second_time_point)
 
@@ -3465,9 +3440,7 @@ class TimeParser(TimeUtility):
         century = self.century_pattern.search(time_string)
         decade = self.decade_pattern.search(time_string)
 
-        first_time_point = TimePoint()
-        second_time_point = TimePoint()
-
+        first_time_point, second_time_point = self._time_point()
         if '公元前' in time_string:
             christ_era = False
         else:
@@ -3571,9 +3544,7 @@ class TimeParser(TimeUtility):
         blur_year_2 = self.year_patterns[3].search(time_string)
         blur_year_3 = self.year_patterns[4].search(time_string)
 
-        first_time_point = TimePoint()
-        second_time_point = TimePoint()
-
+        first_time_point, second_time_point = self._time_point()
         # 月份针对 半年设定
         first_month = -1
         second_month = -1
@@ -3861,9 +3832,7 @@ class TimeParser(TimeUtility):
         """ 解析 年/季节(农历) 时间 """
         season = self.day_patterns[3].search(time_string)
 
-        first_time_point = TimePoint()
-        second_time_point = TimePoint()
-
+        first_time_point, second_time_point = self._time_point()
         year = self._normalize_year(time_string, self.time_base_handler)
         if year is not None:
             first_time_point.year = year
@@ -3902,9 +3871,7 @@ class TimeParser(TimeUtility):
         """
         season = self.day_patterns[3].search(time_string)
 
-        first_time_point = TimePoint()
-        second_time_point = TimePoint()
-
+        first_time_point, second_time_point = self._time_point()
         first_time_point.year, second_time_point.year = self._normalize_limit_year(
             time_string, self.time_base_handler)
 
@@ -3933,9 +3900,7 @@ class TimeParser(TimeUtility):
 
     def normalize_year_month_blur_day(self, time_string):
         """ 解析 `年、月、模糊 日` 时间 """
-        first_time_point = TimePoint()
-        second_time_point = TimePoint()
-
+        first_time_point, second_time_point = self._time_point()
         year = self._normalize_year(time_string, self.time_base_handler)
         if year is not None:
             first_time_point.year = year
@@ -3956,9 +3921,7 @@ class TimeParser(TimeUtility):
         """ 解析 `年、月、模糊 日` 时间 """
         month = self.month_patterns[0].search(time_string)
 
-        first_time_point = TimePoint()
-        second_time_point = TimePoint()
-
+        first_time_point, second_time_point = self._time_point()
         first_time_point.year, second_time_point.year = self._normalize_limit_year(
             time_string, self.time_base_handler)
 
@@ -4023,9 +3986,7 @@ class TimeParser(TimeUtility):
         time_base_datetime = TimeParser._convert_handler2datetime(
             self.time_base_handler)
 
-        first_time_point = TimePoint()
-        second_time_point = TimePoint()
-
+        first_time_point, second_time_point = self._time_point()
         if week_1:
             week_string = week_1.group()
             week_num = self.week_num_pattern.search(week_string)
@@ -4216,9 +4177,7 @@ class TimeParser(TimeUtility):
 
     def normalize_month_week(self, time_string):
         """ 解析 `2月第 N 个星期` 时间 """
-        first_time_point = TimePoint()
-        second_time_point = TimePoint()
-
+        first_time_point, second_time_point = self._time_point()
         month = self.month_patterns[0].search(time_string)
 
         if month:
@@ -4240,9 +4199,7 @@ class TimeParser(TimeUtility):
 
     def normalize_limit_month_week(self, time_string):
         """ 解析 `限定月 第 N 个星期` 时间 """
-        first_time_point = TimePoint()
-        second_time_point = TimePoint()
-
+        first_time_point, second_time_point = self._time_point()
         first_time_point, second_time_point = self._normalize_limit_month(
             time_string, self.time_base_handler, first_time_point, second_time_point)
 
@@ -4257,9 +4214,7 @@ class TimeParser(TimeUtility):
 
     def normalize_year_month_week(self, time_string):
         """ 解析 `2021年2月第 N 个星期` 时间 """
-        first_time_point = TimePoint()
-        second_time_point = TimePoint()
-
+        first_time_point, second_time_point = self._time_point()
         year = self._normalize_year(time_string, self.time_base_handler)
         if year is not None:
             first_time_point.year = year
@@ -4281,9 +4236,7 @@ class TimeParser(TimeUtility):
 
     def normalize_limit_year_month_week(self, time_string):
         """ 解析 `限定年 2月第 N 个星期` 时间 """
-        first_time_point = TimePoint()
-        second_time_point = TimePoint()
-
+        first_time_point, second_time_point = self._time_point()
         first_time_point.year, second_time_point.year = self._normalize_limit_year(
             time_string, self.time_base_handler)
 
@@ -4331,10 +4284,7 @@ class TimeParser(TimeUtility):
 
     def normalize_year_week(self, time_string):
         """ 解析 `2021年第 N 个星期` 时间 """
-
-        first_time_point = TimePoint()
-        second_time_point = TimePoint()
-
+        first_time_point, second_time_point = self._time_point()
         year = self._normalize_year(time_string, self.time_base_handler)
         if year is not None:
             first_time_point.year = year
@@ -4351,9 +4301,7 @@ class TimeParser(TimeUtility):
 
     def normalize_limit_year_week(self, time_string):
         """ 解析 `限定年 第 N 个星期` 时间 """
-        first_time_point = TimePoint()
-        second_time_point = TimePoint()
-
+        first_time_point, second_time_point = self._time_point()
         first_time_point.year, _ = self._normalize_limit_year(
             time_string, self.time_base_handler)
 
@@ -4570,12 +4518,7 @@ class TimeParser(TimeUtility):
             hour_limitation = self.hour_patterns[1].search(time_string)
             if hour_limitation:
                 hour_limit_string = hour_limitation.group()
-                if (5 <= hour <= 12) and ('晚' in hour_limit_string or '夜' in hour_limit_string):
-                    hour += 12
-                if '中午' in hour_limit_string and hour not in [11, 12]:
-                    hour += 12
-                if '下午' in hour_limit_string and (1 <= hour <= 11):
-                    hour += 12
+                hour = TimeParser.convert_hour(hour, hour_limit_string)
             if hour == 24:
                 hour = 0  # 24 会在 datetime 中报错，即第二天的 0 时
                 day_bias = [1, '强']
@@ -4601,9 +4544,7 @@ class TimeParser(TimeUtility):
         """
         day_bias = [0, '弱']
         hour = self.hour_patterns[2].search(time_string)
-        first_time_point = TimePoint()
-        second_time_point = TimePoint()
-
+        first_time_point, second_time_point = self._time_point()
         if hour:
             hour_string = hour.group(1)
             first_hour = int(self._char_num2num(hour_string[0]))
@@ -4640,21 +4581,11 @@ class TimeParser(TimeUtility):
             hour_limit_string = hour_limitation.group()
             time_string = time_string.replace(hour_limit_string, '')
 
-        def convert_hour(h, h_string):
-            if (5 <= h <= 12) and ('晚' in h_string or '夜' in h_string):
-                h += 12
-            if '中午' in h_string and h not in [11, 12]:
-                h += 12
-            if '下午' in h_string and (1 <= h <= 11):
-                # 狭义定义下午为 1~6 点，但存在`今天下午8点`的说法，因此扩展至 1~11 点
-                h += 12
-            return h
-
         colon_num = len(self.hms_segs.findall(time_string))
         if colon_num == 2:
             hour, minute, second = self.hms_segs.split(time_string)
             if hour_limitation:
-                hour = convert_hour(hour, hour_limit_string)
+                hour = TimeParser.convert_hour(hour, hour_limit_string)
 
         elif colon_num == 1:
             first_int, second_int = self.hms_segs.split(time_string)
@@ -4667,7 +4598,7 @@ class TimeParser(TimeUtility):
                 minute = int(second_int)
                 second = -1
                 if hour_limitation:
-                    hour = convert_hour(hour, hour_limit_string)
+                    hour = TimeParser.convert_hour(hour, hour_limit_string)
             else:
                 hour = -1
                 minute = int(first_int)
@@ -4685,21 +4616,22 @@ class TimeParser(TimeUtility):
 
         return time_point.handler(), time_point.handler(), 'time_point', time_definition, day_bias
 
+    @staticmethod
+    def convert_hour(h, h_string):
+        if (5 <= h <= 12) and ('晚' in h_string or '夜' in h_string):
+            h += 12
+        if '中午' in h_string and h not in [11, 12]:
+            h += 12
+        if '下午' in h_string and (1 <= h <= 11):
+            h += 12
+        return h
+
     def normalize_hour_limit_minute(self, time_string):
         """ 解析 `时（限定性）分` 时间 """
         day_bias = [0, '弱']
         hour = self.hour_patterns[0].search(time_string)
         hour_limitation = self.hour_patterns[1].search(time_string)
         limit_minute = self.minute_patterns[1].search(time_string)
-
-        def convert_hour(h, h_string):
-            if (5 <= h <= 12) and ('晚' in h_string or '夜' in h_string):
-                h += 12
-            if '中午' in h_string and h not in [11, 12]:
-                h += 12
-            if '下午' in h_string and (1 <= h <= 11):
-                h += 12
-            return h
 
         time_point = TimePoint()
 
@@ -4708,7 +4640,7 @@ class TimeParser(TimeUtility):
             hour = int(self._char_num2num(hour_string))
             if hour_limitation:
                 hour_limit_string = hour_limitation.group()
-                hour = convert_hour(hour, hour_limit_string)
+                hour = TimeParser.convert_hour(hour, hour_limit_string)
             time_point.hour = hour
 
         if limit_minute:
@@ -4740,9 +4672,7 @@ class TimeParser(TimeUtility):
         day_bias = [0, '弱']
         hour = self.hour_patterns[1].search(time_string)
 
-        first_time_point = TimePoint()
-        second_time_point = TimePoint()
-
+        first_time_point, second_time_point = self._time_point()
         if hour:
             hour_string = hour.group()
             for item in self.blur_time_info_map:
