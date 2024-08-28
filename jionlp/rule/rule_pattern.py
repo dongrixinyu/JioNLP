@@ -365,19 +365,19 @@ YEAR_STRING = r'([12]?\d{2,3}|[一二三四五六七八九零〇]{2,4})年'
 MONTH_NUM_STRING = r'(1[012]|[0]?[1-9]|十[一二]|[一二三四五六七八九十])'  # 1~12 std month num
 MONTH_STRING = MONTH_NUM_STRING + r'月(份)?'
 MONTH_NUM_STRING = MONTH_NUM_STRING[:-2] + r'两])'  # 1~12 order month num
-BLUR_MONTH_STRING = r'(初|[一]开年|伊始|末|尾|终|底|[上下]半年|[暑寒][假期]|[前中后]期)'
+BLUR_MONTH_STRING = r'年?(初|[一]开年|伊始|末|尾|终|底|[上下]半年|[暑寒][假期]|[前中后]期)'
 LUNAR_MONTH_STRING = r'(闰)?([正一二三四五六七八九十冬腊]|十[一二]|[1-9]|1[012])月'
 LIMIT_MONTH_STRING = r'((下(下)?|上(上)?)((一)?个)?|同|本|当|次|(这((一)?个)?))月'
 SELF_EVI_LUNAR_MONTH_STRING = r'((闰)?[正冬腊]|闰([一二三四五六七八九十]|十[一二]|[1-9]|1[012]))月'
 
 # 周
-WEEK_NUM_STRING = r'[一二两三四五六七八九十0-9]{1,3}'  # 1~52
+WEEK_NUM_STRING = r'周?[一二两三四五六七八九十0-9]{1,3}'  # 1~52
 WEEK_STRING = r'(周|星期|礼拜)'
 
 # 日
 DAY_NUM_STRING = r'(([12]\d|3[01]|[0]?[1-9])|([一二]?十)?[一二三四五六七八九]|(三十)?[一]|[二三]?十)'  # 1~31
 DAY_STRING = DAY_NUM_STRING + r'[日号]'
-BLUR_DAY_STRING = r'([上中下]旬|初|中|底|末)'
+BLUR_DAY_STRING = r'月?([上中下]旬|初|中|底|末)'
 # 允许 `初8` 阿拉伯数字出现，但不允许 `廿2`、`23` 等作为农历`日`
 LUNAR_SOLAR_DAY_STRING = r'((初|(二)?十|廿)[一二三四五六七八九]|[初二三]十|初([1-9]|10)|[12]\d|3[01]|[0]?[1-9])'
 LUNAR_DAY_STRING = r'((初|(二)?十|廿)[一二三四五六七八九]|[初二三]十|初([1-9]|10))'

@@ -43,6 +43,12 @@ class TestTimeExtractor(unittest.TestCase):
             ['下下下周一', [{'text': '下下下周一', 'offset': [0, 5], 'type': 'time_point'}]],
             ['上上个月五号', [{'text': '上上个月五号', 'offset': [0, 6], 'type': 'time_point'}]],
             ['下下个季度', [{'text': '下下个季度', 'offset': [0, 5], 'type': 'time_span'}]],
+            ['去年年底',[{'text': '去年年底', 'offset': [0, 4], 'type': 'time_span'}]],
+            ['12月月底',[{'text': '12月月底', 'offset': [0, 5], 'type': 'time_span'}]],
+            ['六月六月中旬这样子',[{'text': '六月中旬', 'offset': [2, 6], 'type': 'time_span'}]],
+            ['十二月月底',[{'text': '十二月月底', 'offset': [0, 5], 'type': 'time_span'}]],
+            # ['每月月底',[{'text': '每月月底', 'offset': [0, 4], 'type': 'time_period'}]],
+
         ]
 
         for item in text_string_list:
