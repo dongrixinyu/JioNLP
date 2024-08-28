@@ -48,7 +48,7 @@ class TestTimeExtractor(unittest.TestCase):
             ['六月六月中旬这样子',[{'text': '六月中旬', 'offset': [2, 6], 'type': 'time_span'}]],
             ['十二月月底',[{'text': '十二月月底', 'offset': [0, 5], 'type': 'time_span'}]],
             # ['每月月底',[{'text': '每月月底', 'offset': [0, 4], 'type': 'time_period'}]],
-
+            ['北京上年末的天气气温是多少？',[{'text': '上年末', 'offset': [2, 5], 'type': 'time_span'}]],# issue209
         ]
 
         for item in text_string_list:
