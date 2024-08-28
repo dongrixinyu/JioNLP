@@ -641,6 +641,8 @@ class TestTimeParser(unittest.TestCase):
              {'type': 'time_span', 'definition': 'blur', 'time': ['2021-06-14 01:06:40', '2021-08-05 23:59:59']}],
             ['2018年10月底', _ts_1,
              {'type': 'time_span', 'definition': 'blur', 'time': ['2018-10-25 00:00:00', '2018-10-31 23:59:59']}],
+            ['十二月月底', _ts_1,
+             {'type': 'time_span', 'definition': 'blur', 'time': ['2021-12-25 00:00:00', '2021-12-31 23:59:59']}],
 
             # 限定年、月、模糊日
             ['去年6月上旬', {'year': 2021},
