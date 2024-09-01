@@ -9,7 +9,7 @@
 
 
 import re
-# import copy
+import copy
 import collections
 
 from jionlp.dictionary.dictionary_loader import china_location_loader,\
@@ -69,12 +69,9 @@ class LocationParser(object):
         self.administrative_map_list = None
         self.town_village = False
         self.town_village_dict = {}
-        
+
     def _mapping(self, china_loc, china_change_loc):
         # 整理行政区划码映射表
-        # TODO:
-        # 整个功能最耗时部分是 get_candidate 中的三重循环，因此，为加速，应当将
-        # self.administrative_map_list 这里的 list 改为 dict，其中，又涉及到诸多信息，这里暂留坑。
         self.administrative_map_list = []  # 地址别称
 
         for prov in china_loc:
@@ -88,27 +85,27 @@ class LocationParser(object):
                     [china_loc[prov]['_admin_code'],
                      [prov, china_loc[prov]['_alias']],
                      [None, None],
-                     [None, None], True])  # True 表示数据为最新地名，反之为旧地名
+                     [None, None] ,[china_loc[prov]['_admin_code'], None, None], True])  # True 表示数据为最新地名，反之为旧地名
 
             for city in china_loc[prov]:
                 if city.startswith('_'):
                     continue
                 self.administrative_map_list.append(
-                    [china_loc[prov][city]['_admin_code'], 
+                    [china_loc[prov][city]['_admin_code'],
                      [prov, china_loc[prov]['_alias']],
                      [city, china_loc[prov][city]['_alias']],
-                     [None, None], True])
+                     [None, None], [china_loc[prov]['_admin_code'], china_loc[prov][city]['_admin_code'], None], True])
 
                 for county in china_loc[prov][city]:
                     if county.startswith('_'):
                         continue
                     self.administrative_map_list.append(
-                        [china_loc[prov][city][county]['_admin_code'], 
+                        [china_loc[prov][city][county]['_admin_code'],
                          [prov, china_loc[prov]['_alias']],
                          [city, china_loc[prov][city]['_alias']],
                          ['经济技术开发区' if county.endswith('经济技术开发区') else county,
                           china_loc[prov][city][county]['_alias']],
-                         True])
+                         [china_loc[prov]['_admin_code'], china_loc[prov][city]['_admin_code'], china_loc[prov][city][county]['_admin_code']], True])
                     # 这里 “经济技术开发区”，例如 “秦皇岛市经济技术开发区”，
                     # 容易将市、县级的地址匹配在相同的 offset 上，造成错误
 
@@ -159,7 +156,7 @@ class LocationParser(object):
             # offset 匹配全名用 0 表示，匹配别名用 1 表示。
             offset_list = [[-1, -1], [-1, -1], [-1, -1]]
 
-            for idx, name_item in enumerate(admin_item[1: 4]):
+            for idx, name_item in enumerate(admin_item[1: -1]):
                 match_flag = False
                 cur_name = None
                 cur_alias = None
@@ -182,37 +179,10 @@ class LocationParser(object):
                     offset_list[idx][0] = location_text.index(cur_name)
                     offset_list[idx][1] = cur_alias
 
-                    # 两条匹配，相差一个字符位置，说明匹配错误，
-                    # 如 “青海西宁”，容易匹配“海西”，是错误的。
-                    if idx == 1 and (offset_list[idx-1][0] >= 0):
-                        if offset_list[idx][0] - offset_list[idx-1][0] == 1:
-                            count = 0
-                            break
-                    if idx == 2:
-                        if offset_list[idx-1][0] >= 0:
-                            if offset_list[idx][0] - offset_list[idx-1][0] == 1:
-                                count = 0
-                                break
-                        if offset_list[idx-2][0] >= 0:
-                            if offset_list[idx][0] - offset_list[idx-2][0] == 1:
-                                count = 0
-                                break
-
             if count > 0:
-                # cur_item = copy.deepcopy(admin_item)
-                # cur_item.extend([count, offset_list])
-                # candidate_admin_list.append(cur_item)
-                if admin_item[1][1] in self.municipalities_cities and admin_item[1][1] in location_text:
-                    count -= 1
-                if len(admin_item) == 5:
-                    admin_item.extend([count, offset_list])
-                    candidate_admin_list.append(admin_item)
-                elif len(admin_item) == 7:
-                    admin_item[-2] = count
-                    admin_item[-1] = offset_list
-                    candidate_admin_list.append(admin_item)
-                else:
-                    raise ValueError('length of admin_item is wrong!')
+                cur_item = copy.deepcopy(admin_item)
+                cur_item.extend([count, offset_list])
+                candidate_admin_list.append(cur_item)
 
         return candidate_admin_list
 
@@ -235,7 +205,7 @@ class LocationParser(object):
             self._prepare()
         if self.town_village and self.town_village_dict == {}:
             self._prepare()
-        
+
         # 获取文本中的省、市、县三级行政区划
         # step 1: 命中匹配别名或全名，统计命中量，并假设省市县分别位于靠前的位置且依次排开
         candidate_admin_list = self.get_candidates(location_text)
@@ -244,6 +214,9 @@ class LocationParser(object):
             result = {'province': None,
                       'city': None,
                       'county': None,
+                      'province_code': None,
+                      'city_code': None,
+                      'county_code': None,
                       'detail': location_text,
                       'full_location': location_text,
                       'orig_location': location_text}
@@ -279,17 +252,6 @@ class LocationParser(object):
         candidate_admin_list = [item for item in candidate_admin_list
                                 if item[-2] == max_matched_num]
 
-        # 对于有些新旧地名简称相同，且省市县不按靠前的位置依次排开的，删除旧地名
-        if len(candidate_admin_list) == 2:
-            # 1. 这种情况下，candidate_admin_list包含2个行政区划且offset中地址的 “索引”相同
-            # 索引名完全相同
-            if [i[0] for i in candidate_admin_list[0][-1]] == [i[0] for i in candidate_admin_list[1][-1]]:
-                # 删除旧地名
-                candidate_admin_list = [item for item in candidate_admin_list if item[4] is True]
-            # 2. 别名完全相同。
-            elif [i[1] for i in candidate_admin_list[0][1:4]] == [i[1] for i in candidate_admin_list[1][1:4]]:
-                candidate_admin_list = [item for item in candidate_admin_list if item[4] is True]
-
         # 此时，若仅有一个地址被匹配，则应当直接返回正确的结果
         if len(candidate_admin_list) == 1:
             result = self._get_final_res(
@@ -322,13 +284,16 @@ class LocationParser(object):
             result = {'province': None,
                       'city': None,
                       'county': None,
+                      'province_code': None,
+                      'city_code': None,
+                      'county_code': None,
                       'detail': location_text,
                       'full_location': location_text,
                       'orig_location': location_text}
             return result
 
         min_matched_offset = sum([j[0] for j in candidate_admin_list[0][-1]])
-        candidate_admin_list = [item for item in candidate_admin_list 
+        candidate_admin_list = [item for item in candidate_admin_list
                                 if sum([j[0] for j in item[-1]]) == min_matched_offset]
 
         # 2.3 优先匹配包含全名的，其次匹配别名，此处将别名的过滤掉，仅保留全名的，如 “海南藏族自治州”，不可匹配到 “海南省”
@@ -387,7 +352,7 @@ class LocationParser(object):
         county_dup_list = [item[3][item[-1][-1][1]] for item in candidate_admin_list]
         county_dup_list = collections.Counter(county_dup_list).most_common()
         county_dup_list = [item[0] for item in county_dup_list if item[1] > 1]
-        
+
         final_admin = candidate_admin_list[0]  # 是所求结果
 
         result = self._get_final_res(
@@ -404,26 +369,36 @@ class LocationParser(object):
         final_prov = None
         final_city = None
         final_county = None
+        final_prov_code = None
+        final_city_code = None
+        final_county_code = None
         for admin_idx, i in enumerate(final_admin[-1]):
             if i[0] != -1:
                 detail_idx = i[0] + len(final_admin[admin_idx + 1][i[1]])
                 # rule: 全国地址省市无重复命名，而县级有，如鼓楼区、高新区等
                 if admin_idx >= 0 and final_admin[admin_idx + 1][i[1]] not in county_dup_list:
                     final_prov = final_admin[1][0]
+                    final_prov_code = final_admin[4][0]
                 if admin_idx >= 1 and final_admin[admin_idx + 1][i[1]] not in county_dup_list:
                     final_city = final_admin[2][0]
+                    final_city_code = final_admin[4][1]
                 if admin_idx >= 2 and final_admin[admin_idx + 1][i[1]] not in county_dup_list:
                     final_county = final_admin[3][0]
+                    final_county_code = final_admin[4][2]
                 else:
                     final_county = final_admin[3][i[1]]
+                    final_county_code = final_admin[4][2]
 
         # step 5: 将旧地址根据映射转换为新地址
         if change2new:
             tmp_key = ''.join([final_prov if final_prov else '',
                                final_city if final_city else '',
-                               final_county if final_county else ''])
+                               final_county if final_county else '',
+                               final_prov_code if final_prov_code else '',
+                               final_city_code if final_city_code else '',
+                               final_county_code if final_county_code else ''])
             if tmp_key in self.old2new_loc_map:
-                final_prov, final_city, final_county = self.old2new_loc_map[tmp_key]
+                final_prov, final_city, final_county, final_prov_code, final_city_code, final_county_code = self.old2new_loc_map[tmp_key]
 
         # step 6: 获取详细地址部分
         detail_part = location_text[detail_idx:]
@@ -435,8 +410,10 @@ class LocationParser(object):
         # step 7: 将地址中的 省直辖、市直辖，去掉
         if final_city is not None and '直辖' in final_city:
             final_city = None
+            final_city_code = None
         if final_county is not None and '直辖' in final_county:
             final_county = None
+            final_county_code = None
 
         # step 8: 获取省市区行政区划部分
         admin_part = ''
@@ -457,6 +434,9 @@ class LocationParser(object):
         result = {'province': final_prov,
                   'city': final_city,
                   'county': final_county,
+                  'province_code': final_prov_code,
+                  'city_code': final_city_code,
+                  'county_code': final_county_code,
                   'detail': detail_part,
                   'full_location': admin_part + detail_part,
                   'orig_location': location_text}
