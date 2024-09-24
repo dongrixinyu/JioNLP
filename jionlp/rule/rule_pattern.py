@@ -454,7 +454,7 @@ TIME_CHAR_STRING = ''.join(
      r'近运深, ”夕〇几汛假壹无数白百刻许左右的这本])+'])
 FAKE_POSITIVE_TIME_PATTERN = I.join([
      r'点' + SINGLE_NUM_STRING + '$',  # 用于排除 `三点四`、`二十点5` 等不符合正常语法的假阳性时间串
-     r'点' + SINGLE_NUM_STRING + '(?![时分秒刻])', # 用于排除`三点五度`、`调高24点5度`等非时间单位结尾的假阳性时间串
+     r'点' + SINGLE_NUM_STRING + '(?![时分秒刻' + SINGLE_NUM_STRING[1:-1] + '])', # 用于排除`三点五度`、`调高24点5度`等非时间单位结尾的假阳性时间串
 ])
 FAKE_POSITIVE_START_STRING = r'[起到至以开－\—\-\~～]'  # 此字符串不可作为时间串的开始， `以来|开始` 为取首字
 FAKE_POSITIVE_END_STRING = r'[到至－\—\-\~～]'  # 此字符串不可作为时间串的结束
