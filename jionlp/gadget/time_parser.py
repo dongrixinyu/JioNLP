@@ -4585,7 +4585,7 @@ class TimeParser(TimeUtility):
         if colon_num == 2:
             hour, minute, second = self.hms_segs.split(time_string)
             if hour_limitation:
-                hour = TimeParser.convert_hour(hour, hour_limit_string)
+                hour = TimeParser.convert_hour(int(hour), hour_limit_string)
 
         elif colon_num == 1:
             first_int, second_int = self.hms_segs.split(time_string)
