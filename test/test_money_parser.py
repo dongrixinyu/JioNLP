@@ -48,6 +48,7 @@ class TestMoneyParser(unittest.TestCase):
             ['近700万元', {'num': '7000000.00', 'case': '元', 'definition': 'blur-'}],
             ['至少九千块钱以上', {'num': '9000.00', 'case': '元', 'definition': 'blur+'}],
             ['不到1.9万台币', {'num': '19000.00', 'case': '新台币', 'definition': 'blur-'}],
+            ['小于40万', {'num': '400000.00', 'case': '元', 'definition': 'blur-'}],
 
             # 模糊金额
             ['3000多欧元', {'num': ['3000.00', '4000.00'], 'case': '欧元', 'definition': 'blur'}],
