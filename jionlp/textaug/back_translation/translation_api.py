@@ -567,9 +567,9 @@ class XunfeiApi(TranslationApi):
                 appkey_obj_list=[{
                     "appid": "5f5846b1",  # 应用ID（到控制台获取）
                     # 接口APIKey（到控制台机器翻译服务页面获取）
-                    "api_key": "52465bb3de9a258379e6909c4b1f2b4b",
+                    "api_key": "5246------------------------b4b",
                     # 接口APISercet（到控制台机器翻译服务页面获取）
-                    "secret": "b21fdc62a7ed0e287f31cdc4bf4ab9a3"}])
+                    "secret": "b21f---------------------------a3"}])
         >>> text = '她很好看。'
         >>> res = xunfei_api(text, from_lang='cn', to_lang='en')
         >>> print(res)
@@ -703,8 +703,8 @@ class XunfeiApi(TranslationApi):
 
 if __name__ == '__main__':
     baidu_api = BaiduApi(
-        {'appid': '20200618000498778', 
-         'secretKey': 'raHalLakgYitNuzGOoBZ'},
+        {'appid': '202-------------78',
+         'secretKey': 'raH---------------BZ'},
         0)
     text = '她很好看。'
     res = baidu_api(text, from_lang='zh', to_lang='en')
@@ -716,8 +716,8 @@ if __name__ == '__main__':
     print(res)
     
     youdao_api = YoudaoApi(
-        appkey_obj={'appid': '39856bd56b482cfc',
-                    'app_secret': '87XpTE63nBVnrR0b6Hy0aTDWlkoq2l4A'})
+        appkey_obj={'appid': '39------------c',
+                    'app_secret': '87XpT------------------A'})
     text = '她很好看。'
     res = youdao_api(text, from_lang='zh-CHS', to_lang='en')
     print(res)
@@ -729,8 +729,8 @@ if __name__ == '__main__':
     
     tencent_api = TencentApi(
         {"project_id": "0",
-            "secret_id": "AKID5zGGuInJwmLehbyKyYXGS3NXOXYLE96o",
-            "secret_key": "buwiGXXifLt888rKQLwGH3asuhFbmeCX"})
+            "secret_id": "AK--------------------------6o",
+            "secret_key": "buw----------------------------CX"})
     text = '她很好看。'
     res = tencent_api(text, from_lang='zh', to_lang='en')
     print(res)
@@ -740,9 +740,9 @@ if __name__ == '__main__':
         # 应用ID（到控制台获取）
         "appid": "5f5846b1",
         # 接口APIKey（到控制台机器翻译服务页面获取）
-        "api_key": "52465bb3de9a258379e6909c4b1f2b4b",
+        "api_key": "524--------------------------4b",
         # 接口APISercet（到控制台机器翻译服务页面获取）
-        "secret": "b21fdc62a7ed0e287f31cdc4bf4ab9a3"})
+        "secret": "b21f---------------------------9a3"})
     text = '她很好看。'
     start_time = time.time()
     res = xunfei_api(text, from_lang='cn', to_lang='en')
