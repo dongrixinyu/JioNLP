@@ -50,6 +50,7 @@ class TestTimeExtractor(unittest.TestCase):
             # ['每月月底',[{'text': '每月月底', 'offset': [0, 4], 'type': 'time_period'}]],
             ['北京上年末的天气气温是多少？',[{'text': '上年末', 'offset': [2, 5], 'type': 'time_span'}]],# issue209
             ['帮我查下15点20分到16点30的会议室', [{'text': '15点20分到16点30', 'offset': [4, 16], 'type': 'time_span'}]],
+            ['地方驻点8月15号', [{'text': '8月15号', 'offset': [4, 9], 'type': 'time_point'}]],
         ]
 
         for item in text_string_list:
