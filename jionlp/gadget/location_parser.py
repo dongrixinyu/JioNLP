@@ -93,30 +93,33 @@ class LocationParser(object):
             for city in china_loc[prov]:
                 if city.startswith('_'):
                     continue
-                self.administrative_map_list.append(
-                    [china_loc[prov][city]['_admin_code'], 
-                     [prov, china_loc[prov]['_alias']],
-                     [city, china_loc[prov][city]['_alias']],
-                     [None, None], True])
 
-                for county in china_loc[prov][city]:
-                    if county.startswith('_'):
-                        continue
+                for alias_name in china_loc[prov][city]['_alias']:
+
                     self.administrative_map_list.append(
-                        [china_loc[prov][city][county]['_admin_code'], 
+                        [china_loc[prov][city]['_admin_code'],
                          [prov, china_loc[prov]['_alias']],
-                         [city, china_loc[prov][city]['_alias']],
-                         ['经济技术开发区' if county.endswith('经济技术开发区') else county,
-                          china_loc[prov][city][county]['_alias']],
-                         True])
-                    # 这里 “经济技术开发区”，例如 “秦皇岛市经济技术开发区”，
-                    # 容易将市、县级的地址匹配在相同的 offset 上，造成错误
+                         [city, alias_name],
+                         [None, None], True])
 
-                    if self.town_village:  # 补充 self.town_village_list
+                    for county in china_loc[prov][city]:
+                        if county.startswith('_'):
+                            continue
+                        self.administrative_map_list.append(
+                            [china_loc[prov][city][county]['_admin_code'],
+                             [prov, china_loc[prov]['_alias']],
+                             [city, alias_name],
+                             ['经济技术开发区' if county.endswith('经济技术开发区') else county,
+                              china_loc[prov][city][county]['_alias']],
+                             True])
+                        # 这里 “经济技术开发区”，例如 “秦皇岛市经济技术开发区”，
+                        # 容易将市、县级的地址匹配在相同的 offset 上，造成错误
 
-                        key_name = prov + city + county
-                        value_dict = china_loc[prov][city][county]
-                        self.town_village_dict.update({key_name: value_dict})
+                        if self.town_village:  # 补充 self.town_village_list
+
+                            key_name = prov + city + county
+                            value_dict = china_loc[prov][city][county]
+                            self.town_village_dict.update({key_name: value_dict})
 
         # 将旧有的地名融入 self.administrative_map_list，并建立映射表
         self.old2new_loc_map = {}

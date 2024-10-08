@@ -155,10 +155,17 @@ def china_location_loader(detail=False):
                 continue
             city, admin_code, alias_name = item.strip().split('\t')
             cur_city = city
-            location_dict[cur_province].update(
-                {cur_city: {'_full_name': city,
-                            '_alias': alias_name,
-                            '_admin_code': admin_code}})
+            if '/' in alias_name:
+                alias_name_list = alias_name.split('/')
+                location_dict[cur_province].update(
+                    {cur_city: {'_full_name': city,
+                                '_alias': alias_name_list,
+                                '_admin_code': admin_code}})
+            else:
+                location_dict[cur_province].update(
+                    {cur_city: {'_full_name': city,
+                                '_alias': [alias_name],
+                                '_admin_code': admin_code}})
 
     return location_dict
 
