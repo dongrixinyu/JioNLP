@@ -473,11 +473,11 @@ class TimeParser(TimeUtility):
 
         # 农历固定节日
         self.year_fixed_lunar_festival_pattern = re.compile(
-            ''.join([bracket_absence(YEAR_STRING), LU_A, FIXED_LUNAR_FESTIVAL]))
+            ''.join([bracket_absence(YEAR_STRING), CONJ_A, LU_A, FIXED_LUNAR_FESTIVAL]))
 
         # 限定年 农历固定节日
         self.limit_year_fixed_lunar_festival_pattern = re.compile(
-            ''.join([bracket(LIMIT_YEAR_STRING), LU_A, FIXED_LUNAR_FESTIVAL, absence(TIME_POINT_SUFFIX)]))
+            ''.join([bracket(LIMIT_YEAR_STRING), CONJ_A, LU_A, FIXED_LUNAR_FESTIVAL, absence(TIME_POINT_SUFFIX)]))
 
         # 公历规律节日
         self.year_regular_solar_festival_pattern = re.compile(
