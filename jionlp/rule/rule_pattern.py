@@ -395,6 +395,8 @@ MIN_SEC_STRING = r'((零|〇|[一二三四五]?十)[一二三四五六七八九]
 I = '|'
 LU = r'([农阴]历)'
 LU_A = absence(LU)
+CONJ = r'([的地得])'   # 中文常见连接词
+CONJ_A = absence(CONJ)
 
 # appendix
 TIME_POINT_SUFFIX = r'(左右|许|前后)'
