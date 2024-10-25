@@ -292,7 +292,7 @@ class TimeParser(TimeUtility):
             ''.join([bracket(LIMIT_YEAR_STRING), r'(([第前后头Qq]?[一二三四1-4两]|首)(个)?季度[初中末]?)']))
 
         # `限定季度`：`上季度`
-        self.limit_solar_season_pattern = re.compile(r'([上下]+(个)?|本|这)季度[初中末]?')
+        self.limit_solar_season_pattern = re.compile(r'([上下]+(一)?(个)?|本|这)季度[初中末]?')
 
         # `年、范围月`：`2018年前三个月`
         self.year_span_month_pattern = re.compile(
