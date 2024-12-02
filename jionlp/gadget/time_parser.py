@@ -1404,6 +1404,9 @@ class TimeParser(TimeUtility):
             if '多' in time_string or '余' in time_string:
                 time_definition = 'blur'
 
+            if '近' in time_string and '最近' not in time_string:
+                time_definition = 'blur'
+
         return time_delta, time_definition
 
     def _check_blur(self, time_string, time_definition):
@@ -2226,7 +2229,8 @@ class TimeParser(TimeUtility):
             time_base_datetime, time_delta_dict)
         second_time_handler = TimeParser._convert_time_base2handler(time_base_datetime)
         delta_set = set(time_delta_dict.keys())
-        if 'hour' in delta_set or 'minute' in delta_set or 'second' in delta_set:
+
+        if 'hour' in delta_set or 'minute' in delta_set or 'second' in delta_set or 'day' in delta_set:
             definition = 'accurate'
             second_time_handler = [s if b > -1 else -1 for (b, s) in zip(self.time_base_handler, second_time_handler)]
         else:
@@ -2254,8 +2258,11 @@ class TimeParser(TimeUtility):
 
         first_time_handler = TimeParser._convert_time_base2handler(time_base_datetime)
         delta_set = set(time_delta_dict.keys())
-        if 'hour' in delta_set or 'minute' in delta_set or 'second' in delta_set:
+
+        if 'hour' in delta_set or 'minute' in delta_set or 'second' in delta_set or 'day' in delta_set:
             definition = 'accurate'
+            if '近' in time_string and '最近' not in time_string:  # 这里有点太奇怪了。逻辑过于碎片化
+                definition = 'blur'
             first_time_handler = [s if b > -1 else -1 for (b, s) in zip(self.time_base_handler, first_time_handler)]
         else:
             definition = 'blur'

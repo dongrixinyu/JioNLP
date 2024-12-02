@@ -964,7 +964,7 @@ class TestTimeParser(unittest.TestCase):
             ['未来5年内', _ts_1,
              {'type': 'time_span', 'definition': 'blur', 'time': ['2021-06-14 01:06:40', '2026-06-13 23:59:59']}],
             ['未来7天', _ts_1,
-             {'type': 'time_span', 'definition': 'blur', 'time': ['2021-06-14 01:06:40', '2021-06-21 23:59:59']}],
+             {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 01:06:40', '2021-06-21 01:06:40']}],
             ['未来48小时', _ts_1,
              {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 01:06:40', '2021-06-16 01:06:40']}],
             ['未来七十二小时内', {'year': 2021, 'month': 7, 'day': 3, 'hour': 14, 'minute': 32},
@@ -974,7 +974,7 @@ class TestTimeParser(unittest.TestCase):
 
             # 过去
             ['过去的一周', {'year': 2021, 'month': 7, 'day': 31, 'hour': 14, 'minute': 32},
-             {'type': 'time_span', 'definition': 'blur', 'time': ['2021-07-24 00:00:00', '2021-07-31 14:32:59']}],
+             {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-07-24 14:32:00', '2021-07-31 14:32:59']}],
             ['过去的一年', {'year': 2021, 'month': 7, 'day': 31, 'hour': 14, 'minute': 32},
              {'type': 'time_span', 'definition': 'blur', 'time': ['2020-07-31 00:00:00', '2021-07-31 14:32:59']}],
             # 过去5分钟，也可能是表示 度过5分钟，此时，并非静态时间，应当按 5分钟解析。故不支持该表述。
@@ -995,7 +995,7 @@ class TestTimeParser(unittest.TestCase):
             # 近
             # ”近三年“、“近几天”：有 time_span 和 time_delta 两种解析方式。，默认为按 time_span 解析
             ['近30天', _ts_1,
-             {'type': 'time_span', 'definition': 'blur', 'time': ['2021-05-15 00:00:00', '2021-06-14 01:06:40']}],
+             {'type': 'time_span', 'definition': 'blur', 'time': ['2021-05-15 01:06:40', '2021-06-14 01:06:40']}],
             ['近三个月', _ts_1,
              {'type': 'time_span', 'definition': 'blur', 'time': ['2021-03-14 00:00:00', '2021-06-14 01:06:40']}],
             ['近三月', _ts_1,
