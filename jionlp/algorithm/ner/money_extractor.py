@@ -107,7 +107,7 @@ class MoneyExtractor(object):
                 # 此循环意在找出同一个 candidate 中包含的多个 money_entity
 
                 true_string, result, offset = self.grid_search(
-                    candidate['money_candidate'][bias:])
+                    candidate['money_candidate'][bias:], candidate)  # 这里添加上下文，做一些简单的判断
 
                 if true_string is not None:
 
@@ -144,7 +144,7 @@ class MoneyExtractor(object):
 
         return money_entity_list
 
-    def _filter(self, money_string):
+    def _filter(self, money_string, candidate):
         # 对字符串进行过滤，某些不符合规则的字符串直接跳过
         # rule 1: 清除边界的标点
         if money_string[0] in '，,' or money_string[-1] in '，,':
@@ -152,7 +152,12 @@ class MoneyExtractor(object):
 
         # rule 2: 字符串为纯数值，则剔除，如 “12”
         if self.money_num_string_pattern.search(money_string):
-            return False
+            if "金额" in candidate['context']:
+                return True
+            elif "钱" in candidate['context']:
+                return True
+            else:
+                return False
 
         # rule 3: [千万亿]元 后一般不再添加数字再构成角分等信息，如：`359万元2`
         matched_res = self.qian_wan_yi_yuan_exception_check_pattern.search(money_string)
@@ -190,8 +195,10 @@ class MoneyExtractor(object):
 
         return money_string
 
-    def grid_search(self, money_candidate):
-        """ 全面搜索候选货币金额字符串，从长至短，较优 """
+    def grid_search(self, money_candidate, candidate):
+        """ 全面搜索候选货币金额字符串，从长至短，较优
+        candidate: 用于做一些简单的上下文判断
+        """
         length = len(money_candidate)
         for i in range(length):  # 控制总长，若想控制单字符的串也被返回考察，此时改为 length + 1
             for j in range(i):  # 控制偏移
@@ -200,7 +207,7 @@ class MoneyExtractor(object):
                     sub_string = money_candidate[j: offset[1]]
 
                     # 对字符串进行过滤
-                    if not self._filter(sub_string):
+                    if not self._filter(sub_string, candidate):
                         continue
 
                     # 对字符串进行清洗
