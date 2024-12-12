@@ -701,6 +701,7 @@ class TimeParser(TimeUtility):
             # 特定日
             '地球日': [4, 22], '护士节': [5, 12], '三一五': [3, 15], '消费者权益日': [3, 15],
             '三.一五': [3, 15], '三·一五': [3, 15], '双11': [11, 11], '双十一': [11, 11],
+            '双十二': [12, 12], '双12':[12, 12]
         }
 
         # 农历固定节日
@@ -4328,7 +4329,8 @@ class TimeParser(TimeUtility):
         time_point.year = year if year is not None else self.time_base_handler[0]
 
         # 默认必然已匹配某节日
-        for festival, date in self.fixed_solar_holiday_dict.items():
+        # 按照长度从长到短匹配，避免重复
+        for festival, date in sorted(self.fixed_solar_holiday_dict.items(), key=lambda item: len(item[0]), reverse=True):
             if festival in time_string:
                 time_point.month = date[0]
                 time_point.day = date[1]
@@ -4347,7 +4349,8 @@ class TimeParser(TimeUtility):
             time_string, self.time_base_handler)
 
         # 默认必然已匹配某节日
-        for festival, date in self.fixed_solar_holiday_dict.items():
+        # 按照长度从长到短匹配，避免重复
+        for festival, date in sorted(self.fixed_solar_holiday_dict.items(), key=lambda item: len(item[0]), reverse=True):
             if festival in time_string:
                 time_point.month = date[0]
                 time_point.day = date[1]
