@@ -594,6 +594,10 @@ class TimeParser(TimeUtility):
         self.year_order_delta_point_pattern = re.compile(''.join([r'第', DELTA_NUM_STRING, r'年']))
         self.day_order_delta_point_pattern = re.compile(''.join([r'第', DELTA_NUM_STRING, r'[天日]']))
 
+        # XX年第N天：`2025年第一天`
+        self.year_day_order_delta_point_pattern = re.compile(
+            ''.join([YEAR_STRING[:-1] + r'年?', r'第', DELTA_NUM_STRING, r'[天日]']))
+
         # **** 年 ****
         self.year_pattern = re.compile(YEAR_STRING[:-1] + r'(?=年)')
         self.limit_year_pattern = re.compile(LIMIT_YEAR_STRING[:-1] + r'(?=年)')
@@ -714,7 +718,7 @@ class TimeParser(TimeUtility):
             '浴佛节': [4, 8], '端午': [5, 5], '端阳': [5, 5], '姑姑节': [6, 6],
             '七夕': [7, 7], '中元': [7, 15], '财神节': [7, 22], '中秋': [8, 15],
             '重阳': [9, 9], '下元节': [10, 15], '寒衣节': [10, 1], '腊八': [12, 8],
-            '除夕': [12, 30],
+            '除夕': [12, 30], '大年三十': [12, 30],
         }
 
         # 公历规律节日
@@ -1373,18 +1377,26 @@ class TimeParser(TimeUtility):
                      ['year', 1, self.year_delta_pattern]]
 
         for unit, multi, pattern in unit_list:
-            time_delta_num, _time_definition = self._normalize_delta_unit(time_string, pattern)
+            time_delta_num, _time_definition = self._normalize_delta_unit(time_string, pattern, unit=unit)
             time_delta.__setattr__(unit, time_delta.__getattribute__(unit) + time_delta_num * multi)
             if time_delta_num > 0:
                 time_definition = _time_definition
 
         return time_delta, 'time_delta', time_definition
 
-    def _normalize_delta_unit(self, time_string, pattern):
+    def _normalize_delta_unit(self, time_string, pattern, unit=None):
         """ 将 time_delta 归一化 """
         # 处理字符串的问题
-        time_string = time_string.replace('俩', '两个')
-        time_string = time_string.replace('仨', '三个')
+        if unit is None:
+            time_string = time_string.replace('俩', '两个')
+            time_string = time_string.replace('仨', '三个')
+        else:
+            if unit in ["second", "minute", "day", "year"]:  # 三秒，三天，三年
+                time_string = time_string.replace('俩', '两')
+                time_string = time_string.replace('仨', '三')
+            elif unit in ["hour", "month"]:  # 三个小时，三个月
+                time_string = time_string.replace('俩', '两个')
+                time_string = time_string.replace('仨', '三个')
 
         delta = pattern.search(time_string)
         time_delta = 0
@@ -1470,6 +1482,7 @@ class TimeParser(TimeUtility):
                 [self.limit_year_span_month_pattern, self.normalize_limit_year_span_month],
                 [self.year_span_month_pattern, self.normalize_year_span_month],
 
+                [self.year_day_order_delta_point_pattern, self.normalize_year_day_order_delta_point],
                 [self.year_order_delta_point_pattern, self.normalize_year_order_delta_point],
                 [self.day_order_delta_point_pattern, self.normalize_day_order_delta_point],
 
@@ -3220,6 +3233,7 @@ class TimeParser(TimeUtility):
         return first_time_point.handler(), second_time_point.handler(), 'time_span', 'blur'
 
     def normalize_day_order_delta_point(self, time_string):
+        # 第N天：`第三天`，
         first_time_point, second_time_point = self._time_point()
         delta_num = self.delta_num_pattern.search(time_string)
         if delta_num:
@@ -3230,6 +3244,34 @@ class TimeParser(TimeUtility):
 
         first_time_point.day = self.time_base_handler[2] + time_delta_num - 1
         second_time_point.day = self.time_base_handler[2] + time_delta_num - 1
+
+        return first_time_point.handler(), second_time_point.handler(), 'time_span', 'accurate'
+
+    def normalize_year_day_order_delta_point(self, time_string):
+        # YY年第N天：`2025年第三天`，
+        first_time_point, second_time_point = self._time_point()
+        year_string, delta_day_string = time_string.split("第")
+        delta_day_string = "第" + delta_day_string
+
+        year = self._normalize_year(year_string, self.time_base_handler)
+        if year is not None:
+            # 找到某年的第一天
+            first_time_point.year = year
+            second_time_point.year = year
+            first_time_point.month = 1
+            second_time_point.month = 1
+            first_time_point.day = 1
+            second_time_point.day = 1
+
+        delta_num = self.delta_num_pattern.search(delta_day_string)
+        if delta_num:
+            delta_num_string = delta_num.group()
+            time_delta_num = int(self._char_num2num(delta_num_string))
+        else:
+            raise ValueError('the given `{}` is illegal.'.format(time_string))
+
+        first_time_point.day = first_time_point.day + time_delta_num - 1
+        second_time_point.day = second_time_point.day + time_delta_num - 1
 
         return first_time_point.handler(), second_time_point.handler(), 'time_span', 'accurate'
 

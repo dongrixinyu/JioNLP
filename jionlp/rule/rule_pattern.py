@@ -414,17 +414,17 @@ FIXED_SOLAR_FESTIVAL = r'((元旦|十一(?![点时分秒]))|(三八|五一|六�
 # 固定农历节日
 FIXED_LUNAR_FESTIVAL = r'((春|填仓|上巳|寒食|浴佛|姑姑|财神|下元|寒衣)节|'\
     r'(龙抬头|除夕)|' \
-    r'(大年初[一二三四五六七八九十])|'\
+    r'(大年(初[一二三四五六七八九十]|三十))|'\
     r'(端午|端阳|七夕|元宵|中秋|重阳|腊八|中元)(节)?)'
 # 规律公历节日
 REGULAR_FOREIGN_FESTIVAL = r'(感恩|母亲|父亲)节'
 
 # time_delta 数字正则
-DELTA_NUM_STRING = r'(([一两二三四五六七八九十百千万零]+点)?[一两二三四五六七八九十百千万零]+|([\d十百千万,]+\.)?[\d十百千万,]+)'
+DELTA_NUM_STRING = r'(([一两俩二仨三四五六七八九十百千万零]+点)?[一两二三四五六七八九十百千万零]+|([\d十百千万,]+\.)?[\d十百千万,]+)'
 QUARTER_NUM_STRING = r'[一两二三四1-4]'
 
 # 单个数字正则
-SINGLE_NUM_STRING = r'[一两二三四五六七八九十\d]'
+SINGLE_NUM_STRING = r'[一两俩二仨三四五六七八九十\d]'
 
 # time_delta 正则
 YEAR_DELTA_STRING = ''.join([DELTA_NUM_STRING, r'[多余]?(周)?年(多)?', I, '半年', I, SINGLE_NUM_STRING, '年半'])

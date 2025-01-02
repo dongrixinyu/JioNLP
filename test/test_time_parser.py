@@ -699,6 +699,8 @@ class TestTimeParser(unittest.TestCase):
              {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-02-26 00:00:00', '2021-02-26 23:59:59']}],
             ['大年初十', _ts_1,
              {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-02-21 00:00:00', '2021-02-21 23:59:59']}],
+            ['2023年大年三十', _ts_2,
+             {'type': 'time_point', 'definition': 'accurate', 'time': ['2023-02-09 00:00:00', '2023-02-09 23:59:59']}],
             ['去年中秋节前后', _ts_1,
              {'type': 'time_point', 'definition': 'blur', 'time': ['2020-10-01 00:00:00', '2020-10-01 23:59:59']}],
 
@@ -954,6 +956,12 @@ class TestTimeParser(unittest.TestCase):
             ['第三天起', _ts_1, {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-16 00:00:00', 'inf']}],
             ['第七年', _ts_1,
              {'type': 'time_span', 'definition': 'blur', 'time': ['2027-01-01 00:00:00', '2027-12-31 23:59:59']}],
+
+            # 有偏移时间基准（非此时此刻）序数 time_delta 转 time_point
+            ['2025年第一天早上8点半', _ts_1,
+             {'type': 'time_point', 'definition': 'accurate', 'time': ['2025-01-01 08:30:00', '2025-01-01 08:30:59']}],
+            ["2023年第十天早上8点", _ts_1,
+             {'type': 'time_point', 'definition': 'accurate', 'time': ['2023-01-10 08:00:00', '2023-01-10 08:59:59']}],
 
             # 另一种类型的 time_delta 转 time_span
             # 未来/今后
