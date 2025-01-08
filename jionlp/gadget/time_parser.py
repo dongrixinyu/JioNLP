@@ -3193,15 +3193,21 @@ class TimeParser(TimeUtility):
                 second_time_handler = [second_time_handler[0], second_time_handler[1],
                                        -1, -1, -1, -1]
         elif '内' in time_string:
-            cur_datetime = time_base_datetime + datetime.timedelta(days=time_year_delta * dpy)
-            cur_time_handler = TimeParser._convert_time_base2handler(cur_datetime)
-
-            first_time_handler = self.time_base_handler
-            if int(time_year_delta) == time_year_delta:
-                second_time_handler = [cur_time_handler[0], -1, -1, -1, -1, -1]
+            if time_year_delta > 2000:
+                # 字符串形如  “2025年内”，含义是当年一整年
+                first_time_handler = [int(time_year_delta), -1, -1, -1, -1, -1]
+                second_time_handler = [int(time_year_delta), -1, -1, -1, -1, -1]
             else:
-                second_time_handler = [cur_time_handler[0], cur_time_handler[1],
-                                       -1, -1, -1, -1]
+                # 字符串形如 “三年内”、“五十年内”，含义为未来若干年内
+                cur_datetime = time_base_datetime + datetime.timedelta(days=time_year_delta * dpy)
+                cur_time_handler = TimeParser._convert_time_base2handler(cur_datetime)
+
+                first_time_handler = self.time_base_handler
+                if int(time_year_delta) == time_year_delta:
+                    second_time_handler = [cur_time_handler[0], -1, -1, -1, -1, -1]
+                else:
+                    second_time_handler = [cur_time_handler[0], cur_time_handler[1],
+                                           -1, -1, -1, -1]
         elif '来' in time_string:
             cur_datetime = time_base_datetime - datetime.timedelta(days=time_year_delta * dpy)
             cur_time_handler = TimeParser._convert_time_base2handler(cur_datetime)
