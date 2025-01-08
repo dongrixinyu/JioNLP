@@ -980,6 +980,10 @@ class TestTimeParser(unittest.TestCase):
             ['今后10年', _ts_1,
              {'type': 'time_span', 'definition': 'blur', 'time': ['2021-06-14 01:06:40', '2031-06-12 23:59:59']}],
 
+            # 某种特殊情况
+            ['2024年内', _ts_1,
+             {'type': 'time_span', 'definition': 'blur', 'time': ['2024-01-01 00:00:00', '2024-12-31 23:59:59']}],
+
             # 过去
             ['过去的一周', {'year': 2021, 'month': 7, 'day': 31, 'hour': 14, 'minute': 32},
              {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-07-24 14:32:00', '2021-07-31 14:32:59']}],
