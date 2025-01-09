@@ -26,6 +26,8 @@ class TestMoneyParser(unittest.TestCase):
             ['15k左右', {'num': '15000.00', 'case': '元', 'definition': 'blur'}],
             ['30w上下', {'num': '300000.00', 'case': '元', 'definition': 'blur'}],
 
+            ['123元1角1分', {'num': '123.11', 'case': '元', 'definition': 'accurate'}],
+
             # 纯汉字金额
             ['六十四万零一百四十三元一角七分', {'num': '640143.17', 'case': '元', 'definition': 'accurate'}],
             ['壹万二千三百四十五元', {'num': '12345.00', 'case': '元', 'definition': 'accurate'}],
@@ -38,6 +40,7 @@ class TestMoneyParser(unittest.TestCase):
             ['十块三毛', {'num': '10.30', 'case': '元', 'definition': 'accurate'}],
             ['一百三十五块六角七分钱', {'num': '135.67', 'case': '元', 'definition': 'accurate'}],
             ['港币两千九百六十元', {'num': '2960.00', 'case': '港元', 'definition': 'accurate'}],
+            ['一百二十三元1角1分', {'num': '123.11', 'case': '元', 'definition': 'accurate'}],
 
             # 特殊纯汉字，两个货币单位
             ['三万元欧元', {'num': '30000.00', 'case': '欧元', 'definition': 'accurate'}],

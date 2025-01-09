@@ -61,6 +61,7 @@ class MoneyParser(object):
         self.money_pattern_1 = None
         
     def _prepare(self):
+        self.int_num_pattern = re.compile('\d+')
         self.float_num_pattern = re.compile('\d+(\.)?\d*')
         self.punc_pattern = re.compile(MONEY_NUM_MIDDLE_STRING)
         self.bai_pattern = re.compile('百|佰')
@@ -205,7 +206,23 @@ class MoneyParser(object):
         # TODO: 检验字符串是否正确的中文金额
         # 两个除零外的 plus_num 不可以连续
 
-        tmp_nums = list()
+        # 此时，角分确定了，但是 元 之前的金额形式仍未确定，并不一定是中文汉字形式.
+        yuan = self.chinese_yuan_currency_pattern.split(money_string)[0]
+        jiao_fen = self.chinese_yuan_currency_pattern.split(money_string)[-1]
+
+        # 第一种情况：整数金额全是阿拉伯数字，如 `123元1角1分`
+        matched_res = self.int_num_pattern.search(yuan)
+        if matched_res and (matched_res.span()[0] == 0) and (matched_res.span()[1] == len(yuan)):
+            yuan_number = int(yuan)
+            jiao_fen_number = self.compute_plus_multi(jiao_fen)
+
+            return yuan_number + jiao_fen_number
+
+        else:
+            return self.compute_plus_multi(money_string)
+
+    def compute_plus_multi(self, money_string):
+        tmp_nums = []
         for char in list(money_string):
             plus_num = self.plus_nums.get(char, 0)
             if plus_num != 0:
@@ -215,8 +232,8 @@ class MoneyParser(object):
             if len(tmp_nums) >= 1:
                 tmp_nums[-1] = tmp_nums[-1] * multi_num
                 
-        rtn_std_num = sum(tmp_nums)
-        return rtn_std_num
+        standard_num = sum(tmp_nums)
+        return standard_num
 
     def turn_money_std_fmt_util2(self, money_string):
         """将中文金额形式转换成 float 形式。处理以 “万” 为核心的金额字符串
@@ -671,7 +688,6 @@ class MoneyParser(object):
         # 若货币的金额字符串部分有误，则报错返回。
         if self.money_num_string_pattern.search(money_string) is None:
             raise ValueError(self.type_error.format(money_string))
-            # pass
 
         if self.money_pattern_1.search(money_string):
             # 纯数字格式的金额，如 “549040.27”
