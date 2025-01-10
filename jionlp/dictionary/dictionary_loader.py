@@ -331,13 +331,17 @@ def chinese_idiom_loader():
 
     for line in content:
         item_tup = line.split('\t')
-        
-        assert len(item_tup) == 5
-        example = item_tup[3] if item_tup[3] != '' else None
-        cur_item = {'explanation': item_tup[1],
-                    'derivation': item_tup[2],
-                    'example': example,
-                    'freq': int(item_tup[4])}
+
+        assert len(item_tup) == 2
+        cur_item = {'freq': int(item_tup[1])}
+
+        # 旧函数遭删减
+        # assert len(item_tup) == 5
+        # example = item_tup[3] if item_tup[3] != '' else None
+        # cur_item = {'explanation': item_tup[1],
+        #             'derivation': item_tup[2],
+        #             'example': example,
+        #             'freq': int(item_tup[4])}
         result.update({item_tup[0]: cur_item})
     
     return result

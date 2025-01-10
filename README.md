@@ -18,7 +18,7 @@
 
 #### &emsp;&emsp; JioNLP：中文 NLP 预处理、解析工具包 A Python Lib for Chinese NLP Preprocessing & Parsing
 #### &emsp;&emsp; 安装：```pip install jionlp```
-- JioNLP 是一个面向 **NLP 开发者**的工具包，提供 NLP 任务预处理、解析功能，准确、高效、零使用门槛。请下拉本网页，查阅具体功能信息，并按 **Ctrl+F** 进行搜索。[**JioNLP在线版**](http://www.jionlp.com/) 可快速试用部分功能。关注同名**微信公众号 JioNLP** 可获取最新的 AI 资讯，数据资源。
+- JioNLP 是一个面向 **NLP 开发者**的工具包，提供 NLP 任务预处理、解析功能，准确、高效、零使用门槛。请下拉本网页，查阅具体功能信息，并按 **Ctrl+F** 进行搜索。[**JioNLP在线版**](https://www.jionlp.com/jionlp_online) 可快速试用部分功能。关注同名**微信公众号 JioNLP** 可获取最新的 AI 资讯，数据资源。
 
   - [**AI发展方向——从pipeline到end2end**](https://mp.weixin.qq.com/s/ZpEn_vZGjY2dqpE_62721w)
   - [**你为什么不相信 LLM 模型评测：深入评测 LLM 接口**](https://mp.weixin.qq.com/s/8PoFz6mUD1AzKthGyO4cyA)
@@ -26,6 +26,17 @@
   - [**ChatGPT这么强，会影响NLPer的就业环境吗？**](https://zhuanlan.zhihu.com/p/605673596)
   - [**一文读懂ChatGPT模型原理**](https://zhuanlan.zhihu.com/p/589621442)
   - [**花了三周，我又更新了一版开源软件 ffio**](https://zhuanlan.zhihu.com/p/678141936) => [**FFIO链接**](https://github.com/dongrixinyu/ffio)
+
+
+### 2025-01-10 更新某些功能
+
+- `jio.chinese_idiom_loader`
+该函数是成语加载函数，**目前**返回成语的 释义、出处、示例、整个中文语料中的出现频率。
+
+由于该函数占据了 2.9M 硬盘空间，且使用人数应该非常少，所以会对该词典进行精简，**计划**仅保留成语以及其文本频率，删除释义、出处、示例。
+这样做会压缩 jionlp 工具包大小。
+
+如果有任何意见，都可以提 issue 反馈。
 
 
 ### 2023-12-12 Add [MELLM](https://zhuanlan.zhihu.com/p/666001842)

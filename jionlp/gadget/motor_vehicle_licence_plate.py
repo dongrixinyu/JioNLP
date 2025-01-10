@@ -14,7 +14,7 @@ from jionlp.rule.rule_pattern import MOTOR_VEHICLE_LICENCE_PLATE_PATTERN
 
 
 class MotorVehicleLicencePlateParser(object):
-    """ 车牌号码解析器，给定一个车牌号码，解析其对应的省、市、县、出生年月、性别、校验码。
+    """ 车牌号码解析器，给定一个车牌号码，解析其对应的省、市、县。
     目前仅限于大陆车牌号。可正确解析普通 92 式车牌号，新能源车牌号。各种特殊用途如农机牌号、
     摩托牌号等，不在本工具考虑范围内。
 
@@ -28,7 +28,7 @@ class MotorVehicleLicencePlateParser(object):
         None
 
     Returns:
-        dict: 身份证号解析结果字段
+        dict: 车牌号解析结果字段
 
     Examples:
         >>> import jionlp as jio
