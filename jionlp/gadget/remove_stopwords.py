@@ -106,24 +106,33 @@ class RemoveStopwords(object):
     @staticmethod
     def _prepare_china_locations():
         china_location = china_location_loader()
-        china_list = list()
+        china_list = []
         china_list.extend(list(china_location.keys()))
         for prov, cities in china_location.items():
             china_list.append(prov)
             china_list.append(cities['_full_name'])
-            china_list.append(cities['_alias'])
+            if type(cities['_alias']) is list:
+                china_list.extend(cities['_alias'])
+            else:
+                china_list.append(cities['_alias'])
             for city, counties in cities.items():
                 if city.startswith('_'):
                     continue
                 china_list.append(city)
                 china_list.append(counties['_full_name'])
-                china_list.append(counties['_alias'])
+                if type(counties['_alias']) is list:
+                    china_list.extend(counties['_alias'])
+                else:
+                    china_list.append(counties['_alias'])
                 for county, info in counties.items():
                     if county.startswith('_'):
                         continue
                     china_list.append(county)
                     china_list.append(info['_full_name'])
-                    china_list.append(info['_alias'])
+                    if type(info['_alias']) is list:
+                        china_list.extend(info['_alias'])
+                    else:
+                        china_list.append(info['_alias'])
                     
         return china_list
         
