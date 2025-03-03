@@ -27,6 +27,17 @@
   - [**一文读懂ChatGPT模型原理**](https://zhuanlan.zhihu.com/p/589621442)
   - [**花了三周，我又更新了一版开源软件 ffio**](https://zhuanlan.zhihu.com/p/678141936) => [**FFIO链接**](https://github.com/dongrixinyu/ffio)
 
+### 2025-02-22 更新[大语言模型 LLM 评测数据集](https://github.com/dongrixinyu/JioNLP/wiki/LLM%E8%AF%84%E6%B5%8B%E6%95%B0%E6%8D%AE%E9%9B%86)
+- JioNLP 提供了一套 LLM 的测试数据集，并应用 MELLM 算法完成了自动评测。
+- **评测结果**可关注**公众号JioNLP**，查阅具体各家评测截图 pdf。
+```
+>>> import jionlp as jio
+>>> llm_test = jio.llm_test_dataset_loader(version='1.2')
+>>> print(llm_test[15])
+>>> llm_test = jio.llm_test_dataset_loader(field='math')
+>>> print(llm_test[5])
+```
+
 
 ### 2025-01-10 更新某些功能
 
@@ -48,18 +59,6 @@
 $ git clone https://github.com/dongrixinyu/JioNLP
 $ cd JioNLP/test/
 $ python test_mellm.py
-```
-
-
-### 2023-06-22 添加[大语言模型 LLM 评测数据集](https://github.com/dongrixinyu/JioNLP/wiki/LLM%E8%AF%84%E6%B5%8B%E6%95%B0%E6%8D%AE%E9%9B%86)
-- JioNLP 提供了一套 LLM 的测试数据集，并应用 MELLM 算法完成了自动评测。
-- **评测结果**可关注**公众号JioNLP**，查阅具体各家评测截图pdf。
-```
->>> import jionlp as jio
->>> llm_test = jio.llm_test_dataset_loader(version='1.1')
->>> print(llm_test[15])
->>> llm_test = jio.llm_test_dataset_loader(field='math')
->>> print(llm_test[5])
 ```
 
 
