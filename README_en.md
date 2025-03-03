@@ -1,7 +1,4 @@
 <p align="center">
-    <a alt="jionlp logo">
-        
-    </a>
     <iframe src="https://github.com/dongrixinyu/JioNLP/blob/master/index.html" width="600" height="400"></iframe>
 </p>
 <p align="center">
