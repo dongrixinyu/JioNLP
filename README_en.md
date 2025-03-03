@@ -1,6 +1,6 @@
 <p align="center">
     <a alt="jionlp logo">
-        <img src="../../blob/master/image/jionlp_logo.jpg" / style="width:300px;height:100px">
+        <object type="text/html" data="http://github.com/dongrixinyu/JioNLP/index.html" width="600" height="400"></object>
     </a>
 </p>
 <p align="center">

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Random Image</title>
+    <script>
+        function getRandomImage() {
+            const images = [
+                "https://raw.githubusercontent.com/your-username/your-repo/main/images/image1.jpg",
+                "https://raw.githubusercontent.com/your-username/your-repo/main/images/image2.jpg",
+                "https://raw.githubusercontent.com/your-username/your-repo/main/images/image3.jpg"
+            ];
+            return images[Math.floor(Math.random() * images.length)];
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const img = document.createElement("img");
+            img.src = getRandomImage();
+            document.body.appendChild(img);
+        });
+    </script>
+</head>
+<body>
+</body>
+</html>
