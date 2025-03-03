@@ -1,6 +1,6 @@
-<p align="center">
-    <iframe src="https://github.com/dongrixinyu/JioNLP/blob/master/index.html" width="600" height="400"></iframe>
-</p>
+
+<iframe src="https://github.com/dongrixinyu/JioNLP/blob/master/index.html" width="600" height="400"></iframe>
+
 <p align="center">
     <a alt="License">
         <img src="https://img.shields.io/github/license/dongrixinyu/JioNLP?color=crimson" /></a>
