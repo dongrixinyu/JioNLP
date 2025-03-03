@@ -1,6 +1,6 @@
 <p align="center">
     <a alt="jionlp logo">
-        <object type="text/html" data="https://github.com/dongrixinyu/JioNLP/blob/master/index.html" width="600" height="400"></object>
+        <iframe src="https://github.com/dongrixinyu/JioNLP/blob/master/index.html" width="600" height="400"></iframe>
     </a>
 </p>
 <p align="center">
