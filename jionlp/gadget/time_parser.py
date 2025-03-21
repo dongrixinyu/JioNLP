@@ -1223,12 +1223,13 @@ class TimeParser(TimeUtility):
 
                         if has_weekday:
                             # `每周工作日9点` 中，`工作日9点`要进入 time_point_string，需要将 `工作日` 剔除
-                            time_point_string = time_point_string.split('工作日')[-1]
+                            time_point_string = time_point_string.split('工作日')[-1].replace('的', '')
 
                             for i in range(7):
                                 first_full_time_handler, second_full_time_handler, _, blur_time = self.parse_time_span_point(
                                     time_point_string)
-                                is_weekday = TimeParser._check_weekday(first_full_time_handler)
+                                first_full_time_datetime = TimeParser._convert_handler2datetime(first_full_time_handler)
+                                is_weekday = TimeParser._check_weekday(first_full_time_datetime)
                                 if is_weekday:
                                     break
                                 else:
@@ -1255,7 +1256,6 @@ class TimeParser(TimeUtility):
 
                         if has_weekday:
                             time_point_string = time_point_string.split('工作日')[-1]
-
                         results = []
 
                         while len(results) < period_results_num:

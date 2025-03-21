@@ -176,6 +176,7 @@ import jionlp as jio
 
 class TestTimeParser(unittest.TestCase):
     """ 测试时间解析工具 """
+    maxDiff = None
 
     def test_time_parser(self):
         """ test func time_parser """
@@ -1060,6 +1061,8 @@ class TestTimeParser(unittest.TestCase):
                 'time': ['2021-06-14 20:00:00', '2021-06-14 20:59:59'], 'string': '晚上8点'}}}],
             ['每个星期天早上9点一刻', _ts_1, {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'day': 7}, 'point': {
                 'time': ['2021-06-20 09:15:00', '2021-06-20 09:15:59'], 'string': '周天早上9点一刻'}}}],
+            ['每个工作日的下午三点', _ts_1, {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'day': 1}, 'point': {
+                'time': ['2021-06-14 15:00:00', '2021-06-14 15:59:59'], 'string': '下午三点'}}}],
             ['每隔200秒', _ts_1,
              {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'second': 200.0}, 'point': None}}],
             ['每年秋天', _ts_1, {'type': 'time_period', 'definition': 'accurate', 'time': {'delta': {'year': 1}, 'point': {
