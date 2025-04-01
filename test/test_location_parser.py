@@ -166,7 +166,22 @@ class TestLocationParser(unittest.TestCase):
               'orig_location': '石首市笔架山办事处建设路香港城西街'}],
             ['新疆巴音郭楞', False, False,
              {'province': '新疆维吾尔自治区', 'city': '巴音郭楞蒙古自治州', 'county': None, 'detail': '',
-              'full_location': '新疆维吾尔自治区巴音郭楞蒙古自治州', 'orig_location': '新疆巴音郭楞'}]
+              'full_location': '新疆维吾尔自治区巴音郭楞蒙古自治州', 'orig_location': '新疆巴音郭楞'}],
+            ['内蒙古自治区通辽市科尔沁左翼后旗甘蓝子街98号', True, True,
+             {'province': '内蒙古自治区', 'city': '通辽市', 'county': '科尔沁左翼后旗', 'detail': '甘蓝子街98号',
+              'full_location': '内蒙古自治区通辽市科尔沁左翼后旗甘蓝子街98号',
+              'orig_location': '内蒙古自治区通辽市科尔沁左翼后旗甘蓝子街98号', 'town': None, 'village': None}
+             ],
+            ['内蒙古自治区通辽市科尔沁甘蓝子街98号', True, True,
+             {'province': '内蒙古自治区', 'city': '通辽市', 'county': '科尔沁区', 'detail': '甘蓝子街98号',
+              'full_location': '内蒙古自治区通辽市科尔沁区甘蓝子街98号',
+              'orig_location': '内蒙古自治区通辽市科尔沁甘蓝子街98号', 'town': None, 'village': None}
+             ],
+            ['内蒙古通辽市科尔沁左翼后旗', True, True,
+             {'province': '内蒙古自治区', 'city': '通辽市', 'county': '科尔沁左翼后旗', 'detail': '',
+              'full_location': '内蒙古自治区通辽市科尔沁左翼后旗', 'orig_location': '内蒙古通辽市科尔沁左翼后旗',
+              'town': None, 'village': None}
+             ],
         ]
 
         for item in location_string_list:

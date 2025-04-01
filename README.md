@@ -7,11 +7,11 @@
     <a alt="License">
         <img src="https://img.shields.io/github/license/dongrixinyu/JioNLP?color=crimson" /></a>
     <a alt="Size">
-        <img src="https://img.shields.io/badge/size-19.3m-orange" /></a>
+        <img src="https://img.shields.io/badge/size-15.6m-orange" /></a>
     <a alt="Downloads">
         <img src="https://pepy.tech/badge/jionlp/month" /></a>
     <a alt="Version">
-        <img src="https://img.shields.io/badge/version-1.5.20-green" /></a>
+        <img src="https://img.shields.io/badge/version-1.5.21-green" /></a>
     <a href="https://github.com/dongrixinyu/JioNLP/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/dongrixinyu/JioNLP?color=blue" /></a>
 </p>
@@ -39,15 +39,13 @@
 ```
 
 
-### 2025-01-10 更新某些功能
+### 2025-04-01 更新函数，删除了一部分词典内容
 
 - `jio.chinese_idiom_loader`
 该函数是成语加载函数，**目前**返回成语的 释义、出处、示例、整个中文语料中的出现频率。
 
 由于该函数占据了 2.9M 硬盘空间，且使用人数应该非常少，所以会对该词典进行精简，**计划**仅保留成语以及其文本频率，删除释义、出处、示例。
 这样做会压缩 jionlp 工具包大小。
-
-如果有任何意见，都可以提 issue 反馈。
 
 
 ### 2023-12-12 Add [MELLM](https://zhuanlan.zhihu.com/p/666001842)

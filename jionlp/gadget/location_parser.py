@@ -334,10 +334,17 @@ class LocationParser(object):
         candidate_admin_list = [item for item in candidate_admin_list 
                                 if sum([j[0] for j in item[-1]]) == min_matched_offset]
 
-        # 2.3 优先匹配包含全名的，其次匹配别名，此处将别名的过滤掉，仅保留全名的，如 “海南藏族自治州”，不可匹配到 “海南省”
+        # 2.3 优先匹配包含全名的，其次匹配别名，此处将别名的过滤掉，仅保留全名的
+        # 分两种情况
+        # case 1: 如 “海南藏族自治州”，不可匹配到 “海南省”
         full_alias_list = [min([j[1] for j in item[-1] if j[1] > -1]) for item in candidate_admin_list]
         full_alias_min = min(full_alias_list)
         candidate_admin_list = [item for val, item in zip(full_alias_list, candidate_admin_list) if val == full_alias_min]
+        # case 2: 如 “科尔沁左翼后旗”，不可匹配到 “科尔沁区”
+        full_alias_list = [sum([j[1] for j in item[-1] if j[1] > -1]) for item in candidate_admin_list]
+        full_alias_min = min(full_alias_list)
+        candidate_admin_list = [item for val, item in zip(full_alias_list, candidate_admin_list)
+                                if val == full_alias_min]
 
         # 2.4 若全部都匹配别名，则别名获取级别应当越高越好
         # 如“海南大学”，应当匹配“海南省”，而非“海南藏族自治州”，
