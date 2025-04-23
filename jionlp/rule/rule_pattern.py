@@ -459,7 +459,7 @@ FAKE_POSITIVE_TIME_PATTERN = I.join([
      r'点' + SINGLE_NUM_STRING + '(?![时分秒刻月日' + SINGLE_NUM_STRING[1:-1] + '])',  # 用于排除`三点五度`、`调高24点5度`等非时间单位结尾的假阳性时间串
 ])
 FAKE_POSITIVE_START_STRING = r'[起到至以开－\—\-\~～]'  # 此字符串不可作为时间串的开始， `以来|开始` 为取首字
-FAKE_POSITIVE_END_STRING = r'[到至－\—\-\~～]'  # 此字符串不可作为时间串的结束
+FAKE_POSITIVE_END_STRING = r'[到至－\—\-\~～\,]'  # 此字符串不可作为时间串的结束
 
 ########################################################################
 # 货币金额 NER 字符规则
