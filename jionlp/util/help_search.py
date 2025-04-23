@@ -29,7 +29,9 @@ class HelpSearch(object):
 
     """
     def __init__(self):
-        print('# jionlp - 微信公众号: JioNLP  Github: `https://github.com/dongrixinyu/JioNLP`.')
+        # print('# jionlp - 微信公众号: JioNLP  Github: `https://github.com/dongrixinyu/JioNLP`.')
+        print('# jionlp - 微信公众号: JioNLP  最近作者想跳槽了，求内推，wx号：shanzhuiyancheng')
+
         self.function_dict = None
         self.non_function_list = [
             # 辅助工具
