@@ -43,7 +43,7 @@ class NewWordDiscovery(object):
         self.n_gram_num = 4
         self.max_word_len = 6
         self.min_point_wise_mutual_information = 80  # min PMI 值
-        self.re_chinese = re.compile(u'[\w]+', re.U)
+        self.re_chinese = re.compile(r'[\w]+', re.U)
         # self.left_right_char = re.compile('(.)%s(.)' % word)
         self.word_freq_counter = Counter()
         self.word_freq_dict = dict()
@@ -124,7 +124,7 @@ class NewWordDiscovery(object):
 
 
 max_word_len = 5
-re_chinese = re.compile(u'[\w]+', re.U)
+re_chinese = re.compile(r'[\w]+', re.U)
 
 
 def count_ngrams(input_file):

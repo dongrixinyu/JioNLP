@@ -97,8 +97,8 @@ class ChineseKeyPhrasesExtractor(object):
         self.trans_map = {'nr1': 'nr', 'nrf': 'nr', 'vi': 'v', 'wx': 'w', 'x': 'nz'}
 
         # 去除冗余短语的规则
-        self.redundant_strict_pattern = re.compile('[\*\|`\;:丨－\<\>]')  # 有一个字符即抛弃
-        self.redundant_loose_pattern = re.compile('[/\d\.\-:=a-z+,%]+')  # 全部是该字符即抛弃
+        self.redundant_strict_pattern = re.compile(r'[\*\|`\;:丨－\<\>]')  # 有一个字符即抛弃
+        self.redundant_loose_pattern = re.compile(r'[/\d\.\-:=a-z+,%]+')  # 全部是该字符即抛弃
         
         # 加载 idf，计算其 oov 均值
         self.idf_dict = idf_loader()

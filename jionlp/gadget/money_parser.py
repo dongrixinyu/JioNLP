@@ -61,8 +61,8 @@ class MoneyParser(object):
         self.money_pattern_1 = None
         
     def _prepare(self):
-        self.int_num_pattern = re.compile('\d+')
-        self.float_num_pattern = re.compile('\d+(\.)?\d*')
+        self.int_num_pattern = re.compile(r'\d+')
+        self.float_num_pattern = re.compile(r'\d+(\.)?\d*')
         self.punc_pattern = re.compile(MONEY_NUM_MIDDLE_STRING)
         self.bai_pattern = re.compile('百|佰')
         self.qian_pattern = re.compile('千|仟|k')

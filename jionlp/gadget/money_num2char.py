@@ -55,8 +55,8 @@ class MoneyNum2Char(object):
         self.traditional_outer_suffix = {
             0: '', 1: '萬', 2: '亿', 3: '兆'}
         self.money_char = {1: '分', 0: '角'}
-        self.integer_pattern = re.compile('(\d+)\.')
-        self.float_pattern = re.compile('\.(\d+)')
+        self.integer_pattern = re.compile(r'(\d+)\.')
+        self.float_pattern = re.compile(r'\.(\d+)')
 
         self.zero_cut_pattern = re.compile('零+$')
         self.zero_shorten_pattern = re.compile('零+')

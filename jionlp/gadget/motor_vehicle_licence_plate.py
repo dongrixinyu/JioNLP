@@ -63,9 +63,9 @@ class MotorVehicleLicencePlateParser(object):
         self.motor_vehicle_licence_plate_check_pattern = re.compile(
             MOTOR_VEHICLE_LICENCE_PLATE_PATTERN)
         self.small_new_energy_pattern = re.compile(
-            '([ABCDEFGHJK][A-HJ-NP-Za-hj-np-z]\d{4}|[ABCDEFGHJK]\d{5})$')
+            r'([ABCDEFGHJK][A-HJ-NP-Za-hj-np-z]\d{4}|[ABCDEFGHJK]\d{5})$')
         self.big_new_energy_pattern = re.compile(
-            '(\d{5}[ABCDEFGHJK])$')
+            r'(\d{5}[ABCDEFGHJK])$')
         self.gap_chars = '·. 　'  # 内含全半角空格
 
     def __call__(self, motor_vehicle_licence_plate):

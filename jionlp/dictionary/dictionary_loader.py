@@ -289,8 +289,8 @@ def chinese_char_dictionary_loader():
                      'chinese_char_dictionary.txt'),
         strip=False, auto_loads_json=False)
 
-    pinyin_ptn = re.compile('\[[a-zàáāǎòóōǒèéēěìíīǐùúūǔǜǘǖǚǹńňüḿ]{1,8}\]')
-    explanation_ptn = re.compile('\d{1,2}\.')
+    pinyin_ptn = re.compile(r'\[[a-zàáāǎòóōǒèéēěìíīǐùúūǔǜǘǖǚǹńňüḿ]{1,8}\]')
+    explanation_ptn = re.compile(r'\d{1,2}\.')
 
     char_dict = {}
     for idx, line in enumerate(content):
