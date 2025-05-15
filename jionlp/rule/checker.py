@@ -104,7 +104,7 @@ class Checker(object):
             return False
 
         if self.any_arabic_num_pattern is None:
-            self.any_arabic_num_pattern = re.compile('(\d|[０１２３４５６７８９])')
+            self.any_arabic_num_pattern = re.compile(r'(\d|[０１２３４５６７８９])')
 
         if self.any_arabic_num_pattern.search(text):
             return True
@@ -132,7 +132,7 @@ class Checker(object):
             return False
 
         if self.all_arabic_num_pattern is None:
-            self.all_arabic_num_pattern = re.compile('(\d|[０１２３４５６７８９])+')
+            self.all_arabic_num_pattern = re.compile(r'(\d|[０１２３４５６７８９])+')
 
         matched_res = self.all_arabic_num_pattern.search(text)
         if matched_res:

@@ -462,7 +462,7 @@ class TimeParser(TimeUtility):
         # 注意，此种情况只针对 日 是 阿拉伯数字的情况，若是汉字 日，如 “五月二十”，则按农历进行解析，
         # 此时，则不存在日期的 “日” 的缺失。
         self.num_month_num_pattern = re.compile(
-            ''.join(['^', MONTH_NUM_STRING, '月', '([12]\d|3[01]|[0]?[1-9])', '$']))
+            ''.join(['^', MONTH_NUM_STRING, '月', r'([12]\d|3[01]|[0]?[1-9])', '$']))
 
         # 公历固定节日
         self.year_fixed_solar_festival_pattern = re.compile(

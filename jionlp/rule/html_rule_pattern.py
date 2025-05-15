@@ -16,7 +16,7 @@ from jionlp.util.funcs import absence
 DIV_TAG_START_PATTERN = '(<(div|DIV)[^<>]*>)'
 DIV_TAG_END_PATTERN = '(</(div|DIV)>)'
 
-PARAGRAPH_TAG_PATTERN = '(<p(>|\s(.|\n)*?>)(.|\n)*?</p>|<P(>|\s(.|\n)*?>)(.|\n)*?</P>)'
+PARAGRAPH_TAG_PATTERN = r'(<p(>|\s(.|\n)*?>)(.|\n)*?</p>|<P(>|\s(.|\n)*?>)(.|\n)*?</P>)'
 
 
 SCRIPT_TAG_PATTERN = '(<script(.|\n)*?>(.|\n)*?</script>|<SCRIPT(.|\n)*?>(.|\n)*?</SCRIPT>)'
@@ -39,9 +39,9 @@ BREAK_LINE_TAG_PATTERN = '(<br>|<BR>)'
 
 
 HTML_TAG_STRICT_PATTERN = \
-    '(<([a-z]{1,8}|[A-Z]{1,8}|h[1-6]|!DOCTYPE|\?xml)([ \n]((.|\n)+?))?>|' \
-    '</([a-z]{1,8}|[A-Z]{1,8}|h[1-6])>|' \
-    '<![endif]-->)'
+    r'(<([a-z]{1,8}|[A-Z]{1,8}|h[1-6]|!DOCTYPE|\?xml)([ \n]((.|\n)+?))?>|' \
+    r'</([a-z]{1,8}|[A-Z]{1,8}|h[1-6])>|' \
+    r'<![endif]-->)'
 
 HTML_TAG_PATTERN = '<(.|\n)*?>'
 
@@ -50,11 +50,11 @@ ADD_NEW_LINE_PATTERN = r'(</p>|</h1>|</h2>|</h3>|</h4>|</h5>)'
 
 # ---------------------------------------------------------------------
 # 属性正则
-NAME_ATTR_PATTERN = '[NAME][name]=(?P<Quote>["\']?)(?P<TagName>[\w\-] *?)(?P=Quote)'
-CONTENT_ATTR_PATTERN = '[Content][content]=(?P<Quote>["\']?)(?P<TagContent>[\w\- ]*?)(?P=Quote)'
+NAME_ATTR_PATTERN = r'[NAME][name]=(?P<Quote>["\']?)(?P<TagName>[\w\-] *?)(?P=Quote)'
+CONTENT_ATTR_PATTERN = r'[Content][content]=(?P<Quote>["\']?)(?P<TagContent>[\w\- ]*?)(?P=Quote)'
 
-ID_ATTR_PATTERN = '[iI][dD]=(?P<Quote>["\']?)(?P<TagID>[\w\- ]*?)(?P=Quote)'
-CLASS_ATTR_PATTERN = '(CLASS|class)=(?P<Quote>["\']?)(?P<TagClass>[\w\- ]*?)(?P=Quote)'
+ID_ATTR_PATTERN = r'[iI][dD]=(?P<Quote>["\']?)(?P<TagID>[\w\- ]*?)(?P=Quote)'
+CLASS_ATTR_PATTERN = r'(CLASS|class)=(?P<Quote>["\']?)(?P<TagClass>[\w\- ]*?)(?P=Quote)'
 
 # ---------------------------------------------------------------------
 # 冗余空格正则

@@ -123,7 +123,7 @@ class LexiconSentiment(object):
              'expand_word': list(self.weight_dict.keys())})
         
         self.split_sentence = SplitSentence()
-        self.transition_words = re.compile('((，|\,)(但是|可是|但|不过))')
+        self.transition_words = re.compile(r'((，|\,)(但是|可是|但|不过))')
 
     def get_sentence_sentiment(self, sentence):
         # print(sentence)

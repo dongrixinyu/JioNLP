@@ -32,7 +32,7 @@ __version__ = ''
 with open(os.path.join(DIR_PATH, 'README.md'),
           'r', encoding='utf-8') as f:
     readme_lines = f.readlines()
-    version_pattern = re.compile('badge/version-(\d\.\d+\.\d+)-')
+    version_pattern = re.compile(r'badge/version-(\d\.\d+\.\d+)-')
     for line in readme_lines:
         result = version_pattern.search(line)
         if result is not None:

@@ -104,9 +104,9 @@ class ChineseKeyPhrasesExtractor(object):
                                 'ad', 'an', 'vn', 'vd', 'vx']
 
         # 去除冗余短语的规则
-        self.redundant_strict_pattern = re.compile('[\*\|`\;:丨－\<\>]')  # 有一个字符即抛弃
-        self.redundant_loose_pattern = re.compile('[/\d\.\-:=a-z+,%]+')  # 全部是该字符即抛弃
-        self.extra_date_ptn = re.compile('\d{1,2}[月|日]')
+        self.redundant_strict_pattern = re.compile(r'[\*\|`\;:丨－\<\>]')  # 有一个字符即抛弃
+        self.redundant_loose_pattern = re.compile(r'[/\d\.\-:=a-z+,%]+')  # 全部是该字符即抛弃
+        self.extra_date_ptn = re.compile(r'\d{1,2}[月|日]')
         
         # 加载 idf，计算其 oov 均值
         self.idf_dict = idf_loader()
