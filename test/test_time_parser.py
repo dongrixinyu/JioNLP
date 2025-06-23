@@ -406,6 +406,8 @@ class TestTimeParser(unittest.TestCase):
             ['这一年', _ts_1,
              {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-01-01 00:00:00', '2021-12-31 23:59:59']}],
 
+            ['现在', _ts_1,
+             {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-14 01:06:40', '2021-06-14 01:06:40']}],
 
             # 限定模糊词汇，‘左右、许’
             ['前年9月2号左右', _ts_1,

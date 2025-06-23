@@ -566,6 +566,8 @@ class TimeParser(TimeUtility):
              bracket(MINUTE_DELTA_STRING), I,
              bracket(SECOND_DELTA_STRING), ')+'])
 
+        self.xianzai_timepoint_pattern = re.compile(NOW_STRING)
+
         self.weilai_delta2span_pattern = re.compile(
             ''.join(['(未来|今后)(的)?', standard_delta_string, '[里内]?']))
 
@@ -1488,6 +1490,8 @@ class TimeParser(TimeUtility):
                 [self.year_order_delta_point_pattern, self.normalize_year_order_delta_point],
                 [self.day_order_delta_point_pattern, self.normalize_day_order_delta_point],
 
+                [self.xianzai_timepoint_pattern, self.normalize_xianzai],
+
                 # time delta 2 span group
                 [self.weilai_delta2span_pattern, self.normalize_weilai_delta2span],
                 [self.guoqu_delta2span_pattern, self.normalize_guoqu_delta2span],
@@ -1673,6 +1677,20 @@ class TimeParser(TimeUtility):
                                         zip(second_full_time_handler, _second_full_time_handler)]
 
         return first_full_time_handler, second_full_time_handler, time_type, blur_time
+
+    def normalize_xianzai(self, time_string):
+        """ 解决 现在 时间解析
+        r"(现在|此时(此刻)?|此刻)"
+        """
+        first_time_point, second_time_point = self._time_point()
+
+        first_time_point.assign(*self.time_base_handler)
+        second_time_point.assign(*self.time_base_handler)
+
+        first_time_handler = first_time_point.handler()
+        second_time_handler = second_time_point.handler()
+
+        return first_time_handler, second_time_handler, 'time_point', 'accurate'
 
     def normalize_special_time_span(self, time_string):
         """ 解决特殊时间解析

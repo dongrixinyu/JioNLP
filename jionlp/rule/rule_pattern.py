@@ -419,6 +419,9 @@ FIXED_LUNAR_FESTIVAL = r'((春|填仓|上巳|寒食|浴佛|姑姑|财神|下元|
 # 规律公历节日
 REGULAR_FOREIGN_FESTIVAL = r'(感恩|母亲|父亲)节'
 
+# “现在” 的时间表达
+NOW_STRING = r"(现在|此时(此刻)?|此刻)"
+
 # time_delta 数字正则
 DELTA_NUM_STRING = r'(([一两俩二仨三四五六七八九十百千万零]+点)?[一两二三四五六七八九十百千万零]+|([\d十百千万,]+\.)?[\d十百千万,]+)'
 QUARTER_NUM_STRING = r'[一两二三四1-4]'
