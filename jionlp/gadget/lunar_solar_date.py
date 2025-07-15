@@ -168,7 +168,7 @@ class LunarSolarDate(object):
         year_code = self.CHINESE_YEAR_CODE[lunar_year - 1900]
 
         month_days = LunarSolarDate._decode(year_code)
-        month_leap = year_code & 0xf  # 当前农历年的闰月，为0表示无润叶
+        month_leap = year_code & 0xf  # 当前农历年的闰月，为0表示无闰月
 
         if (month_leap == 0) or (lunar_month < month_leap):  # 当年无闰月，或者有闰月但是当前月小于闰月
             days_passed_month = sum(month_days[:lunar_month - 1])
