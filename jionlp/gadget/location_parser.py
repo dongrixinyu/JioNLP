@@ -395,8 +395,21 @@ class LocationParser(object):
 
         # step 3.2: 县级存在重复名称，计算候选列表中可能重复的县名，如 “鼓楼区”、“高新区” 等
         county_dup_list = [item[3][item[-1][-1][1]] for item in candidate_admin_list]
+
+        # 但有一些是需要剔除的，例如，库尔勒市，因为 巴音郭楞会有多个别称，导致有多种别称在candidate_admin_list 里
+        # 这种情况是需要剔除的。方法就是比对这些重复县级地名的 市级是否是同一个。
+        exception_county_dup_list = []
+        for county_dup in county_dup_list:
+            sub_candidate_admin_list = [item for item in candidate_admin_list if item[3][item[-1][-1][1]] == county_dup]
+            # 如果 sub_candidate_admin_list  的市级都一样，那就取消掉 county_dup
+            city_dup_list = [item[2][0] for item in candidate_admin_list]
+            city_dup_set = set(city_dup_list)
+            if len(city_dup_set) == 1:  # 唯一一个
+                exception_county_dup_list.append(county_dup)
+
         county_dup_list = collections.Counter(county_dup_list).most_common()
-        county_dup_list = [item[0] for item in county_dup_list if item[1] > 1]
+        county_dup_list = [item[0] for item in county_dup_list
+                           if (item[1] > 1) and item[0] not in exception_county_dup_list]
         
         final_admin = candidate_admin_list[0]  # 是所求结果
 
