@@ -182,6 +182,12 @@ class TestLocationParser(unittest.TestCase):
               'full_location': '内蒙古自治区通辽市科尔沁左翼后旗', 'orig_location': '内蒙古通辽市科尔沁左翼后旗',
               'town': None, 'village': None}
              ],
+            ['库尔勒市祥和镇', False, True,
+             {'province': '新疆维吾尔自治区', 'city': '巴音郭楞蒙古自治州', 'county': '库尔勒市', 'detail': '祥和镇',
+              'full_location': '新疆维吾尔自治区巴音郭楞蒙古自治州库尔勒市祥和镇',
+              'orig_location': '库尔勒市祥和镇'}
+
+             ],
         ]
 
         for item in location_string_list:
