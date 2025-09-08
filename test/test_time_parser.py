@@ -525,6 +525,13 @@ class TestTimeParser(unittest.TestCase):
              {'type': 'time_span', 'definition': 'accurate', 'time': ['2014-11-01 00:00:00', '2020-03-31 23:59:59']}],
             ['2014年11月到下个月9号', _ts_1,
              {'type': 'time_span', 'definition': 'accurate', 'time': ['2014-11-01 00:00:00', '2021-07-09 23:59:59']}],
+            ['今天下午1点到3点十分', _ts_1,
+             {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 13:00:00', '2021-06-14 15:10:59']}],
+            ['今天下午1点10分到3点', _ts_1,
+             {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 13:10:00', '2021-06-14 15:00:00']}],
+            ['今天下午1点半到3点', _ts_1,
+             {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-14 13:30:00', '2021-06-14 15:00:00']}],
+
             ['上周星期三到这周二', _ts_1,
              {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-09 00:00:00', '2021-06-15 23:59:59']}],
             ['上一周', _ts_1,
