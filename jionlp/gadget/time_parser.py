@@ -600,6 +600,8 @@ class TimeParser(TimeUtility):
         self.year_day_order_delta_point_pattern = re.compile(
             ''.join([YEAR_STRING[:-1] + r'年?', r'第', DELTA_NUM_STRING, r'[天日]']))
 
+        self.ymd_meta_pattern = re.compile(YMD_META)
+
         # **** 年 ****
         self.year_pattern = re.compile(YEAR_STRING[:-1] + r'(?=年)')
         self.limit_year_pattern = re.compile(LIMIT_YEAR_STRING[:-1] + r'(?=年)')
@@ -743,7 +745,7 @@ class TimeParser(TimeUtility):
             absence(BLUR_HOUR_STRING) +
             r'(?!:)[\d一二三四五六七八九十零]{1,2}[月日号点时]?(半|[13一三]刻|[\d一二三四五六七八九十零]{1,2}分)?'
             r'(到|至|——|－－|--|~~|～～|—|－|-|~|～)'
-            r'([\d一二三四五六七八九十零]{1,2}[月日号点时](半|[13一三]刻|[\d一二三四五六七八九十零]{1,2}分)?|[\d一二三四五六七八九十零]{2,4}年)')
+            r'([\d一二三四五六七八九十零]{1,2}[月日号点时](半|[13一三]刻|[\d一二三四五六七八九十零]{1,2}分?)?|[\d一二三四五六七八九十零]{2,4}年)')
 
         # 特殊时间表述
         self.special_time_delta_pattern = re.compile(
@@ -760,22 +762,25 @@ class TimeParser(TimeUtility):
 
             # compensate the first
             if '年' in time_compensation:
-                if first_time_string[-1] not in '点时日号月年':  # 若第一个时间以 日月 等结尾，而第二个时间以年开头，则不补全
+                if first_time_string[-1] not in '秒分点时日号月年':  # 若第一个时间以 日月 等结尾，而第二个时间以年开头，则不补全
                     first_time_string = ''.join([first_time_string, '年'])
             elif '月' in time_compensation:
-                if first_time_string[-1] not in '点时日号月':
+                if first_time_string[-1] not in '秒分点时日号月':
                     first_time_string = ''.join([first_time_string, '月'])
             elif '日' in time_compensation or '号' in time_compensation:
-                if first_time_string[-1] not in '点时日号':
+                if first_time_string[-1] not in '秒分点时日号':
                     first_time_string = ''.join([first_time_string, '日'])
             elif '点' in time_compensation or '时' in time_compensation:
-                if first_time_string[-1] not in '点时':
+                if first_time_string[-1] not in '秒分点时':
                     first_time_string = ''.join([first_time_string, '时'])
 
             # compensate the second
-            hour_limitation = self.hour_patterns[1].search(time_string)
-            if hour_limitation:
-                second_time_string = ''.join([hour_limitation.group(), second_time_string])
+            # 若第一个字符串里有对`时` 的修饰，需要添加在第二个字符串之前，用来解决 `9月20日下午3点到5点` 这种情况。
+            # 但需确保第二个字符串里，没有 `年月日号` 这种字符，即不受第一个字符串的限定
+            first_hour_limitation = self.hour_patterns[1].search(time_string)
+            second_independence = self.ymd_meta_pattern.search(second_time_string)
+            if first_hour_limitation and (second_independence is None):
+                second_time_string = ''.join([first_hour_limitation.group(), second_time_string])
 
             return first_time_string, second_time_string
         else:

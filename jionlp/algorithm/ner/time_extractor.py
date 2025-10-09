@@ -5,7 +5,7 @@
 # email: dongrixinyu.89@163.com
 # github: https://github.com/dongrixinyu/JioNLP
 # description: Preprocessing & Parsing tool for Chinese NLP
-# website: www.jionlp.com
+# website: https://www.jionlp.com
 
 """
 TODO:
@@ -20,6 +20,7 @@ TODO:
 
 import re
 import time
+import traceback
 
 from jionlp.rule.rule_pattern import TIME_CHAR_STRING, \
     FAKE_POSITIVE_START_STRING, FAKE_POSITIVE_END_STRING, FAKE_POSITIVE_TIME_PATTERN

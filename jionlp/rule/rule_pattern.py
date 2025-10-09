@@ -5,6 +5,7 @@
 # email: dongrixinyu.89@163.com
 # github: https://github.com/dongrixinyu/JioNLP
 # description: Preprocessing & Parsing tool for Chinese NLP
+# website: https://www.jionlp.com
 
 
 from jionlp.util.funcs import absence
@@ -288,6 +289,7 @@ HMS_PATTERN_3 = '^(' + HMS_PATTERN_1 + r'[\-\~～—]{1,2}' + HMS_PATTERN_1 + ')
 # HMS_PATTERN_4 = '^([012]?\d点)$'  # 有一定前提条件，即前后必须也有时间词汇
 
 # 年月日格式
+YMD_META = r"[年月日号]"
 YE_N = r'[12]?\d{2,3}'  # 年份数字格式
 MO_N = r'([0]?\d|1[012])'  # 月份数字格式
 MO_C = r'(元|正|腊|一|二|三|四|五|六|七|八|九|十(一|二)?)'  # 月份汉字格式
