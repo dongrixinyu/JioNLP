@@ -580,6 +580,10 @@ class TestTimeParser(unittest.TestCase):
              {'type': 'time_point', 'definition': 'accurate', 'time': ['2020-10-01 00:00:00', '2020-10-01 23:59:59']}],
             ['腊月18', _ts_1,
              {'type': 'time_point', 'definition': 'accurate', 'time': ['2022-01-03 00:00:00', '2022-01-31 23:59:59']}],
+            ['除夕晚上6点半', _ts_1,
+             {'type': 'time_point', 'definition': 'accurate', 'time': ['2022-01-31 18:30:00', '2022-01-31 18:30:59']}],
+            ['26年除夕晚上6点半', time.time(),
+             {'type': 'time_point', 'definition': 'accurate', 'time': ['2027-02-05 18:30:00', '2027-02-05 18:30:59']}],
 
             # 年、节气
             ['2024年冬至', time.time(),
@@ -710,7 +714,7 @@ class TestTimeParser(unittest.TestCase):
             ['大年初十', _ts_1,
              {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-02-21 00:00:00', '2021-02-21 23:59:59']}],
             ['2023年大年三十', _ts_2,
-             {'type': 'time_point', 'definition': 'accurate', 'time': ['2023-02-09 00:00:00', '2023-02-09 23:59:59']}],
+             {'type': 'time_point', 'definition': 'accurate', 'time': ['2024-02-09 00:00:00', '2024-02-09 23:59:59']}],
             ['去年中秋节前后', _ts_1,
              {'type': 'time_point', 'definition': 'blur', 'time': ['2020-10-01 00:00:00', '2020-10-01 23:59:59']}],
 

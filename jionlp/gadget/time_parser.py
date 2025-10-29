@@ -4448,6 +4448,7 @@ class TimeParser(TimeUtility):
                 first_solar_date, _ = self._convert_lunar2solar(
                     [time_point.year, date[0], date[1], -1, -1, -1], False)
 
+                time_point.year = first_solar_date[0]
                 time_point.month = first_solar_date[1]
                 time_point.day = first_solar_date[2]
                 break
@@ -4820,11 +4821,22 @@ class TimeParser(TimeUtility):
 
             return string2handler(first_solar_time_handler),\
                 string2handler(second_solar_time_handler)
-
         else:
-            solar_time_handler = self.lunar2solar(
-                lunar_time_handler[0], lunar_time_handler[1],
-                lunar_time_handler[2], leap_month)
+            try:
+                solar_time_handler = self.lunar2solar(
+                    lunar_time_handler[0], lunar_time_handler[1],
+                    lunar_time_handler[2], leap_month)
+            except ValueError:
+                # 农历除夕有时是 12.29，有时是 12.30
+                # 中国农历除了除夕外，其他节日均非 农历最后一天，因此这里仅特殊处理除夕即可
+                # fixed_lunar_holiday_dict 中默认设置除夕为 12.30，对有些年份不友好
+                # 先尝试用 fixed_lunar_holiday_dict 提供的默认阳历日期处理，若失败再将农历日改为 29
+                if lunar_time_handler[1] == 12:
+                    solar_time_handler = self.lunar2solar(
+                        lunar_time_handler[0], lunar_time_handler[1],
+                        29, leap_month)
+                else: raise
+
             handler = string2handler(solar_time_handler)
             return handler, handler
 
