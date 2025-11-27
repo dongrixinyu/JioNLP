@@ -17,6 +17,10 @@ class TestLocationParser(unittest.TestCase):
               'full_location': '广西壮族自治区来宾市忻城县',
               'orig_location': '柳州地区忻城县'}
              ],
+            ['台湾省台北市', False, True,
+             {'province': '台湾省', 'city': '台北市', 'county': None, 'detail': '', 'full_location': '台湾省台北市',
+              'orig_location': '台湾省台北市'}
+             ],
             ['湖北省襄樊市小水街222号', False, True,
              {'province': '湖北省', 'city': '襄阳市', 'county': None,
               'detail': '小水街222号', 'full_location': '湖北省襄阳市小水街222号',
@@ -187,6 +191,10 @@ class TestLocationParser(unittest.TestCase):
               'full_location': '新疆维吾尔自治区巴音郭楞蒙古自治州库尔勒市祥和镇',
               'orig_location': '库尔勒市祥和镇'}
 
+             ],
+            ['台湾省屏东县屏东市太原1路84号', False, True,
+             {'province': '台湾省', 'city': None, 'county': '屏东县', 'detail': '屏东市太原1路84号',
+              'full_location': '台湾省屏东县屏东市太原1路84号', 'orig_location': '台湾省屏东县屏东市太原1路84号'}
              ],
         ]
 
