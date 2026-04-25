@@ -285,8 +285,9 @@ class TimeParser(TimeUtility):
 
         # `年、季度`：`2018年前三季度`
         self.year_solar_season_pattern = re.compile(
-            ''.join([bracket_absence(YEAR_STRING), r'(([第前后头Qq]?[一二三四1-4两]|首)(个)?季度[初中末]?)']))
-
+            ''.join([bracket_absence(YEAR_STRING),
+                     r'(([第前后头Qq]?[一二三四1-4两]|首)(个)?季度'
+                     r'([初末]|中(?!国))?)']))  # 中 only matches if NOT followed by 国
         # `限定年、季度`：`2018年前三季度`
         self.limit_year_solar_season_pattern = re.compile(
             ''.join([bracket(LIMIT_YEAR_STRING), r'(([第前后头Qq]?[一二三四1-4两]|首)(个)?季度[初中末]?)']))
