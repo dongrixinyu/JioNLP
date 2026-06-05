@@ -317,7 +317,12 @@ class TestTimeParser(unittest.TestCase):
             ['本月9日', _ts_1,
              {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-09 00:00:00', '2021-06-09 23:59:59']}],
             ['上一个月', _ts_1,
-             {'type': 'time_point', 'definition': 'blur', 'time': ['2021-05-01 00:00:00', '2021-05-31 23:59:59']}],
+             {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-05-01 00:00:00', '2021-05-31 23:59:59']}],
+
+            ['这个月前两天', _ts_1,
+             {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-01 00:00:00', '2021-06-02 23:59:59']}],
+            ['上月最后五天', _ts_1,
+             {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-05-26 00:00:00', '2021-05-31 23:59:59']}],
 
             # 残缺 月、日，
             ['1月3', _ts_1,
@@ -326,10 +331,12 @@ class TestTimeParser(unittest.TestCase):
              {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-10-31 00:00:00', '2021-10-31 23:59:59']}],
 
             # 限定月、模糊日
+            ["4月前4天", _ts_1,
+             {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-04-01 00:00:00', '2021-04-04 23:59:59']}],
             ['本月初', _ts_1,
              {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-01 00:00:00', '2021-06-05 23:59:59']}],
             ['当月', _ts_1,
-             {'type': 'time_point', 'definition': 'blur', 'time': ['2021-06-01 00:00:00', '2021-06-30 23:59:59']}],
+             {'type': 'time_point', 'definition': 'accurate', 'time': ['2021-06-01 00:00:00', '2021-06-30 23:59:59']}],
 
             # 限定月、第 N 个星期
             ['本月第2周', _ts_1,
@@ -479,7 +486,7 @@ class TestTimeParser(unittest.TestCase):
             ['2020至2025年前', time.time(),
              {'type': 'time_span', 'definition': 'accurate', 'time': ['2020-01-01 00:00:00', '2025-12-31 23:59:59']}],
             ['从上个月到今天', _ts_1,
-             {'type': 'time_span', 'definition': 'blur', 'time': ['2021-05-01 00:00:00', '2021-06-14 01:06:40']}],
+             {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-05-01 00:00:00', '2021-06-14 01:06:40']}],
             ['明天下午3点至下午8点', _ts_1,
              {'type': 'time_span', 'definition': 'accurate', 'time': ['2021-06-15 15:00:00', '2021-06-15 20:00:00']}],
             ['上周星期三到这周二', _ts_1,

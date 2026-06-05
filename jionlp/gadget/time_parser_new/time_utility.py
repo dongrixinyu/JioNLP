@@ -5,7 +5,7 @@
 # email: dongrixinyu.89@163.com
 # github: https://github.com/dongrixinyu/JioNLP
 # description: Preprocessing & Parsing tool for Chinese NLP
-# website: http://www.jionlp.com
+# website: https://www.jionlp.com
 
 import re
 import time
@@ -83,7 +83,7 @@ class TimeUtility(object):
             return ''
 
     def _char_num2num(self, char_num):
-        """ 将 三十一 转换为 31，用于月、日、时、分、秒的汉字转换
+        """ 将汉字数字 三十一 转换为 31，用于月、日、时、分、秒的汉字转换
 
         :param char_num:
         :return: float 类型的数字
