@@ -18,7 +18,7 @@
 
 #### &emsp;&emsp; JioNLP：中文 NLP 预处理、解析工具包 A Python Lib for Chinese NLP Preprocessing & Parsing
 #### &emsp;&emsp; 安装：```pip install jionlp```
-- JioNLP 是一个面向 **NLP 开发者**的工具包，提供 NLP 任务预处理、解析功能，准确、高效、零使用门槛。请下拉本网页，查阅具体功能信息，并按 **Ctrl+F** 进行搜索。[**JioNLP在线版**](https://www.jionlp.com/jionlp_online) 可快速试用部分功能。关注同名**微信公众号 JioNLP** 可获取最新的 AI 资讯，数据资源。
+- JioNLP 是一个面向 **NLP 开发者**的工具包，提供 NLP 任务预处理、解析功能，准确、高效、零使用门槛。请下拉本网页，查阅具体功能信息，并按 **Ctrl+F** 进行搜索。关注同名**微信公众号 JioNLP** 可获取最新的 AI 资讯。
 
   - [**AI发展方向——从pipeline到end2end**](https://mp.weixin.qq.com/s/ZpEn_vZGjY2dqpE_62721w)
   - [**你为什么不相信 LLM 模型评测：深入评测 LLM 接口**](https://mp.weixin.qq.com/s/8PoFz6mUD1AzKthGyO4cyA)
@@ -28,27 +28,6 @@
   - [**花了三周，我又更新了一版开源软件 ffio**](https://zhuanlan.zhihu.com/p/678141936) => [**FFIO链接**](https://github.com/dongrixinyu/ffio)
 
 ### 时间语义解析是目前较多开发者使用的功能，如果您考虑定制化效果更好的版本，可以与我联系，微信号 shanzhuiyancheng
-
-### 2025-02-22 更新[大语言模型 LLM 评测数据集](https://github.com/dongrixinyu/JioNLP/wiki/LLM%E8%AF%84%E6%B5%8B%E6%95%B0%E6%8D%AE%E9%9B%86)
-- JioNLP 提供了一套 LLM 的测试数据集，并应用 MELLM 算法完成了自动评测。
-- **评测结果**可关注**公众号JioNLP**，查阅具体各家评测截图 pdf。
-```
->>> import jionlp as jio
->>> llm_test = jio.llm_test_dataset_loader(version='1.2')
->>> print(llm_test[15])
->>> llm_test = jio.llm_test_dataset_loader(field='math')
->>> print(llm_test[5])
-```
-
-
-### 2025-04-01 更新函数，删除了一部分词典内容
-
-- `jio.chinese_idiom_loader`
-该函数是成语加载函数，**目前**返回成语的 释义、出处、示例、整个中文语料中的出现频率。
-
-由于该函数占据了 2.9M 硬盘空间，且使用人数应该非常少，所以会对该词典进行精简，**计划**仅保留成语以及其文本频率，删除释义、出处、示例。
-这样做会压缩 jionlp 工具包大小。
-
 
 ### 2023-12-12 Add [MELLM](https://zhuanlan.zhihu.com/p/666001842)
 
@@ -63,14 +42,6 @@ $ python test_mellm.py
 
 
 ## 安装 Installation
-
-- python>=3.6 **github 版本略领先于 pip**
-```
-$ git clone https://github.com/dongrixinyu/JioNLP
-$ cd ./JioNLP
-$ pip install .
-```
-- pip 安装
 ```
 $ pip install jionlp
 ```
@@ -238,7 +209,7 @@ $ pip install jionlp
 
 ### 初衷
 
-- NLP 预处理与解析至关重要，且非常耗时。本 lib 能快速辅助完成各种琐碎的预处理、解析操作，加速开发进度，把有限的精力用在思考而非 code 上。
+- NLP 预处理与解析至关重要，且非常耗时。jionlp 目的是辅助完成各种琐碎的预处理、解析操作，加速开发进度，把有限的精力用在思考而非 coding 上。
 - 如有功能建议、bug，可通过 issue 按模板提出。
 - 非常欢迎各位 NLP 开发者和研究者 **合作完善本工具包，添加新功能** 。
 
