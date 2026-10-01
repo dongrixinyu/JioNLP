@@ -93,10 +93,13 @@ class TimeExtractor(object):
 
         self.parse_time = TimeParser()
 
-    def __call__(self, text, time_base=time.time(), with_parsing=True, ret_all=False,
+    def __call__(self, text, time_base=None, with_parsing=True, ret_all=False,
                  ret_type='str', ret_future=False, period_results_num=None):
         if self.parse_time is None:
             self._prepare()
+
+        if time_base is None:
+            time_base = time.time()
 
         candidates_list = self.extract_time_candidates(text)
 
@@ -178,9 +181,12 @@ class TimeExtractor(object):
         直到解析错误或解析结果出错
         """
 
-    def grid_search(self, time_candidate, time_base=time.time(),
+    def grid_search(self, time_candidate, time_base=None,
                     ret_type='str', ret_future=False, period_results_num=None):
         """ 全面搜索候选时间字符串，从长至短，较优 """
+        if time_base is None:
+            time_base = time.time()
+
         length = min(len(time_candidate), 35)  # 默认时间字符串的最大长度是 40，
         # test_time_parser 之中，时间字符串的最大长度为 33.
 
