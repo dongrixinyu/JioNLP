@@ -794,12 +794,15 @@ class TimeParser(TimeUtility):
         else:
             return first_time_string, second_time_string
 
-    def __call__(self, time_string, time_base=time.time(), time_type=None,
+    def __call__(self, time_string, time_base=None, time_type=None,
                  ret_type='str', strict=False, virtual_time=False, ret_future=False,
                  period_results_num=None, lunar_date=True):
         """ 解析时间字符串。 """
         if self.future_time is None:
             self._preprocess()
+
+        if time_base is None:
+            time_base = time.time()
 
         self.string_strict = strict  # 用于控制字符串中的 杂串不被包含
         self.virtual_time = virtual_time  # 指示虚拟时间，若有些模糊字符串可解析为虚拟时间，则按虚拟时间解析，如“前两天”
