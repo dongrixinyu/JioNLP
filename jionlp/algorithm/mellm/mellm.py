@@ -226,7 +226,7 @@ class MELLM(object):
                     grading_result = self.llm_answers_to_grades[llm][_llm][idx]
                     grading_score = self.grading_score_pattern.search(grading_result)
 
-                    res_num = self.money_parser(grading_score, ret_format='str')
+                    res_num = self.num_convertor(grading_score.group(), ret_format='str')
                     if res_num is None:
                         raise ValueError('the model `{}` gives a invalid score to model `{}` at `{}`'.format(
                             llm, _llm, idx))
@@ -281,7 +281,10 @@ class MELLM(object):
                     continue
 
                 for idx, _ in enumerate(self.exam_questions):
-                    self.grading_matrix[llm][_llm][idx] = self.llm_answers_to_norm_grades[llm][_llm][idx]
+                    llm_idx = self.llm_names_dict[llm]
+                    other_llm_idx = self.llm_names_dict[_llm]
+                    self.grading_matrix[llm_idx][other_llm_idx][idx] = \
+                        self.llm_answers_to_norm_grades[llm][_llm][idx]
 
     def run_whole(self, grading_matrix, grading_error_count):
         """
