@@ -123,6 +123,7 @@ class MoneyExtractor(object):
                             candidate['offset'][0] + bias + offset[0],
                             candidate['offset'][0] + bias + offset[1]]
                         if entity_offset[0] not in seg_offset_set or entity_offset[1] not in seg_offset_set:
+                            bias += offset[1]
                             continue
 
                     if with_parsing:
