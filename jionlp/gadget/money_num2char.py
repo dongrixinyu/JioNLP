@@ -97,6 +97,8 @@ class MoneyNum2Char(object):
                 integer_char_list.append(seg_char + self.traditional_outer_suffix[seg])
 
         integer_string = ''.join(integer_char_list)
+        if self.zero_delete_pattern.match(integer_part):
+            integer_string = self.simplified_num_char['0']
 
         if float_part is not None:
             matched = self.zero_delete_pattern.match(float_part[:2])
