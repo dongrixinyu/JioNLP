@@ -166,9 +166,9 @@ class TimeUtility(object):
             assert len(time_base) <= 6, 'length of time_base must be less than 6.'
             for i in time_base:
                 assert type(i) is int, 'type of element of time_base must be `int`.'
+            time_base_handler = list(time_base)
             if len(time_base) < 6:
-                time_base.extend([-1 for _ in range(6 - len(time_base))])
-            time_base_handler = time_base
+                time_base_handler.extend([-1 for _ in range(6 - len(time_base_handler))])
         elif type(time_base) is dict:
             time_base_handler = [
                 time_base.get('year', -1), time_base.get('month', -1),
