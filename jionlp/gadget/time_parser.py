@@ -4745,15 +4745,24 @@ class TimeParser(TimeUtility):
         colon_num = len(self.hms_segs.findall(time_string))
         if colon_num == 2:
             hour, minute, second = self.hms_segs.split(time_string)
+            hour, minute, second = int(hour), int(minute), int(second)
+            if hour == 24:
+                if minute != 0 or second != 0:
+                    raise ValueError('24:00 is the only valid time with hour 24.')
+                hour = 0
+                day_bias = [1, '强']
+            elif hour > 23:
+                raise ValueError('the given time string `{}` is illegal.'.format(time_string))
             if hour_limitation:
-                hour = TimeParser.convert_hour(int(hour), hour_limit_string)
+                hour = TimeParser.convert_hour(hour, hour_limit_string)
 
         elif colon_num == 1:
             first_int, second_int = self.hms_segs.split(time_string)
             if int(first_int) == 24 and int(second_int) == 0:
-                hour = 24
+                hour = 0
                 minute = 0
                 second = -1
+                day_bias = [1, '强']
             elif int(first_int) <= 23:
                 hour = int(first_int)
                 minute = int(second_int)
