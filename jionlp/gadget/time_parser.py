@@ -1292,20 +1292,26 @@ class TimeParser(TimeUtility):
                                     results.append([first_std_time_string, second_std_time_string])
 
                             if 'year' in period_delta:
-                                cur_time_base_datetime += datetime.timedelta(days=365)
+                                cur_time_base_datetime += datetime.timedelta(
+                                    days=365 * period_delta['year'])
                             if 'month' in period_delta:
-                                cur_time_base_datetime += datetime.timedelta(days=30.417)
+                                cur_time_base_datetime += datetime.timedelta(
+                                    days=30.417 * period_delta['month'])
                             if 'day' in period_delta:
                                 if not has_weekday:  # 若日期非按每一日结算，则须按 7天为单位跳过，否则会报错。
-                                    cur_time_base_datetime += datetime.timedelta(days=7)
+                                    cur_time_base_datetime += datetime.timedelta(
+                                        days=period_delta['day'])
                                 else:
                                     cur_time_base_datetime += datetime.timedelta(days=1)
                             if 'hour' in period_delta:
-                                cur_time_base_datetime += datetime.timedelta(hours=1)
+                                cur_time_base_datetime += datetime.timedelta(
+                                    hours=period_delta['hour'])
                             if 'minute' in period_delta:
-                                cur_time_base_datetime += datetime.timedelta(minutes=1)
+                                cur_time_base_datetime += datetime.timedelta(
+                                    minutes=period_delta['minute'])
                             if 'second' in period_delta:
-                                cur_time_base_datetime += datetime.timedelta(seconds=1)
+                                cur_time_base_datetime += datetime.timedelta(
+                                    seconds=period_delta['second'])
 
                             self.time_base_handler = TimeParser._convert_time_base2handler(cur_time_base_datetime)
                     else:
@@ -1342,6 +1348,9 @@ class TimeParser(TimeUtility):
                 num = 0.5
             else:
                 num = 1
+
+        if num <= 0:
+            raise ValueError('time period delta must be positive.')
 
         time_delta = TimeDelta()
         if '年' in time_string:
