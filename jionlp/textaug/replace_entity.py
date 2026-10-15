@@ -93,7 +93,7 @@ class ReplaceEntity(object):
         """ 根据实体词典，对文本进行扩展 """
         orig_text = text
         count = 0
-        while orig_text == text or count > 20:
+        while orig_text == text and count < 20:
             count += 1
             if self.random.random() < self.replace_ratio:
                 # 将该实体从词典中随机选择一个做替换
