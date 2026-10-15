@@ -71,6 +71,7 @@ Problem:
 
 import re
 import time
+import calendar
 import datetime
 import traceback
 
@@ -4644,25 +4645,26 @@ class TimeParser(TimeUtility):
                 num_string = limit_span_day.group(2)
                 num_delta = self._char_num2num(num_string)
             except:
-                ValueError('The given time string `{}` is illegal.'.format(time_string))
+                raise ValueError('The given time string `{}` is illegal.'.format(time_string))
 
             if "前" in limit_span_day_string:
                 first_time_point.day = 1
                 second_time_point.day = int(num_delta)
             elif "后" in limit_span_day_string:
-                if first_time_point.month in self.big_moon:
-                    first_time_point.day = 31 - int(num_delta)
-                    second_time_point.day = 31
-                elif first_time_point.month in self.small_moon:
-                    first_time_point.day = 30 - int(num_delta)
-                    second_time_point.day = 30
+                year = first_time_point.year
+                if year < 1:
+                    year = self.time_base_handler[0]
+                month = first_time_point.month
+                if year >= 1:
+                    last_day = calendar.monthrange(year, month)[1]
                 else:
-                    first_time_point.day = 28 - int(num_delta)
-                    second_time_point.day = 28
+                    last_day = 28 if month == 2 else 30 if month in self.small_moon else 31
+                first_time_point.day = last_day - int(num_delta) + 1
+                second_time_point.day = last_day
             else:
-                ValueError('The given time string `{}` is illegal.'.format(time_string))
+                raise ValueError('The given time string `{}` is illegal.'.format(time_string))
         else:
-            ValueError('The given time string `{}` is illegal.'.format(time_string))
+            raise ValueError('The given time string `{}` is illegal.'.format(time_string))
 
         return first_time_point, second_time_point
 
