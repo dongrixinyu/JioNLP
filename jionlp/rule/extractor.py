@@ -329,7 +329,10 @@ class Extractor(object):
             self.wechat_id_pattern, text, with_offset=True)
 
         if not strict:
-            return tmp_res
+            if detail:
+                return tmp_res
+            else:
+                return [item['text'] for item in tmp_res]
         else:
             # 将无法匹配 微信号 字符的 微信号 删除
             # 注意该规则未经充分的数据验证，仅凭启发式规则定义而成。
