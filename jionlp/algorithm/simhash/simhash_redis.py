@@ -18,7 +18,7 @@ from datetime import datetime
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 
-def async(f):
+def _async(f):
     def wrapper(*args, **kwargs):
         thr = Thread(target=f, args=args, kwargs=kwargs)
         thr.start()
@@ -145,7 +145,7 @@ class SimHashRedisCheck(object):
         关闭redis连接（可不用）
         :return:
         """
-        for k, v in self.REDIS.iteritems():
+        for k, v in self.REDIS.items():
             v.connection_pool.disconnect()
 
     @staticmethod
@@ -409,7 +409,7 @@ class SimHashRedisCheck(object):
             else:
                 print(tmp_msg)
 
-    @async
+    @_async
     def add_schedule_job(self, scheduler_args=None, logger=None):
         """
         添加定时任务
