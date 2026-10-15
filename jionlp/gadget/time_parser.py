@@ -2735,17 +2735,17 @@ class TimeParser(TimeUtility):
         time_day_delta, definition = self._normalize_delta_unit(
             time_string, self.workday_delta_pattern)
 
+        if time_day_delta < 0 or int(time_day_delta) != time_day_delta:
+            raise ValueError('workday delta must be a non-negative integer.')
+
         time_base_datetime = TimeParser._convert_handler2datetime(self.time_base_handler)
 
         one_day = datetime.timedelta(days=1)
         cur_datetime = time_base_datetime
-        workday_count = 0
-        while True:
+        for _ in range(int(time_day_delta)):
             cur_datetime += one_day
-            if cur_datetime.weekday() <= 4:
-                workday_count += 1
-            if workday_count == time_day_delta:
-                break
+            while cur_datetime.weekday() > 4:
+                cur_datetime += one_day
 
         if '之后' in time_string or '以后' in time_string:
             cur_time_handler = TimeParser._convert_time_base2handler(cur_datetime)
