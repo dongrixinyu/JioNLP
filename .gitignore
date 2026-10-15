@@ -148,3 +148,4 @@ dmypy.json
 # cuichengyu
 nohup.out
 
+.DS_Store
