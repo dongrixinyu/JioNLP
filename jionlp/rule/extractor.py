@@ -40,6 +40,7 @@ class Extractor(object):
         self.parentheses_pattern = PARENTHESES_PATTERN
         self.parentheses_dict = None
         self.redundant_pattern = None
+        self.redundant_pattern_chars = None
         self.exception_pattern = None
         self.full_angle_pattern = None
         self.chinese_char_pattern = None
@@ -80,11 +81,13 @@ class Extractor(object):
             删除冗余字符后的文本
 
         """
-        if self.redundant_pattern is None:
-            pattern_list = list()
-            if redundant_chars is None:
-                redundant_chars = REDUNDANT_PATTERN
+        if redundant_chars is None:
+            redundant_chars = REDUNDANT_PATTERN
+        redundant_pattern_chars = tuple(redundant_chars)
 
+        if (self.redundant_pattern is None or
+                self.redundant_pattern_chars != redundant_pattern_chars):
+            pattern_list = list()
             for char in redundant_chars:
                 pattern_tmp = '(?<={char}){char}+'.format(
                     char=re.escape(char))
@@ -92,6 +95,7 @@ class Extractor(object):
             
             redundant_pattern = '|'.join(pattern_list)
             self.redundant_pattern = re.compile(redundant_pattern)
+            self.redundant_pattern_chars = redundant_pattern_chars
             
         return self.redundant_pattern.sub('', text)
 
