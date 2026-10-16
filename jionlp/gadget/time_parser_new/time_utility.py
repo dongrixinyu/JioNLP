@@ -51,6 +51,23 @@ class TimeUtility(object):
         # 删除其中值为 0 的 key
         return dict([item for item in dict_obj.items() if item[1] > 0])
 
+    @staticmethod
+    def _is_leap_year(year):
+        """判断公历闰年。"""
+        return (year % 100 != 0 and year % 4 == 0) \
+            or (year % 100 == 0 and year % 400 == 0)
+
+    def _month_last_day(self, year, month):
+        """获取公历月份最后一天。year 未知时，2 月按 28 天处理。"""
+        if month in self.big_moon:
+            return 31
+        elif month in self.small_moon:
+            return 30
+        elif month == 2:
+            return 29 if year >= 1 and self._is_leap_year(year) else 28
+        else:
+            raise ValueError('month `{}` is illegal.'.format(month))
+
     @property
     def time_unit_names(self):
         return ['year', 'month', 'day', 'hour', 'minute', 'second']
@@ -254,16 +271,8 @@ class TimeUtility(object):
                     if idx == 1:
                         second_handler.append(12)
                     elif idx == 2:
-                        if second_handler[1] in self.big_moon:
-                            second_handler.append(31)
-                        elif second_handler[1] in self.small_moon:
-                            second_handler.append(30)
-                        else:
-                            if (second_handler[0] % 100 != 0 and second_handler[0] % 4 == 0) \
-                                    or (second_handler[0] % 100 == 0 and second_handler[0] % 400 == 0):
-                                second_handler.append(29)
-                            else:
-                                second_handler.append(28)
+                        second_handler.append(
+                            self._month_last_day(second_handler[0], second_handler[1]))
                     elif idx == 3:
                         second_handler.append(23)
                     elif idx == 4:

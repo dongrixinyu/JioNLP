@@ -71,7 +71,6 @@ Problem:
 
 import re
 import time
-import calendar
 import datetime
 import traceback
 
@@ -4664,10 +4663,7 @@ class TimeParser(TimeUtility):
                 if year < 1:
                     year = self.time_base_handler[0]
                 month = first_time_point.month
-                if year >= 1:
-                    last_day = calendar.monthrange(year, month)[1]
-                else:
-                    last_day = 28 if month == 2 else 30 if month in self.small_moon else 31
+                last_day = self._month_last_day(year, month)
                 first_time_point.day = last_day - int(num_delta) + 1
                 second_time_point.day = last_day
             else:
