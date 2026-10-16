@@ -178,6 +178,27 @@ class TestTimeParser(unittest.TestCase):
     """ 测试时间解析工具 """
     maxDiff = None
 
+    def test_optional_month_day_span(self):
+        """Month-only inputs remain valid alongside inclusive day spans."""
+        cases = [
+            ('2月后3天', '2024-02-27', '2024-02-29'),
+            ('4月后3天', '2024-04-28', '2024-04-30'),
+            ('1月后3天', '2024-01-29', '2024-01-31'),
+            ('2月', '2024-02-01', '2024-02-29'),
+            ('本月', '2024-02-01', '2024-02-29'),
+            ('2月前3天', '2024-02-01', '2024-02-03'),
+            ('下个月后3天', '2024-03-29', '2024-03-31'),
+            ('上个月后3天', '2024-01-29', '2024-01-31'),
+        ]
+        for text, first_day, last_day in cases:
+            with self.subTest(text=text):
+                result = jio.parse_time(
+                    text, time_base=[2024, 2, 23, 12, 0, 0], strict=True)
+                self.assertEqual(result, {
+                    'type': 'time_point', 'definition': 'accurate',
+                    'time': [first_day + ' 00:00:00', last_day + ' 23:59:59'],
+                })
+
     def test_time_parser(self):
         """ test func time_parser """
 

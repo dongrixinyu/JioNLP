@@ -4668,8 +4668,6 @@ class TimeParser(TimeUtility):
                 second_time_point.day = last_day
             else:
                 raise ValueError('The given time string `{}` is illegal.'.format(time_string))
-        else:
-            raise ValueError('The given time string `{}` is illegal.'.format(time_string))
 
         return first_time_point, second_time_point
 
