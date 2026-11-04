@@ -103,69 +103,48 @@ def china_location_loader(detail=False):
             若为 False，则返回 省、市、县区 三级信息
 
     """
+    location_dict = {}
+    # 当前所在的省、市、县区、乡镇街道字典
+    province_dict = city_dict = county_dict = town_dict = None
+
     with open(os.path.join(GRAND_DIR_PATH, 'dictionary/china_location.txt'),
               'r', encoding='utf-8') as f:
-        location_jio = f.readlines()
-    
-    cur_province = None
-    cur_city = None
-    cur_county = None
-    cur_town = None
-    cur_village = None
-    location_dict = {}
+        if detail:
+            lines = f
+        else:
+            # 只需三级信息时，跳过乡镇、街道和村、社区
+            lines = (item for item in f if not item.startswith('\t\t\t'))
 
-    for item in location_jio:
-        if not item.startswith('\t'):  # 省
-            if len(item.strip().split('\t')) != 3:
+        for item in lines:
+            if item.startswith('\t\t\t\t'):  # 村、社区
+                town_dict[item.strip()] = None
                 continue
 
-            province, admin_code, alias_name = item.strip().split('\t')
-            cur_province = province
-            location_dict.update(
-                {cur_province: {'_full_name': province,
-                                '_alias': alias_name,
-                                '_admin_code': admin_code}})
-
-        elif item.startswith('\t\t\t\t'):  # 村、社区
-            if not detail:
+            if item.startswith('\t\t\t'):  # 乡镇、街道
+                town_dict = {}
+                county_dict[item.strip()] = town_dict
                 continue
-            cur_village = item.strip()
-            location_dict[cur_province][cur_city][cur_county][cur_town].update(
-                {cur_village: None})
 
-        elif item.startswith('\t\t\t'):  # 乡镇、街道
-            if not detail:
+            parts = item.strip().split('\t')
+            if len(parts) != 3:
                 continue
-            cur_town = item.strip()
-            location_dict[cur_province][cur_city][cur_county].update(
-                {cur_town: dict()})
+            name, admin_code, alias_name = parts
+            entry = {'_full_name': name,
+                     '_alias': alias_name,
+                     '_admin_code': admin_code}
 
-        elif item.startswith('\t\t'):  # 县、区
-            if len(item.strip().split('\t')) != 3:
-                continue
-            county, admin_code, alias_name = item.strip().split('\t')
-            cur_county = county
-            location_dict[cur_province][cur_city].update(
-                {cur_county: {'_full_name': county,
-                              '_alias': alias_name,
-                              '_admin_code': admin_code}})
+            if not item.startswith('\t'):  # 省
+                province_dict = entry
+                location_dict[name] = province_dict
 
-        else:  # 市
-            if len(item.strip().split('\t')) != 3:
-                continue
-            city, admin_code, alias_name = item.strip().split('\t')
-            cur_city = city
-            if '/' in alias_name:
-                alias_name_list = alias_name.split('/')
-                location_dict[cur_province].update(
-                    {cur_city: {'_full_name': city,
-                                '_alias': alias_name_list,
-                                '_admin_code': admin_code}})
-            else:
-                location_dict[cur_province].update(
-                    {cur_city: {'_full_name': city,
-                                '_alias': [alias_name],
-                                '_admin_code': admin_code}})
+            elif item.startswith('\t\t'):  # 县、区
+                county_dict = entry
+                city_dict[name] = county_dict
+
+            else:  # 市
+                entry['_alias'] = alias_name.split('/')
+                city_dict = entry
+                province_dict[name] = city_dict
 
     return location_dict
 
