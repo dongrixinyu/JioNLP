@@ -155,51 +155,50 @@ class LocationParser(object):
         """ 从地址中获取所有可能涉及到的候选地址 """
 
         candidate_admin_list = []  # 候选列表
+        # Rows for one province/city are consecutive. Reuse their match descriptors,
+        # but keep offset lists owned by each row. Custom text objects retain all
+        # their original containment and index calls.
+        reuse_matches = type(location_text) is str
+        previous_names = [object(), object()]
+        previous_matches = [None, None]
         for admin_item in self.administrative_map_list:
             count = 0  # 匹配个数
             # offset 中的每一个元素，分别指示在地址中的 “索引”，以及指示 “全名或别名”
             # 索引指在地址中的那个位置出现，优先处理靠左靠前的
             # offset 匹配全名用 0 表示，匹配别名用 1 表示。
-            offset_list = [[-1, -1], [-1, -1], [-1, -1]]
+            offset_list = None
 
-            for idx, name_item in enumerate(admin_item[1: 4]):
-                match_flag = False
-                cur_name = None
-                cur_alias = None
-                for alias_idx, name in enumerate(name_item):  # 别名与全名任意匹配一个
-                    if name is not None and name in location_text:
-                        # 此时需添加逻辑，若 name 为别名，且之后立即跟了 “路、街” 等字，则需跳过处理。
-                        # 例如：“北海市重庆路其仓11号”，这样的城市名会受到干扰，应当将 “重庆路” 进行过滤
-                        if alias_idx == 1:
-                            exception_alias_flag = self._process_exception_alias(name, location_text)
-                            if not exception_alias_flag:
-                                continue
-
-                        match_flag = True
-                        cur_name = name
-                        cur_alias = alias_idx
+            for idx, name_item in enumerate(admin_item[1:4]):
+                if reuse_matches and idx < 2 and name_item == previous_names[idx]:
+                    match = previous_matches[idx]
+                else:
+                    match = None
+                    for alias_idx, name in enumerate(name_item):
+                        if name is None or name not in location_text:
+                            continue
+                        # Reject aliases followed by 路、大街、街; full names win.
+                        if alias_idx == 1 and not self._process_exception_alias(name, location_text):
+                            continue
+                        match = (location_text.index(name), alias_idx)
                         break
+                    if reuse_matches and idx < 2:
+                        previous_names[idx] = name_item
+                        previous_matches[idx] = match
 
-                if match_flag:
-                    count += 1
-                    offset_list[idx][0] = location_text.index(cur_name)
-                    offset_list[idx][1] = cur_alias
+                if match is None:
+                    continue
+                if offset_list is None:
+                    offset_list = [[-1, -1], [-1, -1], [-1, -1]]
+                count += 1
+                offset_list[idx][0], offset_list[idx][1] = match
 
-                    # 两条匹配，相差一个字符位置，说明匹配错误，
-                    # 如 “青海西宁”，容易匹配“海西”，是错误的。
-                    if idx == 1 and (offset_list[idx-1][0] >= 0):
-                        if offset_list[idx][0] - offset_list[idx-1][0] == 1:
-                            count = 0
-                            break
-                    if idx == 2:
-                        if offset_list[idx-1][0] >= 0:
-                            if offset_list[idx][0] - offset_list[idx-1][0] == 1:
-                                count = 0
-                                break
-                        if offset_list[idx-2][0] >= 0:
-                            if offset_list[idx][0] - offset_list[idx-2][0] == 1:
-                                count = 0
-                                break
+                # 两条匹配相差一个字符位置说明匹配错误，如 “青海西宁” 中的 “海西”。
+                if ((idx > 0 and offset_list[idx-1][0] >= 0
+                     and match[0] - offset_list[idx-1][0] == 1)
+                        or (idx == 2 and offset_list[0][0] >= 0
+                            and match[0] - offset_list[0][0] == 1)):
+                    count = 0
+                    break
 
             if count > 0:
                 # cur_item = copy.deepcopy(admin_item)
@@ -209,13 +208,12 @@ class LocationParser(object):
                     count -= 1
                 if len(admin_item) == 5:
                     admin_item.extend([count, offset_list])
-                    candidate_admin_list.append(admin_item)
                 elif len(admin_item) == 7:
                     admin_item[-2] = count
                     admin_item[-1] = offset_list
-                    candidate_admin_list.append(admin_item)
                 else:
                     raise ValueError('length of admin_item is wrong!')
+                candidate_admin_list.append(admin_item)
 
         return candidate_admin_list
 
