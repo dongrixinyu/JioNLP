@@ -1579,67 +1579,49 @@ class TimeParser(TimeUtility):
 
             ]
 
-        # 减少循环和遍历
-        ymd_string_list = []
-        ymd_func_list = []
-        ymd_empty_string_flag = False
-        for ymd_pattern, ymd_func in self.ymd_pattern_norm_funcs:
-            ymd_string = TimeParser.parse_pattern(time_string, ymd_pattern)
+        # 惰性匹配：仅保留非空匹配及首个空匹配，一旦拼接覆盖整个字符串即停止后续正则搜索
+        def matched_strings(pattern_norm_funcs):
+            empty_string_flag = False
+            for pattern, func in pattern_norm_funcs:
+                searched_res = pattern.search(time_string)
+                if searched_res:
+                    yield searched_res.group(), func
+                elif not empty_string_flag:
+                    empty_string_flag = True
+                    yield '', func
 
-            if ymd_string != '':
-                ymd_string_list.append(ymd_string)
-                ymd_func_list.append([ymd_pattern, ymd_func])
-            else:
-                if not ymd_empty_string_flag:
-                    ymd_string_list.append(ymd_string)
-                    ymd_func_list.append([ymd_pattern, ymd_func])
-
-                    ymd_empty_string_flag = True
-
-        hms_string_list = []
-        hms_func_list = []
-        hms_empty_string_flag = False
-        for hms_pattern, hms_func in self.hms_pattern_norm_funcs:
-            hms_string = TimeParser.parse_pattern(time_string, hms_pattern)
-
-            if hms_string != '':
-                hms_string_list.append(hms_string)
-                hms_func_list.append([hms_pattern, hms_func])
-            else:
-                if not hms_empty_string_flag:
-                    hms_string_list.append(hms_string)
-                    hms_func_list.append([hms_pattern, hms_func])
-
-                    hms_empty_string_flag = True
+        # 一次性批量计算时分秒匹配；对任一年月日匹配，长度不超过前序匹配的时分秒串不可能被选中，故只保留长度严格递增者
+        hms_candidates = []
+        max_hms_length = -1
+        for hms_string, hms_func in matched_strings(self.hms_pattern_norm_funcs):
+            hms_length = len(hms_string)
+            if hms_length > max_hms_length:
+                max_hms_length = hms_length
+                hms_candidates.append((hms_string, hms_length, hms_func))
 
         cur_ymd_func, cur_hms_func = None, None
         cur_ymd_string, cur_hms_string = '', ''
-        break_flag = False
-        # for ymd_pattern, ymd_func in self.ymd_pattern_norm_funcs:
-        #     ymd_string = TimeParser.parse_pattern(time_string, ymd_pattern)
-        #     for (hms_pattern, hms_func) in self.hms_pattern_norm_funcs:
-        #         hms_string = TimeParser.parse_pattern(time_string, hms_pattern)
-        for _ymd_string, (ymd_pattern, ymd_func) in zip(ymd_string_list, ymd_func_list):
-            ymd_string = _ymd_string
-            for _hmd_string, (hms_pattern, hms_func) in zip(hms_string_list, hms_func_list):
-                hms_string = _hmd_string
-
-                if len(ymd_string) + len(hms_string) > len(cur_ymd_string) + len(cur_hms_string):
+        cur_length = 0
+        for ymd_string, ymd_func in matched_strings(self.ymd_pattern_norm_funcs):
+            ymd_length = len(ymd_string)
+            if ymd_length + max_hms_length <= cur_length:
+                continue
+            for hms_string, hms_length, hms_func in hms_candidates:
+                pair_length = ymd_length + hms_length
+                if pair_length > cur_length:
                     cur_hms_func = hms_func
                     cur_ymd_func = ymd_func
                     cur_hms_string = hms_string
                     cur_ymd_string = ymd_string
+                    cur_length = pair_length
 
-                if ''.join([cur_ymd_string, cur_hms_string]) == time_string:
-                    break_flag = True
-                    break
-                else:
-                    continue
+                    if cur_ymd_string + cur_hms_string == time_string:
+                        break
+            else:
+                continue
+            break
 
-            if break_flag:
-                break
-
-        if len(''.join([cur_ymd_string, cur_hms_string])) < len(time_string.replace(' ', '')):
+        if cur_length < len(time_string.replace(' ', '')):
             if self.chinese_char_pattern.search(time_string):
                 # 若搜索到中文，则 `-` 等符号可用作 time_span 的分隔符，可以不用处理判断字符串未匹配的异常情况
                 if self.string_strict:
