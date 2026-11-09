@@ -17,6 +17,7 @@ DESCRIPTION:
 
 
 import re
+from array import array
 
 from jionlp.rule.rule_pattern import CELL_PHONE_CHECK_PATTERN, \
     LANDLINE_PHONE_CHECK_PATTERN, LANDLINE_PHONE_AREA_CODE_PATTERN
@@ -56,17 +57,26 @@ class PhoneLocation(object):
 
     """
     def __init__(self):
-        self.cell_phone_location_trie = None
+        self.cell_phone_location_tables = None
 
     def _prepare(self):
         """ 加载词典 """
-        cell_phone_location, zip_code_location, area_code_location = phone_location_loader()
-        self.zip_code_location = zip_code_location
-        self.area_code_location = area_code_location
+        cell_phone_location, self.zip_code_location, \
+            self.area_code_location = phone_location_loader()
 
-        self.cell_phone_location_trie = TrieTree()
+        # 手机号前七位按前三位分组，每组以后四位为下标存储地名编号，编号 0 表示无此号段
+        self.cell_phone_locations = [None]
+        location_ids = {}
+        self.cell_phone_location_tables = {}
         for num, loc in cell_phone_location.items():
-            self.cell_phone_location_trie.add_node(num, loc)
+            if loc not in location_ids:
+                location_ids[loc] = len(self.cell_phone_locations)
+                self.cell_phone_locations.append(loc)
+            table = self.cell_phone_location_tables.get(num[:3])
+            if table is None:
+                table = array('H', [0]) * 10000
+                self.cell_phone_location_tables[num[:3]] = table
+            table[int(num[3:])] = location_ids[loc]
 
         self.cell_phone_pattern = re.compile(CELL_PHONE_CHECK_PATTERN)
         self.landline_phone_pattern = re.compile(LANDLINE_PHONE_CHECK_PATTERN)
@@ -80,14 +90,14 @@ class PhoneLocation(object):
 
     def __call__(self, text):
         """ 输入一段电话号码文本，返回其结果 """
-        if self.cell_phone_location_trie is None:
+        if self.cell_phone_location_tables is None:
             self._prepare()
 
         res = self.cell_phone_pattern.search(text)
         if res is not None:  # 匹配至手机号码
             cell_phone_number = res.group()
             first_seven = cell_phone_number[:7]
-            _, location = self.cell_phone_location_trie.search(first_seven)
+            location = self._search_cell_phone_location(first_seven)
             province, city = location.split(' ')
             # print(province, city)
 
@@ -115,9 +125,18 @@ class PhoneLocation(object):
         return {'number': text, 'province': None,
                 'city': None, 'type': 'unknown'}
 
+    def _search_cell_phone_location(self, first_seven):
+        """ 检索手机号前七位对应的地名，无此号段时返回 None """
+        table = self.cell_phone_location_tables.get(first_seven[:3])
+        last_four = first_seven[3:]
+        if table is None or not (last_four.isascii() and last_four.isdigit()
+                                 and len(last_four) == 4):
+            return None
+        return self.cell_phone_locations[table[int(last_four)]]
+
     def landline_phone_location(self, phone_num):
         """ 检索固定电话号码城市区号并返回，即已知输入是固话号码 """
-        if self.cell_phone_location_trie is None:
+        if self.cell_phone_location_tables is None:
             self._prepare()
 
         # 抽取固话号码的区号
@@ -136,13 +155,13 @@ class PhoneLocation(object):
 
     def cell_phone_location(self, phone_num):
         """ 检索手机号码城市区号并返回，即已知输入是手机号 """
-        if self.cell_phone_location_trie is None:
+        if self.cell_phone_location_tables is None:
             self._prepare()
 
         res = self.cell_phone_pattern.search(phone_num)
         cell_phone_number = res.group()
         first_seven = cell_phone_number[:7]
-        _, location = self.cell_phone_location_trie.search(first_seven)
+        location = self._search_cell_phone_location(first_seven)
         province, city = location.split(' ')
 
         _, operator = self.telecom_operator_trie.search(cell_phone_number[:4])
