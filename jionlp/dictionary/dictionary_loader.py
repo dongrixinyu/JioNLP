@@ -13,7 +13,7 @@ import json
 import math
 
 from jionlp import logging
-from jionlp.util.file_io import read_file_by_line
+from jionlp.util.file_io import read_file_by_iter, read_file_by_line
 
 
 DIR_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -380,15 +380,18 @@ def char_radical_loader():
     
 def idf_loader():
     """ 加载 idf 文件，属于 tfidf 算法的一部分 """
-    content = read_file_by_line(
+    content = read_file_by_iter(
         os.path.join(GRAND_DIR_PATH, 'dictionary', 'idf.txt'),
         auto_loads_json=False)
-    
+
     idf_dict = {}
+    shared_values = {}  # 相同的 idf 值文本共用同一个 float 对象
     for item in content:
         word, idf_value = item.split('\t')
-        idf_dict.update({word: float(idf_value)})
-    
+        if idf_value not in shared_values:
+            shared_values[idf_value] = float(idf_value)
+        idf_dict[word] = shared_values[idf_value]
+
     return idf_dict
     
     
