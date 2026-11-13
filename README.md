@@ -20,6 +20,7 @@
 #### &emsp;&emsp; 安装：```pip install jionlp```
 - JioNLP 是一个面向 **NLP 开发者**的工具包，提供 NLP 任务预处理、解析功能，准确、高效、零使用门槛。请下拉本网页，查阅具体功能信息，并按 **Ctrl+F** 进行搜索。关注同名**微信公众号 JioNLP** 可获取最新的 AI 资讯。
 
+  - **我开发的AI软件**：[**塞拉-罗夏墨迹心理测试**](https://psyla.cn)，欢迎预约测试
   - [**AI发展方向——从pipeline到end2end**](https://mp.weixin.qq.com/s/ZpEn_vZGjY2dqpE_62721w)
   - [**你为什么不相信 LLM 模型评测：深入评测 LLM 接口**](https://mp.weixin.qq.com/s/8PoFz6mUD1AzKthGyO4cyA)
   - [**AI似乎在向着奇怪的方向飞奔**](https://mp.weixin.qq.com/s/cXktu3BDUee-s2L8Z0wXYA)
