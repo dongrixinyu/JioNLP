@@ -236,31 +236,31 @@ class ChineseSummaryExtractor(object):
         """ 计算每个词语的主题突出度 """
         init_prob_distribution = np.array([self.topic_num for i in range(self.topic_num)])
 
+        topic_keys = [str(i) for i in range(self.topic_num)]
+
+        # 复用缓冲区，避免每个词重复分配 numpy 数组
+        conditional_prob = np.empty(self.topic_num)
+        tmp_dot_log_res = np.empty(self.topic_num)
+
         topic_prominence_dict = dict()
-        for word in self.topic_word_weight:
-            conditional_prob_list = list()
-            for i in range(self.topic_num):
-                if str(i) in self.topic_word_weight[word]:
-                    conditional_prob_list.append(self.topic_word_weight[word][str(i)])
-                else:
-                    conditional_prob_list.append(1e-5)
-            conditional_prob = np.array(conditional_prob_list)
+        for word, topic_weight in self.topic_word_weight.items():
+            conditional_prob[:] = [topic_weight.get(key, 1e-5) for key in topic_keys]
 
-            tmp_dot_log_res = np.log2(np.multiply(conditional_prob, init_prob_distribution))
+            np.multiply(conditional_prob, init_prob_distribution, out=tmp_dot_log_res)
+            np.log2(tmp_dot_log_res, out=tmp_dot_log_res)
             kl_div_sum = np.dot(conditional_prob, tmp_dot_log_res)  # kl divergence
-            topic_prominence_dict.update({word: float(kl_div_sum)})
+            topic_prominence_dict[word] = float(kl_div_sum)
 
-        tmp_list = [i[1] for i in tuple(topic_prominence_dict.items())]
-        max_prominence = max(tmp_list)
-        min_prominence = min(tmp_list)
+        max_prominence = max(topic_prominence_dict.values())
+        min_prominence = min(topic_prominence_dict.values())
         for k, v in topic_prominence_dict.items():
             topic_prominence_dict[k] = (v - min_prominence) / (max_prominence - min_prominence)
 
         self.topic_prominence_dict = topic_prominence_dict
 
         # 计算未知词汇的主题突出度，由于停用词已经预先过滤，所以这里不需要再考停用词无突出度
-        tmp_prominence_list = [item[1] for item in self.topic_prominence_dict.items()]
-        self.unk_topic_prominence_value = sum(tmp_prominence_list) / (2 * len(tmp_prominence_list))
+        self.unk_topic_prominence_value = sum(topic_prominence_dict.values()) / (
+            2 * len(topic_prominence_dict))
 
 
 if __name__ == '__main__':
