@@ -3426,32 +3426,40 @@ class TimeParser(TimeUtility):
 
         return first_time_point.handler(), second_time_point.handler(), 'time_span', 'blur'
 
+    @staticmethod
+    def _shift_year_month(year, month, delta):
+        """按公历月份平移，跨年时回卷。delta 为负表示往前。"""
+        month += delta
+        while month <= 0:
+            month += 12
+            year -= 1
+        while month > 12:
+            month -= 12
+            year += 1
+        return year, month
+
     def _normalize_limit_month(self, time_string, time_base_handler,
                                first_time_point, second_time_point):
         month = self.month_patterns[5].search(time_string)
         if month is not None:
             month_string = month.group()
             if '上' in month_string:
-                month_count = month_string.count('上')
-                if time_base_handler[1] == 1:
-                    first_time_point.year = time_base_handler[0] - 1
-                    second_time_point.year = time_base_handler[0] - 1
-                    first_time_point.month = 12 - (month_count - 1)
-                    second_time_point.month = 12 - (month_count - 1)
-                else:
-                    first_time_point.month = time_base_handler[1] - month_count
-                    second_time_point.month = time_base_handler[1] - month_count
+                # 2 月的「上上个月」会减到 0 月。按 12 个月回卷，而不是只特判 1 月。
+                year, month_num = self._shift_year_month(
+                    time_base_handler[0], time_base_handler[1], -month_string.count('上'))
+                first_time_point.year = year
+                second_time_point.year = year
+                first_time_point.month = month_num
+                second_time_point.month = month_num
             elif '下' in month_string or '次' in month_string:
-                # 当 month_string 不包含`上`但包含`次`时， month_string = 1
-                month_count = month_string.count('下') or 1
-                if time_base_handler[1] == 12:
-                    first_time_point.year = time_base_handler[0] + 1
-                    second_time_point.year = time_base_handler[0] + 1
-                    first_time_point.month = month_count
-                    second_time_point.month = month_count
-                else:
-                    first_time_point.month = time_base_handler[1] + month_count
-                    second_time_point.month = time_base_handler[1] + month_count
+                # 次月没有「下」，仍表示往后一个月。11 月的「下下个月」会加到 13 月。
+                year, month_num = self._shift_year_month(
+                    time_base_handler[0], time_base_handler[1],
+                    month_string.count('下') or 1)
+                first_time_point.year = year
+                second_time_point.year = year
+                first_time_point.month = month_num
+                second_time_point.month = month_num
             elif '同' in month_string or '本' in month_string or '当' in month_string or '这' in month_string:
                 first_time_point.month = time_base_handler[1]
                 second_time_point.month = time_base_handler[1]

@@ -177,6 +177,30 @@ class TestTimeParser(unittest.TestCase):
     """ 测试时间解析工具 """
     maxDiff = None
 
+    def test_limit_month_crosses_year(self):
+        """上上个月 / 下下个月 roll across January and December."""
+        cases = [
+            ('上上个月', [2026, 2, 10, 8, 0, 0], '2025-12-01', '2025-12-31'),
+            ('上上个月', [2026, 1, 10, 8, 0, 0], '2025-11-01', '2025-11-30'),
+            ('上上个月', [2026, 3, 10, 8, 0, 0], '2026-01-01', '2026-01-31'),
+            ('上个月', [2026, 1, 10, 8, 0, 0], '2025-12-01', '2025-12-31'),
+            ('上个月', [2026, 2, 10, 8, 0, 0], '2026-01-01', '2026-01-31'),
+            ('下下个月', [2026, 11, 10, 8, 0, 0], '2027-01-01', '2027-01-31'),
+            ('下下个月', [2026, 12, 10, 8, 0, 0], '2027-02-01', '2027-02-28'),
+            ('下下个月', [2023, 12, 10, 8, 0, 0], '2024-02-01', '2024-02-29'),
+            ('下下个月', [2026, 10, 10, 8, 0, 0], '2026-12-01', '2026-12-31'),
+            ('下个月', [2026, 12, 10, 8, 0, 0], '2027-01-01', '2027-01-31'),
+            ('次月', [2026, 12, 10, 8, 0, 0], '2027-01-01', '2027-01-31'),
+            ('上个月后3天', [2024, 2, 23, 12, 0, 0], '2024-01-29', '2024-01-31'),
+        ]
+        for text, time_base, first_day, last_day in cases:
+            with self.subTest(text=text, time_base=time_base):
+                result = jio.parse_time(text, time_base=list(time_base))
+                self.assertEqual(result, {
+                    'type': 'time_point', 'definition': 'accurate',
+                    'time': [first_day + ' 00:00:00', last_day + ' 23:59:59'],
+                })
+
     def test_optional_month_day_span(self):
         """Month-only inputs remain valid alongside inclusive day spans."""
         cases = [
