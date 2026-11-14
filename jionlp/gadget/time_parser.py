@@ -792,7 +792,27 @@ class TimeParser(TimeUtility):
 
             return first_time_string, second_time_string
         else:
+            # 冒号钟点（下午2:30到4:30）匹配不到上面的「点/时」补偿，
+            # 后半段会落在上午。只补前半段的时段，且后半段不再自带日期。
+            second_time_string = self._carry_blur_hour(first_time_string, second_time_string)
             return first_time_string, second_time_string
+
+    def _carry_blur_hour(self, first_time_string, second_time_string):
+        """把前半段的「下午/晚上」接到纯钟点的后半段。"""
+        if self.hour_patterns[1].search(second_time_string):
+            return second_time_string
+        if self.ymd_meta_pattern.search(second_time_string):
+            return second_time_string
+        if re.search(r'(今|明|昨|大前|大后|前|后)天|星期|周|礼拜', second_time_string):
+            return second_time_string
+        # 14:00 已经是 24 小时制。再加「中午/下午」会把小时加到 24 以外。
+        clock = re.match(r'(\d{1,2})[:：]', second_time_string)
+        if not clock or int(clock.group(1)) >= 13:
+            return second_time_string
+        found = self.hour_patterns[1].search(first_time_string)
+        if not found:
+            return second_time_string
+        return found.group() + second_time_string
 
     def __call__(self, time_string, time_base=None, time_type=None,
                  ret_type='str', strict=False, virtual_time=False, ret_future=False,
