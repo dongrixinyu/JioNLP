@@ -165,6 +165,7 @@ class TimeParser(TimeUtility):
                               ['2021-07-23 16:00:00', '2021-07-23 16:59:59']], 'string': '周五下午4点'}}}
 
     """
+
     def __init__(self):
 
         self.time_point = None
@@ -312,10 +313,10 @@ class TimeParser(TimeUtility):
 
         # `限定月、日`： `下个月9号`
         self.limit_month_day_pattern = re.compile(
-            ''.join([bracket(LIMIT_MONTH_STRING), bracket_absence(DAY_STRING)]))
+            ''.join([bracket(LIMIT_MONTH_STRING), bracket(DAY_STRING)]))
         # 限定月，限定日
         self.limit_month_limit_span_day_pattern = re.compile(
-            ''.join([bracket(LIMIT_MONTH_STRING), bracket_absence(LIMIT_SPAN_DAY_STRING)]))
+            ''.join([bracket(LIMIT_MONTH_STRING), bracket(LIMIT_SPAN_DAY_STRING)]))
 
         # 月，限定日
         self.month_limit_span_day_pattern = re.compile(
@@ -613,7 +614,8 @@ class TimeParser(TimeUtility):
         # **** 年 ****
         self.year_pattern = re.compile(YEAR_STRING[:-1] + r'(?=年)')
         self.limit_year_pattern = re.compile(LIMIT_YEAR_STRING[:-1] + r'(?=年)')
-        self.blur_year_1_pattern = re.compile(r'([12]?\d{1,4}|(?<!几)[一二两三四五六七八九十百千])[几多]?年(半)?(多)?[以之]?[前后]')
+        self.blur_year_1_pattern = re.compile(
+            r'([12]?\d{1,4}|(?<!几)[一二两三四五六七八九十百千])[几多]?年(半)?(多)?[以之]?[前后]')
         self.blur_year_2_pattern = re.compile('半年(多)?[以之]?[前后]')
         self.blur_year_3_pattern = re.compile('几[十百千](多)?年[以之]?[前后]')
 
@@ -629,7 +631,8 @@ class TimeParser(TimeUtility):
         # **** 月 ****
         self.month_pattern = re.compile(MONTH_STRING)
         self.month_num_pattern = re.compile(MONTH_NUM_STRING)  # 1~12
-        self.span_month_pattern = re.compile('([第前后头]([一二两三四五六七八九十]|十[一二]|[1-9]|1[012])|首)(个)?月(份)?')
+        self.span_month_pattern = re.compile(
+            '([第前后头]([一二两三四五六七八九十]|十[一二]|[1-9]|1[012])|首)(个)?月(份)?')
         self.solar_season_pattern = re.compile(
             '((([第前后头Qq][一二三四1-4两]|首)(个)?|[一二三四1-4])季度[初中末]?)')
         self.blur_month_pattern = re.compile(BLUR_MONTH_STRING)
@@ -717,7 +720,7 @@ class TimeParser(TimeUtility):
             # 特定日
             '地球日': [4, 22], '护士节': [5, 12], '三一五': [3, 15], '消费者权益日': [3, 15],
             '三.一五': [3, 15], '三·一五': [3, 15], '双11': [11, 11], '双十一': [11, 11],
-            '双十二': [12, 12], '双12':[12, 12]
+            '双十二': [12, 12], '双12': [12, 12]
         }
 
         # 农历固定节日
@@ -1091,18 +1094,17 @@ class TimeParser(TimeUtility):
                 self.time_base_handler = old_time_base_handler
                 first_full_time_handler, second_full_time_handler, time_type, \
                     blur_time = self.parse_time_point(
-                        time_string, self.time_base_handler)
+                    time_string, self.time_base_handler)
         else:
             # 非 time span，按 time_point 解析
             time_string = self._compensate_num_month_num(time_string)
 
             first_full_time_handler, second_full_time_handler, time_type, \
                 blur_time = self.parse_time_point(
-                    time_string, self.time_base_handler)
+                time_string, self.time_base_handler)
 
             # 检查 handler，确定是否按 ret_future 未来时间解析
             if self.ret_future:
-
                 future_time_string = self._adjust_underlying_future_time(
                     time_string, first_full_time_handler, second_full_time_handler)
                 first_full_time_handler, second_full_time_handler, time_type, blur_time = self.parse_time_point(
@@ -1234,7 +1236,7 @@ class TimeParser(TimeUtility):
                 # 但是某些时间周期难以表示，如 `每周周一` 中的 周一。此时用 time_point 中的绝对时间进行表示，并附以时间文本
                 time_point_string = time_string.replace(period_time, '')
                 # 补充 time_point_string
-                if (period_time.endswith('礼拜') or period_time.endswith('周') or period_time.endswith('星期'))\
+                if (period_time.endswith('礼拜') or period_time.endswith('周') or period_time.endswith('星期')) \
                         and (not time_point_string.startswith('周')):
                     time_point_string = '周' + time_point_string
 
@@ -1662,7 +1664,7 @@ class TimeParser(TimeUtility):
             ymd_first_time_handler, ymd_second_time_handler, ymd_time_type, ymd_blur_time = \
                 cur_ymd_func(cur_ymd_string)
 
-            if (ymd_first_time_handler != ymd_second_time_handler)\
+            if (ymd_first_time_handler != ymd_second_time_handler) \
                     or ymd_first_time_handler[2] == -1:
                 raise ValueError('the string `{}` is illegal, because the hour-min-sec string'
                                  'can NOT be designated to a specific day.'.format(time_string))
@@ -1760,6 +1762,7 @@ class TimeParser(TimeUtility):
 
     def normalize_standard_year_month_day(self, time_string):
         """ 解析 标准数字 年月日（标准） 时间 """
+
         # 清洗 time_string 的边缘杂字符串，如`2018-02-09-`，其原字符串可能为
         # `2018-02-09-11:20`
         def pattern_strip(ymd_segs, time_string):
@@ -3478,7 +3481,7 @@ class TimeParser(TimeUtility):
             first_time_point.day = day
             second_time_point.day = day
 
-        return first_time_point.handler(), second_time_point.handler(), 'time_point',\
+        return first_time_point.handler(), second_time_point.handler(), 'time_point', \
             'blur' if first_time_point.handler()[2] < 0 else 'accurate'
 
     def _normalize_blur_day(self, time_string, first_time_point, second_time_point):
@@ -3522,7 +3525,7 @@ class TimeParser(TimeUtility):
         first_time_point, second_time_point = self._normalize_blur_day(
             time_string, first_time_point, second_time_point)
 
-        return first_time_point.handler(), second_time_point.handler(), 'time_point',\
+        return first_time_point.handler(), second_time_point.handler(), 'time_point', \
             'blur' if first_time_point.handler()[2] < 0 else 'accurate'
 
     def normalize_limit_month_limit_span_day(self, time_string):
@@ -3569,8 +3572,8 @@ class TimeParser(TimeUtility):
         first_time_handler = first_time_point.handler()
         second_time_handler = second_time_point.handler()
 
-        return first_time_point.handler(), second_time_point.handler(), 'time_point',\
-            'blur' if first_time_point.handler()[2] < 0 else 'accurate'
+        return first_time_point.handler(), second_time_point.handler(), 'time_point', 'accurate'
+            # 'blur' if first_time_point.handler()[2] < 0 else 'accurate'
 
     def normalize_century_year(self, time_string):
         """ 解析 世纪、年 时间 """
@@ -3866,7 +3869,7 @@ class TimeParser(TimeUtility):
             lunar_month_string = lunar_month.group(1)
             if '闰' in lunar_month_string:
                 leap_month = True
-            lunar_month_string = lunar_month_string\
+            lunar_month_string = lunar_month_string \
                 .replace('正', '一').replace('冬', '十一').replace('腊', '十二').replace('闰', '')
             lunar_month_string = int(self._char_num2num(lunar_month_string))
 
@@ -3875,7 +3878,7 @@ class TimeParser(TimeUtility):
         if lunar_day:
             if use_lunar_day:
                 lunar_day_string = lunar_day.group(0)
-                lunar_day_string = lunar_day_string\
+                lunar_day_string = lunar_day_string \
                     .replace('初', '').replace('廿', '二十')
                 lunar_day_string = int(self._char_num2num(lunar_day_string))
 
@@ -3914,7 +3917,7 @@ class TimeParser(TimeUtility):
             lunar_month_string = lunar_month.group(1)
             if '闰' in lunar_month_string:
                 leap_month = True
-            lunar_month_string = lunar_month_string\
+            lunar_month_string = lunar_month_string \
                 .replace('正', '一').replace('冬', '十一').replace('腊', '十二').replace('闰', '')
             lunar_month_string = int(self._char_num2num(lunar_month_string))
 
@@ -3922,7 +3925,7 @@ class TimeParser(TimeUtility):
 
         if lunar_day:
             lunar_day_string = lunar_day.group(0)
-            lunar_day_string = lunar_day_string\
+            lunar_day_string = lunar_day_string \
                 .replace('初', '').replace('廿', '二十')
             lunar_day_string = int(self._char_num2num(lunar_day_string))
 
@@ -4459,7 +4462,8 @@ class TimeParser(TimeUtility):
 
         # 默认必然已匹配某节日
         # 按照长度从长到短匹配，避免重复
-        for festival, date in sorted(self.fixed_solar_holiday_dict.items(), key=lambda item: len(item[0]), reverse=True):
+        for festival, date in sorted(self.fixed_solar_holiday_dict.items(), key=lambda item: len(item[0]),
+                                     reverse=True):
             if festival in time_string:
                 time_point.month = date[0]
                 time_point.day = date[1]
@@ -4479,7 +4483,8 @@ class TimeParser(TimeUtility):
 
         # 默认必然已匹配某节日
         # 按照长度从长到短匹配，避免重复
-        for festival, date in sorted(self.fixed_solar_holiday_dict.items(), key=lambda item: len(item[0]), reverse=True):
+        for festival, date in sorted(self.fixed_solar_holiday_dict.items(), key=lambda item: len(item[0]),
+                                     reverse=True):
             if festival in time_string:
                 time_point.month = date[0]
                 time_point.day = date[1]
@@ -4707,8 +4712,8 @@ class TimeParser(TimeUtility):
         return time_point.handler(), time_point.handler(), 'time_point', time_definition, day_bias
 
     def normalize_consecutive_blur_hour_pattern(self, time_string):
-        """ 解析 `连续模糊 时` 时间  
-        
+        """ 解析 `连续模糊 时` 时间
+
         如：下午七八点
         """
         day_bias = [0, '弱']
@@ -4912,7 +4917,7 @@ class TimeParser(TimeUtility):
                     lunar_time_handler[0], lunar_time_handler[1],
                     29, leap_month)  # 当农历月无30 天时，按 29天计算
 
-            return string2handler(first_solar_time_handler),\
+            return string2handler(first_solar_time_handler), \
                 string2handler(second_solar_time_handler)
         else:
             try:
@@ -4928,7 +4933,8 @@ class TimeParser(TimeUtility):
                     solar_time_handler = self.lunar2solar(
                         lunar_time_handler[0], lunar_time_handler[1],
                         29, leap_month)
-                else: raise
+                else:
+                    raise
 
             handler = string2handler(solar_time_handler)
             return handler, handler
