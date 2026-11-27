@@ -144,6 +144,33 @@ class LocationRecognizer(object):
                         [[prov, china_loc[prov]['_alias']],
                          [city, china_loc[prov][city]['_alias']],
                          [county, china_loc[prov][city][county]['_alias']]])
+
+        # 名称（全名或别名）到其所在行的索引，并预先计算每个名称的候选地址
+        name_rows = dict()
+        for admin_item in self.china_administrative_map_list:
+            for name_item in admin_item:
+                for name in name_item:
+                    if isinstance(name, str):
+                        rows = name_rows.setdefault(name, [])
+                        if not rows or rows[-1] is not admin_item:
+                            rows.append(admin_item)
+        self._china_name_candidates = {
+            name: self._match_china_rows(rows, name)
+            for name, rows in name_rows.items()}
+
+    @staticmethod
+    def _match_china_rows(admin_items, location):
+        # 按行顺序返回去重后的 (省, 市, 县) 候选元组，最深的匹配层级决定填充的层级数
+        candidates = dict()
+        for admin_item in admin_items:
+            depth = 0
+            for idx, name_item in enumerate(admin_item, 1):
+                if location in name_item and location is not None:
+                    depth = idx
+            if depth:
+                names = tuple(name_item[0] for name_item in admin_item[:depth])
+                candidates[names + (None,) * (3 - depth)] = None
+        return list(candidates)
     
     def _mapping_world_location(self, world_loc):
         # 整理国外行政区划映射表
@@ -179,36 +206,15 @@ class LocationRecognizer(object):
         """
         if self.china_administrative_map_list is None:
             self._prepare()
-        
-        level_list = ['province', 'city', 'county']
-        candidate_admin_list = []  # 候选列表
-        for admin_item in self.china_administrative_map_list:
-            count = 0
-            for idx, name_item in enumerate(admin_item):
-                match_flag = False
-                for name in name_item:  # 别名与全名任意匹配一个
-                    if name is not None and name == location:
-                        match_flag = True
-                        break
-                if match_flag:
-                    count += 1
-                    # offset 中的每一个元素，分别指示省、市、县三级是否被匹配
-                    offset_list = [1 if i <= idx else 0 for i in range(3)]
-                    
-            if count > 0:
-                cur_item = dict()
-                for level, offset, name in zip(level_list, offset_list, admin_item):
-                    if offset == 1:
-                        cur_item.update({level: name[0]})
-                    else:
-                        cur_item.update({level: None})
-                if cur_item not in candidate_admin_list:
-                    candidate_admin_list.append(cur_item)
-            # TODO
-            # 当这里已有结果后，若不是有歧义的地名，如辽宁朝阳，北京朝阳等之外，可以直接跳出循环
-            # 返回结果即可，可以大大加快计算速度，待总结
-            
-        return candidate_admin_list
+
+        try:
+            candidates = self._china_name_candidates.get(location, ())
+        except TypeError:  # 不可哈希的输入，逐行比较
+            candidates = self._match_china_rows(
+                self.china_administrative_map_list, location)
+
+        return [{'province': province, 'city': city, 'county': county}
+                for province, city, county in candidates]
     
     def get_world_candidates(self, location):
         """ 给定一个地址字符串，找出其中的候选地址，
